@@ -1,0 +1,34 @@
+This's the open source version of OpenWSN project by TongJi University.
+
+For the detail about the OpenWSN project, please refer to the project site:
+http://code.google.com/p/openwsn
+-
+
+
+How to sync with openwsn node project on GitHub?
+=================================================================================
+
+1 download TortoiseGit and msysgit from code.google.com
+2 apply an account at http://github.com
+3 create directory d:\dev\openwsn\source\nodegit.  We will synchronize the source code between nodegit and https://github.com/openwsn/node.  and create reponsitory in this folder. You'll see a ".git" directory.
+4 generate putty key using puttygen.exe in your tortoisegit folder. Upload the public key to github(you should login first) and tell TortioiseGit the private key 
+5 using tortioise git to checkout source code from https://github.com/openwsn/node
+and place it in d:\dev\openwsn\source\nodegit
+6 now you can work with the nodegit folder now. Remember don't change the .git folder manually
+
+
+
+2010.09.21
+Upgrading the developing environment to the newest software
+=================================================================================
+
+- AVR Studio 4.18 and SP3 for ATmega128L from ATMEL.com
+
+- WinAVR 20100110 Toolchain
+
+You should: 1) install AVR Studio D:\binx\embedded\avrstudio (not mandatory); 2) install WinAVR to d:\binx\embedded\winavr (mandatory).
+
+Attention in the past, we use Portable WinAVR 20090313. now we changed back to standard WinAVR to help the beginners to avoid directory settings. Since we haven't changed the path settings in all the example project, we still keep a copy of Portable WinAVR 20090313 in "d:\portable\WinAVR-20090313" is by default our former settings. You only need uninstall the AVR studio and reinstall the new version.
+
+This upgrading may cause some projects failed to open by AVR studio, you can simply re-created the project file. If you encounter such problems, please report to us through google code's issue report. We'll correct them in the next release.
+
