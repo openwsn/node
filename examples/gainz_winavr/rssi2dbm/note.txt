@@ -1,0 +1,31 @@
+Comment by zhangwei on 2010.04
+The following comments are only for Mica nodes. However, our transceiver is cc2420. So we should refer to cc2420 data sheet to finish this task
+
+
+
+
+
+http://chinawangquan.spaces.live.com/blog/cns!9CF795352E94BF70!576.entry
+
+无线传感器网络MICA平台的RSSI原始数据转换为dBm值的方法
+      对于使用Crossbow公司的MICA系列平台，如何将RSSI原始数据传唤为dBm值，是我们使用RSSI数据所关心的，对于如何得到RSSI原始数据，在【TinyOS、NesC程序开发经验谈】文中已给出代码，并在【CrossBow公司MIB600基板Mote节点数据的接收(VC++篇)】文中给出了VC++平台下获取数据的方法，下面介绍MICA平台的RSSI原始数据转换为dBm值的方法：
+      假设RSSI原始数据值定义为RSSI_RAW，转化后的dBm值定义为RSSI，电压为Bat_Vol，其中RSSI_RAW为[0, 255]，那么
+      1、对于MICAz平台
+    if RSSI_RAW < 127
+          RSSI = RSSI_RAW + RSSI_OFFSET [dBm]
+    else
+          RSSI = RSSI_RAW - 256 + RSSI_OFFSET [dBm]
+      通常情况下，RSSI_OFFSET = -45 [dBm]。
+      比如得到RSSI_RAW = 220，那么RSSI = 220 - 256 -45 = -81 [dBm]
+      对于有人给出的RSSI = (RSSI_RAW / 255)*100 - 100 [dBm]，这种实际上是错误的，在TinyOS FAQ的Email列表中早有人指出。
+      2、对于Mica2平台
+     RSSI = a * (RSSI_RAW * Bat_Vol) / 1024 -  b [dBm]
+      通常情况下，对于433 MHz：a = -51.3, b = 49.2；对于868 MHz：a = -50.0, b = 45.5。
+    
+
+TinyOS、NesC程序开发经验谈
+http://chinawangquan.spaces.live.com/blog/cns!9CF795352E94BF70!434.entry
+
+
+CrossBow公司MIB600基板Mote节点数据的接收(VC++篇)
+http://chinawangquan.spaces.live.com/blog/cns!9CF795352E94BF70!493.entry

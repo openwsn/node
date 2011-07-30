@@ -1,0 +1,1 @@
+<AVRWorkspace><IOSettings><CurrentRegisters/></IOSettings><part name="ATMEGA128"/><Files><File00000 Name="D:\dev\openwsn\source\node\common\openwsn\hal\gainz\hal_assert.c" Position="224 124 730 335" LineCol="0 0"/><File00001 Name="D:\dev\openwsn\source\node\gainz-winavr\sniffer_binary\apl_ieee802frame154_dump.c" Position="249 149 747 330" LineCol="6 26"/></Files></AVRWorkspace>

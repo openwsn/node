@@ -1,0 +1,36 @@
+blink
+==========================================================
+
+This is a simple test program running on real hardware.
+the LED will blink
+
+tested ok by zhangwei(20090714)
+
+
+
+Using WinAVR
+==========================================================
+
+open project using PN.exe
+
+
+
+Using AVR Studio 4
+==========================================================
+AVR Studio can be downloaded from www.atmel.com
+
+when create the project
+Project Type => AVR GCC
+select debug platform and device: AVR Simulator 2
+Device => ATmega128
+
+如果选择simulator,可以编译运行
+对实际硬件，选择 JTAG ICE
+
+因为测试程序调用了printf()函数，所以需要定位合适的library：
+菜单 => Projct => Project Options => Libraries
+选择libprintf_min.a
+按<Add Library>将其本工程
+
+
+

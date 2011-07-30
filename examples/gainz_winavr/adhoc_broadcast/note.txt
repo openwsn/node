@@ -1,0 +1,7 @@
+ahhoc_broadcast
+=================================================================
+Tests the broadcasting capability using MAC component's interface in Ad hoc networks. This application uses the MAC interface instead of the MAC component itself directly.
+
+attention: broadcast is an MAC layer operation. It will send the frame to all of its neighbors.
+
+

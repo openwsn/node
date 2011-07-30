@@ -1,0 +1,20 @@
+hello
+================================================================
+compiled ok with AVR Studio and Portable WinAVR 2009.03.13
+
+
+
+steps:
+
+=> start AVR Studio 4
+=> ²Ëµ¥ Project => New Project 
+	Project Type => AVR GCC
+	Project Name => hello
+	Initial File => hello.c
+	Location: <Your Project Root>\source\node\hello
+	Debug Platform => AVR Simulator 2
+	Device => ATmega128
+
+
+=> Menu => Project => Project Options
+	libraries: add libprintf_min.a

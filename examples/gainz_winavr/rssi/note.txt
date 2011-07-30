@@ -1,0 +1,14 @@
+sniffer 是一个基于TiCc2420Adapter开发的调试小工具
+它接收空中所有的frame（不论其类型），并将其通过串口发送给计算机
+sniffer可协助开发人员观察空中数据包的情况
+
+RSSI测试程序则是在sniffer程序的基础上略加扩充而成
+
+
+
+History
+================================================
+2010-06-02
+- recreate the rssi project and eliminates the obsolete source codes from sniffer project. 
+
+

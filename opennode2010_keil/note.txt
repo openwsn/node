@@ -1,0 +1,9 @@
+2011.06.05
+- Reorganize the folder structure. Remove some obsolate source files and replace them with new one. 
+- Now all the target board dependent source code for cc2520 transceiver have been collected into module hal_cc2520vx. If you want to port cc2520 to an new board, you only need to modify this module.
+
+2011.06.04
+
+- upgrade global interrupt control support by improve four functions: hal_enable_interrupts(), hal_disable_interrupts(), hal_atomic_begin(), hal_atomic_end()
+
+- improve hal_delayus() and hal_delayms() by using __NOP() function inside CMSIS package(developed by ARM.com)

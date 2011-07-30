@@ -1,0 +1,17 @@
+osx_multitasksleep
+
+author: xxx
+2010-08-17
+
+state: in developing
+
+
+This application demostrate how to design and implement a system with multi-tasks running inside, and also support sleeping when no tasks active.
+
+The demo/testing application contains the following features:
+- a wireless communication task running only when sensor data is available
+- a luminance sensor measurement task running every 1 seconds
+- a temperature sensor measurement task running every 5 seconds
+- after finishing all the tasks, the device enters sleeping mode automatically
+- the device can be waken up by osx timer. this is usually to control when the task started.
+

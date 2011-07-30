@@ -1,0 +1,18 @@
+maca
+================================================================
+
+testing MACA medium access protocol
+
+related modules:
+	svc_maca
+	hal_cc2420
+	rtl_frame
+
+
+History
+================================================================
+
+modified by zhangwei 2010-06-15
+- revison
+- compile passed.
+

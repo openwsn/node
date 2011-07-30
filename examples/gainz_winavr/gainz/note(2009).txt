@@ -1,0 +1,7 @@
+projects running on ICT GAINZ platform(using atmega128 MCU and cc2420 transceiver)
+
+compiled with 
+- Portable WinAVR 2008 
+- Portable WinAVR 2008 + AVR Studio 2009
+- WinAVR 2004 
+

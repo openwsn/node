@@ -1,0 +1,6 @@
+ah_mac
+=================================================================
+ah_mac: adhoc network's medium access control protocol
+
+tests the MAC's sending/receiving by using MAC's interface.
+ 

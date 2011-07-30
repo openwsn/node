@@ -1,0 +1,19 @@
+adxl345_i2c
+================================================================
+This application reads 3D accelerating data from the ADXL345 sensor and send them out through UART. You can get the sensor output at the computer side and do further analysis. 
+
+This application tests the following modules:
+
+- hal_i2c
+- hal_adxl345
+- hal_uart
+- hal_timer
+- svc_timer
+
+
+History
+================================================================
+
+modified by Lu Weihui(luweihui163@163.com) and He Yaxi(yaxihe@163.com), TongJi University on 2010.07.15
+- compiled passed. tested ok.
+

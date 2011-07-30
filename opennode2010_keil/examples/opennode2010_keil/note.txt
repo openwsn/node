@@ -1,0 +1,5 @@
+2011.06.05
+
+- upgrade global interrupt control support by improve four functions: hal_enable_interrupts(), hal_disable_interrupts(), hal_atomic_begin(), hal_atomic_end()
+
+- improve hal_delayus() and hal_delayms() by using __NOP() function inside CMSIS package(developed by ARM.com)

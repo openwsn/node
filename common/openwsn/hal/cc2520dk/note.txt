@@ -1,0 +1,4 @@
+this folder contains the hardware abstraction layer for cc2520 developing kit (cc2520dk).
+
+2010-05-29
+- merged with Ni Kan's submission.

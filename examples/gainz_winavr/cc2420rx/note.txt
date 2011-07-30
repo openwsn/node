@@ -1,0 +1,18 @@
+cc2420rx
+Notice: the code in cc2420rx.c of this project should be replaced by the modified code in sniffer.c, because the method used in sniffer is newer and more general.
+========================================================================
+1) Project Description: 
+this is a very simple frame receiving test program. 
+It will catch the frame in the air and show them through UART.
+
+2) Experiments and Notice
+
+接收模式有两种，查询模式和中断模式
+并且可设置有无自动ACK。
+
+-- 与CC2420tx配合测试，接受时到数据时红灯闪烁，并通过串口显示cc2420 发送数据。
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-23
+-- test ok by Yan Shixing

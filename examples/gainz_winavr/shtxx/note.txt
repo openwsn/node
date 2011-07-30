@@ -1,0 +1,2 @@
+sht系列温湿度传感器测试
+using SHT temp/humidity sensor

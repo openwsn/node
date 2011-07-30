@@ -1,0 +1,1065 @@
+
+chip45boot.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000504  00000000  00000000  00000094  2**0
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000001e  00800060  00000504  00000598  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          000000ed  0080007e  0080007e  000005b6  2**0
+                  ALLOC
+  3 .noinit       00000000  0080016b  0080016b  000005b6  2**0
+                  CONTENTS
+  4 .eeprom       00000000  00810000  00810000  000005b6  2**0
+                  CONTENTS
+  5 .stab         0000036c  00000000  00000000  000005b8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  6 .stabstr      00000084  00000000  00000000  00000924  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_aranges 00000014  00000000  00000000  000009a8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_pubnames 000001d4  00000000  00000000  000009bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_info   000004f2  00000000  00000000  00000b90  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_abbrev 000001d7  00000000  00000000  00001082  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_line   000004e4  00000000  00000000  00001259  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_str    00000295  00000000  00000000  0000173d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	2b c0       	rjmp	.+86     	; 0x5a <__bad_interrupt>
+   4:	2a c0       	rjmp	.+84     	; 0x5a <__bad_interrupt>
+   6:	29 c0       	rjmp	.+82     	; 0x5a <__bad_interrupt>
+   8:	28 c0       	rjmp	.+80     	; 0x5a <__bad_interrupt>
+   a:	27 c0       	rjmp	.+78     	; 0x5a <__bad_interrupt>
+   c:	26 c0       	rjmp	.+76     	; 0x5a <__bad_interrupt>
+   e:	25 c0       	rjmp	.+74     	; 0x5a <__bad_interrupt>
+  10:	24 c0       	rjmp	.+72     	; 0x5a <__bad_interrupt>
+  12:	23 c0       	rjmp	.+70     	; 0x5a <__bad_interrupt>
+  14:	22 c0       	rjmp	.+68     	; 0x5a <__bad_interrupt>
+  16:	22 c0       	rjmp	.+68     	; 0x5c <__vector_11>
+  18:	20 c0       	rjmp	.+64     	; 0x5a <__bad_interrupt>
+  1a:	1f c0       	rjmp	.+62     	; 0x5a <__bad_interrupt>
+  1c:	1e c0       	rjmp	.+60     	; 0x5a <__bad_interrupt>
+  1e:	1d c0       	rjmp	.+58     	; 0x5a <__bad_interrupt>
+  20:	1c c0       	rjmp	.+56     	; 0x5a <__bad_interrupt>
+  22:	1b c0       	rjmp	.+54     	; 0x5a <__bad_interrupt>
+  24:	1a c0       	rjmp	.+52     	; 0x5a <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	e4 e0       	ldi	r30, 0x04	; 4
+  3a:	f5 e0       	ldi	r31, 0x05	; 5
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <.do_copy_data_start>
+
+0000003e <.do_copy_data_loop>:
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+
+00000042 <.do_copy_data_start>:
+  42:	ae 37       	cpi	r26, 0x7E	; 126
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <.do_copy_data_loop>
+
+00000048 <__do_clear_bss>:
+  48:	11 e0       	ldi	r17, 0x01	; 1
+  4a:	ae e7       	ldi	r26, 0x7E	; 126
+  4c:	b0 e0       	ldi	r27, 0x00	; 0
+  4e:	01 c0       	rjmp	.+2      	; 0x52 <.do_clear_bss_start>
+
+00000050 <.do_clear_bss_loop>:
+  50:	1d 92       	st	X+, r1
+
+00000052 <.do_clear_bss_start>:
+  52:	ab 36       	cpi	r26, 0x6B	; 107
+  54:	b1 07       	cpc	r27, r17
+  56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
+  58:	a5 c1       	rjmp	.+842    	; 0x3a4 <main>
+
+0000005a <__bad_interrupt>:
+  5a:	d2 cf       	rjmp	.-92     	; 0x0 <__vectors>
+
+0000005c <__vector_11>:
+
+//
+// interrupt routine called when a character was received from USART
+//
+ISR(myUSART_ReceiveCompleteVect) {
+  5c:	1f 92       	push	r1
+  5e:	0f 92       	push	r0
+  60:	0f b6       	in	r0, 0x3f	; 63
+  62:	0f 92       	push	r0
+  64:	11 24       	eor	r1, r1
+  66:	8f 93       	push	r24
+  68:	ef 93       	push	r30
+  6a:	ff 93       	push	r31
+
+    char c = myUDR;  // save the character
+  6c:	8c b1       	in	r24, 0x0c	; 12
+
+    if((c != '\r') && (c != '\n'))
+  6e:	8d 30       	cpi	r24, 0x0D	; 13
+  70:	59 f0       	breq	.+22     	; 0x88 <__vector_11+0x2c>
+  72:	8a 30       	cpi	r24, 0x0A	; 10
+  74:	49 f0       	breq	.+18     	; 0x88 <__vector_11+0x2c>
+	*receiveBufferPointer++ = c;  // write character to the buffer
+  76:	e0 91 69 01 	lds	r30, 0x0169
+  7a:	f0 91 6a 01 	lds	r31, 0x016A
+  7e:	81 93       	st	Z+, r24
+  80:	f0 93 6a 01 	sts	0x016A, r31
+  84:	e0 93 69 01 	sts	0x0169, r30
+
+    // if end of line is reached, set buffer full flag
+    // this starts s-record processing in the main program
+    if((c == '\r') || (c == '\n')) {
+  88:	8d 30       	cpi	r24, 0x0D	; 13
+  8a:	11 f0       	breq	.+4      	; 0x90 <__vector_11+0x34>
+  8c:	8a 30       	cpi	r24, 0x0A	; 10
+  8e:	19 f4       	brne	.+6      	; 0x96 <__vector_11+0x3a>
+	receiveBufferFull = TRUE;
+  90:	81 e0       	ldi	r24, 0x01	; 1
+  92:	80 93 8b 00 	sts	0x008B, r24
+  96:	ff 91       	pop	r31
+  98:	ef 91       	pop	r30
+  9a:	8f 91       	pop	r24
+  9c:	0f 90       	pop	r0
+  9e:	0f be       	out	0x3f, r0	; 63
+  a0:	0f 90       	pop	r0
+  a2:	1f 90       	pop	r1
+  a4:	18 95       	reti
+
+000000a6 <uartPutChar>:
+    }
+}
+
+
+//
+// main function
+//
+int main(void) {
+
+    char c;
+
+    // init USART
+    myUBRRH = (F_CPU/(BAUDRATE*16L)-1) >> 8;          // calculate baudrate and set high byte
+    myUBRRL = (uint8_t)(F_CPU/(BAUDRATE*16L)-1);      // and low byte
+    myUCSRB = _BV(myTXEN)|_BV(myRXEN);                // enable transmitter and receiver
+    myUCSRC = myURSEL | _BV(myUCSZ1) | _BV(myUCSZ0);  // 8 bit character size, 1 stop bit, no parity
+
+    // enable USART receive interrupt
+    myUCSRB |= _BV(myRXCIE);
+
+    // the bootloader may be activated either if
+    // the character 'i' (interactive mode) was received from USART
+    // or the flash is (still) empty
+
+    // poll USART receive complete flag 64k times to catch the 'i' reliably
+    uint16_t loop = 0;
+    do {
+	if(bit_is_set(myUCSRA, myRXC))
+	    if(myUDR == 'i')
+		bootloaderEnableFlag = TRUE;
+    } while(--loop);
+
+    // test if flash is empty (i.e. flash content is 0xff)
+    if(pgm_read_byte_near(0x0000) == 0xFF) {
+	bootloaderEnableFlag = TRUE;  // set enable flag
+    }
+
+    // check enable flag and start application if FALSE
+    if(!bootloaderEnableFlag) {
+	startApplication();
+    }
+
+
+    //
+    // now the bootloader code begins
+    //
+
+ prompt:
+
+    // move interrupt vector table to boot loader area
+    GICR = _BV(IVCE);
+    GICR = _BV(IVSEL);
+ 
+    // welcome message and prompt
+#ifndef EEPROM_CODE
+    PGM_P welcome = { "\rchip45boot[flash]\r> " };
+#else
+    PGM_P welcome = { "\rchip45boot[flash][eeprom]\r> " };
+#endif
+    for(c=0; welcome[c] != '\0'; ++c) {
+	uartPutChar(welcome[c]);
+    }
+
+    // loop until a valid character is received
+    do {
+
+	c = uartGetChar();  // read a character
+
+	if(c == 'f') {  // 'f' selects flash programming
+	    uartPutChar('f');
+	    uartPutChar('\r');
+	    selectFlashProgramming = TRUE;  // set flag
+	}
+
+	if(c == 'g') {  // 'g' starts the application
+	    uartPutChar('g');
+	    uartPutChar('\r');
+	    GICR = _BV(IVCE);    // relocate interrupt vector table
+	    GICR = 0;            // to bottom of flash
+	    startApplication();  // and jumpt to 0x0000
+	}
+
+#ifdef EEPROM_CODE
+	if(c == 'e') {  // 'e' selects eeprom programming
+	    uartPutChar('e');
+	    uartPutChar('\r');
+	    selectEepromProgramming = TRUE;  // set flag
+	}
+#endif
+
+    } while( !selectFlashProgramming
+#ifdef EEPROM_CODE
+	     && !selectEepromProgramming
+#endif
+	    );
+
+
+    // enable interrupts
+    sei();
+
+    // set receive buffer pointer to first buffer
+    receiveBufferPointer = (char *)receiveBuffer;
+    flashPageSizeCounter = SPM_PAGESIZE;  // preset page counter to flash page size
+    srecAddress = 0;  // reset s-record address
+    receiveBufferFull = FALSE;  // the buffer is not full at beginning
+    writeBaseAddress = 0;
+
+    // endless loop
+    while(1) {
+
+	// if buffer is full, parse the buffer and write to flash
+	if(receiveBufferFull) {
+	    cli();  // disable interrupts
+	    parseSrecBuffer();  // parse the s-record in buffer
+	    writeBufferToFlash();  // write to flash
+
+	    // was an end-of-file s-record found?
+	    if(srecEndOfFile) {
+		uartPutChar('O');
+		uartPutChar('K');
+		uartPutChar('\r');
+		srecEndOfFile = FALSE;
+		goto prompt;  // start bootloader again
+	    }
+	    receiveBufferFull = FALSE;  // reset full flag
+	    receiveBufferPointer = (char *)receiveBuffer;  // reset buffer pointer to start of buffer
+	    sei();  // enable interrupts
+	}
+    }
+}
+
+
+//
+// parse the s-record in the current buffer
+// check s-record type, extract the address, calculate checksum, etc.
+//
+uint8_t parseSrecBuffer() {
+
+    uint8_t srecBytecount, srecChecksum, srecType;
+    uint8_t tmpAddress;
+    char hi, lo;
+    char c;
+    uint16_t i, w;
+    char *thisBuffer;
+
+    // make a pointer to the receive buffer
+    thisBuffer = (char *)receiveBuffer;
+
+    // check if current buffer is a data record (starts with S1, S2 or S3)
+    if(*thisBuffer++ == 'S' ) {
+
+	// get s-record type
+	srecType = hexCharToInt(*thisBuffer++);
+
+	// only process the record in case it's a data record
+	if((srecType == 1) || (srecType == 2) || (srecType == 3)) {
+
+	    // get the byte count
+	    hi = *thisBuffer++;
+	    lo = *thisBuffer++;
+	    srecBytecount = hexByteToInt(hi, lo);
+	    // one could directly put *thisBuffer++ into the arguments,
+	    // but the arguments are put on stack last first, i.e. the
+	    // lo character is fetched from the *thisBuffer first and
+	    // this changes lo and hi character! Using seperate variables
+	    // hi and lo is more clear and readable than changing the 
+	    // sequence in the hexByteToInt function.
+
+	    // check if byte count is larger than 0x43, i.e. we have more
+	    // than 64 bytes in the record -> not allowed
+	    if(srecBytecount > (0x43 + srecType - 1)) {
+		uartPutChar('B');
+		uartPutChar('C');
+		uartPutChar('\r');
+		return FALSE;
+	    }
+	    srecChecksum = srecBytecount;  // add byte count to checksum
+
+	    // extract the address depending of s-record type
+	    for(i = 0; i <= srecType; ++i) {
+		
+		hi = *thisBuffer++;
+		lo = *thisBuffer++;
+		tmpAddress = hexByteToInt(hi, lo);  // get next address byte
+		srecAddress <<= 8;  // shift existing address one byte left
+		srecAddress += tmpAddress;  // add new lower address byte
+		srecChecksum += tmpAddress;  // add address portion to checksum
+	    }
+
+	    // read all data bytes
+	    for(i = 0; i < (srecBytecount - 3 + (srecType - 1)); i += 2) {
+
+		if(selectFlashProgramming) {
+		    // assemble a 16 bit little endian data word and calculate checksum
+		    hi = *thisBuffer++;
+		    lo = *thisBuffer++;
+		    c = hexByteToInt(hi, lo);
+		    srecChecksum += c;
+		    w = c;
+		    hi = *thisBuffer++;
+		    lo = *thisBuffer++;
+		    c = hexByteToInt(hi, lo);
+		    srecChecksum += c;
+		    w += c << 8;
+		
+		    // write word to flash write buffer
+		    boot_page_fill(srecAddress + i, w);
+		}
+
+#ifdef EEPROM_CODE
+		if(selectEepromProgramming) {
+		    hi = *thisBuffer++;
+		    lo = *thisBuffer++;
+		    c = hexByteToInt(hi, lo);
+		    srecChecksum += c;
+		    eepromWriteBuffer[srecAddress + i] = c;
+		    hi = *thisBuffer++;
+		    lo = *thisBuffer++;
+		    c = hexByteToInt(hi, lo);
+		    srecChecksum += c;
+		    eepromWriteBuffer[srecAddress + i + 1] = c;
+		}
+#endif
+
+		if((flashPageSizeCounter -= 2) < 0) {
+		    uartPutChar('P');
+		    uartPutChar('S');
+		    uartPutChar('\r');
+		    return FALSE;
+		}
+	    }
+
+	    // get checksum and compare to 0xff
+	    hi = *thisBuffer++;
+	    lo = *thisBuffer++;
+	    srecChecksum += hexByteToInt(hi, lo);  
+	    if(srecChecksum != 0xff) {
+		uartPutChar('C');
+		uartPutChar('S');
+		uartPutChar('\r');
+		return FALSE;
+	    }
+
+	    uartPutChar('.');  // some progress indication
+	}
+
+	// check if end of file record
+	if((srecType == 9) || (srecType == 8) || (srecType == 7)) {
+	    srecEndOfFile = TRUE;
+	}
+    }
+
+    return TRUE;
+}
+
+    
+//
+// write buffer to flash
+//
+void writeBufferToFlash() {
+
+    uint8_t sreg;
+
+    sreg = SREG;  // save status register
+
+    // check if either page size counter is zero (i.e. buffer is full)
+    // or end of file was reached (i.e. the previously received
+    // bytes must be written to flash)
+    if((flashPageSizeCounter == 0) || (srecEndOfFile == TRUE)){
+
+	if(selectFlashProgramming) {
+	    eeprom_busy_wait();  // wait for eeprom not busy
+
+	    boot_page_erase(writeBaseAddress);  // do a page erase
+	    boot_spm_busy_wait();  // wait for page erase done
+
+	    boot_page_write(writeBaseAddress);  // do a page write
+	    boot_spm_busy_wait();  // wait for write completed
+
+	    boot_rww_enable();  // reenable rww section again
+	}
+
+#ifdef EEPROM_CODE
+	if(selectEepromProgramming) {
+
+	    eeprom_busy_wait();
+
+	    uartPutHex((writeBaseAddress & 0xff00) >> 8);
+	    uartPutHex((writeBaseAddress & 0x00ff));
+
+	    eeprom_write_block(eepromWriteBuffer, (void *)writeBaseAddress, SPM_PAGESIZE);
+	}
+#endif
+
+	flashPageSizeCounter = SPM_PAGESIZE;  // set byte counter to correct value
+	writeBaseAddress += SPM_PAGESIZE;
+    }
+
+    SREG = sreg;  // restore status register
+}
+
+
+//
+// convert a hex number character into 4 bit unsigned integer
+//
+uint8_t hexCharToInt(char c) {
+
+    // test if character is letter or number
+    if(c <= '9')
+	return (c - '0');
+    else
+	return (c - 'A' + 0xa);
+
+}
+
+
+//
+// convert a hex byte (two characters) into 8 bit unsigned integer
+//
+uint8_t hexByteToInt(char hi, char lo) {
+
+    return ( (hexCharToInt(hi) << 4) + hexCharToInt(lo) );  // return the unsigned integer
+}
+
+
+// set to #if 1 for testing and debugging,
+// this function is not used during normal operation
+#if 1
+//
+// print a hex number (byte, 2 characters) over USART
+//
+void uartPutHex(uint8_t i) {
+    uint8_t hi, lo;
+
+    hi = (i & 0xf0) >> 4;
+    lo = i & 0x0f;
+
+    if((hi >= 0xa) && (hi <= 0xf))
+	uartPutChar(hi + 'A' - 10);
+    else
+	uartPutChar(hi + '0');
+
+    if((lo >= 0xa) && (lo <= 0xf))
+	uartPutChar(lo + 'A' - 10);
+    else
+	uartPutChar(lo + '0');
+
+}
+#endif
+
+//
+// send a character through the USART
+//
+void uartPutChar(char c) {
+  a6:	cf 93       	push	r28
+  a8:	c8 2f       	mov	r28, r24
+
+    if(c == '\r')                            // if character is 'new line', then
+  aa:	8d 30       	cpi	r24, 0x0D	; 13
+  ac:	11 f4       	brne	.+4      	; 0xb2 <uartPutChar+0xc>
+	uartPutChar('\n');                  // send an additional 'carriage return'
+  ae:	8a e0       	ldi	r24, 0x0A	; 10
+  b0:	fa df       	rcall	.-12     	; 0xa6 <uartPutChar>
+    loop_until_bit_is_set(myUCSRA, myUDRE);  // wait until transmit buffer is empty
+  b2:	5d 9b       	sbis	0x0b, 5	; 11
+  b4:	fe cf       	rjmp	.-4      	; 0xb2 <uartPutChar+0xc>
+    myUDR = c;                               // write character to transmit buffer
+  b6:	cc b9       	out	0x0c, r28	; 12
+  b8:	cf 91       	pop	r28
+  ba:	08 95       	ret
+
+000000bc <uartGetChar>:
+}
+
+
+//
+// receive a character from the USART
+//
+char uartGetChar(void) {
+
+    loop_until_bit_is_set(myUCSRA, myRXC);  // wait until character is received
+  bc:	5f 9b       	sbis	0x0b, 7	; 11
+  be:	fe cf       	rjmp	.-4      	; 0xbc <uartGetChar>
+    return myUDR;                           // return the character
+  c0:	8c b1       	in	r24, 0x0c	; 12
+}
+  c2:	99 27       	eor	r25, r25
+  c4:	08 95       	ret
+
+000000c6 <hexCharToInt>:
+  c6:	8a 33       	cpi	r24, 0x3A	; 58
+  c8:	18 f4       	brcc	.+6      	; 0xd0 <hexCharToInt+0xa>
+  ca:	80 53       	subi	r24, 0x30	; 48
+  cc:	99 27       	eor	r25, r25
+  ce:	08 95       	ret
+  d0:	87 53       	subi	r24, 0x37	; 55
+  d2:	99 27       	eor	r25, r25
+  d4:	08 95       	ret
+
+000000d6 <hexByteToInt>:
+  d6:	ef 92       	push	r14
+  d8:	ff 92       	push	r15
+  da:	1f 93       	push	r17
+  dc:	16 2f       	mov	r17, r22
+  de:	f3 df       	rcall	.-26     	; 0xc6 <hexCharToInt>
+  e0:	e8 2e       	mov	r14, r24
+  e2:	ff 24       	eor	r15, r15
+  e4:	84 e0       	ldi	r24, 0x04	; 4
+  e6:	ee 0c       	add	r14, r14
+  e8:	ff 1c       	adc	r15, r15
+  ea:	8a 95       	dec	r24
+  ec:	e1 f7       	brne	.-8      	; 0xe6 <hexByteToInt+0x10>
+  ee:	81 2f       	mov	r24, r17
+  f0:	ea df       	rcall	.-44     	; 0xc6 <hexCharToInt>
+  f2:	8e 0d       	add	r24, r14
+  f4:	99 27       	eor	r25, r25
+  f6:	1f 91       	pop	r17
+  f8:	ff 90       	pop	r15
+  fa:	ef 90       	pop	r14
+  fc:	08 95       	ret
+
+000000fe <parseSrecBuffer>:
+  fe:	6f 92       	push	r6
+ 100:	7f 92       	push	r7
+ 102:	8f 92       	push	r8
+ 104:	9f 92       	push	r9
+ 106:	af 92       	push	r10
+ 108:	bf 92       	push	r11
+ 10a:	cf 92       	push	r12
+ 10c:	df 92       	push	r13
+ 10e:	ef 92       	push	r14
+ 110:	ff 92       	push	r15
+ 112:	0f 93       	push	r16
+ 114:	1f 93       	push	r17
+ 116:	cf 93       	push	r28
+ 118:	df 93       	push	r29
+ 11a:	80 91 d3 00 	lds	r24, 0x00D3
+ 11e:	c4 ed       	ldi	r28, 0xD4	; 212
+ 120:	d0 e0       	ldi	r29, 0x00	; 0
+ 122:	83 35       	cpi	r24, 0x53	; 83
+ 124:	09 f0       	breq	.+2      	; 0x128 <parseSrecBuffer+0x2a>
+ 126:	b7 c0       	rjmp	.+366    	; 0x296 <parseSrecBuffer+0x198>
+ 128:	21 96       	adiw	r28, 0x01	; 1
+ 12a:	80 91 d4 00 	lds	r24, 0x00D4
+ 12e:	cb df       	rcall	.-106    	; 0xc6 <hexCharToInt>
+ 130:	c8 2e       	mov	r12, r24
+ 132:	81 50       	subi	r24, 0x01	; 1
+ 134:	83 30       	cpi	r24, 0x03	; 3
+ 136:	08 f0       	brcs	.+2      	; 0x13a <parseSrecBuffer+0x3c>
+ 138:	a7 c0       	rjmp	.+334    	; 0x288 <parseSrecBuffer+0x18a>
+ 13a:	22 96       	adiw	r28, 0x02	; 2
+ 13c:	60 91 d6 00 	lds	r22, 0x00D6
+ 140:	80 91 d5 00 	lds	r24, 0x00D5
+ 144:	c8 df       	rcall	.-112    	; 0xd6 <hexByteToInt>
+ 146:	28 2f       	mov	r18, r24
+ 148:	68 2e       	mov	r6, r24
+ 14a:	77 24       	eor	r7, r7
+ 14c:	8c 2c       	mov	r8, r12
+ 14e:	99 24       	eor	r9, r9
+ 150:	c4 01       	movw	r24, r8
+ 152:	8e 5b       	subi	r24, 0xBE	; 190
+ 154:	9f 4f       	sbci	r25, 0xFF	; 255
+ 156:	86 15       	cp	r24, r6
+ 158:	97 05       	cpc	r25, r7
+ 15a:	24 f4       	brge	.+8      	; 0x164 <parseSrecBuffer+0x66>
+ 15c:	82 e4       	ldi	r24, 0x42	; 66
+ 15e:	a3 df       	rcall	.-186    	; 0xa6 <uartPutChar>
+ 160:	83 e4       	ldi	r24, 0x43	; 67
+ 162:	8a c0       	rjmp	.+276    	; 0x278 <parseSrecBuffer+0x17a>
+ 164:	d2 2e       	mov	r13, r18
+ 166:	aa 24       	eor	r10, r10
+ 168:	bb 24       	eor	r11, r11
+ 16a:	e0 90 85 00 	lds	r14, 0x0085
+ 16e:	f0 90 86 00 	lds	r15, 0x0086
+ 172:	00 91 87 00 	lds	r16, 0x0087
+ 176:	10 91 88 00 	lds	r17, 0x0088
+ 17a:	89 91       	ld	r24, Y+
+ 17c:	69 91       	ld	r22, Y+
+ 17e:	ab df       	rcall	.-170    	; 0xd6 <hexByteToInt>
+ 180:	10 2f       	mov	r17, r16
+ 182:	0f 2d       	mov	r16, r15
+ 184:	fe 2c       	mov	r15, r14
+ 186:	ee 24       	eor	r14, r14
+ 188:	e8 0e       	add	r14, r24
+ 18a:	f1 1c       	adc	r15, r1
+ 18c:	01 1d       	adc	r16, r1
+ 18e:	11 1d       	adc	r17, r1
+ 190:	d8 0e       	add	r13, r24
+ 192:	08 94       	sec
+ 194:	a1 1c       	adc	r10, r1
+ 196:	b1 1c       	adc	r11, r1
+ 198:	8a 14       	cp	r8, r10
+ 19a:	9b 04       	cpc	r9, r11
+ 19c:	70 f7       	brcc	.-36     	; 0x17a <parseSrecBuffer+0x7c>
+ 19e:	e0 92 85 00 	sts	0x0085, r14
+ 1a2:	f0 92 86 00 	sts	0x0086, r15
+ 1a6:	00 93 87 00 	sts	0x0087, r16
+ 1aa:	10 93 88 00 	sts	0x0088, r17
+ 1ae:	c3 01       	movw	r24, r6
+ 1b0:	88 0d       	add	r24, r8
+ 1b2:	99 1d       	adc	r25, r9
+ 1b4:	aa 24       	eor	r10, r10
+ 1b6:	bb 24       	eor	r11, r11
+ 1b8:	04 97       	sbiw	r24, 0x04	; 4
+ 1ba:	09 f4       	brne	.+2      	; 0x1be <parseSrecBuffer+0xc0>
+ 1bc:	4f c0       	rjmp	.+158    	; 0x25c <parseSrecBuffer+0x15e>
+ 1be:	80 91 8c 00 	lds	r24, 0x008C
+ 1c2:	88 23       	and	r24, r24
+ 1c4:	e1 f0       	breq	.+56     	; 0x1fe <parseSrecBuffer+0x100>
+ 1c6:	89 91       	ld	r24, Y+
+ 1c8:	69 91       	ld	r22, Y+
+ 1ca:	85 df       	rcall	.-246    	; 0xd6 <hexByteToInt>
+ 1cc:	d8 0e       	add	r13, r24
+ 1ce:	08 2f       	mov	r16, r24
+ 1d0:	11 27       	eor	r17, r17
+ 1d2:	89 91       	ld	r24, Y+
+ 1d4:	69 91       	ld	r22, Y+
+ 1d6:	7f df       	rcall	.-258    	; 0xd6 <hexByteToInt>
+ 1d8:	d8 0e       	add	r13, r24
+ 1da:	99 27       	eor	r25, r25
+ 1dc:	98 2f       	mov	r25, r24
+ 1de:	88 27       	eor	r24, r24
+ 1e0:	08 0f       	add	r16, r24
+ 1e2:	19 1f       	adc	r17, r25
+ 1e4:	21 e0       	ldi	r18, 0x01	; 1
+ 1e6:	80 91 85 00 	lds	r24, 0x0085
+ 1ea:	90 91 86 00 	lds	r25, 0x0086
+ 1ee:	8a 0d       	add	r24, r10
+ 1f0:	9b 1d       	adc	r25, r11
+ 1f2:	08 01       	movw	r0, r16
+ 1f4:	fc 01       	movw	r30, r24
+ 1f6:	20 93 57 00 	sts	0x0057, r18
+ 1fa:	e8 95       	spm
+ 1fc:	11 24       	eor	r1, r1
+ 1fe:	80 91 7e 00 	lds	r24, 0x007E
+ 202:	88 23       	and	r24, r24
+ 204:	c1 f0       	breq	.+48     	; 0x236 <parseSrecBuffer+0x138>
+ 206:	89 91       	ld	r24, Y+
+ 208:	69 91       	ld	r22, Y+
+ 20a:	65 df       	rcall	.-310    	; 0xd6 <hexByteToInt>
+ 20c:	d8 0e       	add	r13, r24
+ 20e:	00 91 85 00 	lds	r16, 0x0085
+ 212:	10 91 86 00 	lds	r17, 0x0086
+ 216:	f8 01       	movw	r30, r16
+ 218:	e1 57       	subi	r30, 0x71	; 113
+ 21a:	ff 4f       	sbci	r31, 0xFF	; 255
+ 21c:	ea 0d       	add	r30, r10
+ 21e:	fb 1d       	adc	r31, r11
+ 220:	80 83       	st	Z, r24
+ 222:	89 91       	ld	r24, Y+
+ 224:	69 91       	ld	r22, Y+
+ 226:	57 df       	rcall	.-338    	; 0xd6 <hexByteToInt>
+ 228:	d8 0e       	add	r13, r24
+ 22a:	f5 01       	movw	r30, r10
+ 22c:	e1 57       	subi	r30, 0x71	; 113
+ 22e:	ff 4f       	sbci	r31, 0xFF	; 255
+ 230:	e0 0f       	add	r30, r16
+ 232:	f1 1f       	adc	r31, r17
+ 234:	81 83       	std	Z+1, r24	; 0x01
+ 236:	80 91 80 00 	lds	r24, 0x0080
+ 23a:	82 50       	subi	r24, 0x02	; 2
+ 23c:	80 93 80 00 	sts	0x0080, r24
+ 240:	88 23       	and	r24, r24
+ 242:	bc f0       	brlt	.+46     	; 0x272 <parseSrecBuffer+0x174>
+ 244:	82 e0       	ldi	r24, 0x02	; 2
+ 246:	90 e0       	ldi	r25, 0x00	; 0
+ 248:	a8 0e       	add	r10, r24
+ 24a:	b9 1e       	adc	r11, r25
+ 24c:	c3 01       	movw	r24, r6
+ 24e:	88 0d       	add	r24, r8
+ 250:	99 1d       	adc	r25, r9
+ 252:	04 97       	sbiw	r24, 0x04	; 4
+ 254:	a8 16       	cp	r10, r24
+ 256:	b9 06       	cpc	r11, r25
+ 258:	08 f4       	brcc	.+2      	; 0x25c <parseSrecBuffer+0x15e>
+ 25a:	b1 cf       	rjmp	.-158    	; 0x1be <parseSrecBuffer+0xc0>
+ 25c:	99 91       	ld	r25, Y+
+ 25e:	88 81       	ld	r24, Y
+ 260:	68 2f       	mov	r22, r24
+ 262:	89 2f       	mov	r24, r25
+ 264:	38 df       	rcall	.-400    	; 0xd6 <hexByteToInt>
+ 266:	d8 0e       	add	r13, r24
+ 268:	9f ef       	ldi	r25, 0xFF	; 255
+ 26a:	d9 16       	cp	r13, r25
+ 26c:	59 f0       	breq	.+22     	; 0x284 <parseSrecBuffer+0x186>
+ 26e:	83 e4       	ldi	r24, 0x43	; 67
+ 270:	01 c0       	rjmp	.+2      	; 0x274 <parseSrecBuffer+0x176>
+ 272:	80 e5       	ldi	r24, 0x50	; 80
+ 274:	18 df       	rcall	.-464    	; 0xa6 <uartPutChar>
+ 276:	83 e5       	ldi	r24, 0x53	; 83
+ 278:	16 df       	rcall	.-468    	; 0xa6 <uartPutChar>
+ 27a:	8d e0       	ldi	r24, 0x0D	; 13
+ 27c:	14 df       	rcall	.-472    	; 0xa6 <uartPutChar>
+ 27e:	80 e0       	ldi	r24, 0x00	; 0
+ 280:	90 e0       	ldi	r25, 0x00	; 0
+ 282:	0b c0       	rjmp	.+22     	; 0x29a <parseSrecBuffer+0x19c>
+ 284:	8e e2       	ldi	r24, 0x2E	; 46
+ 286:	0f df       	rcall	.-482    	; 0xa6 <uartPutChar>
+ 288:	8c 2d       	mov	r24, r12
+ 28a:	87 50       	subi	r24, 0x07	; 7
+ 28c:	83 30       	cpi	r24, 0x03	; 3
+ 28e:	18 f4       	brcc	.+6      	; 0x296 <parseSrecBuffer+0x198>
+ 290:	81 e0       	ldi	r24, 0x01	; 1
+ 292:	80 93 7f 00 	sts	0x007F, r24
+ 296:	81 e0       	ldi	r24, 0x01	; 1
+ 298:	90 e0       	ldi	r25, 0x00	; 0
+ 29a:	df 91       	pop	r29
+ 29c:	cf 91       	pop	r28
+ 29e:	1f 91       	pop	r17
+ 2a0:	0f 91       	pop	r16
+ 2a2:	ff 90       	pop	r15
+ 2a4:	ef 90       	pop	r14
+ 2a6:	df 90       	pop	r13
+ 2a8:	cf 90       	pop	r12
+ 2aa:	bf 90       	pop	r11
+ 2ac:	af 90       	pop	r10
+ 2ae:	9f 90       	pop	r9
+ 2b0:	8f 90       	pop	r8
+ 2b2:	7f 90       	pop	r7
+ 2b4:	6f 90       	pop	r6
+ 2b6:	08 95       	ret
+
+000002b8 <uartPutHex>:
+ 2b8:	cf 93       	push	r28
+ 2ba:	28 2f       	mov	r18, r24
+ 2bc:	33 27       	eor	r19, r19
+ 2be:	44 e0       	ldi	r20, 0x04	; 4
+ 2c0:	36 95       	lsr	r19
+ 2c2:	27 95       	ror	r18
+ 2c4:	4a 95       	dec	r20
+ 2c6:	e1 f7       	brne	.-8      	; 0x2c0 <uartPutHex+0x8>
+ 2c8:	c8 2f       	mov	r28, r24
+ 2ca:	cf 70       	andi	r28, 0x0F	; 15
+ 2cc:	82 2f       	mov	r24, r18
+ 2ce:	8a 50       	subi	r24, 0x0A	; 10
+ 2d0:	86 30       	cpi	r24, 0x06	; 6
+ 2d2:	10 f4       	brcc	.+4      	; 0x2d8 <uartPutHex+0x20>
+ 2d4:	8f 5b       	subi	r24, 0xBF	; 191
+ 2d6:	02 c0       	rjmp	.+4      	; 0x2dc <uartPutHex+0x24>
+ 2d8:	82 2f       	mov	r24, r18
+ 2da:	80 5d       	subi	r24, 0xD0	; 208
+ 2dc:	e4 de       	rcall	.-568    	; 0xa6 <uartPutChar>
+ 2de:	8c 2f       	mov	r24, r28
+ 2e0:	8a 50       	subi	r24, 0x0A	; 10
+ 2e2:	86 30       	cpi	r24, 0x06	; 6
+ 2e4:	10 f4       	brcc	.+4      	; 0x2ea <uartPutHex+0x32>
+ 2e6:	8f 5b       	subi	r24, 0xBF	; 191
+ 2e8:	02 c0       	rjmp	.+4      	; 0x2ee <uartPutHex+0x36>
+ 2ea:	8c 2f       	mov	r24, r28
+ 2ec:	80 5d       	subi	r24, 0xD0	; 208
+ 2ee:	db de       	rcall	.-586    	; 0xa6 <uartPutChar>
+ 2f0:	cf 91       	pop	r28
+ 2f2:	08 95       	ret
+
+000002f4 <writeBufferToFlash>:
+ 2f4:	cf 93       	push	r28
+ 2f6:	cf b7       	in	r28, 0x3f	; 63
+ 2f8:	80 91 80 00 	lds	r24, 0x0080
+ 2fc:	88 23       	and	r24, r24
+ 2fe:	29 f0       	breq	.+10     	; 0x30a <writeBufferToFlash+0x16>
+ 300:	80 91 7f 00 	lds	r24, 0x007F
+ 304:	81 30       	cpi	r24, 0x01	; 1
+ 306:	09 f0       	breq	.+2      	; 0x30a <writeBufferToFlash+0x16>
+ 308:	4a c0       	rjmp	.+148    	; 0x39e <writeBufferToFlash+0xaa>
+ 30a:	80 91 8c 00 	lds	r24, 0x008C
+ 30e:	88 23       	and	r24, r24
+ 310:	d1 f0       	breq	.+52     	; 0x346 <writeBufferToFlash+0x52>
+ 312:	e1 99       	sbic	0x1c, 1	; 28
+ 314:	fe cf       	rjmp	.-4      	; 0x312 <writeBufferToFlash+0x1e>
+ 316:	83 e0       	ldi	r24, 0x03	; 3
+ 318:	20 91 81 00 	lds	r18, 0x0081
+ 31c:	30 91 82 00 	lds	r19, 0x0082
+ 320:	f9 01       	movw	r30, r18
+ 322:	80 93 57 00 	sts	0x0057, r24
+ 326:	e8 95       	spm
+ 328:	07 b6       	in	r0, 0x37	; 55
+ 32a:	00 fc       	sbrc	r0, 0
+ 32c:	fd cf       	rjmp	.-6      	; 0x328 <writeBufferToFlash+0x34>
+ 32e:	85 e0       	ldi	r24, 0x05	; 5
+ 330:	f9 01       	movw	r30, r18
+ 332:	80 93 57 00 	sts	0x0057, r24
+ 336:	e8 95       	spm
+ 338:	07 b6       	in	r0, 0x37	; 55
+ 33a:	00 fc       	sbrc	r0, 0
+ 33c:	fd cf       	rjmp	.-6      	; 0x338 <writeBufferToFlash+0x44>
+ 33e:	81 e1       	ldi	r24, 0x11	; 17
+ 340:	80 93 57 00 	sts	0x0057, r24
+ 344:	e8 95       	spm
+ 346:	80 91 7e 00 	lds	r24, 0x007E
+ 34a:	88 23       	and	r24, r24
+ 34c:	89 f0       	breq	.+34     	; 0x370 <writeBufferToFlash+0x7c>
+ 34e:	e1 99       	sbic	0x1c, 1	; 28
+ 350:	fe cf       	rjmp	.-4      	; 0x34e <writeBufferToFlash+0x5a>
+ 352:	80 91 82 00 	lds	r24, 0x0082
+ 356:	b0 df       	rcall	.-160    	; 0x2b8 <uartPutHex>
+ 358:	80 91 81 00 	lds	r24, 0x0081
+ 35c:	ad df       	rcall	.-166    	; 0x2b8 <uartPutHex>
+void 
+eeprom_write_block (const void *pointer_ram,
+                    void *pointer_eeprom,
+                    size_t n)
+{
+ 35e:	ef e8       	ldi	r30, 0x8F	; 143
+ 360:	f0 e0       	ldi	r31, 0x00	; 0
+ 362:	a0 91 81 00 	lds	r26, 0x0081
+ 366:	b0 91 82 00 	lds	r27, 0x0082
+  if (!__builtin_constant_p (n)
+      || n > 256)
+    {
+      /* make sure size is a 16 bit variable.  */
+      uint16_t size = n; 
+
+      asm volatile ( 
+            ".%=_start:" CR_TAB
+            "sbiw %2,1" CR_TAB
+            "brlt .%=_finished" CR_TAB
+            "ld __tmp_reg__,z+" CR_TAB
+             XCALL " __eeprom_write_byte_" _REG_LOCATION_SUFFIX CR_TAB
+            "rjmp .%=_start" CR_TAB
+            ".%=_finished:" 
+          : "=x" (pointer_eeprom),
+            "=z" (pointer_ram),
+            "+w" (size)
+           : "x" (pointer_eeprom), 
+             "z" (pointer_ram)
+           : "memory");
+    }
+  else
+    {
+      /* Do nothing for compile time constant transfer size n == 0.  */
+      if (n != 0)
+        {
+          if (n == 256)
+            {
+              asm volatile (
+                 XCALL " __eeprom_write_block_" _REG_LOCATION_SUFFIX
+               : "+x" (pointer_eeprom),
+                 "=z" (pointer_ram)
+               : "z"  (pointer_ram)
+               : "memory" );
+            }
+          else
+            {
+              uint8_t len;
+              len = (uint8_t) n;
+ 36a:	80 e4       	ldi	r24, 0x40	; 64
+
+              asm volatile (
+ 36c:	18 2e       	mov	r1, r24
+ 36e:	b9 d0       	rcall	.+370    	; 0x4e2 <__eeprom_write_block_1C1D1E>
+ 370:	80 e4       	ldi	r24, 0x40	; 64
+ 372:	80 93 80 00 	sts	0x0080, r24
+ 376:	80 91 81 00 	lds	r24, 0x0081
+ 37a:	90 91 82 00 	lds	r25, 0x0082
+ 37e:	a0 91 83 00 	lds	r26, 0x0083
+ 382:	b0 91 84 00 	lds	r27, 0x0084
+ 386:	80 5c       	subi	r24, 0xC0	; 192
+ 388:	9f 4f       	sbci	r25, 0xFF	; 255
+ 38a:	af 4f       	sbci	r26, 0xFF	; 255
+ 38c:	bf 4f       	sbci	r27, 0xFF	; 255
+ 38e:	80 93 81 00 	sts	0x0081, r24
+ 392:	90 93 82 00 	sts	0x0082, r25
+ 396:	a0 93 83 00 	sts	0x0083, r26
+ 39a:	b0 93 84 00 	sts	0x0084, r27
+ 39e:	cf bf       	out	0x3f, r28	; 63
+ 3a0:	cf 91       	pop	r28
+ 3a2:	08 95       	ret
+
+000003a4 <main>:
+ 3a4:	cf e5       	ldi	r28, 0x5F	; 95
+ 3a6:	d4 e0       	ldi	r29, 0x04	; 4
+ 3a8:	de bf       	out	0x3e, r29	; 62
+ 3aa:	cd bf       	out	0x3d, r28	; 61
+ 3ac:	10 bc       	out	0x20, r1	; 32
+ 3ae:	83 e0       	ldi	r24, 0x03	; 3
+ 3b0:	89 b9       	out	0x09, r24	; 9
+ 3b2:	88 e1       	ldi	r24, 0x18	; 24
+ 3b4:	8a b9       	out	0x0a, r24	; 10
+ 3b6:	86 e8       	ldi	r24, 0x86	; 134
+ 3b8:	80 bd       	out	0x20, r24	; 32
+ 3ba:	57 9a       	sbi	0x0a, 7	; 10
+ 3bc:	e0 e0       	ldi	r30, 0x00	; 0
+ 3be:	f0 e0       	ldi	r31, 0x00	; 0
+ 3c0:	90 91 89 00 	lds	r25, 0x0089
+ 3c4:	5f 9b       	sbis	0x0b, 7	; 11
+ 3c6:	04 c0       	rjmp	.+8      	; 0x3d0 <main+0x2c>
+ 3c8:	8c b1       	in	r24, 0x0c	; 12
+ 3ca:	89 36       	cpi	r24, 0x69	; 105
+ 3cc:	09 f4       	brne	.+2      	; 0x3d0 <main+0x2c>
+ 3ce:	91 e0       	ldi	r25, 0x01	; 1
+ 3d0:	31 97       	sbiw	r30, 0x01	; 1
+ 3d2:	c1 f7       	brne	.-16     	; 0x3c4 <main+0x20>
+ 3d4:	90 93 89 00 	sts	0x0089, r25
+ 3d8:	84 91       	lpm	r24, Z
+ 3da:	8f 3f       	cpi	r24, 0xFF	; 255
+ 3dc:	19 f4       	brne	.+6      	; 0x3e4 <main+0x40>
+ 3de:	81 e0       	ldi	r24, 0x01	; 1
+ 3e0:	80 93 89 00 	sts	0x0089, r24
+ 3e4:	80 91 89 00 	lds	r24, 0x0089
+ 3e8:	88 23       	and	r24, r24
+ 3ea:	29 f4       	brne	.+10     	; 0x3f6 <main+0x52>
+ 3ec:	e0 91 8d 00 	lds	r30, 0x008D
+ 3f0:	f0 91 8e 00 	lds	r31, 0x008E
+ 3f4:	09 95       	icall
+ 3f6:	81 e0       	ldi	r24, 0x01	; 1
+ 3f8:	8b bf       	out	0x3b, r24	; 59
+ 3fa:	82 e0       	ldi	r24, 0x02	; 2
+ 3fc:	8b bf       	out	0x3b, r24	; 59
+ 3fe:	c0 e0       	ldi	r28, 0x00	; 0
+ 400:	80 91 60 00 	lds	r24, 0x0060
+ 404:	88 23       	and	r24, r24
+ 406:	69 f0       	breq	.+26     	; 0x422 <main+0x7e>
+ 408:	ec 2f       	mov	r30, r28
+ 40a:	ff 27       	eor	r31, r31
+ 40c:	e0 5a       	subi	r30, 0xA0	; 160
+ 40e:	ff 4f       	sbci	r31, 0xFF	; 255
+ 410:	80 81       	ld	r24, Z
+ 412:	49 de       	rcall	.-878    	; 0xa6 <uartPutChar>
+ 414:	cf 5f       	subi	r28, 0xFF	; 255
+ 416:	ec 2f       	mov	r30, r28
+ 418:	ff 27       	eor	r31, r31
+ 41a:	e0 5a       	subi	r30, 0xA0	; 160
+ 41c:	ff 4f       	sbci	r31, 0xFF	; 255
+ 41e:	80 81       	ld	r24, Z
+ 420:	f1 cf       	rjmp	.-30     	; 0x404 <main+0x60>
+ 422:	4c de       	rcall	.-872    	; 0xbc <uartGetChar>
+ 424:	86 36       	cpi	r24, 0x66	; 102
+ 426:	39 f4       	brne	.+14     	; 0x436 <main+0x92>
+ 428:	3e de       	rcall	.-900    	; 0xa6 <uartPutChar>
+ 42a:	8d e0       	ldi	r24, 0x0D	; 13
+ 42c:	3c de       	rcall	.-904    	; 0xa6 <uartPutChar>
+ 42e:	81 e0       	ldi	r24, 0x01	; 1
+ 430:	80 93 8c 00 	sts	0x008C, r24
+ 434:	16 c0       	rjmp	.+44     	; 0x462 <__stack+0x3>
+ 436:	87 36       	cpi	r24, 0x67	; 103
+ 438:	61 f4       	brne	.+24     	; 0x452 <main+0xae>
+ 43a:	35 de       	rcall	.-918    	; 0xa6 <uartPutChar>
+ 43c:	8d e0       	ldi	r24, 0x0D	; 13
+ 43e:	33 de       	rcall	.-922    	; 0xa6 <uartPutChar>
+ 440:	81 e0       	ldi	r24, 0x01	; 1
+ 442:	8b bf       	out	0x3b, r24	; 59
+ 444:	1b be       	out	0x3b, r1	; 59
+ 446:	e0 91 8d 00 	lds	r30, 0x008D
+ 44a:	f0 91 8e 00 	lds	r31, 0x008E
+ 44e:	09 95       	icall
+ 450:	08 c0       	rjmp	.+16     	; 0x462 <__stack+0x3>
+ 452:	85 36       	cpi	r24, 0x65	; 101
+ 454:	31 f4       	brne	.+12     	; 0x462 <__stack+0x3>
+ 456:	27 de       	rcall	.-946    	; 0xa6 <uartPutChar>
+ 458:	8d e0       	ldi	r24, 0x0D	; 13
+ 45a:	25 de       	rcall	.-950    	; 0xa6 <uartPutChar>
+ 45c:	81 e0       	ldi	r24, 0x01	; 1
+ 45e:	80 93 7e 00 	sts	0x007E, r24
+ 462:	80 91 8c 00 	lds	r24, 0x008C
+ 466:	88 23       	and	r24, r24
+ 468:	21 f4       	brne	.+8      	; 0x472 <__stack+0x13>
+ 46a:	80 91 7e 00 	lds	r24, 0x007E
+ 46e:	88 23       	and	r24, r24
+ 470:	c1 f2       	breq	.-80     	; 0x422 <main+0x7e>
+ 472:	78 94       	sei
+ 474:	c3 ed       	ldi	r28, 0xD3	; 211
+ 476:	d0 e0       	ldi	r29, 0x00	; 0
+ 478:	d0 93 6a 01 	sts	0x016A, r29
+ 47c:	c0 93 69 01 	sts	0x0169, r28
+ 480:	80 e4       	ldi	r24, 0x40	; 64
+ 482:	80 93 80 00 	sts	0x0080, r24
+ 486:	10 92 85 00 	sts	0x0085, r1
+ 48a:	10 92 86 00 	sts	0x0086, r1
+ 48e:	10 92 87 00 	sts	0x0087, r1
+ 492:	10 92 88 00 	sts	0x0088, r1
+ 496:	10 92 8b 00 	sts	0x008B, r1
+ 49a:	10 92 81 00 	sts	0x0081, r1
+ 49e:	10 92 82 00 	sts	0x0082, r1
+ 4a2:	10 92 83 00 	sts	0x0083, r1
+ 4a6:	10 92 84 00 	sts	0x0084, r1
+ 4aa:	80 91 8b 00 	lds	r24, 0x008B
+ 4ae:	88 23       	and	r24, r24
+ 4b0:	e1 f3       	breq	.-8      	; 0x4aa <__stack+0x4b>
+ 4b2:	f8 94       	cli
+ 4b4:	24 de       	rcall	.-952    	; 0xfe <parseSrecBuffer>
+ 4b6:	1e df       	rcall	.-452    	; 0x2f4 <writeBufferToFlash>
+ 4b8:	80 91 7f 00 	lds	r24, 0x007F
+ 4bc:	88 23       	and	r24, r24
+ 4be:	49 f0       	breq	.+18     	; 0x4d2 <__stack+0x73>
+ 4c0:	8f e4       	ldi	r24, 0x4F	; 79
+ 4c2:	f1 dd       	rcall	.-1054   	; 0xa6 <uartPutChar>
+ 4c4:	8b e4       	ldi	r24, 0x4B	; 75
+ 4c6:	ef dd       	rcall	.-1058   	; 0xa6 <uartPutChar>
+ 4c8:	8d e0       	ldi	r24, 0x0D	; 13
+ 4ca:	ed dd       	rcall	.-1062   	; 0xa6 <uartPutChar>
+ 4cc:	10 92 7f 00 	sts	0x007F, r1
+ 4d0:	92 cf       	rjmp	.-220    	; 0x3f6 <main+0x52>
+ 4d2:	80 93 8b 00 	sts	0x008B, r24
+ 4d6:	d0 93 6a 01 	sts	0x016A, r29
+ 4da:	c0 93 69 01 	sts	0x0169, r28
+ 4de:	78 94       	sei
+ 4e0:	e4 cf       	rjmp	.-56     	; 0x4aa <__stack+0x4b>
+
+000004e2 <__eeprom_write_block_1C1D1E>:
+ 4e2:	01 90       	ld	r0, Z+
+ 4e4:	03 d0       	rcall	.+6      	; 0x4ec <__eeprom_write_byte_1C1D1E>
+ 4e6:	1a 94       	dec	r1
+ 4e8:	e1 f7       	brne	.-8      	; 0x4e2 <__eeprom_write_block_1C1D1E>
+ 4ea:	08 95       	ret
+
+000004ec <__eeprom_write_byte_1C1D1E>:
+ 4ec:	e1 99       	sbic	0x1c, 1	; 28
+ 4ee:	fe cf       	rjmp	.-4      	; 0x4ec <__eeprom_write_byte_1C1D1E>
+ 4f0:	bf bb       	out	0x1f, r27	; 31
+ 4f2:	ae bb       	out	0x1e, r26	; 30
+ 4f4:	0d ba       	out	0x1d, r0	; 29
+ 4f6:	11 96       	adiw	r26, 0x01	; 1
+ 4f8:	0f b6       	in	r0, 0x3f	; 63
+ 4fa:	f8 94       	cli
+ 4fc:	e2 9a       	sbi	0x1c, 2	; 28
+ 4fe:	e1 9a       	sbi	0x1c, 1	; 28
+ 500:	0f be       	out	0x3f, r0	; 63
+ 502:	08 95       	ret

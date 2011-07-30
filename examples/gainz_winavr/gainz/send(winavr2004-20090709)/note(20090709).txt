@@ -1,0 +1,17 @@
+2009-07-09
+
+compiled by Xu Xizhou with WinAVR 2004
+
+串口设置：38.4 kbps
+测试通过，串口输出显示正确
+
+
+send 
+组包发送实验
+
+updated and tested by Xu Xizhou(徐希舟)(tongji university) in 2009.07
+
+running on GAINZ
+compiled with Portable WinAVR 2004
+
+tested ok

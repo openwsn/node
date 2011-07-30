@@ -1,0 +1,6 @@
+wlssensor
+================================================================
+an generic architecture/framework for passive wireless sensor.
+
+Q: What's the difference between flex-sensor and flex-node
+R: node = sensor + router

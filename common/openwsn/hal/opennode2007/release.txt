@@ -1,0 +1,89 @@
+Attn: 每一个人在对源代码作出修改和调整之后，必须在修改处注释说明。对较大的修改，包括文件的变动，要在本文件中做出说明，以方便他人工作。
+
+20070119
+在前几天无线信号强度的基础上做好了定位软件，就是test里的定位测试程序，通过查RSSI表来测距，进而定位。    定位无线通信软件采用查询方式工作，未知节点向锚节点发出定位请求，然后锚节点发出信号，未知节点通过信号强度估算距离。    我在房间内做了测试，虽然精度较差，但理论和软件上是顺利通过的，能定性的进行节点定位（摆布3锚点，定一未知节点）。     
+
+20070107
+merged with huanghuan's modification 
+
+张老师：
+    您好！
+ 
+    在你今天发的新代码基础上，整合进昨晚我得修改，见附件。
+ 
+    昨晚改动主要在：
+    vibration,ad文件中，同时也涉及到target.c和location等文件。在马坤的基础上我修改了一些错误，基本完成了这加速传感器和ad的读取程序。有待于写测试程序进行验证。
+
+
+20070106
+merged with huanghuan's modification on cc2420
+
+20070105
+merged with huanghuan's code on avccs
+delete hal.c. this file should never occur in hal layer
+
+20061226
+added module:
+hal_ad 
+hal_mcp6s
+hal_sensor_strain (for huanghuan)
+hal_sensor_vibration (for makun)
+
+delete module
+hal_sensor
+the old contents in hal_sensor were moved into hal_mcp6s
+
+
+22:08 2006-12-20
+add: unique id (by Ma Kun)
+add: mcp6s26 (by Huanghuan)
+
+15:45 2006-12-09
+hal_timer released
+shan lei debug it .
+the example/test program is in folder test\timer.c
+
+
+
+17:02 2006-10-19
+add module "hal_global"
+so that the whole HAL layer depends on hal_global* rather than global.*  thus the HAL is a separate library.
+
+21:47 2006-10-10
+今天张伟归并从黄欢处发来的程序
+
+mem_a.scf
+原文件中为
+IRAM 0x30000000
+新文件（黄欢发来的）中为
+    IRAM 0x40000000
+
+
+
+22:04 2006-08-21
+修改了hal_cc2420的部分接口
+增加了cc2420_configure()
+
+
+2006-08-12
+删除hal_energy.h,energy管理放在HAL中不合适。
+
+
+23:12 2006-08-11
+增加了子目录
+lpc213x
+将所有.C文件转移到lpc213x中
+
+
+2006-08-01
+在hal_foundation增加了assert() macro，尽管该宏目前被定义成为NULL
+增加了hal_led.c
+修改范围 hal_led.*, hal_key.*
+
+
+17:08 2006-07-28
+在hal_cpu中增加了#include foundation.h
+
+
+11:37 2006-07-26
+今天增加了release.txt文件

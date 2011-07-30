@@ -1,0 +1,2 @@
+This project demonstrate how to register a event listener in the HAL layer and receive event from HAL.
+

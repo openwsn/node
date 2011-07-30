@@ -1,0 +1,37 @@
+sinksensor
+===================================================================
+This is a test program for gateway testing only. The sinksensor program will do the following: 
+
+- accept REQUEST packet from gateway computer throught RS232 and start sampling according to REQUEST indication;
+- encapsulate sampled data as RESPONSE and send it back to the gateway computer through RS232
+
+- periodically sampling the luminance and send it to the gateway computer as VARDATA packet
+
+- broadcast what received from the gateway computer through the wireless transceiver. 
+
+
+Q: difference between sinksensor and gatwsink?
+R: 
+- sinksensor is mainly for testing (maybe changed frequently and may have more bugs)
+- gatwsink is an serious program for robust real applications (should be stable)
+
+
+
+sinksensor
+===================================================================
+sinksensor是一个以测试为目的的程序:
+
+- 它会辨识来自gateway computer通过RS232送过来的packet,并对其进行解析,如发现是REQUEST类型包,则启动采样过程,并将采样后的结果封装成RESPONSE类型包回送给gateway computer.
+-> 至于gateway computer上运行一个gateway程序,该程序的行为不受sinksensor控制
+
+- 周期性采集luminance sensor数据并封装成VARDATA数据包发给gateway computer
+
+- 对收到的来自gateway computer的数据包通过无线通信口广播出去
+
+
+history
+===================================================================
+author yanshixing(TongJi University) in 2010.04
+- first created
+
+

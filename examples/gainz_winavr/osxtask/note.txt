@@ -1,0 +1,8 @@
+osxtask
+============================================
+10:31 2010-08-11
+author Jiang Ridong, LiXin
+in developing
+
+using RTC
+almost same as demo test. The difference is that the osxtask uses RTC as the clock source to drive the osx kernel to run. 

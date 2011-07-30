@@ -1,0 +1,15 @@
+libwsn
+================================================================
+This project will compile some frequently used modules into an library. If you don't want to add a lot of separate modules into your project, you can add this library. 
+
+attention this project may lag behinds your project's developing. so you may need to recompile or upgrade the library project.
+
+
+History
+================================================================
+author openwsn(openwsn@gmail.com) in 2010.04
+- first created
+modified by openwsn(openwsn@gmail.com) and Sheng Kaikai(TongJi University) in 2010.05
+- compiled successfully. released. ok.
+
+

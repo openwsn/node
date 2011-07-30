@@ -1,0 +1,22 @@
+adc_light/adc_luminance
+
+
+1) Project Description: 
+演示如何通过TiAdcAdapter/TiLightSensor读取光敏电阻的值，并且通过USART发送给计算机。
+
+2) Experiments and Notice:
+光敏电阻作为传感器测试光强，通过模块中的TiAdcAdapter/TiLightSensor得到光强度量化值，并且ATMEL单片机的USART端发送给计算机。
+光敏电阻受光强度越大，光电流越大，因此反映出光强。
+测试方法：实验人员用手来挡住光敏电阻的受光面，改变光敏电阻的受光强度。在PC端通过串口调试助手来读取开发板发送的光强数据。
+3) History:
+
+2009-08-17
+- Tested by Xu-Xizhou in TongJi University.(Only the query-based mode of ADC)
+
+Interrupt driven模式还没有完整测试
+
+2009-12-24
+
+- test ok by Yan Shixing.
+- But there is a explicit bug in hal_adc module's adc_start() function, which might cause problem when using adc module to other project.
+

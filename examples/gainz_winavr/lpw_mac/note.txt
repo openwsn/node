@@ -1,0 +1,11 @@
+lpw_mac
+==================================================================
+
+Introduction
+==================================================================
+
+"lpw_mac" means low power MAC protocol test.
+this application layer(the test program) will control the sleep/wakeup/powerdown/powerup behavior of the MAC component.
+
+currently, the sleep/wakeup/powerdown/powerup duration can be controlled by the RTC timer.
+

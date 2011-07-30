@@ -1,0 +1,6 @@
+ah_mac_echo
+=================================================================
+Tests the MAC component's for ad hoc network by echo. Echo means the receiver will send what it received back to the sender. This test can gurantee the SENDING/RECVING state switch is correct.
+
+
+

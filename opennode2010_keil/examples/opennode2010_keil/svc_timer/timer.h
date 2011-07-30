@@ -1,0 +1,10 @@
+
+#include "../../common/openwsn/svc/svc_configall.h"
+#include "../../common/openwsn/hal/hal_cpu.h"
+#include "../../common/openwsn/hal/hal_timer.h"
+#include "../../common/openwsn/hal/hal_debugio.h"
+#include "../../common/openwsn/hal/hal_uart.h"
+#include "../../common/openwsn/hal/hal_led.h"
+#include "../../common/openwsn/hal/hal_assert.h"
+#include "../../common/openwsn/svc/svc_foundation.h"
+#include "../../common/openwsn/svc/svc_timer.h"

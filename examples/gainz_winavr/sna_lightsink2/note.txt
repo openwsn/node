@@ -1,0 +1,4 @@
+sinknode
+=================================================================
+
+The sinknode application works with sinksensor

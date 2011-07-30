@@ -1,0 +1,7 @@
+走马灯试验
+updated and tested by Shi Miaojing(史淼晶)(tongji university) in 2009.07
+
+running on GAINZ platform
+compiled with Portable WinAVR 2008 and AVR Studio 4.x (2009)
+
+tested ok

@@ -1,0 +1,50 @@
+;/****************************************Copyright (c)**************************************************
+;**                               Guangzou ZLG-MCU Development Co.,LTD.
+;**                                      graduate school
+;**                                 http://www.zlgmcu.com
+;**
+;**--------------File Info-------------------------------------------------------------------------------
+;** File Name: men_a.scf
+;** Last modified Date:  2004-09-17
+;** Last Version: 1.0
+;** Descriptions: Scatter File
+;**
+;**------------------------------------------------------------------------------------------------------
+;** Created By: Chenmingji
+;** Created date:   2004-09-17
+;** Version: 1.0
+;** Descriptions: First version
+;**
+;**------------------------------------------------------------------------------------------------------
+;** Modified by:
+;** Modified date:
+;** Version:
+;** Descriptions:
+;**
+;********************************************************************************************************/
+
+ROM_LOAD 0x00000000
+{
+    ROM_EXEC 0x00000000
+    {
+        startup.o (vectors, +First)
+        * (+RO)
+    }
+
+	IRAM 0x40000000
+    {
+        startup.o (MyStacks)
+        * (+RW,+ZI)
+    }
+
+    HEAP +0 UNINIT
+    {
+        startup.o (Heap)
+    }
+
+    STACKS 0x40002000 UNINIT
+    {
+        startup.o (Stacks)
+    }
+}
+

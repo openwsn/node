@@ -1,0 +1,5 @@
+ah_net
+=================================================================
+adhoc network
+
+Tests the adhoc network's networking interface. All ad hoc components should provide such an NETWORK layer interface.

@@ -1,0 +1,2 @@
+simplenode
+可接收REQUEST数据包并且发回响应RESPONSE，但是不支持ad hoc联网

@@ -1,0 +1,5 @@
+OpenNode is a hardware sensor networks platform
+
+Features
+- MCU is LPC2136 
+- 2.4G transceiver. cc2420

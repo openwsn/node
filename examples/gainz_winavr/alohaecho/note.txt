@@ -1,0 +1,19 @@
+Aloha_echo
+========================================================================
+1) Project Description: 
+this is a program used to test the state switch between aloha_send and aloha_receive is ok.
+
+2) Experiments and Notice 实验步骤和实验中的注意事项
+使用A，B两个节点，A点为发aloha_send，B点为aloha_echo。
+aloha_send的功能为：
+send frame periodically, and then switch to receive mode in order to receive the echo frame.
+aloha_echo的功能为：
+send whatever the frame received back to the sender.
+打开A节点，因为B节点未打开，A发向B的数据始终发送失败，从A节点的串口可以看到F，表明发送FAIL。
+打开B节点，从A节点的串口可以看到S和发送数据的ID，接着看到R和一串数据，表明A节点发送数据到接收数据的转换正常。同样从B节点的串口可以看到R和S加数据sequence id，表明收到数据，且正常返回表明B节点接收数据到发送数据的转换正常。
+测试成功。
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-23
+-- test ok by Yan Shixing

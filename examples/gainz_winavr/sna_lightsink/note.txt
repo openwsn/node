@@ -1,0 +1,5 @@
+lightsink
+
+Q: what's the difference between light-sink and light-gateway
+R: 
+gateway = sink + RS232 communication functionality

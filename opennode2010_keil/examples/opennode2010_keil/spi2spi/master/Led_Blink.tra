@@ -1,0 +1,29 @@
+*** Creating Trace Output File 'Led_Blink.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"cortexm3_macro.o"'
+### List of Objects: adding '"stm32f10x_vector.o"'
+### List of Objects: adding '"led_blink.o"'
+### List of Objects: adding '"stm32f10x_crc.o"'
+### List of Objects: adding '"stm32f10x_dac.o"'
+### List of Objects: adding '"stm32f10x_dbgmcu.o"'
+### List of Objects: adding '"stm32f10x_fsmc.o"'
+### List of Objects: adding '"stm32f10x_i2c.o"'
+### List of Objects: adding '"stm32f10x_lib.o"'
+### List of Objects: adding '"stm32f10x_sdio.o"'
+### List of Objects: adding '"stm32f10x_spi.o"'
+### ADS-LD Command completed:
+--device DARMSTM "cortexm3_macro.o" "stm32f10x_vector.o" "led_blink.o" "stm32f10x_crc.o" "stm32f10x_dac.o" "stm32f10x_dbgmcu.o" "stm32f10x_fsmc.o" "stm32f10x_i2c.o" "stm32f10x_lib.o" "stm32f10x_sdio.o" "stm32f10x_spi.o" --library_type=microlib --strict --scatter "Led_Blink.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Led_Blink.map" -o "Led_Blink.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'Led_Blink.axf'
+### ADS-LD Command File: 'Led_Blink.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'Led_Blink.lnp', Handle=0x000004C8
+### Writing '.lnp' file
+### ADS-LD Command file 'Led_Blink.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

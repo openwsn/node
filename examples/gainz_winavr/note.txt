@@ -1,0 +1,37 @@
+2011-07-29
+- Move this directory from "node/gainz-winavr" into "examples/gainz-winavr".
+This will lead to the compiling failure if you use AVRStudio to open the projects directly.
+However, you can remove the files and add it again by force AVRStudio to update file link information. 
+
+2010-05-18
+- upgrade demo cc2420rx, cc2420tx, one2many, adc_luminance. now they can be compiled successfully with AVR Studio 4.15(17) and Portable WinAVR 20090313
+
+2010-05-08
+- start the work to support multiple platforms
+so today i move all the .c files in "hal" folder to their corresponding platform folder. our default platform is "gainz". 
+- add new demonstration project "hal_assert" to testing hal_assert function
+
+2010-04-05
+
+This folder "winavr" is used to keep the testing/demonstration programs developed by winavr. 
+
+Developing envionment is: 
+
+- Windows OS 
+- WinAVR + AVRStudio 
+or WinAVR + Code::Blocks
+
+We OpenWSN team is using Portable WinAVR and AVRStudio. The projects can be opened directly using AVR Studio and compiled successfully. 
+
+Attention: 
+If you found the AVR Studio complains "cannot find file", then you can search for the file and add it directly into the project. 
+
+
+2010-04-27
+add new project rssi2dBm
+this project helps to transform RSSI value into dBm
+which helps the localization algorithm.
+
+
+2010-04-20
+add new project libwsn. the libwsn output is an library which can be used in other testing projects. 

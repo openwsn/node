@@ -1,0 +1,11 @@
+Flood Routing Test
+(networked led)
+
+controls all the LEDs by flooding a packet among the whole network
+
+洪泛测试
+
+该程序分两个版本，一个是运行在根结点的版本(flood sender)，一个是运行在其它所有通用结点的版本(node)。
+
+输出：
+整个网络中所有结点的LED在网络根结点发出的洪泛数据包的控制下，近似同步闪烁。

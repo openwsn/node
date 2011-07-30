@@ -1,0 +1,24 @@
+lpw_mcu
+==================================================================
+
+Introduction
+==================================================================
+
+lpw_mcu: low power support of the microcontroller 
+
+
+for Atmega128L mcu (copied from its datasheet):
+
+six software selectable
+power saving modes. The Idle mode stops the CPU while allowing the SRAM,
+Timer/Counters, SPI port, and interrupt system to continue functioning. The Power-
+down mode saves the register contents but freezes the OscillatorOscillator, disabling all
+other chip functions until the next interrupt or Hardware Reset. In Power-save mode, the
+asynchronous timer continues to run, allowing the user to maintain a timer base while
+the rest of the device is sleeping. The ADC Noise Reduction mode stops the CPU and
+all I/O modules except Asynchronous Timer and ADC, to minimize switching noise dur-
+ing ADC conversions. In Standby mode, the Crystal/Resonator Oscillator is running
+while the rest of the device is sleeping. This allows very fast start-up combined with low
+power consumption. In Extended Standby mode, both the main Oscillator and the Asyn-
+chronous Timer continue to run.
+T

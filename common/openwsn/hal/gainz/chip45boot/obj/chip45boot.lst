@@ -1,0 +1,931 @@
+   1               		.file	"chip45boot.c"
+   2               		.arch atmega8
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	selectEepromProgramming
+  19               	.global	selectEepromProgramming
+  20               		.section .bss
+  23               	selectEepromProgramming:
+  24 0000 00        		.skip 1,0
+  25               	.global	srecEndOfFile
+  26               	.global	srecEndOfFile
+  29               	srecEndOfFile:
+  30 0001 00        		.skip 1,0
+  31               	.global	flashPageSizeCounter
+  32               	.global	flashPageSizeCounter
+  35               	flashPageSizeCounter:
+  36 0002 00        		.skip 1,0
+  37               	.global	writeBaseAddress
+  38               	.global	writeBaseAddress
+  41               	writeBaseAddress:
+  42 0003 0000 0000 		.skip 4,0
+  43               	.global	srecAddress
+  44               	.global	srecAddress
+  47               	srecAddress:
+  48 0007 0000 0000 		.skip 4,0
+  49               	.global	bootloaderEnableFlag
+  50               	.global	bootloaderEnableFlag
+  53               	bootloaderEnableFlag:
+  54 000b 00        		.skip 1,0
+  55               	.global	bufferOverflow
+  56               	.global	bufferOverflow
+  59               	bufferOverflow:
+  60 000c 00        		.skip 1,0
+  61               	.global	receiveBufferFull
+  62               	.global	receiveBufferFull
+  65               	receiveBufferFull:
+  66 000d 00        		.skip 1,0
+  67               	.global	selectFlashProgramming
+  68               	.global	selectFlashProgramming
+  71               	selectFlashProgramming:
+  72 000e 00        		.skip 1,0
+  73               	.global	startApplication
+  74               	.global	startApplication
+  77               	startApplication:
+  78 000f 0000      		.skip 2,0
+  79               		.text
+  80               	.global	__vector_11
+  82               	__vector_11:
+  83               	.LFB12:
+  84               	.LM1:
+  85               	/* prologue: frame size=0 */
+  86 0000 1F92      		push __zero_reg__
+  87 0002 0F92      		push __tmp_reg__
+  88 0004 0FB6      		in __tmp_reg__,__SREG__
+  89 0006 0F92      		push __tmp_reg__
+  90 0008 1124      		clr __zero_reg__
+  91 000a 8F93      		push r24
+  92 000c EF93      		push r30
+  93 000e FF93      		push r31
+  94               	/* prologue end (size=8) */
+  95               	.LM2:
+  96 0010 8CB1      		in r24,44-0x20
+  97               	.LM3:
+  98 0012 8D30      		cpi r24,lo8(13)
+  99 0014 59F0      		breq .L2
+ 100               	.LM4:
+ 101 0016 8A30      		cpi r24,lo8(10)
+ 102 0018 49F0      		breq .L2
+ 103               	.LM5:
+ 104 001a E091 0000 		lds r30,receiveBufferPointer
+ 105 001e F091 0000 		lds r31,(receiveBufferPointer)+1
+ 106 0022 8193      		st Z+,r24
+ 107 0024 F093 0000 		sts (receiveBufferPointer)+1,r31
+ 108 0028 E093 0000 		sts receiveBufferPointer,r30
+ 109               	.L2:
+ 110               	.LM6:
+ 111 002c 8D30      		cpi r24,lo8(13)
+ 112 002e 11F0      		breq .L4
+ 113 0030 8A30      		cpi r24,lo8(10)
+ 114 0032 19F4      		brne .L1
+ 115               	.L4:
+ 116               	.LM7:
+ 117 0034 81E0      		ldi r24,lo8(1)
+ 118 0036 8093 0000 		sts receiveBufferFull,r24
+ 119               	.L1:
+ 120               	/* epilogue: frame size=0 */
+ 121 003a FF91      		pop r31
+ 122 003c EF91      		pop r30
+ 123 003e 8F91      		pop r24
+ 124 0040 0F90      		pop __tmp_reg__
+ 125 0042 0FBE      		out __SREG__,__tmp_reg__
+ 126 0044 0F90      		pop __tmp_reg__
+ 127 0046 1F90      		pop __zero_reg__
+ 128 0048 1895      		reti
+ 129               	/* epilogue end (size=8) */
+ 130               	/* function __vector_11 size 37 (21) */
+ 131               	.LFE12:
+ 133               	.global	uartPutChar
+ 135               	uartPutChar:
+ 136               	.LFB19:
+ 137               	.LM8:
+ 138               	/* prologue: frame size=0 */
+ 139 004a CF93      		push r28
+ 140               	/* prologue end (size=1) */
+ 141 004c C82F      		mov r28,r24
+ 142               	.LM9:
+ 143 004e 8D30      		cpi r24,lo8(13)
+ 144 0050 11F4      		brne .L8
+ 145               	.LM10:
+ 146 0052 8AE0      		ldi r24,lo8(10)
+ 147 0054 FADF      		rcall uartPutChar
+ 148               	.L8:
+ 149               	.LM11:
+ 150 0056 5D9B      		sbis 43-0x20,5
+ 151 0058 FECF      		rjmp .L8
+ 152               	.LM12:
+ 153 005a CCB9      		out 44-0x20,r28
+ 154               	/* epilogue: frame size=0 */
+ 155 005c CF91      		pop r28
+ 156 005e 0895      		ret
+ 157               	/* epilogue end (size=2) */
+ 158               	/* function uartPutChar size 11 (8) */
+ 159               	.LFE19:
+ 161               	.global	uartGetChar
+ 163               	uartGetChar:
+ 164               	.LFB20:
+ 165               	.LM13:
+ 166               	/* prologue: frame size=0 */
+ 167               	/* prologue end (size=0) */
+ 168               	.L12:
+ 169               	.LM14:
+ 170 0060 5F9B      		sbis 43-0x20,7
+ 171 0062 FECF      		rjmp .L12
+ 172               	.LM15:
+ 173 0064 8CB1      		in r24,44-0x20
+ 174               	.LM16:
+ 175 0066 9927      		clr r25
+ 176               	/* epilogue: frame size=0 */
+ 177 0068 0895      		ret
+ 178               	/* epilogue end (size=1) */
+ 179               	/* function uartGetChar size 5 (4) */
+ 180               	.LFE20:
+ 182               	.global	hexCharToInt
+ 184               	hexCharToInt:
+ 185               	.LFB16:
+ 186               	.LM17:
+ 187               	/* prologue: frame size=0 */
+ 188               	/* prologue end (size=0) */
+ 189               	.LM18:
+ 190 006a 8A33      		cpi r24,lo8(58)
+ 191 006c 18F4      		brsh .L16
+ 192               	.LM19:
+ 193 006e 8053      		subi r24,lo8(-(-48))
+ 194 0070 9927      		clr r25
+ 195 0072 0895      		ret
+ 196               	.L16:
+ 197               	.LM20:
+ 198 0074 8753      		subi r24,lo8(-(-55))
+ 199 0076 9927      		clr r25
+ 200               	.LM21:
+ 201 0078 0895      		ret
+ 202               	/* epilogue: frame size=0 */
+ 203               	/* epilogue: noreturn */
+ 204               	/* epilogue end (size=0) */
+ 205               	/* function hexCharToInt size 8 (8) */
+ 206               	.LFE16:
+ 208               	.global	hexByteToInt
+ 210               	hexByteToInt:
+ 211               	.LFB17:
+ 212               	.LM22:
+ 213               	/* prologue: frame size=0 */
+ 214 007a EF92      		push r14
+ 215 007c FF92      		push r15
+ 216 007e 1F93      		push r17
+ 217               	/* prologue end (size=3) */
+ 218 0080 162F      		mov r17,r22
+ 219               	.LM23:
+ 220 0082 F3DF      		rcall hexCharToInt
+ 221 0084 E82E      		mov r14,r24
+ 222 0086 FF24      		clr r15
+ 223 0088 84E0      		ldi r24,4
+ 224 008a EE0C      	1:	lsl r14
+ 225 008c FF1C      		rol r15
+ 226 008e 8A95      		dec r24
+ 227 0090 E1F7      		brne 1b
+ 228 0092 812F      		mov r24,r17
+ 229 0094 EADF      		rcall hexCharToInt
+ 230 0096 8E0D      		add r24,r14
+ 231               	.LM24:
+ 232 0098 9927      		clr r25
+ 233               	/* epilogue: frame size=0 */
+ 234 009a 1F91      		pop r17
+ 235 009c FF90      		pop r15
+ 236 009e EF90      		pop r14
+ 237 00a0 0895      		ret
+ 238               	/* epilogue end (size=4) */
+ 239               	/* function hexByteToInt size 20 (13) */
+ 240               	.LFE17:
+ 242               	.global	parseSrecBuffer
+ 244               	parseSrecBuffer:
+ 245               	.LFB14:
+ 246               	.LM25:
+ 247               	/* prologue: frame size=0 */
+ 248 00a2 6F92      		push r6
+ 249 00a4 7F92      		push r7
+ 250 00a6 8F92      		push r8
+ 251 00a8 9F92      		push r9
+ 252 00aa AF92      		push r10
+ 253 00ac BF92      		push r11
+ 254 00ae CF92      		push r12
+ 255 00b0 DF92      		push r13
+ 256 00b2 EF92      		push r14
+ 257 00b4 FF92      		push r15
+ 258 00b6 0F93      		push r16
+ 259 00b8 1F93      		push r17
+ 260 00ba CF93      		push r28
+ 261 00bc DF93      		push r29
+ 262               	/* prologue end (size=14) */
+ 263               	.LM26:
+ 264 00be 8091 0000 		lds r24,receiveBuffer
+ 265 00c2 C0E0      		ldi r28,lo8(receiveBuffer+1)
+ 266 00c4 D0E0      		ldi r29,hi8(receiveBuffer+1)
+ 267 00c6 8335      		cpi r24,lo8(83)
+ 268 00c8 09F0      		breq .+2
+ 269 00ca B7C0      		rjmp .L20
+ 270               	.LM27:
+ 271 00cc 2196      		adiw r28,1
+ 272 00ce 8091 0000 		lds r24,receiveBuffer+1
+ 273 00d2 CBDF      		rcall hexCharToInt
+ 274 00d4 C82E      		mov r12,r24
+ 275               	.LM28:
+ 276 00d6 8150      		subi r24,lo8(-(-1))
+ 277 00d8 8330      		cpi r24,lo8(3)
+ 278 00da 08F0      		brlo .+2
+ 279 00dc A7C0      		rjmp .L21
+ 280               	.LM29:
+ 281 00de 2296      		adiw r28,2
+ 282 00e0 6091 0000 		lds r22,receiveBuffer+3
+ 283               	.LM30:
+ 284 00e4 8091 0000 		lds r24,receiveBuffer+2
+ 285 00e8 C8DF      		rcall hexByteToInt
+ 286 00ea 282F      		mov r18,r24
+ 287               	.LM31:
+ 288 00ec 682E      		mov r6,r24
+ 289 00ee 7724      		clr r7
+ 290 00f0 8C2C      		mov r8,r12
+ 291 00f2 9924      		clr r9
+ 292 00f4 C401      		movw r24,r8
+ 293 00f6 8E5B      		subi r24,lo8(-(66))
+ 294 00f8 9F4F      		sbci r25,hi8(-(66))
+ 295 00fa 8615      		cp r24,r6
+ 296 00fc 9705      		cpc r25,r7
+ 297 00fe 24F4      		brge .L22
+ 298               	.LM32:
+ 299 0100 82E4      		ldi r24,lo8(66)
+ 300 0102 A3DF      		rcall uartPutChar
+ 301               	.LM33:
+ 302 0104 83E4      		ldi r24,lo8(67)
+ 303 0106 8AC0      		rjmp .L43
+ 304               	.L22:
+ 305               	.LM34:
+ 306 0108 D22E      		mov r13,r18
+ 307               	.LM35:
+ 308 010a AA24      		clr r10
+ 309 010c BB24      		clr r11
+ 310 010e E090 0000 		lds r14,srecAddress
+ 311 0112 F090 0000 		lds r15,(srecAddress)+1
+ 312 0116 0091 0000 		lds r16,(srecAddress)+2
+ 313 011a 1091 0000 		lds r17,(srecAddress)+3
+ 314               	.L26:
+ 315               	.LM36:
+ 316 011e 8991      		ld r24,Y+
+ 317               	.LM37:
+ 318 0120 6991      		ld r22,Y+
+ 319               	.LM38:
+ 320 0122 ABDF      		rcall hexByteToInt
+ 321               	.LM39:
+ 322 0124 102F      		mov r17,r16
+ 323 0126 0F2D      		mov r16,r15
+ 324 0128 FE2C      		mov r15,r14
+ 325 012a EE24      		clr r14
+ 326               	.LM40:
+ 327 012c E80E      		add r14,r24
+ 328 012e F11C      		adc r15,__zero_reg__
+ 329 0130 011D      		adc r16,__zero_reg__
+ 330 0132 111D      		adc r17,__zero_reg__
+ 331               	.LM41:
+ 332 0134 D80E      		add r13,r24
+ 333               	.LM42:
+ 334 0136 0894      		sec
+ 335 0138 A11C      		adc r10,__zero_reg__
+ 336 013a B11C      		adc r11,__zero_reg__
+ 337 013c 8A14      		cp r8,r10
+ 338 013e 9B04      		cpc r9,r11
+ 339 0140 70F7      		brsh .L26
+ 340 0142 E092 0000 		sts srecAddress,r14
+ 341 0146 F092 0000 		sts (srecAddress)+1,r15
+ 342 014a 0093 0000 		sts (srecAddress)+2,r16
+ 343 014e 1093 0000 		sts (srecAddress)+3,r17
+ 344               	.LM43:
+ 345 0152 C301      		movw r24,r6
+ 346 0154 880D      		add r24,r8
+ 347 0156 991D      		adc r25,r9
+ 348 0158 AA24      		clr r10
+ 349 015a BB24      		clr r11
+ 350 015c 0497      		sbiw r24,4
+ 351 015e 09F4      		brne .+2
+ 352 0160 4FC0      		rjmp .L39
+ 353               	.L33:
+ 354               	.LM44:
+ 355 0162 8091 0000 		lds r24,selectFlashProgramming
+ 356 0166 8823      		tst r24
+ 357 0168 E1F0      		breq .L30
+ 358               	.LM45:
+ 359 016a 8991      		ld r24,Y+
+ 360               	.LM46:
+ 361 016c 6991      		ld r22,Y+
+ 362               	.LM47:
+ 363 016e 85DF      		rcall hexByteToInt
+ 364               	.LM48:
+ 365 0170 D80E      		add r13,r24
+ 366               	.LM49:
+ 367 0172 082F      		mov r16,r24
+ 368 0174 1127      		clr r17
+ 369               	.LM50:
+ 370 0176 8991      		ld r24,Y+
+ 371               	.LM51:
+ 372 0178 6991      		ld r22,Y+
+ 373               	.LM52:
+ 374 017a 7FDF      		rcall hexByteToInt
+ 375               	.LM53:
+ 376 017c D80E      		add r13,r24
+ 377               	.LM54:
+ 378 017e 9927      		clr r25
+ 379 0180 982F      		mov r25,r24
+ 380 0182 8827      		clr r24
+ 381 0184 080F      		add r16,r24
+ 382 0186 191F      		adc r17,r25
+ 383               	.LBB2:
+ 384               	.LM55:
+ 385 0188 21E0      		ldi r18,lo8(1)
+ 386 018a 8091 0000 		lds r24,srecAddress
+ 387 018e 9091 0000 		lds r25,(srecAddress)+1
+ 388 0192 8A0D      		add r24,r10
+ 389 0194 9B1D      		adc r25,r11
+ 390               	/* #APP */
+ 391 0196 0801      		movw  r0, r16
+ 392 0198 FC01      		movw r30, r24
+ 393 019a 2093 5700 		sts 87, r18
+ 394 019e E895      		spm
+ 395 01a0 1124      		clr  r1
+ 396               		
+ 397               	/* #NOAPP */
+ 398               	.L30:
+ 399               	.LBE2:
+ 400               	.LM56:
+ 401 01a2 8091 0000 		lds r24,selectEepromProgramming
+ 402 01a6 8823      		tst r24
+ 403 01a8 C1F0      		breq .L31
+ 404               	.LM57:
+ 405 01aa 8991      		ld r24,Y+
+ 406               	.LM58:
+ 407 01ac 6991      		ld r22,Y+
+ 408               	.LM59:
+ 409 01ae 65DF      		rcall hexByteToInt
+ 410               	.LM60:
+ 411 01b0 D80E      		add r13,r24
+ 412               	.LM61:
+ 413 01b2 0091 0000 		lds r16,srecAddress
+ 414 01b6 1091 0000 		lds r17,(srecAddress)+1
+ 415 01ba F801      		movw r30,r16
+ 416 01bc E050      		subi r30,lo8(-(eepromWriteBuffer))
+ 417 01be F040      		sbci r31,hi8(-(eepromWriteBuffer))
+ 418 01c0 EA0D      		add r30,r10
+ 419 01c2 FB1D      		adc r31,r11
+ 420 01c4 8083      		st Z,r24
+ 421               	.LM62:
+ 422 01c6 8991      		ld r24,Y+
+ 423               	.LM63:
+ 424 01c8 6991      		ld r22,Y+
+ 425               	.LM64:
+ 426 01ca 57DF      		rcall hexByteToInt
+ 427               	.LM65:
+ 428 01cc D80E      		add r13,r24
+ 429               	.LM66:
+ 430 01ce F501      		movw r30,r10
+ 431 01d0 E050      		subi r30,lo8(-(eepromWriteBuffer))
+ 432 01d2 F040      		sbci r31,hi8(-(eepromWriteBuffer))
+ 433 01d4 E00F      		add r30,r16
+ 434 01d6 F11F      		adc r31,r17
+ 435 01d8 8183      		std Z+1,r24
+ 436               	.L31:
+ 437               	.LM67:
+ 438 01da 8091 0000 		lds r24,flashPageSizeCounter
+ 439 01de 8250      		subi r24,lo8(-(-2))
+ 440 01e0 8093 0000 		sts flashPageSizeCounter,r24
+ 441 01e4 8823      		tst r24
+ 442 01e6 BCF0      		brlt .L40
+ 443               	.LM68:
+ 444 01e8 82E0      		ldi r24,lo8(2)
+ 445 01ea 90E0      		ldi r25,hi8(2)
+ 446 01ec A80E      		add r10,r24
+ 447 01ee B91E      		adc r11,r25
+ 448 01f0 C301      		movw r24,r6
+ 449 01f2 880D      		add r24,r8
+ 450 01f4 991D      		adc r25,r9
+ 451 01f6 0497      		sbiw r24,4
+ 452 01f8 A816      		cp r10,r24
+ 453 01fa B906      		cpc r11,r25
+ 454 01fc 08F4      		brsh .+2
+ 455 01fe B1CF      		rjmp .L33
+ 456               	.L39:
+ 457               	.LM69:
+ 458 0200 9991      		ld r25,Y+
+ 459               	.LM70:
+ 460 0202 8881      		ld r24,Y
+ 461               	.LM71:
+ 462 0204 682F      		mov r22,r24
+ 463 0206 892F      		mov r24,r25
+ 464 0208 38DF      		rcall hexByteToInt
+ 465 020a D80E      		add r13,r24
+ 466               	.LM72:
+ 467 020c 9FEF      		ldi r25,lo8(-1)
+ 468 020e D916      		cp r13,r25
+ 469 0210 59F0      		breq .L34
+ 470               	.LM73:
+ 471 0212 83E4      		ldi r24,lo8(67)
+ 472 0214 01C0      		rjmp .L42
+ 473               	.L40:
+ 474               	.LM74:
+ 475 0216 80E5      		ldi r24,lo8(80)
+ 476               	.L42:
+ 477 0218 18DF      		rcall uartPutChar
+ 478               	.LM75:
+ 479 021a 83E5      		ldi r24,lo8(83)
+ 480               	.L43:
+ 481 021c 16DF      		rcall uartPutChar
+ 482               	.LM76:
+ 483 021e 8DE0      		ldi r24,lo8(13)
+ 484 0220 14DF      		rcall uartPutChar
+ 485               	.LM77:
+ 486 0222 80E0      		ldi r24,lo8(0)
+ 487 0224 90E0      		ldi r25,hi8(0)
+ 488 0226 0BC0      		rjmp .L19
+ 489               	.L34:
+ 490               	.LM78:
+ 491 0228 8EE2      		ldi r24,lo8(46)
+ 492 022a 0FDF      		rcall uartPutChar
+ 493               	.L21:
+ 494               	.LM79:
+ 495 022c 8C2D      		mov r24,r12
+ 496 022e 8750      		subi r24,lo8(-(-7))
+ 497 0230 8330      		cpi r24,lo8(3)
+ 498 0232 18F4      		brsh .L20
+ 499               	.LM80:
+ 500 0234 81E0      		ldi r24,lo8(1)
+ 501 0236 8093 0000 		sts srecEndOfFile,r24
+ 502               	.L20:
+ 503               	.LM81:
+ 504 023a 81E0      		ldi r24,lo8(1)
+ 505 023c 90E0      		ldi r25,hi8(1)
+ 506               	.L19:
+ 507               	/* epilogue: frame size=0 */
+ 508 023e DF91      		pop r29
+ 509 0240 CF91      		pop r28
+ 510 0242 1F91      		pop r17
+ 511 0244 0F91      		pop r16
+ 512 0246 FF90      		pop r15
+ 513 0248 EF90      		pop r14
+ 514 024a DF90      		pop r13
+ 515 024c CF90      		pop r12
+ 516 024e BF90      		pop r11
+ 517 0250 AF90      		pop r10
+ 518 0252 9F90      		pop r9
+ 519 0254 8F90      		pop r8
+ 520 0256 7F90      		pop r7
+ 521 0258 6F90      		pop r6
+ 522 025a 0895      		ret
+ 523               	/* epilogue end (size=15) */
+ 524               	/* function parseSrecBuffer size 229 (200) */
+ 525               	.LFE14:
+ 527               	.global	uartPutHex
+ 529               	uartPutHex:
+ 530               	.LFB18:
+ 531               	.LM82:
+ 532               	/* prologue: frame size=0 */
+ 533 025c CF93      		push r28
+ 534               	/* prologue end (size=1) */
+ 535               	.LM83:
+ 536 025e 282F      		mov r18,r24
+ 537 0260 3327      		clr r19
+ 538 0262 44E0      		ldi r20,4
+ 539 0264 3695      	1:	lsr r19
+ 540 0266 2795      		ror r18
+ 541 0268 4A95      		dec r20
+ 542 026a E1F7      		brne 1b
+ 543               	.LM84:
+ 544 026c C82F      		mov r28,r24
+ 545 026e CF70      		andi r28,lo8(15)
+ 546               	.LM85:
+ 547 0270 822F      		mov r24,r18
+ 548 0272 8A50      		subi r24,lo8(-(-10))
+ 549 0274 8630      		cpi r24,lo8(6)
+ 550 0276 10F4      		brsh .L45
+ 551               	.LM86:
+ 552 0278 8F5B      		subi r24,lo8(-(65))
+ 553 027a 02C0      		rjmp .L49
+ 554               	.L45:
+ 555               	.LM87:
+ 556 027c 822F      		mov r24,r18
+ 557 027e 805D      		subi r24,lo8(-(48))
+ 558               	.L49:
+ 559 0280 E4DE      		rcall uartPutChar
+ 560               	.LM88:
+ 561 0282 8C2F      		mov r24,r28
+ 562 0284 8A50      		subi r24,lo8(-(-10))
+ 563 0286 8630      		cpi r24,lo8(6)
+ 564 0288 10F4      		brsh .L47
+ 565               	.LM89:
+ 566 028a 8F5B      		subi r24,lo8(-(65))
+ 567 028c 02C0      		rjmp .L50
+ 568               	.L47:
+ 569               	.LM90:
+ 570 028e 8C2F      		mov r24,r28
+ 571 0290 805D      		subi r24,lo8(-(48))
+ 572               	.L50:
+ 573 0292 DBDE      		rcall uartPutChar
+ 574               	/* epilogue: frame size=0 */
+ 575 0294 CF91      		pop r28
+ 576 0296 0895      		ret
+ 577               	/* epilogue end (size=2) */
+ 578               	/* function uartPutHex size 30 (27) */
+ 579               	.LFE18:
+ 581               	.global	writeBufferToFlash
+ 583               	writeBufferToFlash:
+ 584               	.LFB15:
+ 585               	.LM91:
+ 586               	/* prologue: frame size=0 */
+ 587 0298 CF93      		push r28
+ 588               	/* prologue end (size=1) */
+ 589               	.LM92:
+ 590 029a CFB7      		in r28,95-0x20
+ 591               	.LM93:
+ 592 029c 8091 0000 		lds r24,flashPageSizeCounter
+ 593 02a0 8823      		tst r24
+ 594 02a2 29F0      		breq .L53
+ 595               	.LM94:
+ 596 02a4 8091 0000 		lds r24,srecEndOfFile
+ 597 02a8 8130      		cpi r24,lo8(1)
+ 598 02aa 09F0      		breq .+2
+ 599 02ac 4AC0      		rjmp .L52
+ 600               	.L53:
+ 601               	.LM95:
+ 602 02ae 8091 0000 		lds r24,selectFlashProgramming
+ 603 02b2 8823      		tst r24
+ 604 02b4 D1F0      		breq .L54
+ 605               	.L55:
+ 606               	.LM96:
+ 607 02b6 E199      		sbic 60-0x20,1
+ 608 02b8 FECF      		rjmp .L55
+ 609               	.LBB3:
+ 610               	.LM97:
+ 611 02ba 83E0      		ldi r24,lo8(3)
+ 612 02bc 2091 0000 		lds r18,writeBaseAddress
+ 613 02c0 3091 0000 		lds r19,(writeBaseAddress)+1
+ 614               	/* #APP */
+ 615 02c4 F901      		movw r30, r18
+ 616 02c6 8093 5700 		sts 87, r24
+ 617 02ca E895      		spm
+ 618               		
+ 619               	/* #NOAPP */
+ 620               	.L58:
+ 621               	.LBE3:
+ 622               	.LM98:
+ 623 02cc 07B6      		in __tmp_reg__,87-0x20
+ 624 02ce 00FC      		sbrc __tmp_reg__,0
+ 625 02d0 FDCF      		rjmp .L58
+ 626               	.LBB4:
+ 627               	.LM99:
+ 628 02d2 85E0      		ldi r24,lo8(5)
+ 629               	/* #APP */
+ 630 02d4 F901      		movw r30, r18
+ 631 02d6 8093 5700 		sts 87, r24
+ 632 02da E895      		spm
+ 633               		
+ 634               	/* #NOAPP */
+ 635               	.L61:
+ 636               	.LBE4:
+ 637               	.LM100:
+ 638 02dc 07B6      		in __tmp_reg__,87-0x20
+ 639 02de 00FC      		sbrc __tmp_reg__,0
+ 640 02e0 FDCF      		rjmp .L61
+ 641               	.LBB5:
+ 642               	.LM101:
+ 643 02e2 81E1      		ldi r24,lo8(17)
+ 644               	/* #APP */
+ 645 02e4 8093 5700 		sts 87, r24
+ 646 02e8 E895      		spm
+ 647               		
+ 648               	/* #NOAPP */
+ 649               	.L54:
+ 650               	.LBE5:
+ 651               	.LM102:
+ 652 02ea 8091 0000 		lds r24,selectEepromProgramming
+ 653 02ee 8823      		tst r24
+ 654 02f0 89F0      		breq .L64
+ 655               	.L65:
+ 656               	.LM103:
+ 657 02f2 E199      		sbic 60-0x20,1
+ 658 02f4 FECF      		rjmp .L65
+ 659               	.LM104:
+ 660 02f6 8091 0000 		lds r24,writeBaseAddress+1
+ 661 02fa B0DF      		rcall uartPutHex
+ 662               	.LM105:
+ 663 02fc 8091 0000 		lds r24,writeBaseAddress
+ 664 0300 ADDF      		rcall uartPutHex
+ 665               	.LBB6:
+ 666               	.LM106:
+ 667 0302 E0E0      		ldi r30,lo8(eepromWriteBuffer)
+ 668 0304 F0E0      		ldi r31,hi8(eepromWriteBuffer)
+ 669 0306 A091 0000 		lds r26,writeBaseAddress
+ 670 030a B091 0000 		lds r27,(writeBaseAddress)+1
+ 671               	.LBB7:
+ 672               	.LBB8:
+ 673               	.LM107:
+ 674 030e 80E4      		ldi r24,lo8(64)
+ 675               	.LM108:
+ 676               	/* #APP */
+ 677 0310 182E      		mov __zero_reg__,r24
+ 678 0312 00D0      		rcall __eeprom_write_block_1C1D1E
+ 679               	/* #NOAPP */
+ 680               	.L64:
+ 681               	.LBE8:
+ 682               	.LBE7:
+ 683               	.LBE6:
+ 684               	.LM109:
+ 685 0314 80E4      		ldi r24,lo8(64)
+ 686 0316 8093 0000 		sts flashPageSizeCounter,r24
+ 687               	.LM110:
+ 688 031a 8091 0000 		lds r24,writeBaseAddress
+ 689 031e 9091 0000 		lds r25,(writeBaseAddress)+1
+ 690 0322 A091 0000 		lds r26,(writeBaseAddress)+2
+ 691 0326 B091 0000 		lds r27,(writeBaseAddress)+3
+ 692 032a 805C      		subi r24,lo8(-(64))
+ 693 032c 9F4F      		sbci r25,hi8(-(64))
+ 694 032e AF4F      		sbci r26,hlo8(-(64))
+ 695 0330 BF4F      		sbci r27,hhi8(-(64))
+ 696 0332 8093 0000 		sts writeBaseAddress,r24
+ 697 0336 9093 0000 		sts (writeBaseAddress)+1,r25
+ 698 033a A093 0000 		sts (writeBaseAddress)+2,r26
+ 699 033e B093 0000 		sts (writeBaseAddress)+3,r27
+ 700               	.L52:
+ 701               	.LM111:
+ 702 0342 CFBF      		out 95-0x20,r28
+ 703               	/* epilogue: frame size=0 */
+ 704 0344 CF91      		pop r28
+ 705 0346 0895      		ret
+ 706               	/* epilogue end (size=2) */
+ 707               	/* function writeBufferToFlash size 101 (98) */
+ 708               	.LFE15:
+ 710               		.data
+ 711               	.LC0:
+ 712 0000 0D63 6869 		.string	"\rchip45boot[flash][eeprom]\r> "
+ 712      7034 3562 
+ 712      6F6F 745B 
+ 712      666C 6173 
+ 712      685D 5B65 
+ 713               		.text
+ 714               	.global	main
+ 716               	main:
+ 717               	.LFB13:
+ 718               	.LM112:
+ 719               	/* prologue: frame size=0 */
+ 720 0348 C0E0      		ldi r28,lo8(__stack - 0)
+ 721 034a D0E0      		ldi r29,hi8(__stack - 0)
+ 722 034c DEBF      		out __SP_H__,r29
+ 723 034e CDBF      		out __SP_L__,r28
+ 724               	/* prologue end (size=4) */
+ 725               	.LM113:
+ 726 0350 10BC      		out 64-0x20,__zero_reg__
+ 727               	.LM114:
+ 728 0352 83E0      		ldi r24,lo8(3)
+ 729 0354 89B9      		out 41-0x20,r24
+ 730               	.LM115:
+ 731 0356 88E1      		ldi r24,lo8(24)
+ 732 0358 8AB9      		out 42-0x20,r24
+ 733               	.LM116:
+ 734 035a 86E8      		ldi r24,lo8(-122)
+ 735 035c 80BD      		out 64-0x20,r24
+ 736               	.LM117:
+ 737 035e 579A      		sbi 42-0x20,7
+ 738               	.LM118:
+ 739 0360 E0E0      		ldi r30,lo8(0)
+ 740 0362 F0E0      		ldi r31,hi8(0)
+ 741 0364 9091 0000 		lds r25,bootloaderEnableFlag
+ 742               	.L76:
+ 743               	.LM119:
+ 744 0368 5F9B      		sbis 43-0x20,7
+ 745 036a 04C0      		rjmp .L78
+ 746               	.LM120:
+ 747 036c 8CB1      		in r24,44-0x20
+ 748 036e 8936      		cpi r24,lo8(105)
+ 749 0370 09F4      		brne .L78
+ 750               	.LM121:
+ 751 0372 91E0      		ldi r25,lo8(1)
+ 752               	.L78:
+ 753               	.LM122:
+ 754 0374 3197      		sbiw r30,1
+ 755 0376 C1F7      		brne .L76
+ 756 0378 9093 0000 		sts bootloaderEnableFlag,r25
+ 757               	.LBB9:
+ 758               	.LM123:
+ 759               	/* #APP */
+ 760 037c 8491      		lpm r24, Z
+ 761               		
+ 762               	/* #NOAPP */
+ 763               	.LBE9:
+ 764 037e 8F3F      		cpi r24,lo8(-1)
+ 765 0380 19F4      		brne .L81
+ 766               	.LM124:
+ 767 0382 81E0      		ldi r24,lo8(1)
+ 768 0384 8093 0000 		sts bootloaderEnableFlag,r24
+ 769               	.L81:
+ 770               	.LM125:
+ 771 0388 8091 0000 		lds r24,bootloaderEnableFlag
+ 772 038c 8823      		tst r24
+ 773 038e 29F4      		brne .L83
+ 774               	.LM126:
+ 775 0390 E091 0000 		lds r30,startApplication
+ 776 0394 F091 0000 		lds r31,(startApplication)+1
+ 777 0398 0995      		icall
+ 778               	.L83:
+ 779               	.LM127:
+ 780 039a 81E0      		ldi r24,lo8(1)
+ 781 039c 8BBF      		out 91-0x20,r24
+ 782               	.LM128:
+ 783 039e 82E0      		ldi r24,lo8(2)
+ 784 03a0 8BBF      		out 91-0x20,r24
+ 785               	.LM129:
+ 786 03a2 C0E0      		ldi r28,lo8(0)
+ 787 03a4 8091 0000 		lds r24,.LC0
+ 788               	.L103:
+ 789 03a8 8823      		tst r24
+ 790 03aa 69F0      		breq .L88
+ 791               	.LM130:
+ 792 03ac EC2F      		mov r30,r28
+ 793 03ae FF27      		clr r31
+ 794 03b0 E050      		subi r30,lo8(-(.LC0))
+ 795 03b2 F040      		sbci r31,hi8(-(.LC0))
+ 796 03b4 8081      		ld r24,Z
+ 797 03b6 49DE      		rcall uartPutChar
+ 798               	.LM131:
+ 799 03b8 CF5F      		subi r28,lo8(-(1))
+ 800 03ba EC2F      		mov r30,r28
+ 801 03bc FF27      		clr r31
+ 802 03be E050      		subi r30,lo8(-(.LC0))
+ 803 03c0 F040      		sbci r31,hi8(-(.LC0))
+ 804 03c2 8081      		ld r24,Z
+ 805 03c4 F1CF      		rjmp .L103
+ 806               	.L88:
+ 807               	.LM132:
+ 808 03c6 4CDE      		rcall uartGetChar
+ 809               	.LM133:
+ 810 03c8 8636      		cpi r24,lo8(102)
+ 811 03ca 39F4      		brne .L91
+ 812               	.LM134:
+ 813 03cc 3EDE      		rcall uartPutChar
+ 814               	.LM135:
+ 815 03ce 8DE0      		ldi r24,lo8(13)
+ 816 03d0 3CDE      		rcall uartPutChar
+ 817               	.LM136:
+ 818 03d2 81E0      		ldi r24,lo8(1)
+ 819 03d4 8093 0000 		sts selectFlashProgramming,r24
+ 820 03d8 16C0      		rjmp .L90
+ 821               	.L91:
+ 822               	.LM137:
+ 823 03da 8736      		cpi r24,lo8(103)
+ 824 03dc 61F4      		brne .L92
+ 825               	.LM138:
+ 826 03de 35DE      		rcall uartPutChar
+ 827               	.LM139:
+ 828 03e0 8DE0      		ldi r24,lo8(13)
+ 829 03e2 33DE      		rcall uartPutChar
+ 830               	.LM140:
+ 831 03e4 81E0      		ldi r24,lo8(1)
+ 832 03e6 8BBF      		out 91-0x20,r24
+ 833               	.LM141:
+ 834 03e8 1BBE      		out 91-0x20,__zero_reg__
+ 835               	.LM142:
+ 836 03ea E091 0000 		lds r30,startApplication
+ 837 03ee F091 0000 		lds r31,(startApplication)+1
+ 838 03f2 0995      		icall
+ 839 03f4 08C0      		rjmp .L90
+ 840               	.L92:
+ 841               	.LM143:
+ 842 03f6 8536      		cpi r24,lo8(101)
+ 843 03f8 31F4      		brne .L90
+ 844               	.LM144:
+ 845 03fa 27DE      		rcall uartPutChar
+ 846               	.LM145:
+ 847 03fc 8DE0      		ldi r24,lo8(13)
+ 848 03fe 25DE      		rcall uartPutChar
+ 849               	.LM146:
+ 850 0400 81E0      		ldi r24,lo8(1)
+ 851 0402 8093 0000 		sts selectEepromProgramming,r24
+ 852               	.L90:
+ 853               	.LM147:
+ 854 0406 8091 0000 		lds r24,selectFlashProgramming
+ 855 040a 8823      		tst r24
+ 856 040c 21F4      		brne .L89
+ 857 040e 8091 0000 		lds r24,selectEepromProgramming
+ 858 0412 8823      		tst r24
+ 859 0414 C1F2      		breq .L88
+ 860               	.L89:
+ 861               	.LM148:
+ 862               	/* #APP */
+ 863 0416 7894      		sei
+ 864               	.LM149:
+ 865               	/* #NOAPP */
+ 866 0418 C0E0      		ldi r28,lo8(receiveBuffer)
+ 867 041a D0E0      		ldi r29,hi8(receiveBuffer)
+ 868 041c D093 0000 		sts (receiveBufferPointer)+1,r29
+ 869 0420 C093 0000 		sts receiveBufferPointer,r28
+ 870               	.LM150:
+ 871 0424 80E4      		ldi r24,lo8(64)
+ 872 0426 8093 0000 		sts flashPageSizeCounter,r24
+ 873               	.LM151:
+ 874 042a 1092 0000 		sts srecAddress,__zero_reg__
+ 875 042e 1092 0000 		sts (srecAddress)+1,__zero_reg__
+ 876 0432 1092 0000 		sts (srecAddress)+2,__zero_reg__
+ 877 0436 1092 0000 		sts (srecAddress)+3,__zero_reg__
+ 878               	.LM152:
+ 879 043a 1092 0000 		sts receiveBufferFull,__zero_reg__
+ 880               	.LM153:
+ 881 043e 1092 0000 		sts writeBaseAddress,__zero_reg__
+ 882 0442 1092 0000 		sts (writeBaseAddress)+1,__zero_reg__
+ 883 0446 1092 0000 		sts (writeBaseAddress)+2,__zero_reg__
+ 884 044a 1092 0000 		sts (writeBaseAddress)+3,__zero_reg__
+ 885               	.L104:
+ 886               	.LM154:
+ 887 044e 8091 0000 		lds r24,receiveBufferFull
+ 888 0452 8823      		tst r24
+ 889 0454 E1F3      		breq .L104
+ 890               	.LM155:
+ 891               	/* #APP */
+ 892 0456 F894      		cli
+ 893               	.LM156:
+ 894               	/* #NOAPP */
+ 895 0458 24DE      		rcall parseSrecBuffer
+ 896               	.LM157:
+ 897 045a 1EDF      		rcall writeBufferToFlash
+ 898               	.LM158:
+ 899 045c 8091 0000 		lds r24,srecEndOfFile
+ 900 0460 8823      		tst r24
+ 901 0462 49F0      		breq .L97
+ 902               	.LM159:
+ 903 0464 8FE4      		ldi r24,lo8(79)
+ 904 0466 F1DD      		rcall uartPutChar
+ 905               	.LM160:
+ 906 0468 8BE4      		ldi r24,lo8(75)
+ 907 046a EFDD      		rcall uartPutChar
+ 908               	.LM161:
+ 909 046c 8DE0      		ldi r24,lo8(13)
+ 910 046e EDDD      		rcall uartPutChar
+ 911               	.LM162:
+ 912 0470 1092 0000 		sts srecEndOfFile,__zero_reg__
+ 913               	.LM163:
+ 914 0474 92CF      		rjmp .L83
+ 915               	.L97:
+ 916               	.LM164:
+ 917 0476 8093 0000 		sts receiveBufferFull,r24
+ 918               	.LM165:
+ 919 047a D093 0000 		sts (receiveBufferPointer)+1,r29
+ 920 047e C093 0000 		sts receiveBufferPointer,r28
+ 921               	.LM166:
+ 922               	/* #APP */
+ 923 0482 7894      		sei
+ 924               	/* #NOAPP */
+ 925 0484 E4CF      		rjmp .L104
+ 926               	/* epilogue: frame size=0 */
+ 927               	/* epilogue: noreturn */
+ 928               	/* epilogue end (size=0) */
+ 929               	/* function main size 166 (162) */
+ 930               	.LFE13:
+ 932               		.comm receiveBuffer,150,1
+ 933               		.comm receiveBufferPointer,2,1
+ 934               		.comm tmpBuffer,2,1
+ 935               		.comm eepromWriteBuffer,66,1
+ 936               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 chip45boot.c
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:3      *ABS*:0000003f __SREG__
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:4      *ABS*:0000003e __SP_H__
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:5      *ABS*:0000003d __SP_L__
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:6      *ABS*:00000000 __tmp_reg__
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:7      *ABS*:00000001 __zero_reg__
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:23     .bss:00000000 selectEepromProgramming
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:29     .bss:00000001 srecEndOfFile
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:35     .bss:00000002 flashPageSizeCounter
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:41     .bss:00000003 writeBaseAddress
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:47     .bss:00000007 srecAddress
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:53     .bss:0000000b bootloaderEnableFlag
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:59     .bss:0000000c bufferOverflow
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:65     .bss:0000000d receiveBufferFull
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:71     .bss:0000000e selectFlashProgramming
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:77     .bss:0000000f startApplication
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:82     .text:00000000 __vector_11
+                            *COM*:00000002 receiveBufferPointer
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:135    .text:0000004a uartPutChar
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:163    .text:00000060 uartGetChar
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:184    .text:0000006a hexCharToInt
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:210    .text:0000007a hexByteToInt
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:244    .text:000000a2 parseSrecBuffer
+                            *COM*:00000096 receiveBuffer
+                            *COM*:00000042 eepromWriteBuffer
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:529    .text:0000025c uartPutHex
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:583    .text:00000298 writeBufferToFlash
+c:\DOKUME~1\linserik\LOKALE~1\Temp/cccXaaaa.s:716    .text:00000348 main
+                            *COM*:00000002 tmpBuffer
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+__eeprom_write_block_1C1D1E
+__stack

@@ -1,0 +1,14 @@
+Aloha_broadcast
+========================================================================
+1) Project Description: 
+this is a program used to test whether the broadcast function in mac is ok.
+
+2) Experiments and Notice 实验步骤和实验中的注意事项
+使用A, B, C三个节点，A点为以广播方式进行数据发送的发送方，B、C点为不同网络和不同地址的接受方。
+打开A、B、C三个节点，可以看到A发送节点的黄灯闪烁，表示发送出数据且收到返回ACK，表明发送成功。
+而不同网络不同地址的B、C节点红灯同时闪烁，表明Aloha_broadcast能够正常进行。信。
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-24
+-- test ok by Yan Shixing

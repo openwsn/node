@@ -1,0 +1,14 @@
+cc2420ack
+========================================================================
+1) Project Description: 
+this is a test program specially used to test the frame sending and receiving when autoack is enabled. 
+
+2) Experiments and Notice
+
+Please refer to cc2420tx and cc2420rx
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-23
+-- test ok, it should be ok for the sake of the identification with cc2420tx.c and cc2420rx.c and the latter have been test ok. -Yan Shixing
+Also the method of cc2420rx.c in this project is old. we recommend you to refer to code in sniffer.

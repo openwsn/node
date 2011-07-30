@@ -1,0 +1,278 @@
+ATmega128单片机IAP功能的应用
+
+http://www.mcu123.com/news/Article/Design/avr/200608/269.html
+
+
+ATmega128具备引导加载支持的用户程序自编程功能(In-Sysytem Programming by On-chip Boot Program)，它提供了一个真正的由MCU本身自动下载和更新（采用读/写同时"Read-While-Write"进行的方式）程序代码的系统程序自编程更新的机制。利用AVR的这个功能，可以实现在应用编程（IAP）以及实现系统程序的远程自动更新的应用。
+      IAP的本质就是，MCU可以灵活地运行一个常驻Flash的引导加载程序（Boot Loader Program），实现对用户应用程序的在线自编程更新。引导加载程序的设计可以使用任何的可用的数据接口和相关的协议读取代码，或者从程序存储器中读取代码，然后将代码写入（编程）到Flash存储器中。
+引导加载程序有能力读写整个Flash存储器，包括引导加载程序所在的引导加载区本身。引导加载程序还可以对自身进行更新修改，甚至可以将自身删除，使系统的自编程能力消失。引导加载程序区的大小可以由芯片的熔丝位设置，该段程序区还提供两组锁定位，以便用户选择对该段程序区的不同级别的保护。
+      本节将给出一个实际的的Boot Loader程序，它可以配合Windows中的超级终端程序，采用Xmodem传输协议，通过RS232接口下载更新用户的应用程序。
+5.2.1 基本设计思想
+1．    Boot Loader程序的设计要点
+      Boot Loader程序的设计是实现IAP的关键，它必须能过通过一个通信接口，采用某种协议正确的接收数据，再将完整的数据写入到用户程序区中。本例Boot Loader程序的设计要点有：
+l    采用ATmega128的USART口实现与PC之间的简易RS232三线通信；
+l    采用Xmodem通信协议完成与PC机之间的数据交换；
+l    用户程序更新完成后自动转入用户程序执行；
+l    Boot Loader程序采用C语言内嵌AVR汇编方式编写，阅读理解方便，可移植性强，代码小于1K字。
+2．    Xmodem通信协议
+      Xmodem协议是一种使用拨号调制解调器的个人计算机通信中广泛使用的异步文件运输协议。这种协议以128字节块的形式传输数据，并且每个块都使用一个校验和过程来进行错误检测。如果接收方关于一个块的校验和与它在发送方的校验和相同时，接收方就向发送方发送一个认可字节。为了便于读者阅读程序，下面简要说明该协议的主要特点，有关Xmoden的完整的协议请参考其它相关的资料。
+l    Xmodem的控制字符： 01H、 04H、 06H、 15H、 18H、 1AH。
+l    Xmodem传输数据块格式：" <255-packNO> <...128个字节的数据块...> "。其中为起始字节；为数据块编号字节，每次加一；<255-packNO>是前一字节的反码；接下来是长度为128字节的数据块；最后的是128字节数据的CRC校验码，长度为2个字节。
+l    接收端收到一个数据块并校验正确时，回送；接收错误回送；而回送表示要发送端停止发送。
+l    发送端收到后，可继续发送下一个数据块（packNO+1）；而收到则可再次重发上一个数据块。
+l    发送端发送表示全部数据发送完成。如果最后需要发送的数据不足128个字节，用填满一个数据块。
+l    控制字符"C"有特殊的作用，当发送端收到"C"控制字符时，它回重新开始以CRC校验方式发送数据块（packNO = 1）。
+l    每发送一个新的数据块加1，加到OxFF后下一个数据块的为零。
+l    校验方式采用16位CRC校验(X^16 + X^12 + X^5 + 1)。
+
+5.2.2 源程序代码
+下面给出的源程序是在ICCAVR中实现的。
+/*****************************************************
+采用串行接口实现Boot_load应用的实例
+华东师大电子系 马 潮 2004.07
+Compiler:    ICC-AVR 6.31
+Target:    Mega128
+Crystal:    16Mhz
+Used:        T/C0,USART0
+*****************************************************/
+#include
+#define SPM_PAGESIZE 256              file://M128的一个Flash页为256字节(128字)
+#define BAUD 38400                file://波特率采用38400bps
+#define CRYSTAL 16000000            file://系统时钟16MHz
+file://计算和定义M128的波特率设置参数
+#define BAUD_SETTING (unsigned char)((unsigned long)CRYSTAL/(16*(unsigned long)BAUD)-1)
+#define BAUD_H (unsigned char)(BAUD_SETTING>>8)
+#define BAUD_L (unsigned char)BAUD_SETTING
+
+#define DATA_BUFFER_SIZE SPM_PAGESIZE        file://定义接收缓冲区长度
+file://定义Xmoden控制字符
+#define XMODEM_NUL 0x00
+#define XMODEM_SOH 0x01
+#define XMODEM_STX 0x02
+#define XMODEM_EOT 0x04
+#define XMODEM_ACK 0x06
+#define XMODEM_NAK 0x15
+#define XMODEM_CAN 0x18
+#define XMODEM_EOF 0x1A
+#define XMODEM_RECIEVING_WAIT_CHAR 'C'
+file://定义全局变量
+const char startupString[]="Type 'd' download, Others run app.\n\r\0";
+char data[DATA_BUFFER_SIZE];
+long address = 0;
+file://擦除(code=0x03)和写入(code=0x05)一个Flash页
+void boot_page_ew(long p_address,char code)
+{
+    asm("mov r30,r16\n"
+        "mov r31,r17\n"
+        "out 0x3b,r18\n");            file://将页地址放入Z寄存器和RAMPZ的Bit0中
+    SPMCSR = code;                file://寄存器SPMCSR中为操作码
+    asm("spm\n");                    file://对指定Flash页进行操作
+}         
+file://填充Flash缓冲页中的一个字
+void boot_page_fill(unsigned int address,int data)
+{
+    asm("mov r30,r16\n"
+        "mov r31,r17\n"             file://Z寄存器中为填冲页内地址
+        "mov r0,r18\n"
+        "mov r1,r19\n");            file://R0R1中为一个指令字
+    SPMCSR = 0x01;
+    asm("spm\n");
+}
+file://等待一个Flash页的写完成
+void wait_page_rw_ok(void)
+{
+      while(SPMCSR & 0x40)
+     {
+         while(SPMCSR & 0x01);
+         SPMCSR = 0x11;
+         asm("spm\n");
+     }
+}
+file://更新一个Flash页的完整处理
+void write_one_page(void)
+{
+    int i;
+    boot_page_ew(address,0x03);                    file://擦除一个Flash页
+    wait_page_rw_ok();                            file://等待擦除完成
+    for(i=0;i
+    {
+        boot_page_fill(i, data[i]+(data[i+1]<<8));
+    }
+    boot_page_ew(address,0x05);                    file://将缓冲页数据写入一个Flash页
+    wait_page_rw_ok();                            file://等待写入完成
+}         
+file://从RS232发送一个字节
+void uart_putchar(char c)
+{
+    while(!(UCSR0A & 0x20));
+    UDR0 = c;
+}
+file://从RS232接收一个字节
+int uart_getchar(void)
+{
+    unsigned char status,res;
+    if(!(UCSR0A & 0x80)) return -1;        file://no data to be received
+    status = UCSR0A;
+    res = UDR0;
+    if (status & 0x1c) return -1;        // If error, return -1
+    return res;
+}
+file://等待从RS232接收一个有效的字节
+char uart_waitchar(void)
+{
+    int c;
+    while((c=uart_getchar())==-1);
+    return (char)c;
+}
+file://计算CRC
+int calcrc(char *ptr, int count)
+{
+    int crc = 0;
+    char i;
+     
+    while (--count >= 0)
+    {
+        crc = crc ^ (int) *ptr++ << 8;
+        i = 8;
+        do
+        {
+        if (crc & 0x8000)
+            crc = crc << 1 ^ 0x1021;
+        else
+            crc = crc << 1;
+        } while(--i);
+    }
+    return (crc);
+}
+file://退出Bootloader程序，从0x0000处执行应用程序
+void quit(void)
+{
+      uart_putchar('O');uart_putchar('K');
+uart_putchar(0x0d);uart_putchar(0x0a);
+     while(!(UCSR0A & 0x20));            file://等待结束提示信息回送完成
+  MCUCR = 0x01;
+     MCUCR = 0x00;                    file://将中断向量表迁移到应用程序区头部
+     RAMPZ = 0x00;                    file://RAMPZ清零初始化
+     asm("jmp 0x0000\n");                file://跳转到Flash的0x0000处，执行用户的应用程序
+}
+file://主程序
+void main(void)
+{
+    int i = 0;
+    unsigned char timercount = 0;
+    unsigned char packNO = 1;
+    int bufferPoint = 0;
+    unsigned int crc;
+file://初始化M128的USART0
+    UBRR0H = BAUD_H;     
+    UBRR0L = BAUD_L;            file://Set baud rate
+    UCSR0B = 0x18;            file://Enable Receiver and Transmitter
+    UCSR0C = 0x0E;            file://Set frame format: 8data, 2stop bit
+file://初始化M128的T/C0，15ms自动重载
+  OCR0 = 0xEA;
+  TCCR0 = 0x0F;     
+file://向PC机发送开始提示信息
+    while(startupString[i]!='\0')
+    {
+        uart_putchar(startupString[i]);
+        i++;
+    }
+file://3秒种等待PC下发"d"，否则退出Bootloader程序，从0x0000处执行应用程序
+    while(1)
+    {
+        if(uart_getchar()== 'd') break;
+        if (TIFR & 0x02)                        file://timer0 over flow
+        {
+               if (++timercount > 200) quit();        file://200*15ms = 3s
+            TIFR = TIFR|0x02;
+        }
+    }
+    file://每秒向PC机发送一个控制字符"C"，等待控制字〈soh〉
+    while(uart_getchar()!=XMODEM_SOH)        file://receive the start of Xmodem
+    {
+         if(TIFR & 0x02)                    file://timer0 over flow
+        {
+            if(++timercount > 67)                        file://wait about 1 second
+            {
+                uart_putchar(XMODEM_RECIEVING_WAIT_CHAR);    file://send a "C"
+                timercount=0;
+            }
+            TIFR=TIFR | 0x02;
+        }
+    }
+    file://开始接收数据块
+    do
+    {
+        if ((packNO == uart_waitchar()) && (packNO ==(~uart_waitchar())))
+        {    file://核对数据块编号正确
+            for(i=0;i<128;i++)                file://接收128个字节数据
+            {
+                data[bufferPoint]= uart_waitchar();
+                bufferPoint++;     
+            }
+            crc = (uart_waitchar()<<8);
+            crc += uart_waitchar();            file://接收2个字节的CRC效验字
+            if(calcrc(&data[bufferPoint-128],128)==crc)    file://CRC校验验证
+            {    file://正确接收128个字节数据
+                while(bufferPoint >= SPM_PAGESIZE)
+                {    file://正确接受256个字节的数据
+                    write_one_page();            file://收到256字节写入一页Flash中
+                    address += SPM_PAGESIZE;    file://Flash页加1
+                    bufferPoint = 0;
+                }     
+                uart_putchar(XMODEM_ACK);        file://正确收到一个数据块
+                packNO++;                        file://数据块编号加1
+            }
+            else
+            {
+                uart_putchar(XMODEM_NAK);        file://要求重发数据块
+            }
+        }
+        else
+        {
+            uart_putchar(XMODEM_NAK);                file://要求重发数据块
+        }
+    }while(uart_waitchar()!=XMODEM_EOT);                file://循环接收，直到全部发完
+    uart_putchar(XMODEM_ACK);                        file://通知PC机全部收到
+     
+    if(bufferPoint) write_one_page();                file://把剩余的数据写入Flash中
+    quit();                file://退出Bootloader程序，从0x0000处执行应用程序
+}
+
+      程序的主体部分采用C高级编写，结构性好，程序的相应部分都给出了比较详细的注释说明，读者非常容易读懂和理解。下面再对程序做进一步的说明。
+l    函数"void  write_one_page(void)" 实现了对ATmega128一个Flash页的完整编程处理。当程序从串口正确接收到256个字节后，（ATmega128一个Flash页为128个字），便调用该函数将其写入ATmega128一个Flash页中。函数先将一个指定的Flash页进行擦除；然后将数据填入Flash    的缓冲页中，最后将Flash    缓冲页的数据写入到该指定的Flash页中（详细技术细节见第二章相关内容的介绍）。
+l    一个Flash 页的擦除、写入，以及填充Flash缓冲页的函数采用内嵌AVR汇编完成，在ICCAVR中，寄存器R16、R17、R18、R19用于传递一个C函数的第1、2个参数（int类型）或第1个乘数（long类型），具体参考ICCAVR应用说明。
+l    函数"void quit(void)"的用途是退出Bootloader程序，从Flash的0x0000处执行用户的应用程序。在执行强行跳转指令"jmp 0x0000"前，对寄存器MCUCR的操作是将中断向量地址迁移回应用程序区的头部，因为在ICCAVR环境中编译Bootloader程序时，其自动把中断向量地址迁移到了Bootloader区的头部。为了保证能正确执行用户的程序，在跳转前需要把中断向量地址迁再移回应用程序区的头部。
+l    在这段Bootloader程序中使用的硬件资源为T/C0和USART0，用户在编写其应用程序时，应首先对这两个硬件资源相关的寄存器重新做初始化。
+l    Bootloader 程序占具并住留在Flash的最高1K字空间内，因此实际的应用程序空间为63K字（126K字节），所以用户编写的应用程序不得超出126K字节。同时应将ATmega128的熔丝位BLB12、BLB11的状态设置为"00"，禁止SPM和LPM指令对Bootloader区的读写操作，已确保 Bootloader程序不被改写和擦除。
+5．2．3 IAP的实现与应用
+1．    Bootloader程序的编译与下载
+     首先在ICCAVR中新建一个工程项目，并按照生成Bootloader程序代码的要求进行正确的设置。打开Project -> Options的Compiler Options设置选项窗口，见图5.1：
+l    在Device Configration栏中选定器件ATMega128；
+l    选定Use RAMPZ/ELPM项（ATMega128的Flash > 64K字节）；
+l    Program Type选定为Boot Loader；
+l    Boot Size选择1K Words。
+图5.1 在ICCAVR中编写Bootloader程序的编译属性设置
+正确设置好编译选项后输入C的源代码，然后编译生成.HEX的下载代码程序。
+在下载HEX文件前还要对ATmega128芯片的熔丝位进行正确的配置：
+l    配置M103C熔丝位，使芯片工作于ATmega128方式；
+l    配置BOOTSZ1和BOOTSZ0熔丝位，设定BOOTLOADER区的大小为1024个字，起始首地址为0xFC00；
+l    配置BOOTRST熔丝位，设定芯片上电起动从BOOTLOADER区的起始地址处开始，既每次RESET复位后从0xFC00处执行Bootloader程序；
+l    下载Bootloader程序的HEX文件；
+l    配置LB2和LB1熔丝位，加密程序；
+l    配置BLB12和BLB11熔丝位，对BOOTLOADER区进行安全锁定。
+特别注意的是，以上对芯片熔丝位的配置以及Bootloader程序的下载，需要由ISP、或JTAG、或并行方式实现，既要实现IAP，首先还需要使用一次非IAP的编程方式来建立IAP的应用环境。
+2．    IAP应用
+当你按照上面的方法将Bootloader程序下载完成后，就可以使用它来下载你的应用程序了。具体操作如下。
+l    编写你的应用程序，编译生成HEX文件；
+l    使用HEX2BIN.EXE转换程序，将HEX文件转换成BIN文件；
+l    使用普通的RS232电缆将PC机的串口与ATmega128的串口连接；
+l    打开WINDOWS中的超级终端软件，正确设置COM口的参数：38400，1，8，无，2，无（使用2位停止位提高通信可靠性）；
+l    ATmega128上电，在PC超级终端收到"Type 'd' download, Others run app."的Bootloader程序启动的提示详细；
+l    3 秒钟内在PC上按下"d"键，通知Bootloader程序转入接收数据并更新应用程序的处理。3秒钟内没有按"d"键，PC超级终端收到"OK"提示，Bootloader程序退出，自动转入执行芯片内原有的用户应用程序（如果有的话，否则再次启动Bootloader程序）；
+l    当PC超级终端收到"C"（一秒钟一个），说明Bootloader程序转入接收数据和更新应用程序的处理流程，正在等待PC下发数据；
+l    在PC超级终端上的工具栏中选择"传送->发送文件"，在发送文件窗口选择协议"Xmodem"，文件栏中选定要下载应用程序的BIN文件，单击发送按钮；
+l    此时出现文件发送窗口，显示文件发送的过程和进度，以及是否出错；
+l    当文件全部正确发送完成后，PC超级终端收到"OK"提示，Bootloader程序退出，自动转入执行刚更新的用户应用程序。
+      在ATmega128中烧入这样一个Bootloader程序，建立了IAP后，最基本的开发AVR的环境就简化成"PC+RS232电缆+目标板"。读者在掌握了Bootloader程序编写的原理后，可以编写自己的Bootloader程序，实现系统程序的自动远程网络更新等应用。
+      AVR的BOOTLOADER功能同其它一些芯片不同，它的BOOTLOADER程序没有固化（固定）在芯片内部（出厂为空），而是需要由用户设计实现（实际上，你第一次下载BOOTLOADER程序还必须使用其它的方式编程，如ISP、JTAG等），因此对一般的用户掌握起来有一定的困难，不如一些其它芯片的固化IAP使用方便。但对高手来讲，可以根据实际需要编写高级、高效、专用的BOOTLOADER程序，如从一个U盘读取数据，更新用户的应用程序；编写一个时间炸弹，或对用户的密码进行验证，10次不对则将系统程序销毁等等。简单意味着使用方便，但灵活和适应性差，而灵活性需要你具备更高的能力去驾驭它。可能会有一天，在单片机的系统上也出现了"病毒"程序，其原因就是使用了固化的BOOTLOADER程序。由于固化（固定）的程序采用规定公开（开放）的接口，那么用一个带"病毒"的应用程序更新原来的应用程序也就轻而易举了。 欢迎进入超前MCU技术论坛对 ATmega128单片机IAP功能的应用进行讨论! 

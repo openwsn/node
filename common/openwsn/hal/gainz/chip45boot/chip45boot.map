@@ -1,0 +1,389 @@
+Archive member included because of file (symbol)
+
+C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+                              obj/chip45boot.o (__do_copy_data)
+C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_clear_bss.o)
+                              obj/chip45boot.o (__do_clear_bss)
+c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wblk.1C1D1E.o)
+                              obj/chip45boot.o (__eeprom_write_block_1C1D1E)
+c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wb.1C1D1E.o)
+                              c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wblk.1C1D1E.o) (__eeprom_write_byte_1C1D1E)
+
+Allocating common symbols
+Common symbol       size              file
+
+eepromWriteBuffer   0x42              obj/chip45boot.o
+tmpBuffer           0x2               obj/chip45boot.o
+receiveBuffer       0x96              obj/chip45boot.o
+receiveBufferPointer
+                    0x2               obj/chip45boot.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00002000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+LOAD obj/chip45boot.o
+LOAD c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libm.a
+LOAD C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a
+LOAD c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a
+LOAD C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000      0x504
+ *(.vectors)
+ .vectors       0x00000000       0x26 c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+                0x00000026                __ctors_start = .
+ *(.ctors)
+                0x00000026                __ctors_end = .
+                0x00000026                __dtors_start = .
+ *(.dtors)
+                0x00000026                __dtors_end = .
+ *(.progmem.gcc*)
+ *(.progmem*)
+                0x00000026                . = ALIGN (0x2)
+ *(.init0)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000026        0xc c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+ *(.init3)
+ *(.init4)
+ .init4         0x00000032       0x16 C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+                0x00000032                __do_copy_data
+ .init4         0x00000048       0x10 C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_clear_bss.o)
+                0x00000048                __do_clear_bss
+ *(.init5)
+ *(.init6)
+ *(.init7)
+ *(.init8)
+ *(.init9)
+ .init9         0x00000058        0x2 c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+ *(.text)
+ .text          0x0000005a        0x2 c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+                0x0000005a                __vector_1
+                0x0000005a                __vector_12
+                0x0000005a                __bad_interrupt
+                0x0000005a                __vector_6
+                0x0000005a                __vector_3
+                0x0000005a                __vector_13
+                0x0000005a                __vector_17
+                0x0000005a                __vector_7
+                0x0000005a                __vector_5
+                0x0000005a                __vector_4
+                0x0000005a                __vector_9
+                0x0000005a                __vector_2
+                0x0000005a                __vector_15
+                0x0000005a                __vector_8
+                0x0000005a                __vector_14
+                0x0000005a                __vector_10
+                0x0000005a                __vector_16
+                0x0000005a                __vector_18
+ .text          0x0000005c      0x486 obj/chip45boot.o
+                0x000002b8                uartPutHex
+                0x000000a6                uartPutChar
+                0x0000005c                __vector_11
+                0x000000bc                uartGetChar
+                0x000003a4                main
+                0x000000d6                hexByteToInt
+                0x000000c6                hexCharToInt
+                0x000000fe                parseSrecBuffer
+                0x000002f4                writeBufferToFlash
+                0x000004e2                . = ALIGN (0x2)
+ *(.text.*)
+ .text.eeprom   0x000004e2        0xa c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wblk.1C1D1E.o)
+                0x000004e2                __eeprom_write_block_1C1D1E
+ .text.eeprom   0x000004ec       0x18 c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wb.1C1D1E.o)
+                0x000004ec                __eeprom_write_byte_1C1D1E
+                0x00000504                . = ALIGN (0x2)
+ *(.fini9)
+ *(.fini8)
+ *(.fini7)
+ *(.fini6)
+ *(.fini5)
+ *(.fini4)
+ *(.fini3)
+ *(.fini2)
+ *(.fini1)
+ *(.fini0)
+                0x00000504                _etext = .
+
+.data           0x00800060       0x1e load address 0x00000504
+                0x00800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800060       0x1e obj/chip45boot.o
+ *(.gnu.linkonce.d*)
+                0x0080007e                . = ALIGN (0x2)
+                0x0080007e                _edata = .
+                0x0080007e                PROVIDE (__data_end, .)
+
+.bss            0x0080007e       0xed
+                0x0080007e                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080007e       0x11 obj/chip45boot.o
+                0x0080008c                selectFlashProgramming
+                0x0080007f                srecEndOfFile
+                0x00800085                srecAddress
+                0x0080008d                startApplication
+                0x00800080                flashPageSizeCounter
+                0x00800081                writeBaseAddress
+                0x0080008b                receiveBufferFull
+                0x00800089                bootloaderEnableFlag
+                0x0080008a                bufferOverflow
+                0x0080007e                selectEepromProgramming
+ *(COMMON)
+ COMMON         0x0080008f       0xdc obj/chip45boot.o
+                0x0080008f                eepromWriteBuffer
+                0x008000d1                tmpBuffer
+                0x008000d3                receiveBuffer
+                0x00800169                receiveBufferPointer
+                0x0080016b                PROVIDE (__bss_end, .)
+                0x00000504                __data_load_start = LOADADDR (.data)
+                0x00000522                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x0080016b        0x0
+                0x0080016b                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x0080016b                PROVIDE (__noinit_end, .)
+                0x0080016b                _end = .
+                0x0080016b                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.stab           0x00000000      0x36c
+ *(.stab)
+ .stab          0x00000000      0x36c c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+
+.stabstr        0x00000000       0x84
+ *(.stabstr)
+ .stabstr       0x00000000       0x84 c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0x14
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x14 obj/chip45boot.o
+
+.debug_pubnames
+                0x00000000      0x1d4
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000      0x1d4 obj/chip45boot.o
+
+.debug_info     0x00000000      0x4f2
+ *(.debug_info)
+ .debug_info    0x00000000      0x4f2 obj/chip45boot.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0x1d7
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x1d7 obj/chip45boot.o
+
+.debug_line     0x00000000      0x4e8
+ *(.debug_line)
+ .debug_line    0x00000000      0x4e8 obj/chip45boot.o
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str      0x00000000      0x2c3
+ *(.debug_str)
+ .debug_str     0x00000000      0x2c3 obj/chip45boot.o
+                                0x31b (size before relaxing)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(chip45boot.elf elf32-avr)
+
+Cross Reference Table
+
+Symbol                                            File
+__bad_interrupt                                   c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__bss_end                                         C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_clear_bss.o)
+__bss_start                                       C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_clear_bss.o)
+__data_end                                        C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+__data_load_start                                 C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+__data_start                                      C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+__do_clear_bss                                    C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_clear_bss.o)
+                                                  obj/chip45boot.o
+__do_copy_data                                    C:/Programme/WinAVR/lib/gcc/avr/3.4.6/avr4\libgcc.a(_copy_data.o)
+                                                  obj/chip45boot.o
+__eeprom_write_block_1C1D1E                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wblk.1C1D1E.o)
+                                                  obj/chip45boot.o
+__eeprom_write_byte_1C1D1E                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wb.1C1D1E.o)
+                                                  c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4\libc.a(ee_wblk.1C1D1E.o)
+__heap_end                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__init                                            c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__stack                                           c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+                                                  obj/chip45boot.o
+__vector_1                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_10                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_11                                       obj/chip45boot.o
+                                                  c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_12                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_13                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_14                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_15                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_16                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_17                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_18                                       c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_2                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_3                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_4                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_5                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_6                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_7                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_8                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_9                                        c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vector_default                                  c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+__vectors                                         c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+bootloaderEnableFlag                              obj/chip45boot.o
+bufferOverflow                                    obj/chip45boot.o
+eepromWriteBuffer                                 obj/chip45boot.o
+flashPageSizeCounter                              obj/chip45boot.o
+hexByteToInt                                      obj/chip45boot.o
+hexCharToInt                                      obj/chip45boot.o
+main                                              obj/chip45boot.o
+                                                  c:/Programme/WinAVR/bin/../lib/gcc/avr/3.4.6/../../../../avr/lib/avr4/crtm8.o
+parseSrecBuffer                                   obj/chip45boot.o
+receiveBuffer                                     obj/chip45boot.o
+receiveBufferFull                                 obj/chip45boot.o
+receiveBufferPointer                              obj/chip45boot.o
+selectEepromProgramming                           obj/chip45boot.o
+selectFlashProgramming                            obj/chip45boot.o
+srecAddress                                       obj/chip45boot.o
+srecEndOfFile                                     obj/chip45boot.o
+startApplication                                  obj/chip45boot.o
+tmpBuffer                                         obj/chip45boot.o
+uartGetChar                                       obj/chip45boot.o
+uartPutChar                                       obj/chip45boot.o
+uartPutHex                                        obj/chip45boot.o
+writeBaseAddress                                  obj/chip45boot.o
+writeBufferToFlash                                obj/chip45boot.o

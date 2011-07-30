@@ -1,0 +1,7 @@
+testing: common/svc/svc_timer
+
+该程序测试vtimer，
+vtimer和timeradapter在功能和使用方法上类似
+但是vtimer数量要远多于timeradapter，不受硬件资源限制
+
+

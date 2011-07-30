@@ -1,0 +1,2 @@
+msp430 5xx is an ultra low power mcu 
+160uA / MHz

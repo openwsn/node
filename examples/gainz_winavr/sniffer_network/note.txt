@@ -1,0 +1,34 @@
+Sniffer Network
+=================================================================
+
+A lot of sniffer node can be connected through an wired RS485 network. Each node is a single sniffer device which can listen the frames transmitted near itself, and respond the REQUEST command from the data collection computer and send RESPONSE back.
+
+The logic is:
+
+define nio_rxbuf;
+define nio_rxque;
+define sio_rxbuf;
+
+while (1)
+{
+  len = cc2420_recv( nio_rxbuf );
+  if (len > 0)
+  {
+    push the frame inside nio_rxbuf into nio_rxque;
+  }
+  
+  len = uart_recv( sio_rxbuf );  
+  if (len > 0)
+  {
+    if the address of the frame inside sio_rxbuf is the current node
+      if the frame inside sio_rxbuf is an DATA_REQUEST
+        encapsulate the data inside nio_rxque as an serial communication frame and send it out
+      endif
+    endif
+  }
+}
+
+
+=================================================================
+released
+tested by Jiang RiDong

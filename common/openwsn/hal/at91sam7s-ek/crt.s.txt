@@ -1,0 +1,27 @@
+This assembly language startup file includes parts of the standard Atmel startup file with a few changes by 
+the author to conform to the GNU assembler.  
+ 
+The interrupt vector table  is implemented as branch  instructions with one interesting difference; the FIQ 
+interrupt service routine is completely implemented right after the vector table. The designers of the ARM 
+microprocessor purposely placed the FIQ vector last in the vector table for this very purpose. This is the 
+most efficient implementation of a FIQ  interrupt. The AT91F_Fiq_Handler  routine, coded  completely in 
+assembler, turns on LED3 and increments a global variable. 
+ 
+The AT91F_Irq_Handler routine is derived from Atmel documentation and supports nested IRQ interrupts. 
+For a detailed technical discussion of  this topic, consult pages 336 ¨C 342 in the book ¡°ARM System 
+Developer¡¯s Guide¡± by Andrew Sloss et. al. Another great advantage of this technique is that the assembly 
+language nested interrupt handler calls a standard C Language function to do most of the work servicing 
+the IRQ interrupt. You don¡¯t have to deal with the  GNU C  extensions that support  ARM interrupt 
+processing. 
+ 
+The start-up  code called by the RESET vector sets up 128 byte stacks for the IRQ and FIQ interrupt 
+modes and finally places the CPU in ¡°System¡± mode with the FIQ and IRQ interrupts disabled. System 
+mode operation allows the main( ) program to enable the IRQ and FIQ interrupts after all peripherals have 
+been properly initialized. 
+ 
+The start-up code also initializes all variables that  require it and clears all uninitialized variables to zero 
+before branching to the C Language main( ) routine. 
+ 
+The author would like to thank Eric Pasquier for noting deficiencies in the Revision B version of the IRQ 
+handler. As per Eric¡¯s suggestions, the standard Atmel IRQ code is used in this revision. 
+ 

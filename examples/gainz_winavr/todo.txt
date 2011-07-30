@@ -1,0 +1,54 @@
+re-organize examples for the following networks
+
+- pointer to pointer 
+  - based on transceiver
+  - based on mac
+  - wlsmodem
+  - wlscable
+
+for star network
+
+starnode
+starsink
+stargatw
+starmodem
+
+
+for flood networks
+flood_node
+flood_sink
+flood_gateway
+
+for mesh networks
+
+mesh_node
+mesh_router
+mesh_sink
+mesh_gateway
+
+for datatree data collection protocol
+
+dtp_node
+dtp_gateway
+
+for gradient routing
+
+gradient_node
+gradient_sink/gateway
+
+
+for general sensor
+
+wlssensor：this is an important project demonstrate how to develop an wireless sensor
+wlssink (only for test)
+wlsgatw (for real applications)
+
+eliminate the following:
+因为它们的层次不清楚
+
+fullnode
+gatwsink(contains wlssensor)
+sinknode
+sensornode
+
+

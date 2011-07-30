@@ -1,0 +1,34 @@
+one2many demonstration/test program
+===================================================================
+
+Q: What's one2many?
+R: 
+Assuming there're 5 nodes, one is the gateway node G, and the others are sensor nodes S. Now G will periodically sending DATA_REQUEST frames to all the sensor nodes. And the sensor nodes should start measuring after receiving the DATA_REQUEST frame. The DATA_RESPONSE frame will be replied to the gateway node G. and finally, G output these frames to the PC.
+
+
+In our one2many program:
+
+- there's 1 G node, and serveral S nodes.
+
+- G node is controlled by TiTimer(in svc_timer module) and sending DATA_REQUEST frames periodically. The period is about 3 seconds.
+
+- S nodes should start measuring the luminance of the environment and send the results back to the G nodes as a DATA_RESPONSE frame. 
+attention in this process, the S nodes will encounter severe frame conflication. We should improve our MAC protocol to help transmit the measured data back to G.
+=> we need random delay in aloha MAC protocol instead of fix-time delay!
+
+- the G nodes output received data and the source node id information to the PC console
+
+
+
+
+
+22:19 2009-11-16
+zhangwei => yan shixing
+sensor node和gateway node应该写两成两个project,且这两个project共享svc_one2many这一个模块.
+因此,svc_one2many在设计上要考虑方便wireless sensor node和gateway node两种情形的开发,不应用宏或者type来进行区分.
+
+请再创建两个工程wlssensor和gateway,或者把one2many作为gateway对待.
+
+你可尝试先写wlssensor,这个只要循环的接收REQUEST然后启动measurement,最后发回RESPONSE即可.
+gateway因为涉及到延迟和循环重新发送,略微复杂.
+one2many现在不要求严格的周期性收集数据,所以可以不用timer,而用hal_delay来实现延迟应该更方便.

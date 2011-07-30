@@ -1,0 +1,2757 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+<title>Static Call Graph - [D:\dev\openwsn\source\node\opennode2010-keil\experiment\hal_GPIO_interrupt\hal_gpio.axf]</title></head>
+<body><HR>
+<H1>Static Call Graph for image D:\dev\openwsn\source\node\opennode2010-keil\experiment\hal_GPIO_interrupt\hal_gpio.axf</H1><HR>
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 4.1 [Build 481]: Last Updated: Tue Jul 19 09:48:30 2011
+<BR><P>
+<H3>Maximum Stack Usage =        152 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+Call chain for Maximum Stack Depth:</H3>
+__rt_entry_main &rArr; main &rArr; halRfSetShortAddr &rArr; halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+<P>
+<H3>
+Functions with no stack information
+</H3><UL>
+ <LI><a href="#[179]">__user_initial_stackheap</a>
+</UL>
+</UL>
+<P>
+<H3>
+Mutually Recursive functions
+</H3> <LI><a href="#[65]">GPIO_SetBits</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[67]">hal_assert_report</a><BR>
+ <LI><a href="#[64]">GPIO_ResetBits</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[67]">hal_assert_report</a><BR>
+ <LI><a href="#[3]">NMI_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[3]">NMI_Handler</a><BR>
+ <LI><a href="#[4]">HardFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[4]">HardFault_Handler</a><BR>
+ <LI><a href="#[5]">MemManage_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[5]">MemManage_Handler</a><BR>
+ <LI><a href="#[6]">BusFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[6]">BusFault_Handler</a><BR>
+ <LI><a href="#[7]">UsageFault_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[7]">UsageFault_Handler</a><BR>
+ <LI><a href="#[8]">SVC_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[8]">SVC_Handler</a><BR>
+ <LI><a href="#[9]">DebugMon_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[9]">DebugMon_Handler</a><BR>
+ <LI><a href="#[a]">PendSV_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[a]">PendSV_Handler</a><BR>
+ <LI><a href="#[b]">SysTick_Handler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[b]">SysTick_Handler</a><BR>
+ <LI><a href="#[1e]">ADC1_2_IRQHandler</a>&nbsp;&nbsp;&nbsp;&rArr;&nbsp;&nbsp;&nbsp;<a href="#[1e]">ADC1_2_IRQHandler</a><BR>
+</UL>
+<P>
+<H3>
+Function Pointers
+</H3><UL>
+ <LI><a href="#[2]">Reset_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3]">NMI_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[4]">HardFault_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[5]">MemManage_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[6]">BusFault_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[7]">UsageFault_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[8]">SVC_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[9]">DebugMon_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[a]">PendSV_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[b]">SysTick_Handler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[c]">WWDG_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[d]">PVD_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[e]">TAMPER_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[f]">RTC_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[10]">FLASH_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[11]">RCC_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[12]">EXTI0_IRQHandler</a> from hal_gpio.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[13]">EXTI1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[14]">EXTI2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[15]">EXTI3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[16]">EXTI4_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[17]">DMA1_Channel1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[18]">DMA1_Channel2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[19]">DMA1_Channel3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1a]">DMA1_Channel4_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1b]">DMA1_Channel5_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1c]">DMA1_Channel6_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1d]">DMA1_Channel7_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1e]">ADC1_2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[1f]">USB_HP_CAN1_TX_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[20]">USB_LP_CAN1_RX0_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[21]">CAN1_RX1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[22]">CAN1_SCE_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[23]">EXTI9_5_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[24]">TIM1_BRK_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[25]">TIM1_UP_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[26]">TIM1_TRG_COM_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[27]">TIM1_CC_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[28]">TIM2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[29]">TIM3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2a]">TIM4_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2b]">I2C1_EV_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2c]">I2C1_ER_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2d]">I2C2_EV_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2e]">I2C2_ER_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[2f]">SPI1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[30]">SPI2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[31]">USART1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[32]">USART2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[33]">USART3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[34]">EXTI15_10_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[35]">RTCAlarm_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[36]">USBWakeUp_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[37]">TIM8_BRK_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[38]">TIM8_UP_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[39]">TIM8_TRG_COM_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3a]">TIM8_CC_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3b]">ADC3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3c]">FSMC_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3d]">SDIO_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3e]">TIM5_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[3f]">SPI3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[40]">UART4_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[41]">UART5_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[42]">TIM6_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[43]">TIM7_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[44]">DMA2_Channel1_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[45]">DMA2_Channel2_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[46]">DMA2_Channel3_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[47]">DMA2_Channel4_5_IRQHandler</a> from startup_stm32f10x_hd.o(.text) referenced from startup_stm32f10x_hd.o(RESET)
+ <LI><a href="#[48]">SystemInit</a> from system_stm32f10x.o(.text) referenced from startup_stm32f10x_hd.o(.text)
+ <LI><a href="#[4a]">__main</a> from __main.o(!!!main) referenced from startup_stm32f10x_hd.o(.text)
+</UL>
+<P>
+<H3>
+Global Symbols
+</H3>
+<P><STRONG><a name="[4a]"></a>__main</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, __main.o(!!!main))
+<BR><BR>[Calls]<UL><LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload
+<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
+</UL>
+
+<P><STRONG><a name="[4b]"></a>__scatterload</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter))
+<BR><BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
+</UL>
+
+<P><STRONG><a name="[4d]"></a>__scatterload_rt2</STRONG> (Thumb, 44 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry
+</UL>
+
+<P><STRONG><a name="[17c]"></a>__scatterload_rt2_thumb_only</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
+
+<P><STRONG><a name="[17d]"></a>__scatterload_null</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __scatter.o(!!!scatter), UNUSED)
+
+<P><STRONG><a name="[4e]"></a>__scatterload_copy</STRONG> (Thumb, 26 bytes, Stack size unknown bytes, __scatter_copy.o(!!handler_copy), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_copy
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_copy
+</UL>
+
+<P><STRONG><a name="[17e]"></a>__scatterload_zeroinit</STRONG> (Thumb, 28 bytes, Stack size unknown bytes, __scatter_zi.o(!!handler_zi), UNUSED)
+
+<P><STRONG><a name="[4f]"></a>__rt_lib_init</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit.o(.ARM.Collect$$libinit$$00000000))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
+<LI>Call Chain = __rt_lib_init &rArr; _fp_init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_li
+</UL>
+
+<P><STRONG><a name="[17f]"></a>__rt_lib_init_alloca_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002A))
+
+<P><STRONG><a name="[180]"></a>__rt_lib_init_argv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000028))
+
+<P><STRONG><a name="[181]"></a>__rt_lib_init_atexit_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000017))
+
+<P><STRONG><a name="[182]"></a>__rt_lib_init_clock_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001D))
+
+<P><STRONG><a name="[183]"></a>__rt_lib_init_cpp_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002E))
+
+<P><STRONG><a name="[184]"></a>__rt_lib_init_exceptions_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002C))
+
+<P><STRONG><a name="[185]"></a>__rt_lib_init_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001B))
+
+<P><STRONG><a name="[186]"></a>__rt_lib_init_getenv_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000001F))
+
+<P><STRONG><a name="[187]"></a>__rt_lib_init_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000006))
+
+<P><STRONG><a name="[188]"></a>__rt_lib_init_lc_collate_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000D))
+
+<P><STRONG><a name="[189]"></a>__rt_lib_init_lc_ctype_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000F))
+
+<P><STRONG><a name="[18a]"></a>__rt_lib_init_lc_monetary_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000011))
+
+<P><STRONG><a name="[18b]"></a>__rt_lib_init_lc_numeric_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000013))
+
+<P><STRONG><a name="[18c]"></a>__rt_lib_init_lc_time_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000015))
+
+<P><STRONG><a name="[18d]"></a>__rt_lib_init_rand_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000000A))
+
+<P><STRONG><a name="[18e]"></a>__rt_lib_init_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$0000002F))
+
+<P><STRONG><a name="[18f]"></a>__rt_lib_init_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000019))
+
+<P><STRONG><a name="[190]"></a>__rt_lib_init_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000021))
+
+<P><STRONG><a name="[191]"></a>__rt_lib_init_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libinit2.o(.ARM.Collect$$libinit$$00000008))
+
+<P><STRONG><a name="[58]"></a>__rt_lib_shutdown</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown.o(.ARM.Collect$$libshutdown$$00000000))
+<BR><BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_ls
+</UL>
+
+<P><STRONG><a name="[192]"></a>__rt_lib_shutdown_fp_trap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000006))
+
+<P><STRONG><a name="[193]"></a>__rt_lib_shutdown_heap_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000E))
+
+<P><STRONG><a name="[194]"></a>__rt_lib_shutdown_return</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000F))
+
+<P><STRONG><a name="[195]"></a>__rt_lib_shutdown_signal_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000009))
+
+<P><STRONG><a name="[196]"></a>__rt_lib_shutdown_stdio_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$00000003))
+
+<P><STRONG><a name="[197]"></a>__rt_lib_shutdown_user_alloc_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, libshutdown2.o(.ARM.Collect$$libshutdown$$0000000B))
+
+<P><STRONG><a name="[4c]"></a>__rt_entry</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry.o(.ARM.Collect$$rtentry$$00000000))
+<BR><BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__scatterload_rt2
+<LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__main
+</UL>
+
+<P><STRONG><a name="[198]"></a>__rt_entry_presh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry2.o(.ARM.Collect$$rtentry$$00000002))
+
+<P><STRONG><a name="[51]"></a>__rt_entry_sh</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry4.o(.ARM.Collect$$rtentry$$00000004))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
+<LI>Call Chain = __rt_entry_sh &rArr; __user_setup_stackheap
+</UL>
+<BR>[Calls]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
+</UL>
+
+<P><STRONG><a name="[53]"></a>__rt_entry_li</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry2.o(.ARM.Collect$$rtentry$$0000000A))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
+<LI>Call Chain = __rt_entry_li &rArr; __rt_lib_init &rArr; _fp_init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_init
+</UL>
+
+<P><STRONG><a name="[199]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry2.o(.ARM.Collect$$rtentry$$00000009))
+
+<P><STRONG><a name="[54]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152 + Unknown Stack Size
+<LI>Call Chain = __rt_entry_main &rArr; main &rArr; halRfSetShortAddr &rArr; halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
+</UL>
+
+<P><STRONG><a name="[19a]"></a>__rt_entry_postli_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtentry2.o(.ARM.Collect$$rtentry$$0000000C))
+
+<P><STRONG><a name="[17a]"></a>__rt_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit.o(.ARM.Collect$$rtexit$$00000000))
+<BR><BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exit
+</UL>
+
+<P><STRONG><a name="[57]"></a>__rt_exit_ls</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000003))
+<BR><BR>[Calls]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_shutdown
+</UL>
+
+<P><STRONG><a name="[19b]"></a>__rt_exit_prels_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000002))
+
+<P><STRONG><a name="[59]"></a>__rt_exit_exit</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rtexit2.o(.ARM.Collect$$rtexit$$00000004))
+<BR><BR>[Calls]<UL><LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_sys_exit
+</UL>
+
+<P><STRONG><a name="[5b]"></a>RCC_Configuration</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = RCC_Configuration &rArr; RCC_PCLK2Config &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK2Config
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK1Config
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[6c]"></a>GPIO_Interrupt_Ini</STRONG> (Thumb, 92 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = GPIO_Interrupt_Ini &rArr; GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_PriorityGroupConfig
+<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
+<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearITPendingBit
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[55]"></a>main</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = main &rArr; halRfSetShortAddr &rArr; halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_open
+<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetShortAddr
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetPower
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetPanId
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetChannel
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfInit
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRXON
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRFOFF
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_OPEN
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_Configuration
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GPIO_Configuration
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_GPIO_Configuration
+</UL>
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
+</UL>
+
+<P><STRONG><a name="[12]"></a>EXTI0_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = EXTI0_IRQHandler &rArr; CC2520_SFLUSHRX &rArr; CC2520_INS_STROBE &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_toggle
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearITPendingBit
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SFLUSHRX
+<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Send
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2]"></a>Reset_Handler</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NMI_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NMI_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[4]"></a>HardFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HardFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[5]"></a>MemManage_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MemManage_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[6]"></a>BusFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[7]"></a>UsageFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UsageFault_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[8]"></a>SVC_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SVC_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SVC_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[9]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DebugMon_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DebugMon_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[a]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[b]"></a>SysTick_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1e]"></a>ADC1_2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_2_IRQHandler
+</UL>
+<BR>[Called By]<UL><LI><a href="#[1e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_2_IRQHandler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3b]"></a>ADC3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[21]"></a>CAN1_RX1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[22]"></a>CAN1_SCE_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[17]"></a>DMA1_Channel1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[18]"></a>DMA1_Channel2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[19]"></a>DMA1_Channel3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1a]"></a>DMA1_Channel4_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1b]"></a>DMA1_Channel5_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1c]"></a>DMA1_Channel6_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1d]"></a>DMA1_Channel7_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[44]"></a>DMA2_Channel1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[45]"></a>DMA2_Channel2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[46]"></a>DMA2_Channel3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[47]"></a>DMA2_Channel4_5_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[34]"></a>EXTI15_10_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[13]"></a>EXTI1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[14]"></a>EXTI2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[15]"></a>EXTI3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[16]"></a>EXTI4_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[23]"></a>EXTI9_5_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[10]"></a>FLASH_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3c]"></a>FSMC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2c]"></a>I2C1_ER_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2b]"></a>I2C1_EV_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2e]"></a>I2C2_ER_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2d]"></a>I2C2_EV_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[d]"></a>PVD_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[11]"></a>RCC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[35]"></a>RTCAlarm_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[f]"></a>RTC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3d]"></a>SDIO_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2f]"></a>SPI1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[30]"></a>SPI2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3f]"></a>SPI3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[e]"></a>TAMPER_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[24]"></a>TIM1_BRK_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[27]"></a>TIM1_CC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[26]"></a>TIM1_TRG_COM_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[25]"></a>TIM1_UP_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[28]"></a>TIM2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[29]"></a>TIM3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[2a]"></a>TIM4_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3e]"></a>TIM5_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[42]"></a>TIM6_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[43]"></a>TIM7_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[37]"></a>TIM8_BRK_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[3a]"></a>TIM8_CC_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[39]"></a>TIM8_TRG_COM_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[38]"></a>TIM8_UP_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[40]"></a>UART4_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[41]"></a>UART5_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[31]"></a>USART1_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[32]"></a>USART2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[33]"></a>USART3_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[36]"></a>USBWakeUp_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[1f]"></a>USB_HP_CAN1_TX_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[20]"></a>USB_LP_CAN1_RX0_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[c]"></a>WWDG_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f10x_hd.o(.text))
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(RESET)
+</UL>
+<P><STRONG><a name="[179]"></a>__user_initial_stackheap</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, startup_stm32f10x_hd.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
+</UL>
+
+<P><STRONG><a name="[48]"></a>SystemInit</STRONG> (Thumb, 78 bytes, Stack size 8 bytes, system_stm32f10x.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = SystemInit &rArr; SetSysClock
+</UL>
+<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_hd.o(.text)
+</UL>
+<P><STRONG><a name="[19c]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, system_stm32f10x.o(.text), UNUSED)
+
+<P><STRONG><a name="[6d]"></a>NVIC_PriorityGroupConfig</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, misc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = NVIC_PriorityGroupConfig &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+</UL>
+
+<P><STRONG><a name="[6e]"></a>NVIC_Init</STRONG> (Thumb, 194 bytes, Stack size 24 bytes, misc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = NVIC_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+</UL>
+
+<P><STRONG><a name="[84]"></a>NVIC_SetVectorTable</STRONG> (Thumb, 70 bytes, Stack size 16 bytes, misc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[85]"></a>NVIC_SystemLPConfig</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, misc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[86]"></a>SysTick_CLKSourceConfig</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, misc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[19d]"></a>EXTI_DeInit</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, stm32f10x_exti.o(.text), UNUSED)
+
+<P><STRONG><a name="[71]"></a>EXTI_Init</STRONG> (Thumb, 278 bytes, Stack size 16 bytes, stm32f10x_exti.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = EXTI_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+<LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_NVIC_Configuration
+</UL>
+
+<P><STRONG><a name="[19e]"></a>EXTI_StructInit</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, stm32f10x_exti.o(.text), UNUSED)
+
+<P><STRONG><a name="[87]"></a>EXTI_GenerateSWInterrupt</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, stm32f10x_exti.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[88]"></a>EXTI_GetFlagStatus</STRONG> (Thumb, 144 bytes, Stack size 16 bytes, stm32f10x_exti.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[89]"></a>EXTI_ClearFlag</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_exti.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[8a]"></a>EXTI_GetITStatus</STRONG> (Thumb, 158 bytes, Stack size 16 bytes, stm32f10x_exti.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[6f]"></a>EXTI_ClearITPendingBit</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_exti.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = EXTI_ClearITPendingBit &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+</UL>
+
+<P><STRONG><a name="[8b]"></a>FLASH_SetLatency</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[8c]"></a>FLASH_HalfCycleAccessCmd</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[8d]"></a>FLASH_PrefetchBufferCmd</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[19f]"></a>FLASH_Unlock</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[1a0]"></a>FLASH_UnlockBank1</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[1a1]"></a>FLASH_Lock</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[1a2]"></a>FLASH_LockBank1</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[8f]"></a>FLASH_GetBank1Status</STRONG> (Thumb, 50 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastBank1Operation
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+</UL>
+
+<P><STRONG><a name="[8e]"></a>FLASH_WaitForLastOperation</STRONG> (Thumb, 38 bytes, Stack size 4 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_GetBank1Status
+</UL>
+<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_UserOptionByteConfig
+<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ReadOutProtection
+<LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EnableWriteProtection
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramOptionByteData
+<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramHalfWord
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramWord
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseOptionBytes
+<LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseAllPages
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ErasePage
+</UL>
+
+<P><STRONG><a name="[90]"></a>FLASH_ErasePage</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[91]"></a>FLASH_EraseAllPages</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+</UL>
+
+<P><STRONG><a name="[92]"></a>FLASH_WaitForLastBank1Operation</STRONG> (Thumb, 38 bytes, Stack size 4 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_GetBank1Status
+</UL>
+<BR>[Called By]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseAllBank1Pages
+</UL>
+
+<P><STRONG><a name="[93]"></a>FLASH_EraseAllBank1Pages</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastBank1Operation
+</UL>
+
+<P><STRONG><a name="[95]"></a>FLASH_GetReadOutProtectionStatus</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EraseOptionBytes
+</UL>
+
+<P><STRONG><a name="[94]"></a>FLASH_EraseOptionBytes</STRONG> (Thumb, 152 bytes, Stack size 12 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_GetReadOutProtectionStatus
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+</UL>
+
+<P><STRONG><a name="[96]"></a>FLASH_ProgramWord</STRONG> (Thumb, 132 bytes, Stack size 24 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[97]"></a>FLASH_ProgramHalfWord</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[98]"></a>FLASH_ProgramOptionByteData</STRONG> (Thumb, 132 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[99]"></a>FLASH_EnableWriteProtection</STRONG> (Thumb, 200 bytes, Stack size 32 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[9a]"></a>FLASH_ReadOutProtection</STRONG> (Thumb, 180 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[9b]"></a>FLASH_UserOptionByteConfig</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[1a3]"></a>FLASH_GetUserOptionByte</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[1a4]"></a>FLASH_GetWriteProtectionOptionByte</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[1a5]"></a>FLASH_GetPrefetchBufferStatus</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[9c]"></a>FLASH_ITConfig</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[9d]"></a>FLASH_GetFlagStatus</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[9e]"></a>FLASH_ClearFlag</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, stm32f10x_flash.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[1a6]"></a>FLASH_GetStatus</STRONG> (Thumb, 50 bytes, Stack size 0 bytes, stm32f10x_flash.o(.text), UNUSED)
+
+<P><STRONG><a name="[9f]"></a>GPIO_DeInit</STRONG> (Thumb, 230 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphResetCmd
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[a1]"></a>GPIO_AFIODeInit</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphResetCmd
+</UL>
+
+<P><STRONG><a name="[61]"></a>GPIO_Init</STRONG> (Thumb, 406 bytes, Stack size 40 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_open
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GPIO_Configuration
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_GPIO_Configuration
+<LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GPIO_Configuration
+</UL>
+
+<P><STRONG><a name="[1a7]"></a>GPIO_StructInit</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, stm32f10x_gpio.o(.text), UNUSED)
+
+<P><STRONG><a name="[66]"></a>GPIO_ReadInputDataBit</STRONG> (Thumb, 182 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = GPIO_ReadInputDataBit &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+</UL>
+
+<P><STRONG><a name="[a2]"></a>GPIO_ReadInputData</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[a3]"></a>GPIO_ReadOutputDataBit</STRONG> (Thumb, 218 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = GPIO_ReadOutputDataBit &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_toggle
+</UL>
+
+<P><STRONG><a name="[a4]"></a>GPIO_ReadOutputData</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[65]"></a>GPIO_SetBits</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16 + In Cycle
+<LI>Call Chain = GPIO_SetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+</UL>
+
+<P><STRONG><a name="[64]"></a>GPIO_ResetBits</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16 + In Cycle
+<LI>Call Chain = GPIO_ResetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_on
+</UL>
+
+<P><STRONG><a name="[a5]"></a>GPIO_WriteBit</STRONG> (Thumb, 200 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = GPIO_WriteBit &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_toggle
+</UL>
+
+<P><STRONG><a name="[a6]"></a>GPIO_Write</STRONG> (Thumb, 70 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[a7]"></a>GPIO_PinLockConfig</STRONG> (Thumb, 108 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[a8]"></a>GPIO_EventOutputConfig</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[a9]"></a>GPIO_EventOutputCmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[aa]"></a>GPIO_PinRemapConfig</STRONG> (Thumb, 536 bytes, Stack size 32 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[70]"></a>GPIO_EXTILineConfig</STRONG> (Thumb, 194 bytes, Stack size 16 bytes, stm32f10x_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = GPIO_EXTILineConfig &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Interrupt_Ini
+<LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_NVIC_Configuration
+</UL>
+
+<P><STRONG><a name="[ab]"></a>GPIO_ETH_MediaInterfaceConfig</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_gpio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[15f]"></a>RCC_DeInit</STRONG> (Thumb, 64 bytes, Stack size 0 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[ac]"></a>RCC_HSEConfig</STRONG> (Thumb, 106 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[ad]"></a>RCC_GetFlagStatus</STRONG> (Thumb, 124 bytes, Stack size 24 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_WaitForHSEStartUp
+</UL>
+
+<P><STRONG><a name="[ae]"></a>RCC_WaitForHSEStartUp</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetFlagStatus
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[af]"></a>RCC_AdjustHSICalibrationValue</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b0]"></a>RCC_HSICmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b1]"></a>RCC_PLLConfig</STRONG> (Thumb, 164 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[b2]"></a>RCC_PLLCmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[b3]"></a>RCC_SYSCLKConfig</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[160]"></a>RCC_GetSYSCLKSource</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[b4]"></a>RCC_HCLKConfig</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[5d]"></a>RCC_PCLK1Config</STRONG> (Thumb, 64 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = RCC_PCLK1Config &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_Configuration
+<LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[5c]"></a>RCC_PCLK2Config</STRONG> (Thumb, 66 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = RCC_PCLK2Config &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_Configuration
+<LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[b5]"></a>RCC_ITConfig</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b6]"></a>RCC_USBCLKConfig</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b7]"></a>RCC_ADCCLKConfig</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b8]"></a>RCC_LSEConfig</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[b9]"></a>RCC_LSICmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ba]"></a>RCC_RTCCLKConfig</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[bb]"></a>RCC_RTCCLKCmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c6]"></a>RCC_GetClocksFreq</STRONG> (Thumb, 192 bytes, Stack size 12 bytes, stm32f10x_rcc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = RCC_GetClocksFreq
+</UL>
+<BR>[Called By]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
+<LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2S_Init
+</UL>
+
+<P><STRONG><a name="[bc]"></a>RCC_AHBPeriphClockCmd</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[5f]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = RCC_APB2PeriphClockCmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_open
+<LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_Configuration
+<LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[5e]"></a>RCC_APB1PeriphClockCmd</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = RCC_APB1PeriphClockCmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_Configuration
+<LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[a0]"></a>RCC_APB2PeriphResetCmd</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_AFIODeInit
+<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_DeInit
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_DeInit
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_DeInit
+</UL>
+
+<P><STRONG><a name="[bd]"></a>RCC_APB1PeriphResetCmd</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_DeInit
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_DeInit
+</UL>
+
+<P><STRONG><a name="[be]"></a>RCC_BackupResetCmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[bf]"></a>RCC_ClockSecuritySystemCmd</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c0]"></a>RCC_MCOConfig</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[1a8]"></a>RCC_ClearFlag</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f10x_rcc.o(.text), UNUSED)
+
+<P><STRONG><a name="[c1]"></a>RCC_GetITStatus</STRONG> (Thumb, 118 bytes, Stack size 16 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c2]"></a>RCC_ClearITPendingBit</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, stm32f10x_rcc.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c3]"></a>SPI_I2S_DeInit</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphResetCmd
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphResetCmd
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c4]"></a>SPI_Init</STRONG> (Thumb, 388 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = SPI_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_OPEN
+</UL>
+
+<P><STRONG><a name="[c5]"></a>I2S_Init</STRONG> (Thumb, 472 bytes, Stack size 56 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetClocksFreq
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[1a9]"></a>SPI_StructInit</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f10x_spi.o(.text), UNUSED)
+
+<P><STRONG><a name="[1aa]"></a>I2S_StructInit</STRONG> (Thumb, 42 bytes, Stack size 0 bytes, stm32f10x_spi.o(.text), UNUSED)
+
+<P><STRONG><a name="[c7]"></a>SPI_Cmd</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = SPI_Cmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_OPEN
+</UL>
+
+<P><STRONG><a name="[c8]"></a>I2S_Cmd</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[c9]"></a>SPI_I2S_ITConfig</STRONG> (Thumb, 142 bytes, Stack size 24 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ca]"></a>SPI_I2S_DMACmd</STRONG> (Thumb, 118 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[cb]"></a>SPI_I2S_SendData</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = SPI_I2S_SendData &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TX
+</UL>
+
+<P><STRONG><a name="[cc]"></a>SPI_I2S_ReceiveData</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = SPI_I2S_ReceiveData &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_RX
+</UL>
+
+<P><STRONG><a name="[cd]"></a>SPI_NSSInternalSoftwareConfig</STRONG> (Thumb, 104 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ce]"></a>SPI_SSOutputCmd</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = SPI_SSOutputCmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_OPEN
+</UL>
+
+<P><STRONG><a name="[cf]"></a>SPI_DataSizeConfig</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d0]"></a>SPI_TransmitCRC</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d1]"></a>SPI_CalculateCRC</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d2]"></a>SPI_GetCRC</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d3]"></a>SPI_GetCRCPolynomial</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d4]"></a>SPI_BiDirectionalLineConfig</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d5]"></a>SPI_I2S_GetFlagStatus</STRONG> (Thumb, 110 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_WAIT_RXRDY
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TX
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_RX
+</UL>
+
+<P><STRONG><a name="[d6]"></a>SPI_I2S_ClearFlag</STRONG> (Thumb, 70 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d7]"></a>SPI_I2S_GetITStatus</STRONG> (Thumb, 146 bytes, Stack size 32 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d8]"></a>SPI_I2S_ClearITPendingBit</STRONG> (Thumb, 82 bytes, Stack size 16 bytes, stm32f10x_spi.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[d9]"></a>USART_DeInit</STRONG> (Thumb, 180 bytes, Stack size 8 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphResetCmd
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphResetCmd
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[75]"></a>USART_Init</STRONG> (Thumb, 498 bytes, Stack size 56 bytes, stm32f10x_usart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = USART_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetClocksFreq
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[1ab]"></a>USART_StructInit</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f10x_usart.o(.text), UNUSED)
+
+<P><STRONG><a name="[da]"></a>USART_ClockInit</STRONG> (Thumb, 192 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[1ac]"></a>USART_ClockStructInit</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f10x_usart.o(.text), UNUSED)
+
+<P><STRONG><a name="[76]"></a>USART_Cmd</STRONG> (Thumb, 130 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = USART_Cmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[db]"></a>USART_ITConfig</STRONG> (Thumb, 270 bytes, Stack size 32 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[dc]"></a>USART_DMACmd</STRONG> (Thumb, 130 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[dd]"></a>USART_SetAddress</STRONG> (Thumb, 94 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[de]"></a>USART_WakeUpConfig</STRONG> (Thumb, 98 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[df]"></a>USART_ReceiverWakeUpCmd</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e0]"></a>USART_LINBreakDetectLengthConfig</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e1]"></a>USART_LINCmd</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[6a]"></a>USART_SendData</STRONG> (Thumb, 86 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = USART_SendData &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Send
+</UL>
+
+<P><STRONG><a name="[e2]"></a>USART_ReceiveData</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e3]"></a>USART_SendBreak</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e4]"></a>USART_SetGuardTime</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e5]"></a>USART_SetPrescaler</STRONG> (Thumb, 70 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e6]"></a>USART_SmartCardCmd</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e7]"></a>USART_SmartCardNACKCmd</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e8]"></a>USART_HalfDuplexCmd</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[e9]"></a>USART_OverSampling8Cmd</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ea]"></a>USART_OneBitMethodCmd</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[eb]"></a>USART_IrDAConfig</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ec]"></a>USART_IrDACmd</STRONG> (Thumb, 102 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[6b]"></a>USART_GetFlagStatus</STRONG> (Thumb, 202 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = USART_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+<BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Send
+</UL>
+
+<P><STRONG><a name="[ed]"></a>USART_ClearFlag</STRONG> (Thumb, 134 bytes, Stack size 16 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ee]"></a>USART_GetITStatus</STRONG> (Thumb, 268 bytes, Stack size 32 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[ef]"></a>USART_ClearITPendingBit</STRONG> (Thumb, 168 bytes, Stack size 24 bytes, stm32f10x_usart.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[67]"></a>hal_assert_report</STRONG> (Thumb, 156 bytes, Stack size 24 bytes, hal_assert.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_on
+<LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n16toa
+<LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dbo_write
+<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dbo_putchar
+<LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+</UL>
+<BR>[Called By]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ETH_MediaInterfaceConfig
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_PinRemapConfig
+<LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EventOutputCmd
+<LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EventOutputConfig
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_PinLockConfig
+<LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Write
+<LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
+<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadOutputData
+<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadOutputDataBit
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputData
+<LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_DeInit
+<LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ClearFlag
+<LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_GetFlagStatus
+<LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ITConfig
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_UserOptionByteConfig
+<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ReadOutProtection
+<LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_EnableWriteProtection
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramOptionByteData
+<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramHalfWord
+<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ProgramWord
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ErasePage
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_PrefetchBufferCmd
+<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_HalfCycleAccessCmd
+<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_SetLatency
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_GetITStatus
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearFlag
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_GetFlagStatus
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_GenerateSWInterrupt
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphResetCmd
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_BackupResetCmd
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphResetCmd
+<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_CLKSourceConfig
+<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SystemLPConfig
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SetVectorTable
+<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SendData
+<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Init
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetFlagStatus
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK2Config
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK1Config
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_PriorityGroupConfig
+<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
+<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearITPendingBit
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+<LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_construct
+<LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ClearITPendingBit
+<LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetITStatus
+<LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ClearFlag
+<LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_IrDACmd
+<LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_IrDAConfig
+<LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_OneBitMethodCmd
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_OverSampling8Cmd
+<LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_HalfDuplexCmd
+<LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SmartCardNACKCmd
+<LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SmartCardCmd
+<LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SetPrescaler
+<LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SetGuardTime
+<LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SendBreak
+<LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiveData
+<LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_LINCmd
+<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_LINBreakDetectLengthConfig
+<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ReceiverWakeUpCmd
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_WakeUpConfig
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SetAddress
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_DMACmd
+<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ITConfig
+<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_ClockInit
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_DeInit
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_ClearITPendingBit
+<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetITStatus
+<LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_ClearFlag
+<LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetFlagStatus
+<LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_BiDirectionalLineConfig
+<LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_GetCRCPolynomial
+<LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_GetCRC
+<LI><a href="#[d1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_CalculateCRC
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_TransmitCRC
+<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_DataSizeConfig
+<LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_SSOutputCmd
+<LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_NSSInternalSoftwareConfig
+<LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_ReceiveData
+<LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_SendData
+<LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_DMACmd
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_ITConfig
+<LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2S_Cmd
+<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_Cmd
+<LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2S_Init
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_Init
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_DeInit
+<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_ClearITPendingBit
+<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetITStatus
+<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_MCOConfig
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_ClockSecuritySystemCmd
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_RTCCLKCmd
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_RTCCLKConfig
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_LSICmd
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_LSEConfig
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_ADCCLKConfig
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_USBCLKConfig
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_ITConfig
+<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_HCLKConfig
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_SYSCLKConfig
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PLLCmd
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PLLConfig
+<LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_HSICmd
+<LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AdjustHSICalibrationValue
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetFlagStatus
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_HSEConfig
+</UL>
+
+<P><STRONG><a name="[f5]"></a>cc2520_construct</STRONG> (Thumb, 38 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+</UL>
+
+<P><STRONG><a name="[f8]"></a>cc2520_close</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_destroy
+</UL>
+
+<P><STRONG><a name="[f7]"></a>cc2520_destroy</STRONG> (Thumb, 12 bytes, Stack size 4 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_close
+</UL>
+
+<P><STRONG><a name="[1ad]"></a>cc2520_open</STRONG> (Thumb, 32 bytes, Stack size 12 bytes, hal_cc2520.o(.text), UNUSED)
+
+<P><STRONG><a name="[1ae]"></a>cc2520_state</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_cc2520.o(.text), UNUSED)
+
+<P><STRONG><a name="[103]"></a>halRfPowerUp</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitUs
+</UL>
+
+<P><STRONG><a name="[105]"></a>halRfWaitXoscStable</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitUs
+</UL>
+<BR>[Called By]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfResetChip
+</UL>
+
+<P><STRONG><a name="[106]"></a>halRfResetChip</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWaitXoscStable
+<LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitUs
+</UL>
+
+<P><STRONG><a name="[77]"></a>halRfInit</STRONG> (Thumb, 184 bytes, Stack size 8 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = halRfInit &rArr; halRfWriteMem8 &rArr; CC2520_MEMWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BSET
+<LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteMem8
+<LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteReg8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[108]"></a>halRfGetChipId</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+</UL>
+
+<P><STRONG><a name="[10a]"></a>halRfGetChipVer</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+</UL>
+
+<P><STRONG><a name="[10b]"></a>halRfGetStatusByte</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfStrobe
+</UL>
+<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+</UL>
+
+<P><STRONG><a name="[10c]"></a>halRfGetRandomByte</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM8
+</UL>
+
+<P><STRONG><a name="[1af]"></a>halRfGetRssiOffset</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, hal_cc2520.o(.text), UNUSED)
+
+<P><STRONG><a name="[7b]"></a>halRfSetChannel</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = halRfSetChannel &rArr; halRfWriteReg8 &rArr; CC2520_REGWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteReg8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[7c]"></a>halRfSetShortAddr</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = halRfSetShortAddr &rArr; halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteMem16
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[7d]"></a>halRfSetPanId</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = halRfSetPanId &rArr; halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteMem16
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[7a]"></a>halRfSetPower</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = halRfSetPower &rArr; CC2520_REGWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[10e]"></a>halRfRecvFrame</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+</UL>
+
+<P><STRONG><a name="[110]"></a>halRfWriteTxBuf</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+</UL>
+
+<P><STRONG><a name="[112]"></a>halRfReadRxBuf</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+</UL>
+
+<P><STRONG><a name="[1b0]"></a>halRfTransmitCCA</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, hal_cc2520.o(.text), UNUSED)
+
+<P><STRONG><a name="[113]"></a>halRfSecurityInit</STRONG> (Thumb, 20 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSecurityInitRAM
+</UL>
+
+<P><STRONG><a name="[114]"></a>halRfRecvFrameUCCM</STRONG> (Thumb, 198 bytes, Stack size 48 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCCM
+<LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFMOV
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD
+<LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMCP
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[11a]"></a>halRfWriteTxBufCCM</STRONG> (Thumb, 206 bytes, Stack size 48 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUFCP
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CCM
+<LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfGetStatusByte
+</UL>
+
+<P><STRONG><a name="[11d]"></a>halRfIncNonceTx</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INC
+</UL>
+
+<P><STRONG><a name="[11f]"></a>halRfReceiveOn</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfStrobe
+</UL>
+
+<P><STRONG><a name="[120]"></a>halRfReceiveOff</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfStrobe
+</UL>
+
+<P><STRONG><a name="[118]"></a>CC2520_REGRD8</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GotException
+<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+</UL>
+
+<P><STRONG><a name="[126]"></a>CC2520_REGWR24</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;clearException
+</UL>
+
+<P><STRONG><a name="[12d]"></a>CC2520_INS_WR_ARRAY</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_WAIT_RXRDY
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR
+<LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMXWR
+<LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+</UL>
+
+<P><STRONG><a name="[102]"></a>CC2520_INS_STROBE</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = CC2520_INS_STROBE &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRXON
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRFOFF
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SFLUSHRX
+<LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRXMASKBITCLR
+<LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRXMASKBITSET
+<LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SNACK
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SACKPEND
+<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SACK
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SFLUSHTX
+<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SXOSCOFF
+<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_STXONCCA
+<LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_STXON
+<LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_STXCAL
+<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SXOSCON
+<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SSAMPLECCA
+<LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SIBUFEX
+<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SNOP
+<LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfIncNonceTx
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+<LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+<LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfStrobe
+</UL>
+
+<P><STRONG><a name="[12e]"></a>CC2520_SNOP</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[12f]"></a>CC2520_SIBUFEX</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[130]"></a>CC2520_SSAMPLECCA</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[131]"></a>CC2520_SXOSCON</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[132]"></a>CC2520_STXCAL</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[7f]"></a>CC2520_SRXON</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = CC2520_SRXON &rArr; CC2520_INS_STROBE &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[133]"></a>CC2520_STXON</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[134]"></a>CC2520_STXONCCA</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[7e]"></a>CC2520_SRFOFF</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = CC2520_SRFOFF &rArr; CC2520_INS_STROBE &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[135]"></a>CC2520_SXOSCOFF</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[81]"></a>CC2520_SFLUSHRX</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = CC2520_SFLUSHRX &rArr; CC2520_INS_STROBE &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
+</UL>
+
+<P><STRONG><a name="[136]"></a>CC2520_SFLUSHTX</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[137]"></a>CC2520_SACK</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[138]"></a>CC2520_SACKPEND</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[139]"></a>CC2520_SNACK</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[13a]"></a>CC2520_SRXMASKBITSET</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[13b]"></a>CC2520_SRXMASKBITCLR</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+
+<P><STRONG><a name="[13c]"></a>CC2520_IBUFLD</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[13d]"></a>CC2520_SRES</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[119]"></a>CC2520_MEMRD</STRONG> (Thumb, 50 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+<BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+</UL>
+
+<P><STRONG><a name="[109]"></a>CC2520_MEMRD8</STRONG> (Thumb, 52 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfGetChipVer
+<LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfGetChipId
+</UL>
+
+<P><STRONG><a name="[1b1]"></a>CC2520_MEMRD16</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[1b2]"></a>CC2520_MEMRD24</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[fa]"></a>CC2520_MEMWR</STRONG> (Thumb, 50 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+</UL>
+<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSecurityInitRAM
+</UL>
+
+<P><STRONG><a name="[fe]"></a>CC2520_MEMWR8</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = CC2520_MEMWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteMem8
+</UL>
+
+<P><STRONG><a name="[100]"></a>CC2520_MEMWR16</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteMem16
+</UL>
+
+<P><STRONG><a name="[13e]"></a>CC2520_MEMWR24</STRONG> (Thumb, 58 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[10f]"></a>CC2520_RXBUF</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+<BR>[Called By]<UL><LI><a href="#[10e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrame
+<LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfReadRxBuf
+</UL>
+
+<P><STRONG><a name="[13f]"></a>CC2520_RXBUF8</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[1b3]"></a>CC2520_RXBUF16</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[140]"></a>CC2520_RXBUFCP_BEGIN</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[141]"></a>CC2520_RXBUFCP_END</STRONG> (Thumb, 36 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[115]"></a>CC2520_RXBUFMOV</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+</UL>
+
+<P><STRONG><a name="[111]"></a>CC2520_TXBUF</STRONG> (Thumb, 46 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+</UL>
+<BR>[Called By]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBuf
+</UL>
+
+<P><STRONG><a name="[142]"></a>CC2520_TXBUF8</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[143]"></a>CC2520_TXBUF16</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[11c]"></a>CC2520_TXBUFCP</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+</UL>
+
+<P><STRONG><a name="[144]"></a>CC2520_RANDOM</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[10d]"></a>CC2520_RANDOM8</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[10c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfGetRandomByte
+</UL>
+
+<P><STRONG><a name="[1b4]"></a>CC2520_RANDOM16</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[145]"></a>CC2520_RXMASKOR</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[146]"></a>CC2520_RXMASKAND</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[116]"></a>CC2520_MEMCP</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+</UL>
+<BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+</UL>
+
+<P><STRONG><a name="[fb]"></a>CC2520_MEMCPR</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+</UL>
+<BR>[Called By]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSecurityInitRAM
+</UL>
+
+<P><STRONG><a name="[147]"></a>CC2520_MEMXCP</STRONG> (Thumb, 26 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+</UL>
+
+<P><STRONG><a name="[148]"></a>CC2520_MEMXWR</STRONG> (Thumb, 52 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+</UL>
+
+<P><STRONG><a name="[107]"></a>CC2520_BSET</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = CC2520_BSET &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfInit
+</UL>
+
+<P><STRONG><a name="[149]"></a>CC2520_BCLR</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[14a]"></a>CC2520_CTR</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCTR
+</UL>
+
+<P><STRONG><a name="[14b]"></a>CC2520_UCTR</STRONG> (Thumb, 36 bytes, Stack size 40 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CTR
+</UL>
+
+<P><STRONG><a name="[14c]"></a>CC2520_CBCMAC</STRONG> (Thumb, 88 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[14d]"></a>CC2520_UCBCMAC</STRONG> (Thumb, 70 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[11b]"></a>CC2520_CCM</STRONG> (Thumb, 108 bytes, Stack size 40 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteTxBufCCM
+</UL>
+
+<P><STRONG><a name="[117]"></a>CC2520_UCCM</STRONG> (Thumb, 108 bytes, Stack size 40 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[114]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfRecvFrameUCCM
+</UL>
+
+<P><STRONG><a name="[14e]"></a>CC2520_ECB</STRONG> (Thumb, 80 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[14f]"></a>CC2520_ECBO</STRONG> (Thumb, 60 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[150]"></a>CC2520_ECBX</STRONG> (Thumb, 80 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[151]"></a>CC2520_ECBXO</STRONG> (Thumb, 60 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[11e]"></a>CC2520_INC</STRONG> (Thumb, 52 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfIncNonceTx
+</UL>
+
+<P><STRONG><a name="[152]"></a>CC2520_ABORT</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[153]"></a>CC2520_REGRD</STRONG> (Thumb, 54 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[1b5]"></a>CC2520_REGRD16</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[1b6]"></a>CC2520_REGRD24</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_cc2520base.o(.text), UNUSED)
+
+<P><STRONG><a name="[154]"></a>CC2520_REGWR</STRONG> (Thumb, 54 bytes, Stack size 24 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+</UL>
+
+<P><STRONG><a name="[79]"></a>CC2520_REGWR8</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, hal_cc2520base.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = CC2520_REGWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetPower
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWriteReg8
+</UL>
+
+<P><STRONG><a name="[155]"></a>CC2520_REGWR16</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+
+<P><STRONG><a name="[123]"></a>CC2520_SPI_END</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = CC2520_SPI_END &rArr; GPIO_SetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+</UL>
+<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+<LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuRfInterfaceInit
+<LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR16
+<LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR
+<LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD
+<LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ABORT
+<LI><a href="#[151]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBXO
+<LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBX
+<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBO
+<LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECB
+<LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCBCMAC
+<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CBCMAC
+<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CTR
+<LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMXWR
+<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKAND
+<LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKOR
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM
+<LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF16
+<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF8
+<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFCP_END
+<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF8
+<LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR24
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRES
+<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_IBUFLD
+<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR24
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+<LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCCM
+<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUFCP
+<LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+<LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFMOV
+<LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+<LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM8
+<LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR8
+<LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR16
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+<LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INC
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CCM
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BSET
+<LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BCLR
+</UL>
+
+<P><STRONG><a name="[157]"></a>cc2520_dependent_init</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halDigioConfig
+<LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuRfInterfaceInit
+<LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRadioSpiInit
+</UL>
+
+<P><STRONG><a name="[74]"></a>CC2520_SPI_OPEN</STRONG> (Thumb, 98 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = CC2520_SPI_OPEN &rArr; SPI_SSOutputCmd &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_SSOutputCmd
+<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_Cmd
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[121]"></a>CC2520_SPI_BEGIN</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = CC2520_SPI_BEGIN &rArr; GPIO_ResetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
+</UL>
+<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+<LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR16
+<LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR
+<LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD
+<LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ABORT
+<LI><a href="#[151]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBXO
+<LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBX
+<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBO
+<LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECB
+<LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCBCMAC
+<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CBCMAC
+<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CTR
+<LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMXWR
+<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKAND
+<LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKOR
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM
+<LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF16
+<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF8
+<LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFCP_BEGIN
+<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF8
+<LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR24
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRES
+<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_IBUFLD
+<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR24
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+<LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCCM
+<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUFCP
+<LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+<LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFMOV
+<LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+<LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM8
+<LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR8
+<LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR16
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+<LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INC
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CCM
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BSET
+<LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BCLR
+</UL>
+
+<P><STRONG><a name="[129]"></a>CC2520_SPI_TX</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetFlagStatus
+<LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_SendData
+</UL>
+<BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[12b]"></a>CC2520_SPI_RX</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = CC2520_SPI_RX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetFlagStatus
+<LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_ReceiveData
+</UL>
+<BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[12a]"></a>CC2520_SPI_WAIT_RXRDY</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetFlagStatus
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_WR_ARRAY
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_RD_ARRAY
+</UL>
+
+<P><STRONG><a name="[159]"></a>halDigioConfig</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_dependent_init
+</UL>
+
+<P><STRONG><a name="[1b7]"></a>halDigioSet</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1b8]"></a>halDigioClear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1b9]"></a>halDigioToggle</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1ba]"></a>halDigioGet</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1bb]"></a>halDigioIntConnect</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1bc]"></a>halDigioIntEnable</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1bd]"></a>halDigioIntDisable</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1be]"></a>halDigioIntClear</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1bf]"></a>halDigioIntSetEdge</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1c0]"></a>port1_ISR</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1c1]"></a>port2_ISR</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_digio.o(.text), UNUSED)
+
+<P><STRONG><a name="[73]"></a>led_off</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, hal_led.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = led_off &rArr; GPIO_SetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+</UL>
+<BR>[Called By]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_open
+<LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_showstate
+<LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_twinkle
+<LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led
+<LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_close
+</UL>
+
+<P><STRONG><a name="[72]"></a>led_open</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, hal_led.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = led_open &rArr; GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[15a]"></a>led_close</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, hal_led.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+</UL>
+
+<P><STRONG><a name="[f4]"></a>led_on</STRONG> (Thumb, 22 bytes, Stack size 8 bytes, hal_led.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = led_on &rArr; GPIO_ResetBits &rArr;  hal_assert_report (Cycle)
+</UL>
+<BR>[Calls]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[15d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_showstate
+<LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led
+</UL>
+
+<P><STRONG><a name="[15b]"></a>led</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, hal_led.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_on
+</UL>
+
+<P><STRONG><a name="[80]"></a>led_toggle</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, hal_led.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = led_toggle &rArr; GPIO_WriteBit &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_WriteBit
+<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadOutputDataBit
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
+<LI><a href="#[15c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_twinkle
+</UL>
+
+<P><STRONG><a name="[15c]"></a>led_twinkle</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, hal_led.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_toggle
+<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+</UL>
+
+<P><STRONG><a name="[15d]"></a>led_showstate</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, hal_led.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_off
+<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_on
+</UL>
+
+<P><STRONG><a name="[163]"></a>mcu_init</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_NVIC_Configuration
+<LI><a href="#[161]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GPIO_Configuration
+<LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_RCC_Configuration
+</UL>
+
+<P><STRONG><a name="[68]"></a>delay_nus</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, hal_mcu.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nms
+<LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_Activate
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+<LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+</UL>
+
+<P><STRONG><a name="[78]"></a>delay_nms</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, hal_mcu.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = delay_nms
+</UL>
+<BR>[Calls]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfInit
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+<LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR
+<LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD
+<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF8
+<LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+<LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR8
+</UL>
+
+<P><STRONG><a name="[1c2]"></a>halMcuInit</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_mcu.o(.text), UNUSED)
+
+<P><STRONG><a name="[104]"></a>halMcuWaitUs</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitMs
+<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;waitException
+<LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfResetChip
+<LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfWaitXoscStable
+<LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfPowerUp
+</UL>
+
+<P><STRONG><a name="[164]"></a>halMcuWaitMs</STRONG> (Thumb, 26 bytes, Stack size 4 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitUs
+</UL>
+
+<P><STRONG><a name="[1c3]"></a>halMcuSetLowPowerMode</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_mcu.o(.text), UNUSED)
+
+<P><STRONG><a name="[167]"></a>_dbc_digit2hexchar</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, rtl_debugio.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n16toa
+<LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n8toa
+<LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_asciiputchar
+</UL>
+
+<P><STRONG><a name="[165]"></a>_dbc_construct</STRONG> (Thumb, 20 bytes, Stack size 16 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+</UL>
+
+<P><STRONG><a name="[1c4]"></a>_dbc_destroy</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, rtl_debugio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1c5]"></a>_dbc_open</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, rtl_debugio.o(.text), UNUSED)
+
+<P><STRONG><a name="[1c6]"></a>_dbc_close</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, rtl_debugio.o(.text), UNUSED)
+
+<P><STRONG><a name="[168]"></a>_dbc_putchar</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, rtl_debugio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = _dbc_putchar
+</UL>
+<BR>[Called By]<UL><LI><a href="#[169]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_write
+<LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n16toa
+<LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dbo_putchar
+<LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_string
+<LI><a href="#[16b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_write_n8toa
+<LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n8toa
+<LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_asciiputchar
+</UL>
+
+<P><STRONG><a name="[1c7]"></a>_dbc_getchar</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, rtl_debugio.o(.text), UNUSED)
+
+<P><STRONG><a name="[166]"></a>_dbc_asciiputchar</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_digit2hexchar
+</UL>
+
+<P><STRONG><a name="[169]"></a>_dbc_write</STRONG> (Thumb, 32 bytes, Stack size 24 bytes, rtl_debugio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+</UL>
+<BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dbo_write
+<LI><a href="#[16f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_evolve
+</UL>
+
+<P><STRONG><a name="[16a]"></a>_dbc_n8toa</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_digit2hexchar
+</UL>
+<BR>[Called By]<UL><LI><a href="#[16b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_write_n8toa
+</UL>
+
+<P><STRONG><a name="[16b]"></a>_dbc_write_n8toa</STRONG> (Thumb, 40 bytes, Stack size 24 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+<LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_n8toa
+</UL>
+
+<P><STRONG><a name="[16c]"></a>_dbc_string</STRONG> (Thumb, 32 bytes, Stack size 16 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+<LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+</UL>
+
+<P><STRONG><a name="[16d]"></a>_dbc_asyncwrite</STRONG> (Thumb, 58 bytes, Stack size 24 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memmove
+</UL>
+
+<P><STRONG><a name="[16f]"></a>_dbc_evolve</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, rtl_debugio.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[169]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_write
+</UL>
+
+<P><STRONG><a name="[f3]"></a>_dbc_n16toa</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, rtl_debugio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = _dbc_n16toa &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_digit2hexchar
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[f0]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = strlen
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[16c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_string
+</UL>
+
+<P><STRONG><a name="[173]"></a>__aeabi_memcpy</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memmove
+</UL>
+
+<P><STRONG><a name="[170]"></a>__rt_memcpy</STRONG> (Thumb, 138 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+</UL>
+
+<P><STRONG><a name="[1c8]"></a>_memcpy_lastbytes</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_v6.o(.text), UNUSED)
+
+<P><STRONG><a name="[16e]"></a>__aeabi_memmove</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memmove_v6.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[16d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_asyncwrite
+</UL>
+
+<P><STRONG><a name="[172]"></a>__rt_memmove</STRONG> (Thumb, 132 bytes, Stack size 0 bytes, rt_memmove_v6.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[174]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__memmove_aligned
+<LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+</UL>
+
+<P><STRONG><a name="[1c9]"></a>__memmove_lastfew</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memmove_v6.o(.text), UNUSED)
+
+<P><STRONG><a name="[f6]"></a>__aeabi_memclr</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memclr.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_construct
+<LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_construct
+</UL>
+
+<P><STRONG><a name="[175]"></a>__rt_memclr</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, rt_memclr.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset_w
+</UL>
+
+<P><STRONG><a name="[1ca]"></a>_memset</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr.o(.text), UNUSED)
+
+<P><STRONG><a name="[1cb]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1cc]"></a>__aeabi_memclr8</STRONG> (Thumb, 0 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1cd]"></a>__rt_memclr_w</STRONG> (Thumb, 78 bytes, Stack size 4 bytes, rt_memclr_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[176]"></a>_memset_w</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memclr_w.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memclr
+</UL>
+
+<P><STRONG><a name="[1ce]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+
+<P><STRONG><a name="[1cf]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+
+<P><STRONG><a name="[1d0]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+
+<P><STRONG><a name="[171]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memmove_w
+<LI><a href="#[170]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memcpy
+</UL>
+
+<P><STRONG><a name="[1d1]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1d2]"></a>__rt_memcpy_w</STRONG> (Thumb, 100 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1d3]"></a>_memcpy_lastbytes_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memcpy_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1d4]"></a>__aeabi_memmove4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memmove_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[1d5]"></a>__aeabi_memmove8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memmove_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[177]"></a>__rt_memmove_w</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, rt_memmove_w.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+</UL>
+
+<P><STRONG><a name="[174]"></a>__memmove_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memmove_w.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[172]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_memmove
+</UL>
+
+<P><STRONG><a name="[1d6]"></a>__memmove_lastfew_aligned</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, rt_memmove_w.o(.text), UNUSED)
+
+<P><STRONG><a name="[52]"></a>__user_setup_stackheap</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, sys_stackheap_outer.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
+<LI>Call Chain = __user_setup_stackheap
+</UL>
+<BR>[Calls]<UL><LI><a href="#[179]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_initial_stackheap
+<LI><a href="#[178]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_perproc_libspace
+</UL>
+<BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_sh
+</UL>
+
+<P><STRONG><a name="[56]"></a>exit</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, exit.o(.text))
+<BR><BR>[Calls]<UL><LI><a href="#[17a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit
+</UL>
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
+</UL>
+
+<P><STRONG><a name="[1d7]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+
+<P><STRONG><a name="[178]"></a>__user_perproc_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
+</UL>
+
+<P><STRONG><a name="[1d8]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+
+<P><STRONG><a name="[17b]"></a>__rt_fp_status_addr</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, rt_fp_status_addr_intlibspace.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_init
+</UL>
+
+<P><STRONG><a name="[5a]"></a>_sys_exit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, sys_exit.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
+</UL>
+
+<P><STRONG><a name="[1d9]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+
+<P><STRONG><a name="[1da]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+
+<P><STRONG><a name="[122]"></a>CC2520_SPI_TXRX</STRONG> (Thumb, 18 bytes, Stack size 8 bytes, hal_cc2520base.o(i.CC2520_SPI_TXRX))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TX
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_RX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+<LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR16
+<LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR
+<LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD
+<LI><a href="#[152]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ABORT
+<LI><a href="#[151]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBXO
+<LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBX
+<LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECBO
+<LI><a href="#[14e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_ECB
+<LI><a href="#[14d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCBCMAC
+<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CBCMAC
+<LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CTR
+<LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMXWR
+<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKAND
+<LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXMASKOR
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM
+<LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF16
+<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF8
+<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFCP_END
+<LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFCP_BEGIN
+<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF8
+<LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR24
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SRES
+<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_IBUFLD
+<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR24
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_MEMCP_COMMON
+<LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_UCCM
+<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUFCP
+<LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_TXBUF
+<LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFMOV
+<LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+<LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+<LI><a href="#[10d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM8
+<LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR8
+<LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR16
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+<LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD8
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD
+<LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INC
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_CCM
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BSET
+<LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_BCLR
+</UL>
+
+<P><STRONG><a name="[f2]"></a>dbo_putchar</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, hal_assert.o(i.dbo_putchar))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = dbo_putchar &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_putchar
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[f1]"></a>dbo_write</STRONG> (Thumb, 18 bytes, Stack size 16 bytes, hal_assert.o(i.dbo_write))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[169]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dbc_write
+</UL>
+<BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+</UL>
+
+<P><STRONG><a name="[50]"></a>_fp_init</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, fpinit.o(x$fpl$fpinit))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = _fp_init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[17b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_fp_status_addr
+</UL>
+<BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_lib_init
+</UL>
+
+<P><STRONG><a name="[1db]"></a>__fplib_config_pureend_doubles</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, fpinit.o(x$fpl$fpinit), UNUSED)
+<P>
+<H3>
+Local Symbols
+</H3>
+<P><STRONG><a name="[60]"></a>SPI_GPIO_Configuration</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = SPI_GPIO_Configuration &rArr; GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[62]"></a>USART_GPIO_Configuration</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = USART_GPIO_Configuration &rArr; GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[63]"></a>CC2520_Activate</STRONG> (Thumb, 146 bytes, Stack size 16 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = CC2520_Activate &rArr; GPIO_Init &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;hal_assert_report
+<LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_nus
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
+<P><STRONG><a name="[69]"></a>USART_Send</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, hal_gpio.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = USART_Send &rArr; USART_SendData &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SendData
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetFlagStatus
+</UL>
+<BR>[Called By]<UL><LI><a href="#[12]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_IRQHandler
+</UL>
+
+<P><STRONG><a name="[83]"></a>SetSysClockTo72</STRONG> (Thumb, 192 bytes, Stack size 0 bytes, system_stm32f10x.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock
+</UL>
+
+<P><STRONG><a name="[82]"></a>SetSysClock</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, system_stm32f10x.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SetSysClock
+</UL>
+<BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClockTo72
+</UL>
+<BR>[Called By]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
+</UL>
+
+<P><STRONG><a name="[f9]"></a>halRfSecurityInitRAM</STRONG> (Thumb, 88 bytes, Stack size 16 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR
+<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMCPR
+</UL>
+<BR>[Called By]<UL><LI><a href="#[113]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSecurityInit
+</UL>
+
+<P><STRONG><a name="[fc]"></a>halRfWriteReg8</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = halRfWriteReg8 &rArr; CC2520_REGWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetChannel
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfInit
+</UL>
+
+<P><STRONG><a name="[fd]"></a>halRfWriteMem8</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = halRfWriteMem8 &rArr; CC2520_MEMWR8 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfInit
+</UL>
+
+<P><STRONG><a name="[ff]"></a>halRfWriteMem16</STRONG> (Thumb, 16 bytes, Stack size 16 bytes, hal_cc2520.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = halRfWriteMem16 &rArr; CC2520_MEMWR16 &rArr; CC2520_SPI_TXRX &rArr; CC2520_SPI_TX &rArr; SPI_I2S_GetFlagStatus &rArr; hal_assert_report &rArr; dbo_write &rArr; _dbc_write &rArr; _dbc_putchar
+</UL>
+<BR>[Calls]<UL><LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMWR16
+</UL>
+<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetShortAddr
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfSetPanId
+</UL>
+
+<P><STRONG><a name="[101]"></a>halRfStrobe</STRONG> (Thumb, 12 bytes, Stack size 8 bytes, hal_cc2520.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_INS_STROBE
+</UL>
+<BR>[Called By]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfGetStatusByte
+<LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfReceiveOn
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halRfReceiveOff
+</UL>
+
+<P><STRONG><a name="[124]"></a>GotException</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD8
+</UL>
+<BR>[Called By]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;waitException
+</UL>
+
+<P><STRONG><a name="[125]"></a>waitException</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GotException
+<LI><a href="#[104]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;halMcuWaitUs
+</UL>
+
+<P><STRONG><a name="[127]"></a>clearException</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGWR24
+</UL>
+
+<P><STRONG><a name="[128]"></a>CC2520_INS_RD_ARRAY</STRONG> (Thumb, 38 bytes, Stack size 16 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_WAIT_RXRDY
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TX
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_RX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_REGRD
+<LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RANDOM
+<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUFCP_END
+<LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_RXBUF
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMRD
+</UL>
+
+<P><STRONG><a name="[12c]"></a>CC2520_INS_MEMCP_COMMON</STRONG> (Thumb, 76 bytes, Stack size 32 bytes, hal_cc2520base.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_BEGIN
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_TXRX
+</UL>
+<BR>[Called By]<UL><LI><a href="#[147]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMXCP
+<LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMCPR
+<LI><a href="#[116]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_MEMCP
+</UL>
+
+<P><STRONG><a name="[158]"></a>halRadioSpiInit</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hal_cc2520vx.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_dependent_init
+</UL>
+
+<P><STRONG><a name="[156]"></a>halMcuRfInterfaceInit</STRONG> (Thumb, 8 bytes, Stack size 8 bytes, hal_cc2520vx.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CC2520_SPI_END
+</UL>
+<BR>[Called By]<UL><LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cc2520_dependent_init
+</UL>
+
+<P><STRONG><a name="[15e]"></a>_RCC_Configuration</STRONG> (Thumb, 134 bytes, Stack size 8 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_PrefetchBufferCmd
+<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_SetLatency
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK2Config
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PCLK1Config
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_HCLKConfig
+<LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetSYSCLKSource
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_SYSCLKConfig
+<LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PLLCmd
+<LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_PLLConfig
+<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_WaitForHSEStartUp
+<LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetFlagStatus
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_HSEConfig
+<LI><a href="#[15f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_DeInit
+</UL>
+<BR>[Called By]<UL><LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mcu_init
+</UL>
+
+<P><STRONG><a name="[161]"></a>_GPIO_Configuration</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mcu_init
+</UL>
+
+<P><STRONG><a name="[162]"></a>_NVIC_Configuration</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, hal_mcu.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_EXTILineConfig
+<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+</UL>
+<BR>[Called By]<UL><LI><a href="#[163]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mcu_init
+</UL>
+<P>
+<H3>
+Undefined Global Symbols
+</H3><HR></body></html>

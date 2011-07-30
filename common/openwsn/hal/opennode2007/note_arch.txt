@@ -1,0 +1,12 @@
+when a new project is activated, its platform-dependent source code should be copied into this folder. 
+
+the files in hal/rtl/kernel/service will looking files in the "arch" folder instead of considering the platform dependent folder names. 
+
+
+Chinese Translation
+
+arch目录是本项目的一个专用目录。当创建一个新的project的时候，arch目录下应存放与平台高度相关的代码，其它目录hal/rtl/kernel/service中的文件，会到名为target的目录中寻找需要的文件，这样就无需关心与特定平台有关的目录名。
+
+
+arch本身也是整个系统硬件抽象层的一部分，应该列在hal下面。
+但与hal不同，arch主要是与CPU有关的部分，包括存储区域设置、引导、C库重置semihost问题、以及全局终端、时钟、串口。因为它的运行层次很低，往往是在引导，所以很多其它代码还不能用。所以要特别注意。例如绝大部分OS代码不可用，因为arch中的代码是在OS真正启动之前就要被执行的

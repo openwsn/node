@@ -1,0 +1,14 @@
+wireless modem demonstration (wlsmodem)
+
+The difficulties of this application are:
+
+- how to decrease the probability of frame loss 
+a) medium access control
+b) try small frames
+c) the program be parallel or multi-threaded
+
+- how to enhance real time performance?
+the program be parallel or multi-threaded
+
+- double directional communication rather than mono-directional communication in other modules
+

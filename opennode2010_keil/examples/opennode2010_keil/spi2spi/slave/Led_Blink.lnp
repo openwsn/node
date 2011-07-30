@@ -1,0 +1,4 @@
+--device DARMSTM "cortexm3_macro.o" "stm32f10x_vector.o" "led_blink.o" "stm32f10x_crc.o" "stm32f10x_dac.o" "stm32f10x_dbgmcu.o" "stm32f10x_fsmc.o" "stm32f10x_i2c.o" "stm32f10x_lib.o" "stm32f10x_sdio.o" "stm32f10x_spi.o" --library_type=microlib --strict --scatter "Led_Blink.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\Led_Blink.map" -o "Led_Blink.axf"

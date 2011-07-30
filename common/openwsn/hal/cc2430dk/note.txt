@@ -1,0 +1,2 @@
+this project has ceased now
+because we havn't got an cc2430 developing kit yet

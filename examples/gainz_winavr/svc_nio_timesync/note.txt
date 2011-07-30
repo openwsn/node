@@ -1,0 +1,3 @@
+timesync service testing
+
+If you start the timesync service, then the whole network will be synchronized

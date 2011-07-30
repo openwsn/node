@@ -1,0 +1,14 @@
+gateway
+==============================================================
+Implements a gateway on the sink node
+running on the sink node
+
+
+
+
+gatwsink
+==============================================================
+
+gatwsink works with gateway application on the workstation side. 
+
+it accepts commands from the workstation side and broadcast it to neighbor nodes. it also accepts frames from neighbor nodes and forward it to workstation side.

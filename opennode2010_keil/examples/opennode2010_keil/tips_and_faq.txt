@@ -1,0 +1,12 @@
+Q: 如何将Keil编译过程中生成的二进制文件自动归入到某个temp目录下
+R: Keil => Project for Target => Output Page => Select Folders for Objects
+
+Q: 如何创建hex格式文件？
+R: Keil => Project for Target => Output Page
+
+Q: 为什么我可以打开CHM格式文件但无法阅读内容？
+R：此系Windows保护机制在起作用，windows不允许随意打开来自其他计算机的chm文件。
+解决方法是鼠标右键点击该chm格式文件，选择属性Properties, 右下角选择解除锁定即可。
+
+Q: 如何创建lib文件？
+R: Keil => Project for Target => Output Page

@@ -1,0 +1,17 @@
+frame
+================================================================
+This application tests/demonstrates the TiFrame component.
+TiFrame supports multi-layer manipulation interface and is very convenient for passing frames between different network layers.
+
+
+History
+================================================================
+author zhangwei in 2010.07.13
+- first created.
+- compiled successfully
+- tested.
+
+modified by zhang-wei, xu-fuzhen on 2010.08.13
+- tested ok.
+- revision
+

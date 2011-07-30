@@ -1,0 +1,50 @@
+wlssense
+================================================================
+无线感知
+
+introduction
+================================================================
+wireless sensing project. 
+this project demonstrates how to develope a device which can do periodically sampling and wireless communication simulataneously. the program will do:
+
+- task1: sampling the luminance sensor every 5 seconds;
+- task2: sampling the vibration/sound sensor every 7 seconds. each measurements lasts for 3 seconds. in the idle stage, you should turn off the source sensor;
+- task3: do wireless communication every 13 seconds. each communication stage lasts for 3 seconds. in the idle stage, you should turn off the transceiver;
+- if there's no task pending, then the whole node goes into sleep mode to save energy. it will be wakeup by the system timer. (now we use the RTC timer as the system to generate OSX ticks).
+
+the tasks are running based on osx kernel.
+
+in the communication stage, the node will turn on the transceiver to wait for potential DATA REQUEST packets, and then send the DATA RESPONSE packets (containing the measured data) immediately after the DATA REQUEST packet. 
+
+
+Q: how to demostate/test?
+================================================================
+
+select two nodes. one node is burned with the "collector" project hex file, and the other is with the "wlssense"
+ project hex file. Both of these two projects are placed inside the wlssense folder. 
+
+
+Q: main idea of the "wlssense" project?
+================================================================
+R: 
+- develope 3 tasks to deal with task1 to task 3 respectively;
+- register these 3 tasks into osx kernel and let the kernel call them at correct time;
+- system timer (now we use RTC timer instead) will generate interrupt every 0.5 seconds. the CPU will wakeup and the scheduler will continue to run. it's the scheduler's responsibility to check the state of each task to devide whether to call them to run. 
+- actually, the task queue will save the next running time of each task. the future tasks will only be called by the scheduler until the time elasped to their pre-configured running time.
+
+Q: any reference to help understanding/developing this program?
+================================================================
+
+project osx demo.
+this project demonstrates how to developing serveral services with the osx kernel. 
+attention the "service" is actually the same as the "task".
+
+
+
+History
+================================================================
+
+
+2010.07.xx 
+- first version.
+

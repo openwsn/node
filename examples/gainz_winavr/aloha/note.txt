@@ -1,0 +1,24 @@
+Aloha_send & Aloha_receive
+========================================================================
+1) Project Description: 
+this is a program used to test our mac protocl--aloha protocol.
+
+2) Experiments and Notice 实验步骤和实验中的注意事项
+使用A,B, C三个节点，A点为发送方，B点为接受方，C点为噪声。
+打开A节点和B节点，可以看到发送节点的黄灯闪烁，表示发送出数据且收到返回ACK，表明发送成功。
+打开C节点，C节点不断发送数据，加入噪声干扰，我们发现黄灯的闪烁频率基本不变，表明Aloha协议能够保证A、B两节点之间的通信。
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-23
+-- test ok by Yan Shixing
+
+2010.08.21
+- upgraded TiOpenFrame to TiFrame
+- upgraded the debug io module
+- and a lot of other minor changes
+- compiled successfully
+
+modified by Xu-Fuzhen(TongJi University) on 2010.10.14
+- revision. tested ok.
+

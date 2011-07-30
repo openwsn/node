@@ -1,0 +1,18 @@
+CSMA_CA (not finished)
+================================================================
+
+testing CSMA/CA medium access protocol
+
+related modules:
+	svc_csma
+	hal_cc2420
+	rtl_frame
+
+
+History
+================================================================
+
+modified by zhangwei 2010-06-15
+- rename project name from "adaptaloha" to "csma"
+- compile passed.
+

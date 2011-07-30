@@ -1,0 +1,10 @@
+this folder contains several small programs for USART testing. 
+
+uart_simpleoutput
+will periodically send some characters to the computer
+
+uartecho_simple
+an uart echo program based on uart_putchar/uart_getchar
+
+uartecho_readwrite
+an uart echo program based on uart_read/uart_write

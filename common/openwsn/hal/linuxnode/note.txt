@@ -1,0 +1,1 @@
+This project simulates the wireless sensor node on Linux

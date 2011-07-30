@@ -1,0 +1,32 @@
+gateway
+==============================================================
+Implements a gateway on the sink node
+running on the sink node
+
+The sna_lightgatew works with sna_lightsensor/sna_lightnode together
+
+
+
+
+gatwsink
+==============================================================
+
+gatwsink works with gateway application on the workstation side. 
+
+it accepts commands from the workstation side and broadcast it to neighbor nodes. it also accepts frames from neighbor nodes and forward it to workstation side.
+
+
+stargatw
+================================================================
+The gateway node for a star network. It responsible for:
+- maintain a star network
+- collecting sensor data in the star network
+
+It's an application for practical using.
+
+
+Q: difference between stargatw and starsink?
+R: 
+starsink doesn't provide full functional communication between wireless network and computer network. It's actually for testing and demonstrating rather than practical application.
+
+

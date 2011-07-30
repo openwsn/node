@@ -1,0 +1,100 @@
+libwsn
+================================================================
+
+This project helps to build the common files into an library. 
+By using library, our testing projects management can be simplified.
+The file extension of a library in AVR is .a.
+
+
+status
+================================================================
+compiled ok with AVR Studio and Portable WinAVR 2009.03.13
+
+
+Q: How to generate libwsn.a?
+================================================================
+We use the project "libwsn" in path "dev\openwsn\source\node\gainz-winavr\libwsn\" to generate the library.
+
+1.Open the libwsn.aps, add the C files that we need to the "source files" and then build the project.
+
+2.If errors occur, resolve them and rebuild until no error. If build successfully, you will see many object files( whose file extension is .o) 
+corresponding to the C files we add appear in the "default" folder under the project directory.
+
+3.Turn to the "default" folder. Make sure there are avr-ar.exe, libgen.bat and object file mentioned above(If not, you have to contact me for them). Double click the libgen.bat, and the libwsn.a will be generated in the same folder.
+
+Note:
+As I see it, we do not need to generate different libraries for different projects. A unique library that include all C files can be used by all projects.(Refer to how to use library in the next Question);
+The objects(C files) included is listed in the includeObjects.txt.
+
+
+
+Q: How to link with libwsn.a when compiling openwsn projects using AVR Studio?
+================================================================
+1.Get the libwsn.a in the directory "dev\openwsn\source\node\gainz-winavr\libwsn\default".
+
+2.Copy it to the directory "d:\Portable\WinAVR-20080610\avr\lib\". You can skip this step if you have done it before.
+
+3.Copy it to the directory of the project you want to use.
+
+4.Open the project (click xxx.aps). Choose menu "project"->"Configuration Options". Click the "Libraries" tab. In the tab, you will see a blank named 
+"Linked with these objects". If the libwsn.a is not listed on it, press "Add Object..." button and add the libwsn.a we put in this project folder.
+Click ok to exit.
+
+5.Rebuild the project, it should be ok now.
+
+
+
+
+The following is the document I refer to
+Q: How to build library with WinAVR?
+================================================================
+R: 
+google: How to Build a Library
+http://www.nongnu.org/avr-libc/user-manual/library.html
+
+This document has already with WinAVR
+
+
+
+Creating a Library
+
+The librarian program is called ar (for "archiver") and is found in the GNU Binutils project. This program will have been built for the AVR target and will therefore be named avr-ar.
+The job of the librarian program is simple: aggregate a list of object modules into a single library (archive) and create an index for the linker to use. The name that you create for the library filename must follow a specific pattern: libname.a. The name part is the unique part of the filename that you create. It makes it easier if the name part relates to what the library is about. This name part must be prefixed by "lib", and it must have a file extension of .a, for "archive". The reason for the special form of the filename is for how the library gets used by the toolchain, as we will see later on.
+
+Note:
+The filename is case-sensitive. Use a lowercase "lib" prefix, and a lowercase ".a" as the file extension.
+The command line is fairly simple:
+avr-ar rcs <library name> <list of object modules>
+The r command switch tells the program to insert the object modules into the archive with replacement. The c command line switch tells the program to create the archive. And the s command line switch tells the program to write an object-file index into the archive, or update an existing one. This last switch is very important as it helps the linker to find what it needs to do its job.
+
+Note:
+The command line switches are case sensitive! There are uppercase switches that have completely different actions.
+MFile and the WinAVR distribution contain a Makefile Template that includes the necessary command lines to build a library. You will have to manually modify the template to switch it over to build a library instead of an application.
+
+See the GNU Binutils manual for more information on the ar program.
+
+
+
+
+Using a Library
+
+To use a library, use the -l switch on your linker command line. The string immediately following the -l is the unique part of the library filename that the linker will link in. For example, if you use:
+-lm
+this will expand to the library filename:
+
+libm.a
+which happens to be the math library included in avr-libc.
+
+If you use this on your linker command line:
+
+-lprintf_flt
+then the linker will look for a library called:
+
+libprintf_flt.a
+This is why naming your library is so important when you create it!
+
+The linker will search libraries in the order that they appear on the command line. Whichever function is found first that matches the undefined reference, it will be linked in.
+
+There are also command line switches that tell GCC which directory to look in (-L) for the libraries that are specified to be linke in with -l.
+
+See the GNU Binutils manual for more information on the GNU linker (ld) program.

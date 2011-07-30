@@ -1,0 +1,4 @@
+--cpu Cortex-M3 "hal_gpio.o" "core_cm3.o" ".\startup_stm32f10x_hd.o" "system_stm32f10x.o" "misc.o" "stm32f10x_adc.o" "stm32f10x_bkp.o" "stm32f10x_can.o" "stm32f10x_cec.o" "stm32f10x_crc.o" "stm32f10x_dac.o" "stm32f10x_dbgmcu.o" "stm32f10x_dma.o" "stm32f10x_exti.o" "stm32f10x_flash.o" "stm32f10x_fsmc.o" "stm32f10x_gpio.o" "stm32f10x_i2c.o" "stm32f10x_iwdg.o" "stm32f10x_pwr.o" "stm32f10x_rcc.o" "stm32f10x_rtc.o" "stm32f10x_sdio.o" "stm32f10x_spi.o" "stm32f10x_tim.o" "stm32f10x_usart.o" "stm32f10x_wwdg.o" "basic_rf.o" "hal_assert.o" "hal_cc2520.o" "hal_cc2520base.o" "hal_cc2520vx.o" "hal_cpu.o" "hal_debugio.o" "hal_digio.o" "hal_foundation.o" "hal_led.o" "hal_mcu.o" "rtl_debugio.o" "rtl_foundation.o" --strict --scatter "hal_gpio.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\hal_gpio.map" -o "hal_gpio.axf"

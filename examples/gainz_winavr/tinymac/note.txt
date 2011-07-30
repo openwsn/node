@@ -1,0 +1,4 @@
+TiTinyMAC demonstration/testing
+==================================================================
+
+can use simplaaloha test because all MAC shares the same interface besides their initialization.

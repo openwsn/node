@@ -1,0 +1,4 @@
+Digested from 
+Using Open Source Tools for AT91SAM7S Cross Development revision C.pdf
+
+This platform has ceased now.

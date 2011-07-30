@@ -1,0 +1,36 @@
+introduction
+======================================================
+this is an cc2420 based cama/ca protocol implementation.
+
+the sending process is as the following:
+
+1. check whether the channel is empty (CCA). if it's not empty, then wait for a random time and restart the sending processing again when the wait period expired.
+
+check: if the current frame has been tried to sent for more than 3 times, then give up and return false to its upper layer.
+
+2. send the frame out by sending the frame to cc2420 hardware transceiver
+
+3. after sending the frame, the sender should wait for its reply till some time. 
+
+4. if got ACK, then clear the frame from sender's internal buffer.
+if got NAK or timeout, then restart the sending process later.
+
+
+
+the receiving process is as the following:
+
+1. accept incoming frame
+
+2. if this is a data frame, then sent ACK/NAK frame back imdiately. 
+if ACK, recorded the sequence number.
+if ACK, put the frame inside the local buffer and wait for other applications to read it out or else fire the listener.
+
+3. if this ACK/NAK frame
+search for specified frame inside local buffer. 
+if ACK, then seaching the frame inside local buffer and delete it. if not found, then do nothing.
+if NAK, then seaching the frame inside local buffer. if success, then restart the sending process. if failed, then simply ignore this frame. 
+
+4. if this is command frame
+the treat it as a data frame and call the mac command interpreter.
+
+

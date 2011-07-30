@@ -1,0 +1,4 @@
+adhoc_flood
+
+Flood is similar to broadcast. But it's an network layer operation. When a node do flood operation on a frame/packet, the frame/packet will be broadcasted by the current node and then propgated in the whole network.
+

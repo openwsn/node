@@ -1,0 +1,3 @@
+Q: Porting openwsn to mica2 nodes?
+R:
+mica2 is widely accetped around the world. considering the mica2 node uses cc1000 series transceiver, you had to re-deveope the transceiver driver and implement the TiRxTxTransceiverInterface 

@@ -1,0 +1,14 @@
+Hal_timer
+========================================================================
+1) Project Description: 
+this is a program used to test whether hal_timer module is ok.
+
+2) Experiments and Notice 实验步骤和实验中的注意事项
+测试程序使用hal_timer模块来控制节点LED的闪烁频率。
+取一节点，设置hal_timer的周期为较小值，可以看到节点的红灯以较快频率闪烁。
+增大hal_timer的周期，可以看到节点红灯以更慢的频率闪烁。表明以hal_timer的设置成功
+
+3) History 修改历史，哪些工作还没有完成需要特别注意的
+
+2009-12-23
+-- test ok by Yan Shixing

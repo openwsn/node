@@ -1,0 +1,4 @@
+osx_pooldemo
+
+test TiOsxTaskPool
+tested ok by Jiang Ridong

@@ -1,0 +1,3 @@
+与hal_timer不同，hal_multimer测试多个timeradapter
+这些timeradapter的实例同时运行
+该测试用例用于测试多个timer运行时彼此不相互干扰

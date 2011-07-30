@@ -1,0 +1,4 @@
+这个工程文件是用来测试16定时器3的，实验现象：绿灯闪得很快，串口输出“fe”，周期是20ms；
+要想改变实验周期必须到hal_ticker.c文件中改变 SYSTM_HOPEINTERVAL宏的值。因为该时钟是给系统内核用的，应用程序不应该改变其频率。
+
+tested successfully by Jiang Ridong 2011/5/16
