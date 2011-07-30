@@ -1,0 +1,11 @@
+http://www.linaro.org/downloads/
+
+Linaro develops a growing range of open source development tools and software that can be downloaded here.  We aim to deliver the best open source tool chain for ARM v7A architecture (e.g. ARM Cortex-A8 and Cortex-A9 processors), a modern Linux kernel, power optimization tools and Linaro Evaluation Builds for Android and Ubuntu.  The LEBs are being developed for our members low cost dev boards and will be made available as soon as the code is ready.
+
+To ensure the quality of the tools and code we continuously build the Android and Ubuntu LEBs on our partners board and extensively test and benchmark their performance.  Linaro¡¯s aim is to provide product quality software and tools to all.
+
+Most of the software is updated every month so please check regularly for the latest code and tools.
+
+You can keep up to date by registering for our linaro-dev mailing list and chatting with us on IRC (#linaro on irc.freenode.net)
+
+If you would like to get involved with Linaro please feel free to send an e-mail to contactus@linaro.org

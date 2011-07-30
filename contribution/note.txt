@@ -1,0 +1,1 @@
+These directory contains the source code from third party contributors. Some of them maybe merged into the main openwsn project after revision and testing. Those contributions will be found in common directory.

@@ -1,0 +1,3 @@
+This is the Standard Peripheral Library V3.5.0 for STM32F10x micro-controller from ST.com
+Generally
+, you needn't modify the files in this directory. The files are extracted from "STM32F10x_StdPeriph_Lib_V3.5.0.zip"

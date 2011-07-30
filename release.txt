@@ -1,0 +1,216 @@
+===Introduction===
+----
+OpenWSN means Open Wireless Sensor Networks. It's a fundamental platform for WSN research and applications. It was initiated by TongJi University . The first version of OpenWSN is based on LPC213x/LPC214x ARM7 + TI/Chipcon cc2420. The default configuration is LPC2146. The second version is based on Atmega128 MCU and ICT GAINZ hardware.
+
+OpenWSN hopes it can be widely used in the society and powers the smart sensor to make us live better. According to our prediction, the huge number of smart sensors will become an important infrastructure like 3G and Internet-2 in the future. While, while, OpenWSN powers 1/3 of them!
+
+- [http://docs.google.com/View?id=dddjbnk9_111x985twdt OpenWSN FAQ] 
+
+- [https://sourceforge.net/apps/mediawiki/openwsn/index.php?title=Course_Sensor_Network,_System_and_Application Course In TongJi: Sensor Network, System and Applications] ([http://jpkc.tongji.edu.cn/jpkc/sensor/index.html Old])
+
+
+===News===
+
+----
+
+On Hardware Platforms
+
+
+Currently, OpenWSN runs on GAINZ platform only. GAINZ is based on cc2420 and atmega128L which is quite similar to Crossbow's MicaZ node. 
+Please contact [http://www.shenlian-tech.com Shen Lian Tech] (Manager Jiang, Peng) for GAINZ hardware.
+
+
+=============================================================
+
+2011.07.29
+
+- Change the version mangement from svn to git.
+
+
+2011.03.18
+
+Bug fixed and prepare for the next milestone release. Also improved the network architecture. Fully discard the old TiOpenFrame and replace it with TiFrame(in rtl_frame) and TiIEEE802Frame154Descriptor(in rtl_ieee802frame154). Upgraded a lot of network components including aloha(in svc_nio_aloha), csma(in svc_nio_csma), flood(in svc_nio_flood), etc.  Also new example and testings.
+
+- frame improvement (rtl_frame)
+- frame queue bug fixed (rtl_framequeue)
+- fully discard TiOpenFrame (rtl_openframe was removed from project) and it should be replaced with TiFrame(in rtl_frame) and TiIEEE802Frame154Descriptor(in rtl_ieee802frame154)
+- add rtl_cache 
+- upgrade new tinymac (svc_tinymac)
+- upgrade new aloha (svc_nio_aloha)
+- upgrade new csma (svc_nio_csma)
+- upgrade flood (svc_nio_flood)
+
+
+2010-10-18
+=============================================================
+
+- improved maca mac protocol component (in svc_maca module)
+- improved maca testing project in gainz-winavr/maca/
+
+
+2010-10-14
+=============================================================
+openwsn 2.1.0 released
+- bug fix: svc_csma component and also upgrade related testing programs in gainz-winavr folder.
+
+
+2010-10-10
+=============================================================
+openwsn 2.0.0 released!
+this version improved a lot of core features, in particular the low power event and task scheduling architecture (osx kernel), and some protocols. since we upgraded the low level MAC protocols, the flooding coomponent failed to run on the new MAC component now, but we will fix this soon in the next release before the end of this year.
+
+- upgrading developing environment to the newest WinAVR and AVR Studio: AVR Studio 4.18 and SP3 for ATmega128L from ATMEL.com, and WinAVR 20100110 Toolchain. attention we install it into D:\binx\embedded\winarm and don't use the portal version of WinAVR now.
+- rewrite the task scheduling component. now using heap data structure for priority queuing based scheduling;
+- using interface design and implementation to split transceiver components and mac components;
+- add interface definition for byte, block and frame devices;
+- upgrade the MAC components, including tinymac, simple aloha(tested), aloha(tested), csma(in testing) and maca;
+- reorganize the folder structures. it's intend to support multiple developing platform; and target platforms;
+- add some new examples such as low power testing;
+- upgrade cc2420 testings and other testing/examples;
+- and a lot of other minor improvements.
+
+openwsn 2.0.0 is an important release due to the great improvements of osx kernel and files reorganization. but it maybe not very stable due to some high level components may cannot keep consistent with the low level upgradings. but this will be solved in the next release.
+
+The next release will contain more bug fix, protocol improvements and extensions. and will released in Dec. 2010. the time synchronization feature will be provided in the next release too.
+
+
+2010-08-26
+=============================================================
+- support 4 MAC protocols: TinyMAC, SimpleAloha, Aloha, CSMA and MACA is in revision
+- upgraded to WinAVR 20100110.
+
+
+
+2010-05-10
+=============================================================
+- support 4 MAC protocols: simple aloha, standard aloha, adaptive aloha, and MACA. 
+
+
+2010-05-04
+=============================================================
+release version 1.1.0 (some work are still in heavy developing)
+new features: 
+- re-organize the whole file structure. preparing to port to other platforms. however, we'll still choose GAINZ as our main working platform. since the folder structure changed, some demo project configuration may need to be upgraded to reflect these changes. 
+- add project libwsn. this is used to compile most of the c file into an library. 
+- network protocol stack architecture re-design. (still in developing)
+- sleep/wakeup feature test in cc2420 adapter (still in developing)
+- adaptive aloha mac protocol (still in developing)
+- maca mac protocol (still in developing)
+- low power application architecture re-design (still in developing)
+- add project starsink. this is an upgrade version of sinknode project. however, starsink enhances sinknode and it's compatible with gateway project on the PC side.
+and a lot of minor revisions.
+
+
+2010-04-06
+=============================================================
+- Re-organize the whole source code tree. Plan to support multiple developing environment in the future. 
+- all the shared source files are placed in folder "common"
+- the example file folders are named by the following rule: 
+	<target board name>-<compiler name>
+such as
+	gainz-winavr
+
+if the compiler name are duplication, then use:
+	<target board name>-<developing ide>
+
+if there're multiple choices
+	<target board name>/<compiler name or developing ide name>
+
+
+2010-11-31
+=============================================================
+openwsn-1.0.0 released 
+this version can run directly on GAINZ platform
+
+
+2009-11-28
+=============================================================
+
+openwsn-1.0.0rc for gainz released
+this's a release candidate version. 
+the formal version will be released after serveral more month testing.
+
+
+2009-10-19
+=============================================================
+这几天将OS_宏替换为HAL_宏
+可能如下文件中的更改会导致错误或者问题
+common/hal/opennode/hal_target.h, hal_target.c, INCLUDES.h, OS_CFG.h
+osx/umemory/osdep.h
+gainz\目录下的所有老代码
+
+
+
+20090717
+=============================================================
+测试通过的：
+hal_led模块 三个led和所有API都已经测试通过，工作正确
+hal_timer模块 timer 0的查询和中断方式都能正确工作
+hal_uart模块 查询方式工作正常，中断方式有待进一步测试
+
+20090710
+=============================================================
+- 删除了当前目录下的common子目录。如果用到某个模块的话，直接到上一级common中去找并在工程中加入即可。
+- 编译通过
+- hal_led由史淼晶修改完成并测试通过。
+- hal_uart0由史淼晶测试通过
+- 本目录原为send(20090707)
+
+
+20090524
+=============================================================
+
+- 按照新的编码风格对源代码模块进行了较大调整，但没有修改程序逻辑
+- 重新整理OS_打头的有关代码，将os.h, os.c彻底剥离了出来。今后os模块可不用，也可单独用。
+- 以hal作为文件名前缀的文件隶属于hal层，不再依赖于osx_nano.c。hal层中用到的原子管理代码和延迟代码放在hal_cpu模块中。
+- 虽然该工程编译的时候仍然放进了osx_nano模块，但是完全可以删除，已经测试过。
+- 修改了hal_cc2420模块格式，但是极少修改代码，使其看上去更美观
+- compile 通过 by Portable WinAVR 2008 and AVR Studio 4.x (当前最新版本)
+
+
+20090523
+=============================================================
+
+- 在版本20090522基础上进一步简化了cc2420内部的缓冲区管理
+不再缓冲多个数据包，现在只缓冲1个包。我们认为主要的队列管理应由MAC层提供而不是在cc2420 adapter内部。cc2420只提供最基本的硬件功能封装，不要把cc2420 adapter对象搞得太复杂。
+
+- 删除了原 demo_handlepacket
+- 删除了原ICT程序中大量的用于缓冲区管理的标志变量。
+
+- Timer3_fire
+其中删除了对cc2420_writetxfifo(demopacket)的调用，也就是删除了周期发送frame这一测试性功能。以后根据需要请酌情利用Timer的周期性中断。
+
+- 消除了malloc和free。今后也不允许使用malloc和free，尽量以 len+array 方式替代
+
+采用如下工具编译通过（张伟）
+- Portable WinAVR 2008版本编译通过 (缺省首选)
+- AVRStudio 4.x + WinAVR 2009最新版本 编译通过（可直接在AVRStudio中打开并编译）
+
+
+20090522
+=============================================================
+
+- 重新修改了interrupt部分的声明和定义，采用了最基本的__attribute((signal))和__attribute((interrupt))方式，没有使用WinAVR提供的宏。
+
+- 在程序中删除了os_post调用，这样，整个工程在没有os支持下也可以跑，整个逻辑更加简单。
+但是os.c和os.h仍然需要加在工程中，因为用到了它们提供的临界区管理函数。
+
+由于删除了os_post，故在程序中增加了变量 m_fifop_request 以指示有数据报到达，并且为cc2420增加了一个新的cc2420_evolve()函数。同时在主程序中频繁调用cc2420_evolve()以实现数据包到达的查询。
+
+- 简化了cc2420内部的缓冲区管理
+原先支持多个frame，现在只支持1个。多缓冲Queue不在由cc2420 adapter提供，而改由上层的mac层提供
+
+
+张伟编译通过
+
+
+20090521
+=============================================================
+
+在中科院ICT原版本的基础上，本目录下工程进展：
+
+- 删除了全部库文件，直接以c文件代替
+- 修改了makefile
+- 将开发环境从WinAVR 2004升级到 WinAVR Portable 2008
+
+以上由张伟编译通过，未测试

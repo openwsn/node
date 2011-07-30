@@ -1,0 +1,6 @@
+This is the Standard Peripheral Library for STM32L1xx micro-controller from ST.com
+
+Generally
+, you needn't modify the files in this directory. The files are extracted from "STM32_USB-FS-Device_Lib_V3.3.0.zip"
+
+Refer to "UM0424 STM32 USB-FS Device development kit.pdf" at ST.com. There's also a copy of this file in %OPENWSN_ROOT%/install/stm3210x/

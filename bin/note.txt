@@ -1,0 +1,2 @@
+binary executable programs collected into this file.
+mainly those running on developing workstation 

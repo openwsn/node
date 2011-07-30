@@ -1,0 +1,14 @@
+
+Attention
+=================================================
+
+The files in this folder are collected from the STM32 Peripherial Library 3.5.0 (STM32F10x_StdPeriph_Lib_V3.5.0.zip downloaded from ST.com). 
+
+However, these files are provided by ARM.com. 
+
+Generally, you needn't modify these files because they're work with Cortex-M3 CPU rather than the STM32 microcontroller.
+
+History
+=================================================
+
+author zhangwei on 2011.06.03

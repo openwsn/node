@@ -1,0 +1,2 @@
+This folders contains some hex files for fast protyping. 
+The source codes of these projects can be found in "examples" folder.
