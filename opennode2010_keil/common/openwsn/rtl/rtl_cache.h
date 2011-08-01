@@ -1,5 +1,3 @@
-#ifndef _RTL_ASSERT_H_7689_
-#define _RTL_ASSERT_H_7689_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -25,46 +23,46 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-
-
-#include "rtl_configall.h"
-#include "rtl_foundation.h"
+#ifndef _CACHE_H_4638_
+#define _CACHE_H_4638_
 
 /*******************************************************************************
- * @name rtl_assert.h
- * @author zhangwei on 20050120
- * 
- * assert support for the runtime library.
- * In the past, the rtl_assert() is support inside rtl_foundation. However, the 
- * assert implementation depends on hal layer modules. In order to break this 
- * dependency, i move the rtl_assert() from rtl_foundation and create this file.
- * 
- * In all the rtl library modules, this module is the only one depends on modules
- * outside of rtl.
- * 
- * @modified by zhangwei on 2005-01-20
- *  - released
- * @modified by zhangwei on 200812
- *	- upgraded from the original tk_assert.*
- *	- revision, but not tested
- *	- not tested.
- *	- todo: eliminate the dependence on BCB. it should be ansi/windows only.
- * @modified by zhangwei on 20100713
- *  - fully revised. the rtl_assert() has been moved into rtl_foundation module.
- *    this module is kept for old module's compatible issues.
+ * rtl_cache
+ * This module implements a simple but very useful object -- TiCache. The eldest
+ * item will be replaced according to the current algorithm.
  *
+ * @todo
+ * performance tuning in the future
+ *
+ * @author zhangwei(TongJi University) in 200911
+ *	- first created.
  ******************************************************************************/ 
 
-#ifdef __cplusplus
-extern "C" {
+#ifndef CONFIG_CACHE_CAPACITY 
+#define CONFIG_CACHE_CAPACITY 8
 #endif
 
-// rtl_assert
-// rtl_assert_init()
-
-#ifdef __cplusplus
-}
+#ifndef CONFIG_CACHE_MAX_LIFETIME 
+#define CONFIG_CACHE_MAX_LIFETIME 0xFF
 #endif
 
-#endif /* _RTL_ASSERT_H_7689_ */
+#define CACHE_HOPESIZE(itemsize,capacity) (sizeof(TiCache) + itemsize*capacity)
 
+/* TiCache
+ * An simple cache. The eldest item will be displaced first. 
+ *
+ * lifetime = 0 means this is an empty item in the cache. The bigger the lifetime, 
+ * the newer the lifetime.
+ */
+typedef struct{
+	uint16 itemsize;
+	uintx  capacity;
+	uint8  lifetime[CONFIG_CACHE_CAPACITY];				
+} TiCache;
+
+TiCache * cache_open( void * mem, uint16 memsize, uint16 itemsize, uintx capacity );
+void cache_close( TiCache * cache );
+bool cache_hit( TiCache * cache, char * item, uint16 itemlen, uintx * idx );
+uintx cache_visit( TiCache * cache, char * item, uint16 itemlen );
+
+#endif

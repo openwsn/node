@@ -1,64 +1,14 @@
-/*******************************************************************************
- * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
- *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
- *
- * OpenWSN is a free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 or (at your option) any later version.
- *
- * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA.
- *
- * For non-opensource or commercial applications, please choose commercial license.
- * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
- *
- * For other questions, you can contact the author through email openwsn#gmail.com
- * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
- * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
- *
- ******************************************************************************/
-
-/* TiIoBuf
- * An array based high performance input/output buffer. It can also be used as a 
- * byte based queue.
- *
- * @state
- * 	released
- *
- * @modified by zhangwei on 2009.05.xx
- *	- created
- * @modified by zhangwei on 2010.02.19
+/* @modified by zhangwei on 2010.02.19
  * 	- bug fix: correct length setting error in function iobuf_pushback()
  * @modified by zhangwei on 2010.02.20
  * 	- bug fix: correct behavior of iobuf_append()
  *  - add: iobuf_adjustlength()
- * @modified by zhangwei on 2010.02.21
- * 	- bug fix in iobuf_append()
- *  - add function iobuf_dump(). the dump function is enabled when CONFIG_DEBUG
- *    defined.
- * @modified by zhangwei on 2011.07.30
- *	- revision. Eliminate some compiling warnings.
+ *
  */
-
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
-#include <stdlib.h>
-#include <string.h>
-
-#ifdef CONFIG_DEBUG
-#include <stdio.h>
-#endif
-
-#include "rtl_assert.h"
 #include "rtl_iobuf.h"
-
-#define inline
+#include "rtl_assert.h"
 
 #ifdef CONFIG_DYNA_MEMORY
 TiIoBuf * iobuf_create( uintx size )
@@ -95,9 +45,8 @@ void iobuf_destroy( TiIoBuf * iobuf )
 #ifdef CONFIG_DYNA_MEMORY
 inline TiIoBuf * iobuf_duplicate( TiIoBuf * iobuf )
 {
-	TiIoBuf * newbuf;
 	rtl_assert( iobuf != NULL );
-	newbuf = iobuf_create(iobuf->size);
+	TiIoBuf * newbuf = iobuf_create(iobuf->size);
 	iobuf_copyfrom( newbuf, iobuf );
     return newbuf;
 }
@@ -137,7 +86,7 @@ inline char * iobuf_endptr( TiIoBuf * iobuf )
 	return iobuf_ptr(iobuf) + iobuf_length(iobuf);
 }
 
-inline void iobuf_clear( TiIoBuf * iobuf )
+void iobuf_clear( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	iobuf->length = 0;
@@ -213,17 +162,6 @@ inline void iobuf_popfront( TiIoBuf * iobuf, uintx count )
 	}
 	else
 		iobuf->length = 0;
-}
-
-inline uintx iobuf_getchar( TiIoBuf * iobuf, char * pc )
-{
-	uintx count = 0;
-	count = iobuf_front(iobuf, pc, 1);
-	if (count > 0)
-	{
-		iobuf_popfront(iobuf, count);
-	}
-	return count;
 }
 
 inline bool iobuf_set( TiIoBuf * iobuf, uintx idx, char c )
@@ -302,7 +240,7 @@ uintx iobuf_append( TiIoBuf * iobuf1, TiIoBuf * iobuf2 )
 	return count;
 }
 
-inline void	iobuf_setlength( TiIoBuf * buf, uintx count )
+ void	iobuf_setlength( TiIoBuf * buf, uintx count )
 {
 	buf->length = count;
 }
@@ -315,7 +253,7 @@ void iobuf_adjustlength( TiIoBuf * buf, int delta )
 #ifdef CONFIG_DEBUG
 void iobuf_dump( TiIoBuf * buf )
 {
-	uintx i;
+	int i;
 	char * pc;
 	// printf("dump iobuf: memsize=%d, size=%d, length=%d\n", buf->memsize, buf->size, buf->length );
 	if (buf->length > 0)

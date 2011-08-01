@@ -440,7 +440,7 @@ void frame_adjustlength( TiFrame * frame, int delta );
  * Requires <link rtl_debugio.h>
  */
 #ifdef CONFIG_DEBUG
-void frame_dump( TiFrame * frame );
+//void frame_dump( TiFrame * frame );
 #endif
 
 

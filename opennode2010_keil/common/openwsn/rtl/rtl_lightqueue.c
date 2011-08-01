@@ -48,7 +48,7 @@
 #include "rtl_foundation.h"
 #include "rtl_lightqueue.h"
 
-inline TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
+TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
 {
 	TiLightQueue * que;
 	que = (TiLightQueue *)buf;
@@ -63,27 +63,27 @@ inline TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize 
 	return que;
 }
 
-inline void lwque_destroy( TiLightQueue * que )
+ void lwque_destroy( TiLightQueue * que )
 {
 	return;
 }
 
-inline uint8 lwque_count( TiLightQueue * que )
+ uint8 lwque_count( TiLightQueue * que )
 {
 	return que->count;
 }
 
-inline uint8 lwque_capacity( TiLightQueue * que )
+ uint8 lwque_capacity( TiLightQueue * que )
 {
 	return que->capacity;
 }
 
-inline bool lwque_empty( TiLightQueue * que )
+ bool lwque_empty( TiLightQueue * que )
 {
 	return (que->count == 0);
 }
 
-inline bool lwque_full( TiLightQueue * que )
+ bool lwque_full( TiLightQueue * que )
 {
 	return ((que->count != 0) && (que->count == que->capacity));
 }
@@ -92,7 +92,7 @@ inline bool lwque_full( TiLightQueue * que )
  * This function returns the memory address of specified item with index input. It helps
  * to manipulate the item directly.
  */
-inline void * lwque_getbuf( TiLightQueue * que, uint8 idx )
+ void * lwque_getbuf( TiLightQueue * que, uint8 idx )
 {
 	rtl_assert( idx < que->capacity );
 	return (char*)que + sizeof(TiLightQueue) + (idx * que->itemsize);
@@ -104,7 +104,7 @@ inline void * lwque_getbuf( TiLightQueue * que, uint8 idx )
  * Returns the memory address of the front item in the queue. If the queue is empty, 
  * then NULL will be returned.
  */
-inline void * lwque_front( TiLightQueue * que )
+ void * lwque_front( TiLightQueue * que )
 {
 	void * item = (que->count > 0) ? lwque_getbuf(que,que->front) : NULL;
 	
@@ -116,7 +116,7 @@ inline void * lwque_front( TiLightQueue * que )
  * Returns the memory address of the rear item in the queue. If the queue is empty, 
  * then NULL will be returned.
  */
-inline void * lwque_rear( TiLightQueue * que )
+void * lwque_rear( TiLightQueue * que )
 {
 	void * item = (que->count > 0) ? lwque_getbuf(que,que->rear) : NULL;
 	return item;
@@ -126,7 +126,7 @@ inline void * lwque_rear( TiLightQueue * que )
  * Push the specified item into the queue. The item will be duplicated in the queue
  * so the source item can be discarded or reused.
  */
-inline bool lwque_pushback( TiLightQueue * que, void * item )
+bool lwque_pushback( TiLightQueue * que, void * item )
 {
 	bool ret;
 	if (que->count == 0)
@@ -150,7 +150,7 @@ inline bool lwque_pushback( TiLightQueue * que, void * item )
 	return ret;
 }
 
-inline bool lwque_pushfront( TiLightQueue * que, void * item )
+bool lwque_pushfront( TiLightQueue * que, void * item )
 {
 	bool ret;
 
@@ -179,7 +179,7 @@ inline bool lwque_pushfront( TiLightQueue * que, void * item )
 /* lwque_popfront()
  * Pop the front item out from the queue. It's usually used with lwque_front().
  */
-inline bool lwque_popfront( TiLightQueue * que )
+bool lwque_popfront( TiLightQueue * que )
 {
 	bool ret;
 
@@ -199,7 +199,7 @@ inline bool lwque_popfront( TiLightQueue * que )
 	return ret;
 }
 
-inline bool lwque_poprear( TiLightQueue * que )
+bool lwque_poprear( TiLightQueue * que )
 {
 	bool ret;
 

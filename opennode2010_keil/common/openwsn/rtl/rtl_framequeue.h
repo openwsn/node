@@ -57,7 +57,7 @@
 #include "rtl_lightqueue.h"
 
 #ifdef CONFIG_DEBUG
-#include "rtl_dumpframe.h"
+//#include "rtl_dumpframe.h"
 #include "rtl_debugio.h"
 #endif
 

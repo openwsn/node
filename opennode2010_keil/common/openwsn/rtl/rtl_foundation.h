@@ -26,30 +26,8 @@
  *
  ******************************************************************************/
 
-
-/*******************************************************************************
- * rtl_foundation
- *
- * system wide definitions for runtime library (RTL)
- *
- * @history
- * @author zhangwei on 2003
- * @modified by zhangwei on 200610
- * @modified by xxx on 200704
- * @modified by zhangwei on 20100709
- *  - revision. add rtl_init() and rtl_assert() 
- *
- * @modified by zhangwei on 200901
- * 	- bug fix: you should include <tchar.h> all the time no matter the macro
- * 	  CONFIG_UNICODE defined or not, or else the system cannot recognize the
- * 	  TCHAR macro.
- *  - tested ok.
- *  - review the source code.
- *  - format the source code.
- *
- ******************************************************************************/
-
 #include "rtl_configall.h"
+#include <stdint.h>
 
 /*****************************************************************************
  * Q: how to enable unicode programming?
@@ -68,6 +46,28 @@
   #include <windows.h>
 #endif
 */
+
+/*******************************************************************************
+ * @name rtl_foundation.h
+ * @author zhangwei on 20070331
+ *
+ * system wide definitions for runtime library (RTL)
+ *
+ * @history
+ * @modified by zhangwei on 200610
+ * @modified by xxx on 200704
+ * @modified by zhangwei on 20100709
+ *  - revision. add rtl_init() and rtl_assert() 
+ *
+ * @modified by zhangwei on 200901
+ * 	- bug fix: you should include <tchar.h> all the time no matter the macro
+ * 	  CONFIG_UNICODE defined or not, or else the system cannot recognize the
+ * 	  TCHAR macro.
+ *  - tested ok.
+ *  - review the source code.
+ *  - format the source code.
+ *
+ ******************************************************************************/
 
 #ifdef __cplusplus
 extern "C" {
@@ -158,10 +158,9 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 
 
 
-/*
 #define STEP_CHECK(cond,retvar,retvalue) \
 	if ((retvar >= 0) && (cond)) retvar = retvalue;
-*/
+
 
 /*
  * obsolete definitions
@@ -196,6 +195,10 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 #define ADDR(arr) (&((arr)[0]))
 #define ADDRAT(arr,n) (&(arr[0])+(n))
 
+#ifdef CONFIG_COMPILER_BORLAND
+//#define max(a,b) (((a)>(b)) ? (a) : (b))
+//#define min(a,b) (((a)<(b)) ? (a) : (b))
+#endif
 
 /* @attention:
  * you must guarantee sizeof(TiHandle) == sizeof(void*)
