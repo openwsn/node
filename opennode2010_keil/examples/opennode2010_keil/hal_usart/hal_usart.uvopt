@@ -193,10 +193,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>6</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>167</TopLine>
-      <CurrentLine>173</CurrentLine>
+      <TopLine>187</TopLine>
+      <CurrentLine>187</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\hal_usart.c</PathWithFileName>
       <FilenameWithoutPath>hal_usart.c</FilenameWithoutPath>
@@ -210,7 +210,7 @@
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>3</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -219,12 +219,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\cm3\core\core_cm3.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\cm3\core\core_cm3.c</PathWithFileName>
       <FilenameWithoutPath>core_cm3.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>4</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>2</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -233,12 +233,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\startup_stm32f10x_hd.s</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\startup_stm32f10x_hd.s</PathWithFileName>
       <FilenameWithoutPath>startup_stm32f10x_hd.s</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>5</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -247,12 +247,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\stm32f10x.h</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\stm32f10x.h</PathWithFileName>
       <FilenameWithoutPath>stm32f10x.h</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>6</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -261,12 +261,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\system_stm32f10x.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\system_stm32f10x.c</PathWithFileName>
       <FilenameWithoutPath>system_stm32f10x.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>7</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -275,7 +275,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\system_stm32f10x.h</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\system_stm32f10x.h</PathWithFileName>
       <FilenameWithoutPath>system_stm32f10x.h</FilenameWithoutPath>
     </File>
   </Group>
@@ -287,7 +287,7 @@
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>8</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -296,12 +296,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</PathWithFileName>
       <FilenameWithoutPath>misc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>9</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -310,12 +310,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_adc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>10</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -324,12 +324,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_bkp.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>11</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -338,12 +338,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_can.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>12</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -352,12 +352,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_cec.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_cec.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_cec.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>13</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -366,12 +366,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_crc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>14</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -380,12 +380,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dac.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dac.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_dac.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>15</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -394,12 +394,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dbgmcu.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dbgmcu.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_dbgmcu.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>16</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -408,12 +408,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dma.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dma.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_dma.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>17</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -422,12 +422,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_exti.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_exti.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_exti.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>18</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -436,12 +436,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_flash.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>19</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -450,12 +450,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_fsmc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>20</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -464,12 +464,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_gpio.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_gpio.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_gpio.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>21</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -478,12 +478,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_i2c.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>22</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -492,12 +492,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_iwdg.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_iwdg.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_iwdg.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>23</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -506,12 +506,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_pwr.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_pwr.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_pwr.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>24</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -520,12 +520,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rcc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rcc.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_rcc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>25</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -534,12 +534,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rtc.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rtc.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_rtc.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>26</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -548,12 +548,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_sdio.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -562,12 +562,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_spi.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_spi.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_spi.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>28</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -576,12 +576,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_tim.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_tim.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_tim.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>29</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -590,12 +590,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_usart.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_usart.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_usart.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>3</GroupNumber>
-      <FileNumber>30</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -604,19 +604,19 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_wwdg.c</FilenameWithoutPath>
     </File>
   </Group>
 
   <Group>
     <GroupName>hal</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>31</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -625,26 +625,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_assert.c</PathWithFileName>
-      <FilenameWithoutPath>hal_assert.c</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>4</GroupNumber>
-      <FileNumber>32</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_cpu.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_cpu.c</PathWithFileName>
       <FilenameWithoutPath>hal_cpu.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>33</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -653,12 +639,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_debugio.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_debugio.c</PathWithFileName>
       <FilenameWithoutPath>hal_debugio.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>34</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -667,26 +653,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_digio.c</PathWithFileName>
-      <FilenameWithoutPath>hal_digio.c</FilenameWithoutPath>
-    </File>
-    <File>
-      <GroupNumber>4</GroupNumber>
-      <FileNumber>35</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_foundation.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_foundation.c</PathWithFileName>
       <FilenameWithoutPath>hal_foundation.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>36</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -695,12 +667,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_led.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_led.c</PathWithFileName>
       <FilenameWithoutPath>hal_led.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>37</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -709,19 +681,33 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\hal\opennode2010\hal_mcu.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_mcu.c</PathWithFileName>
       <FilenameWithoutPath>hal_mcu.c</FilenameWithoutPath>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_assert.c</PathWithFileName>
+      <FilenameWithoutPath>hal_assert.c</FilenameWithoutPath>
     </File>
   </Group>
 
   <Group>
     <GroupName>rtl</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>38</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -730,12 +716,12 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\rtl\rtl_debugio.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\rtl\rtl_debugio.c</PathWithFileName>
       <FilenameWithoutPath>rtl_debugio.c</FilenameWithoutPath>
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>39</FileNumber>
+      <FileNumber>0</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
@@ -744,7 +730,7 @@
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\common\openwsn\rtl\rtl_foundation.c</PathWithFileName>
+      <PathWithFileName>..\..\..\common\openwsn\rtl\rtl_foundation.c</PathWithFileName>
       <FilenameWithoutPath>rtl_foundation.c</FilenameWithoutPath>
     </File>
   </Group>
@@ -773,8 +759,8 @@
     <MDIClientArea>
       <RegID>0</RegID>
       <MDITabState>
-        <Len>278</Len>
-        <Data>01000000040000000100000001000000010000000100000001000000FFFFFFFF000000000100000001000000000000002800000028000000010000000100000000000000010000004D443A5C6465765C6F70656E77736E5C736F757263655C6E6F64655C6F70656E6E6F6465323031302D6B65696C5C6578706572696D656E745C68616C5F75736172745C68616C5F75736172742E63000000000B68616C5F75736172742E6300000000FFDC7800FFFFFFFF0100000010000000C5D4F200FFDC7800BECEA100F0A0A100BCA8E1009CC1B600F7B88600D9ADC200A5C2D700B3A6BE00EAD6A300F6FA7D00B5E99D005FC3CF00C1838300CACAD500010000000100000002000000CA00000065000000560500006C020000</Data>
+        <Len>294</Len>
+        <Data>01000000040000000100000001000000010000000100000001000000FFFFFFFF000000000100000001000000000000002800000028000000010000000100000000000000010000005D443A5C6465765C6F70656E77736E5C736F757263655C6E6F64655C6F70656E6E6F6465323031305F6B65696C5C6578616D706C65735C6F70656E6E6F6465323031305F6B65696C5C68616C5F75736172745C68616C5F75736172742E63000000000B68616C5F75736172742E6300000000FFDC7800FFFFFFFF0100000010000000C5D4F200FFDC7800BECEA100F0A0A100BCA8E1009CC1B600F7B88600D9ADC200A5C2D700B3A6BE00EAD6A300F6FA7D00B5E99D005FC3CF00C1838300CACAD500010000000100000002000000CA000000650000005605000018020000</Data>
       </MDITabState>
     </MDIClientArea>
     <ViewEx>
@@ -813,7 +799,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>0300000066000000C30000003D020000</Data>
+          <Data>0300000066000000C3000000E9010000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -833,7 +819,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>0300000066000000C30000003D020000</Data>
+          <Data>0300000066000000C3000000E9010000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1053,7 +1039,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1073,7 +1059,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1093,7 +1079,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1113,7 +1099,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1153,7 +1139,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>0300000066000000C30000003D020000</Data>
+          <Data>0300000066000000C3000000E9010000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1173,7 +1159,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>0300000066000000C30000003D020000</Data>
+          <Data>0300000066000000C3000000E9010000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1193,7 +1179,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>000000006E02000056050000AF020000</Data>
+          <Data>000000001A02000056050000AF020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1233,7 +1219,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1813,7 +1799,7 @@
         <RecentRowIndex>0</RecentRowIndex>
         <RectRecentDocked>
           <Len>16</Len>
-          <Data>03000000710200005305000096020000</Data>
+          <Data>030000001D0200005305000042020000</Data>
         </RectRecentDocked>
         <RectRecentFloat>
           <Len>16</Len>
@@ -1922,14 +1908,14 @@
       </Window>
       <DockMan>
         <Len>2485</Len>
-        <Data>000000000B000000000000000020000000000000FFFFFFFFFFFFFFFF94000000B00000005D030000B4000000000000000100000004000000010000000000000000000000FFFFFFFF06000000CB00000057010000CC000000F08B00005A01000079070000FFFF02000B004354616262656450616E65002000000000000019010000EA000000E20300004B010000940000004F0000005D030000B00000000000000040280046060000000B446973617373656D626C7900000000CB00000001000000FFFFFFFFFFFFFFFF14506572666F726D616E636520416E616C797A6572000000005701000001000000FFFFFFFFFFFFFFFF14506572666F726D616E636520416E616C797A657200000000CC00000001000000FFFFFFFFFFFFFFFF0E4C6F67696320416E616C797A657200000000F08B000001000000FFFFFFFFFFFFFFFF0D436F646520436F766572616765000000005A01000001000000FFFFFFFFFFFFFFFF11496E737472756374696F6E205472616365000000007907000001000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000001000000FFFFFFFFCB00000001000000FFFFFFFFCB000000000000000040000000000000FFFFFFFFFFFFFFFF5D0300004F00000061030000D5010000000000000200000004000000010000000000000000000000FFFFFFFF16000000E20500002D8C00002E8C00002F8C0000308C0000318C0000328C0000338C0000348C0000358C0000368C0000378C0000388C0000398C00003A8C00003B8C00003C8C00003D8C00003E8C00003F8C0000408C0000418C000001800040000000000000E6030000EA0000007604000070020000610300004F000000F1030000D50100000000000040410046160000000753796D626F6C7300000000E205000001000000FFFFFFFFFFFFFFFF00000000002D8C000001000000FFFFFFFFFFFFFFFF00000000002E8C000001000000FFFFFFFFFFFFFFFF00000000002F8C000001000000FFFFFFFFFFFFFFFF0000000000308C000001000000FFFFFFFFFFFFFFFF0000000000318C000001000000FFFFFFFFFFFFFFFF0000000000328C000001000000FFFFFFFFFFFFFFFF0000000000338C000001000000FFFFFFFFFFFFFFFF0000000000348C000001000000FFFFFFFFFFFFFFFF0000000000358C000001000000FFFFFFFFFFFFFFFF0000000000368C000001000000FFFFFFFFFFFFFFFF0000000000378C000001000000FFFFFFFFFFFFFFFF0000000000388C000001000000FFFFFFFFFFFFFFFF0000000000398C000001000000FFFFFFFFFFFFFFFF00000000003A8C000001000000FFFFFFFFFFFFFFFF00000000003B8C000001000000FFFFFFFFFFFFFFFF00000000003C8C000001000000FFFFFFFFFFFFFFFF00000000003D8C000001000000FFFFFFFFFFFFFFFF00000000003E8C000001000000FFFFFFFFFFFFFFFF00000000003F8C000001000000FFFFFFFFFFFFFFFF0000000000408C000001000000FFFFFFFFFFFFFFFF0000000000418C000001000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000001000000FFFFFFFFE205000001000000FFFFFFFFE2050000000000000010000001000000FFFFFFFFFFFFFFFFC60000004F000000CA000000560200000100000002000010040000000100000072FFFFFFBD040000FFFFFFFF05000000ED0300006D000000C3000000C4000000739400000180001000000100000085000000EA0000004B010000F1020000000000004F000000C6000000560200000000000040140056050000000750726F6A65637401000000ED03000001000000FFFFFFFFFFFFFFFF05426F6F6B73010000006D00000001000000FFFFFFFFFFFFFFFF0946756E6374696F6E7301000000C300000001000000FFFFFFFFFFFFFFFF0954656D706C6174657301000000C400000001000000FFFFFFFFFFFFFFFF09526567697374657273000000007394000001000000FFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000001000000FFFFFFFFED03000001000000FFFFFFFFED030000000000000080000000000000FFFFFFFFFFFFFFFF000000005C010000F10300006001000000000000010000000400000001000000000000000000000000000000000000000000000001000000C6000000FFFFFFFF0900000098070000E30500008F0700009007000091070000B9050000BA050000BB050000BC0500000180008000000000000085000000FB01000076040000700200000000000060010000F1030000D50100000000000040820046090000000A43616C6C20537461636B000000009807000001000000FFFFFFFFFFFFFFFF0A43616C6C20537461636B00000000E305000001000000FFFFFFFFFFFFFFFF064C6F63616C73000000008F07000001000000FFFFFFFFFFFFFFFF0757617463682031000000009007000001000000FFFFFFFFFFFFFFFF0757617463682032000000009107000001000000FFFFFFFFFFFFFFFF084D656D6F7279203100000000B905000001000000FFFFFFFFFFFFFFFF084D656D6F7279203200000000BA05000001000000FFFFFFFFFFFFFFFF084D656D6F7279203300000000BB05000001000000FFFFFFFFFFFFFFFF084D656D6F7279203400000000BC05000001000000FFFFFFFFFFFFFFFFFFFFFFFF0000000001000000000000000000000001000000FFFFFFFFF901000060010000FD010000D501000000000000020000000400000000000000000000000000000000000000000000000000000002000000C6000000FFFFFFFF9807000001000000FFFFFFFF9807000001000000C6000000000000000080000001000000FFFFFFFFFFFFFFFF0000000056020000560500005A0200000100000001000010040000000100000085FEFFFFDA000000FFFFFFFF07000000C5000000C700000077940000930700009407000095070000960700000180008000000100000085000000F5020000DB0500004A030000000000005A02000056050000AF0200000000000040820056070000000C4275696C64204F757470757401000000C500000001000000FFFFFFFFFFFFFFFF0D46696E6420496E2046696C657300000000C700000001000000FFFFFFFFFFFFFFFF0742726F77736572000000007794000001000000FFFFFFFFFFFFFFFF0755415254202331000000009307000001000000FFFFFFFFFFFFFFFF0755415254202332000000009407000001000000FFFFFFFFFFFFFFFF0755415254202333000000009507000001000000FFFFFFFFFFFFFFFF15446562756720287072696E74662920566965776572000000009607000001000000FFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000001000000FFFFFFFFC500000001000000FFFFFFFFC5000000000000000000000000000000</Data>
+        <Data>000000000B000000000000000020000000000000FFFFFFFFFFFFFFFF94000000B00000005D030000B4000000000000000100000004000000010000000000000000000000FFFFFFFF06000000CB00000057010000CC000000F08B00005A01000079070000FFFF02000B004354616262656450616E65002000000000000019010000EA000000E20300004B010000940000004F0000005D030000B00000000000000040280046060000000B446973617373656D626C7900000000CB00000001000000FFFFFFFFFFFFFFFF14506572666F726D616E636520416E616C797A6572000000005701000001000000FFFFFFFFFFFFFFFF14506572666F726D616E636520416E616C797A657200000000CC00000001000000FFFFFFFFFFFFFFFF0E4C6F67696320416E616C797A657200000000F08B000001000000FFFFFFFFFFFFFFFF0D436F646520436F766572616765000000005A01000001000000FFFFFFFFFFFFFFFF11496E737472756374696F6E205472616365000000007907000001000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000001000000FFFFFFFFCB00000001000000FFFFFFFFCB000000000000000040000000000000FFFFFFFFFFFFFFFF5D0300004F00000061030000D5010000000000000200000004000000010000000000000000000000FFFFFFFF16000000E20500002D8C00002E8C00002F8C0000308C0000318C0000328C0000338C0000348C0000358C0000368C0000378C0000388C0000398C00003A8C00003B8C00003C8C00003D8C00003E8C00003F8C0000408C0000418C000001800040000000000000E6030000EA0000007604000070020000610300004F000000F1030000D50100000000000040410046160000000753796D626F6C7300000000E205000001000000FFFFFFFFFFFFFFFF00000000002D8C000001000000FFFFFFFFFFFFFFFF00000000002E8C000001000000FFFFFFFFFFFFFFFF00000000002F8C000001000000FFFFFFFFFFFFFFFF0000000000308C000001000000FFFFFFFFFFFFFFFF0000000000318C000001000000FFFFFFFFFFFFFFFF0000000000328C000001000000FFFFFFFFFFFFFFFF0000000000338C000001000000FFFFFFFFFFFFFFFF0000000000348C000001000000FFFFFFFFFFFFFFFF0000000000358C000001000000FFFFFFFFFFFFFFFF0000000000368C000001000000FFFFFFFFFFFFFFFF0000000000378C000001000000FFFFFFFFFFFFFFFF0000000000388C000001000000FFFFFFFFFFFFFFFF0000000000398C000001000000FFFFFFFFFFFFFFFF00000000003A8C000001000000FFFFFFFFFFFFFFFF00000000003B8C000001000000FFFFFFFFFFFFFFFF00000000003C8C000001000000FFFFFFFFFFFFFFFF00000000003D8C000001000000FFFFFFFFFFFFFFFF00000000003E8C000001000000FFFFFFFFFFFFFFFF00000000003F8C000001000000FFFFFFFFFFFFFFFF0000000000408C000001000000FFFFFFFFFFFFFFFF0000000000418C000001000000FFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000001000000FFFFFFFFE205000001000000FFFFFFFFE2050000000000000010000001000000FFFFFFFFFFFFFFFFC60000004F000000CA000000020200000100000002000010040000000100000072FFFFFFBD040000FFFFFFFF05000000ED0300006D000000C3000000C4000000739400000180001000000100000085000000EA0000004B010000F1020000000000004F000000C6000000020200000000000040140056050000000750726F6A65637401000000ED03000001000000FFFFFFFFFFFFFFFF05426F6F6B73010000006D00000001000000FFFFFFFFFFFFFFFF0946756E6374696F6E7301000000C300000001000000FFFFFFFFFFFFFFFF0954656D706C6174657301000000C400000001000000FFFFFFFFFFFFFFFF09526567697374657273000000007394000001000000FFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000001000000FFFFFFFFED03000001000000FFFFFFFFED030000000000000080000000000000FFFFFFFFFFFFFFFF000000005C010000F10300006001000000000000010000000400000001000000000000000000000000000000000000000000000001000000C6000000FFFFFFFF0900000098070000E30500008F0700009007000091070000B9050000BA050000BB050000BC0500000180008000000000000085000000FB01000076040000700200000000000060010000F1030000D50100000000000040820046090000000A43616C6C20537461636B000000009807000001000000FFFFFFFFFFFFFFFF0A43616C6C20537461636B00000000E305000001000000FFFFFFFFFFFFFFFF064C6F63616C73000000008F07000001000000FFFFFFFFFFFFFFFF0757617463682031000000009007000001000000FFFFFFFFFFFFFFFF0757617463682032000000009107000001000000FFFFFFFFFFFFFFFF084D656D6F7279203100000000B905000001000000FFFFFFFFFFFFFFFF084D656D6F7279203200000000BA05000001000000FFFFFFFFFFFFFFFF084D656D6F7279203300000000BB05000001000000FFFFFFFFFFFFFFFF084D656D6F7279203400000000BC05000001000000FFFFFFFFFFFFFFFFFFFFFFFF0000000001000000000000000000000001000000FFFFFFFFF901000060010000FD010000D501000000000000020000000400000000000000000000000000000000000000000000000000000002000000C6000000FFFFFFFF9807000001000000FFFFFFFF9807000001000000C6000000000000000080000001000000FFFFFFFFFFFFFFFF0000000002020000560500000602000001000000010000100400000001000000FEFDFFFF53000000FFFFFFFF07000000C5000000C700000077940000930700009407000095070000960700000180008000000100000085000000F5020000DB0500004A030000000000000602000056050000AF0200000000000040820056070000000C4275696C64204F757470757401000000C500000001000000FFFFFFFFFFFFFFFF0D46696E6420496E2046696C657300000000C700000001000000FFFFFFFFFFFFFFFF0742726F77736572000000007794000001000000FFFFFFFFFFFFFFFF0755415254202331000000009307000001000000FFFFFFFFFFFFFFFF0755415254202332000000009407000001000000FFFFFFFFFFFFFFFF0755415254202333000000009507000001000000FFFFFFFFFFFFFFFF15446562756720287072696E74662920566965776572000000009607000001000000FFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000001000000FFFFFFFFC500000001000000FFFFFFFFC5000000000000000000000000000000</Data>
       </DockMan>
       <ToolBar>
         <RegID>59392</RegID>
         <Name>File</Name>
         <Buttons>
           <Len>2031</Len>
-          <Data>00200000010000002800FFFF01001100434D4643546F6F6C426172427574746F6E00E100000000000000000000000000000000000000000000000100000001000000018001E100000000000001000000000000000000000000000000000100000001000000018003E1000000000000020000000000000000000000000000000001000000010000000180CD7F0000000000000300000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018023E100000000040004000000000000000000000000000000000100000001000000018022E100000000000005000000000000000000000000000000000100000001000000018025E10000000000000600000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001802BE10000000004000700000000000000000000000000000000010000000100000001802CE10000000004000800000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001807A8A0000000004000900000000000000000000000000000000010000000100000001807B8A0000000004000A00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180D3B00000000000000B000000000000000000000000000000000100000001000000018015B10000000004000C0000000000000000000000000000000001000000010000000180F4B00000000004000D000000000000000000000000000000000100000001000000018036B10000000004000E00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180FF88000000000400460000000000000000000000000000000001000000010000000180FE880000000004004500000000000000000000000000000000010000000100000001800B810000000004001300000000000000000000000000000000010000000100000001800C810000000004001400000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180F0880000020000000F000000000000000000000000000000000100000001000000FFFF0100120043555646696E64436F6D626F427574746F6EE803000000000000000000000000000000000000000000000001000000010000009600000002002050000000000C4750494F5F73657462697473960000000000000001000C4750494F5F7365746269747300000000018024E10000000000001100000000000000000000000000000000010000000100000001800A810000000000001200000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018022800000020000001500000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180C488000000000000160000000000000000000000000000000001000000010000000180C988000000000400180000000000000000000000000000000001000000010000000180C788000000000000190000000000000000000000000000000001000000010000000180C8880000000000001700000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000FFFF01001500434D4643546F6F6C4261724D656E75427574746F6E4C010000020001001A0000000F50726F6A6563742057696E646F7773000000000000000000000000010000000100000000000000000000000100000008002880DD880000000000001A0000000750726F6A656374000000000000000000000000010000000100000000000000000000000100000000002880DC8B0000000000003A00000005426F6F6B73000000000000000000000000010000000100000000000000000000000100000000002880E18B0000000000003B0000000946756E6374696F6E73000000000000000000000000010000000100000000000000000000000100000000002880E28B000000000000400000000954656D706C6174657300000000000000000000000001000000010000000000000000000000010000000000288018890000000000003D0000000E536F757263652042726F777365720000000000000000000000000100000001000000000000000000000001000000000028800000000000000400FFFFFFFF00000000000000000001000000000000000100000000000000000000000100000000002880D988000000000000390000000C4275696C64204F7574707574000000000000000000000000010000000100000000000000000000000100000000002880E38B000000000000410000000B46696E64204F75747075740000000000000000000000000100000001000000000000000000000001000000000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180FB7F0000000000001B000000000000000000000000000000000100000001000000000000000446696C65AC030000</Data>
+          <Data>00200000010000002800FFFF01001100434D4643546F6F6C426172427574746F6E00E100000000000000000000000000000000000000000000000100000001000000018001E100000000000001000000000000000000000000000000000100000001000000018003E1000000000000020000000000000000000000000000000001000000010000000180CD7F0000000000000300000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018023E100000000040004000000000000000000000000000000000100000001000000018022E100000000040005000000000000000000000000000000000100000001000000018025E10000000004000600000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001802BE10000000004000700000000000000000000000000000000010000000100000001802CE10000000004000800000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001807A8A0000000004000900000000000000000000000000000000010000000100000001807B8A0000000004000A00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180D3B00000000004000B000000000000000000000000000000000100000001000000018015B10000000004000C0000000000000000000000000000000001000000010000000180F4B00000000004000D000000000000000000000000000000000100000001000000018036B10000000004000E00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180FF88000000000400460000000000000000000000000000000001000000010000000180FE880000000004004500000000000000000000000000000000010000000100000001800B810000000004001300000000000000000000000000000000010000000100000001800C810000000004001400000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180F0880000020000000F000000000000000000000000000000000100000001000000FFFF0100120043555646696E64436F6D626F427574746F6EE803000000000000000000000000000000000000000000000001000000010000009600000002002050000000000C4750494F5F73657462697473960000000000000001000C4750494F5F7365746269747300000000018024E10000000004001100000000000000000000000000000000010000000100000001800A810000000004001200000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018022800000020000001500000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180C488000000000400160000000000000000000000000000000001000000010000000180C988000000000400180000000000000000000000000000000001000000010000000180C788000000000000190000000000000000000000000000000001000000010000000180C8880000000000001700000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000FFFF01001500434D4643546F6F6C4261724D656E75427574746F6E4C010000020001001A0000000F50726F6A6563742057696E646F7773000000000000000000000000010000000100000000000000000000000100000008002880DD880000000000001A0000000750726F6A656374000000000000000000000000010000000100000000000000000000000100000000002880DC8B0000000000003A00000005426F6F6B73000000000000000000000000010000000100000000000000000000000100000000002880E18B0000000000003B0000000946756E6374696F6E73000000000000000000000000010000000100000000000000000000000100000000002880E28B000000000000400000000954656D706C6174657300000000000000000000000001000000010000000000000000000000010000000000288018890000000000003D0000000E536F757263652042726F777365720000000000000000000000000100000001000000000000000000000001000000000028800000000000000400FFFFFFFF00000000000000000001000000000000000100000000000000000000000100000000002880D988000000000000390000000C4275696C64204F7574707574000000000000000000000000010000000100000000000000000000000100000000002880E38B000000000000410000000B46696E64204F75747075740000000000000000000000000100000001000000000000000000000001000000000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180FB7F0000000000001B000000000000000000000000000000000100000001000000000000000446696C65AC030000</Data>
         </Buttons>
         <OriginalItems>
           <Len>1423</Len>
@@ -1961,7 +1947,7 @@
         <Name>Debug</Name>
         <Buttons>
           <Len>2582</Len>
-          <Data>00200000000000001B00FFFF01001100434D4643546F6F6C426172427574746F6ECC880000000000002500000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018017800000000000002600000000000000000000000000000000010000000100000001801D800000000000002700000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001801A800000000000002800000000000000000000000000000000010000000100000001801B80000000000000290000000000000000000000000000000001000000010000000180E57F0000000000002A00000000000000000000000000000000010000000100000001801C800000000000002B00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018000890000000000002C00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180E48B0000000000002D0000000000000000000000000000000001000000010000000180F07F0000000000002E0000000000000000000000000000000001000000010000000180E8880000000000003700000000000000000000000000000000010000000100000001803B010000000000002F0000000000000000000000000000000001000000010000000180BB8A00000000000030000000000000000000000000000000000100000001000000FFFF01001500434D4643546F6F6C4261724D656E75427574746F6E0E01000000000000310000000D57617463682057696E646F7773000000000000000000000000010000000100000000000000000000000100000003001380DB8B00000000000031000000064C6F63616C73000000000000000000000000010000000100000000000000000000000100000000001380D88B000000000000310000000757617463682031000000000000000000000000010000000100000000000000000000000100000000001380D98B0000000000003100000007576174636820320000000000000000000000000100000001000000000000000000000001000000000013800F01000000000000320000000E4D656D6F72792057696E646F7773000000000000000000000000010000000100000000000000000000000100000004001380D28B00000000000032000000084D656D6F72792031000000000000000000000000010000000100000000000000000000000100000000001380D38B00000000000032000000084D656D6F72792032000000000000000000000000010000000100000000000000000000000100000000001380D48B00000000000032000000084D656D6F72792033000000000000000000000000010000000100000000000000000000000100000000001380D58B00000000000032000000084D656D6F727920340000000000000000000000000100000001000000000000000000000001000000000013801001000000000000330000000E53657269616C2057696E646F77730000000000000000000000000100000001000000000000000000000001000000040013809307000000000000330000000755415254202331000000000000000000000000010000000100000000000000000000000100000000001380940700000000000033000000075541525420233200000000000000000000000001000000010000000000000000000000010000000000138095070000000000003300000007554152542023330000000000000000000000000100000001000000000000000000000001000000000013809607000000000000330000000E49544D2F525441205669657765720000000000000000000000000100000001000000000000000000000001000000000013803C010000000000003400000010416E616C797369732057696E646F7773000000000000000000000000010000000100000000000000000000000100000003001380658A000000000000340000000E4C6F67696320416E616C797A6572000000000000000000000000010000000100000000000000000000000100000000001380DC7F0000000000003E00000014506572666F726D616E636520416E616C797A6572000000000000000000000000010000000100000000000000000000000100000000001380E788000000000000380000000D436F646520436F76657261676500000000000000000000000001000000010000000000000000000000010000000000138053010000000000003F0000001553797374656D205669657765722057696E646F77730000000000000000000000000100000001000000000000000000000001000000010013805401000000000000FFFFFFFF115472616365204D656E7520416E63686F720000000000000000010000000000000001000000000000000000000001000000000013802901000000000000350000001553797374656D205669657765722057696E646F77730000000000000000000000000100000001000000000000000000000001000000010013804B01000000000000FFFFFFFF1453797374656D2056696577657220416E63686F720000000000000000010000000000000001000000000000000000000001000000000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000138001890000000000003600000007546F6F6C626F7800000000000000000000000001000000010000000000000000000000010000000300138044C5000000000000FFFFFFFF0E5570646174652057696E646F77730000000000000000010000000000000001000000000000000000000001000000000013800000000000000400FFFFFFFF000000000000000000010000000000000001000000000000000000000001000000000013805B01000000000000FFFFFFFF12546F6F6C626F78204D656E75416E63686F720000000000000000010000000000000001000000000000000000000001000000000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000138046010000000000004900000013446562756720526573746F72652056696577730000000000000000000000000100000001000000000000000000000001000000030013802C8C000000000000FFFFFFFF1A446562756720526573746F726520566965777320416E63686F720000000000000000010000000000000001000000000000000000000001000000000013800000000000000400FFFFFFFF000000000000000000010000000000000001000000000000000000000001000000000013802B8C000000000000FFFFFFFF17265265736574205669657720746F2044656661756C7473000000000000000001000000000000000100000000000000000000000100000000000000000005446562756791020000</Data>
+          <Data>00200000000000001B00FFFF01001100434D4643546F6F6C426172427574746F6ECC880000000000002500000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018017800000000000002600000000000000000000000000000000010000000100000001801D800000000000002700000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF00000000000000000000000000010000000100000001801A800000000000002800000000000000000000000000000000010000000100000001801B80000000000000290000000000000000000000000000000001000000010000000180E57F0000000000002A00000000000000000000000000000000010000000100000001801C800000000000002B00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000018000890000000000002C00000000000000000000000000000000010000000100000001800000000001000000FFFFFFFF0000000000000000000000000001000000010000000180E48B0000000000002D0000000000000000000000000000000001000000010000000180F07F0000000000002E0000000000000000000000000000000001000000010000000180E8880000000000003700000000000000000000000000000000010000000100000001803B010000000000002F0000000000000000000000000000000001000000010000000180BB8A00000000000030000000000000000000000000000000000100000001000000FFFF01001500434D4643546F6F6C4261724D656E75427574746F6E0E01000000000000310000000D57617463682057696E646F7773000000000000000000000000010000000100000000000000000000000100000003001380DB8B00000000000031000000064C6F63616C73000000000000000000000000010000000100000000000000000000000100000000001380D88B000000000000310000000757617463682031000000000000000000000000010000000100000000000000000000000100000000001380D98B0000000000003100000007576174636820320000000000000000000000000100000001000000000000000000000001000000000013800F01000000000000320000000E4D656D6F72792057696E646F7773000000000000000000000000010000000100000000000000000000000100000004001380D28B00000000000032000000084D656D6F72792031000000000000000000000000010000000100000000000000000000000100000000001380D38B00000000000032000000084D656D6F72792032000000000000000000000000010000000100000000000000000000000100000000001380D48B00000000000032000000084D656D6F72792033000000000000000000000000010000000100000000000000000000000100000000001380D58B00000000000032000000084D656D6F727920340000000000000000000000000100000001000000000000000000000001000000000013801001000000000000330000000E53657269616C2057696E646F77730000000000000000000000000100000001000000000000000000000001000000040013809307000000000000330000000755415254202331000000000000000000000000010000000100000000000000000000000100000000001380940700000000000033000000075541525420233200000000000000000000000001000000010000000000000000000000010000000000138095070000000000003300000007554152542023330000000000000000000000000100000001000000000000000000000001000000000013809607000000000000330000000E49544D2F525441205669657765720000000000000000000000000100000001000000000000000000000001000000000013803C010000000000003400000010416E616C797369732057696E646F7773000000000000000000000000010000000100000000000000000000000100000003001380658A000000000000340000000E4C6F67696320416E616C797A6572000000000000000000000000010000000100000000000000000000000100000000001380DC7F0000000000003E00000014506572666F726D616E636520416E616C797A6572000000000000000000000000010000000100000000000000000000000100000000001380E788000000000000380000000D436F646520436F76657261676500000000000000000000000001000000010000000000000000000000010000000000138053010000000000003F0000001553797374656D205669657765722057696E646F77730000000000000000000000000100000001000000000000000000000001000000010013805401000000000000FFFFFFFF115472616365204D656E7520416E63686F720100000000000000010000000000000001000000000000000000000001000000000013802901000000000000350000001553797374656D205669657765722057696E646F77730000000000000000000000000100000001000000000000000000000001000000010013804B01000000000000FFFFFFFF1453797374656D2056696577657220416E63686F720100000000000000010000000000000001000000000000000000000001000000000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000138001890000000000003600000007546F6F6C626F7800000000000000000000000001000000010000000000000000000000010000000300138044C5000000000000FFFFFFFF0E5570646174652057696E646F77730100000000000000010000000000000001000000000000000000000001000000000013800000000000000400FFFFFFFF000000000000000000010000000000000001000000000000000000000001000000000013805B01000000000000FFFFFFFF12546F6F6C626F78204D656E75416E63686F720100000000000000010000000000000001000000000000000000000001000000000001800000000001000000FFFFFFFF000000000000000000000000000100000001000000138046010000000000004900000013446562756720526573746F72652056696577730000000000000000000000000100000001000000000000000000000001000000030013802C8C000000000000FFFFFFFF1A446562756720526573746F726520566965777320416E63686F720100000000000000010000000000000001000000000000000000000001000000000013800000000000000400FFFFFFFF000000000000000000010000000000000001000000000000000000000001000000000013802B8C000000000000FFFFFFFF17265265736574205669657720746F2044656661756C7473010000000000000001000000000000000100000000000000000000000100000000000000000005446562756791020000</Data>
         </Buttons>
         <OriginalItems>
           <Len>968</Len>
@@ -1989,9 +1975,9 @@
       <Documents>
         <Doc>
           <Name>.\hal_usart.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>167</TopLine>
-          <CurrentLine>173</CurrentLine>
+          <ColumnNumber>6</ColumnNumber>
+          <TopLine>187</TopLine>
+          <CurrentLine>187</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
