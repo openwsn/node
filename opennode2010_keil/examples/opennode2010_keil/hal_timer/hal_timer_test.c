@@ -4,9 +4,9 @@
 
 #include "apl_foundation.h"
 
-#include "../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "../../common/openwsn/hal/opennode2010/hal_timer.h"
-
+#include "../../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
+                                   
 static TiTimerAdapter g_timer3;
 static TiTimerAdapter g_timer2;
 
