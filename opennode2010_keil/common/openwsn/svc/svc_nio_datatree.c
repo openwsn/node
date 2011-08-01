@@ -66,17 +66,15 @@
 
 #include "svc_configall.h"
 #include <string.h>
+#include "../hal/opennode2010/hal_mcu.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_ieee802frame154.h"
-#include "../rtl/rtl_dumpframe.h"
-#include "../hal/hal_targetboard.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_interrupt.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_cc2420.h"
-#include "../hal/hal_uart.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_assert.h"
+#include "../hal/opennode2010/hal_cpu.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_cc2520.h"
+#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
@@ -591,7 +589,7 @@ uint8 dtp_unicast_leaftoroot( TiDataTreeNetwork * net, TiFrame * frame, uint8 op
 		frame_setlength( net->txque,frame_length( frame));
 
 		if (count > 0)
-		{   
+		{     
 			DTP_SET_PROTOCAL_IDENTIFIER( pkt,DTP_PROTOCOL_IDENTIFER);
 			DTP_SET_PACKETCONTROL( pkt, DTP_UNICAST_LEAF2ROOT | DTP_DATA_RESPONSE );
 			DTP_SET_SHORTADDRTO( pkt, net->root );
@@ -602,15 +600,6 @@ uint8 dtp_unicast_leaftoroot( TiDataTreeNetwork * net, TiFrame * frame, uint8 op
 				DTP_SET_MAX_HOPCOUNT( pkt, CONFIG_DTP_MAX_COUNT );
 			}
 			DTP_SET_PATHDESC_COUNT( pkt, 0 );
-			/*
-			aloha_setremoteaddress( net->mac, net->parent );
-			
-			frame_skipouter( frame, 12, 2 );
-			ieee802frame154_open( &desc );
-			ieee802frame154_format( &desc, frame_startptr(frame), frame_capacity(frame), FRAME154_DEF_FRAMECONTROL_DATA );
-			ieee802frame154_set_shortaddrto( desc, net->addrto );
-			ieee802frame154_set_shortaddrfrom( desc, net->addrfrom );
-			*/
 		}
 		else{
 			frame_totalclear( net->txque );
@@ -685,6 +674,11 @@ uint8 dtp_recv( TiDataTreeNetwork * net, TiFrame * frame, uint8 option )
 		count = frame_totalcopyto( net->rxque, frame); 
 		frame_totalclear( net->rxque );
 	}
+
+    if ( count>0)
+    {
+        count = frame_length( frame);
+    }
   
 	dtp_evolve( net, NULL );
 	return count;
@@ -844,12 +838,12 @@ void dtp_evolve_node( void * netptr, TiEvent * e )
 		case DTP_STATE_IDLE:
 
 			if (!frame_empty(net->txque))
-			{  
+			{ 
+
 				switch (DTP_TRANTYPE(frame_startptr(net->txque)))
 				{
 				case DTP_BROADCAST:
 
-					led_toggle( LED_GREEN);//todo for testing
 					if (aloha_broadcast( net->mac, net->txque, 0x00 ) > 0)
 					{
 						frame_totalclear( net->txque );
@@ -865,15 +859,15 @@ void dtp_evolve_node( void * netptr, TiEvent * e )
 					}
 					break;
 				case DTP_UNICAST_LEAF2ROOT:
-
 					// if the last bit of the forth parameter of aloha_send() is 
 					// 1, then the aloha will use ACK mechanism.
 					//
 					//todo hal_assert(!(opf_shortaddrto(net->txque)==0x0000));
 					//todo if (aloha_send( net->mac, net->txque, 0x01 ) > 0)
 
+
 					if (aloha_send( net->mac,net->parent, net->txque, 0x01 ) > 0)
-					{   
+					{
 						frame_totalclear( net->txque );
 						net->txtrytime = DTP_MAX_TX_TRYTIME;
 					}
@@ -973,7 +967,6 @@ void dtp_evolve_node( void * netptr, TiEvent * e )
 				{
 				case DTP_BROADCAST:
 
-					led_toggle( LED_GREEN);//todo for testing
 					if (aloha_broadcast( net->mac, net->txque, 0x00 ) > 0)
 					{
 						frame_totalclear( net->txque );
@@ -1139,7 +1132,7 @@ void dtp_evolve_sink( void * netptr, TiEvent * e )
 			// when the frame in net->txque is really sent.
 
 			if (!frame_empty(net->txque))
-			{   
+			{ 
 
 				pkt = frame_startptr( net->txque );
 				switch (DTP_TRANTYPE(pkt))
@@ -1149,7 +1142,6 @@ void dtp_evolve_sink( void * netptr, TiEvent * e )
 					{   
 						frame_totalclear( net->txque );
 						net->txtrytime = DTP_MAX_TX_TRYTIME;
-						led_toggle( LED_RED);//todo for testing
 					}
 					else{
 						
@@ -1490,61 +1482,28 @@ void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net )
 		case DTP_MAINTAIN_REQUEST:
              /**********************************************************/
 			frame_moveouter( net->rxbuf);//todo for testing
-			dbc_putchar( 0xfe);//todo for testing
-            ieee802frame154_dump(net->rxbuf);//todo for testing
 			rssi = pkt[(frame_capacity( net->rxbuf)-14)];//todo for testing
 			depth = cur_hopcount = DTP_HOPCOUNT( pkt );//todo for testing
 			depth--;//todo for testing
 	
 			if ( (rssi >= net->rssi)&&(depth < net->depth))//todo for testing
 			{
-				dbc_putchar( 0xab);//todo for testing
-				dbc_uint8( net->rssi);//todo for testing
-				dbc_uint8( rssi);//todo for testing
-				dbc_putchar( 0xab);//todo for testing
 				net->rssi = rssi;//todo for testing
 				net->depth = cur_hopcount;//这一句是不是应该写成呢他net->depth = depth?
 				net->root = DTP_SHORTADDRFROM( pkt );
 				pc = DTP_PATHDESC_PTR(pkt) + ((DTP_HOPCOUNT(pkt)-1) << 1);//todo
 				net->parent = DTP_MAKEWORD( pc[2],pc[1]);//todo  父亲节点为上一节点的网络地址
-				dbc_uint16( net->parent);//todo for testing
-				dbc_putchar( 0xbc);//todo for testing
 			}
 			else if ( (( rssi - net->rssi) > 4)&&( depth == net->depth))//todo for testing
 			{
-				dbc_putchar( 0xcb);//todo for testing
-				dbc_uint8( net->rssi);//todo for testing
-				dbc_uint8( rssi);//todo for testing
-				dbc_putchar( 0xcb);//todo for testing
 				net->rssi = rssi;//todo for testing
 				net->depth = cur_hopcount;
 				net->root = DTP_SHORTADDRFROM( pkt );
 				pc = DTP_PATHDESC_PTR(pkt) + ((DTP_HOPCOUNT(pkt)-1) << 1);//todo
 				net->parent = DTP_MAKEWORD( pc[2],pc[1]);//todo  父亲节点为上一节点的网络地址
-				dbc_uint16( net->parent);//todo for testing
-				dbc_putchar( 0xcd);//todo for testing
 			}
 			else
 			{
-				/*这一句先不加
-				net->count++;//todo for testing
-				if ( net->count > 5)
-				{
-					net->parent =0;
-					net->rssi = 0;
-					net->depth = ~0;
-					net->count = 0;
-				}
-				*/
-				dbc_putchar( 0xea);//todo for testing
-				dbc_uint8( net->rssi);//todo for testing
-				dbc_uint8( rssi);//todo for testing
-				dbc_putchar( 0xeb);//todo for testing
-				dbc_uint8( net->depth);//todo for testing
-				dbc_uint8( depth);//todo for testing
-				dbc_putchar( 0xec);//todo for testing
-				dbc_uint16( net->parent);//todo for testing
-				dbc_putchar( 0xed);//todo for testing
 			}
 
 			
@@ -1578,8 +1537,6 @@ void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net )
 			max_hopcount = DTP_MAX_HOPCOUNT( pkt );
 			if (cur_hopcount >= max_hopcount)
 			{
-				dbc_putchar( 0xa0);//todo for testing
-				dbc_putchar( 0xa1);//todo for testing
 				frame_totalclear( net->rxbuf );
 				break;
 			}
@@ -1621,8 +1578,6 @@ void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net )
 			/*************************************************************************************/
 			if (!frame_empty(net->rxbuf))
 			{
-				dbc_putchar( 0xa1);//todo for testing
-				dbc_putchar( 0xa2);//todo for testing
 				cur_hopcount = DTP_HOPCOUNT( pkt );
 
 				//DTP_SET_HOPCOUNT( pkt, ++cur_hopcount );
@@ -1630,20 +1585,12 @@ void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net )
 				//为了阻止后面的节点成为前面的节点的父亲节点，用下面语句替换上面的语句。
 				if ( cur_hopcount < net->depth)//todo for testing
 				{
-					dbc_putchar( 0xa3);//todo for testing
 					hopcount = net->depth;
 					DTP_SET_HOPCOUNT( pkt,++hopcount);
-					dbc_uint8( DTP_HOPCOUNT( pkt));//todo for testing
-					dbc_uint8( net->depth);//todo for testing
-					dbc_putchar( 0xa4);//todo for testing
 
 				} 
 				else
 				{
-					dbc_putchar( 0xa5);//todo for testing
-					dbc_uint8( net->depth);//todo for testing
-					dbc_uint8( cur_hopcount);//todo for testing
-					dbc_putchar( 0xa6);//todo for testing
 					DTP_SET_HOPCOUNT( pkt, ++cur_hopcount );
 				}
 
@@ -1655,14 +1602,9 @@ void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net )
                 i = 0;
 				while ( i< 0x04)
 				{
-                    dbc_putchar( 0xa7);//todo for testing
-					dbc_putchar( 0xa8);//todo for testing
 
 					if (aloha_broadcast( net->mac, net->rxbuf, 0x00 ) > 0)
 					{
-						dbc_putchar( 0xa9);//todo for testing
-						dbc_putchar( 0xaa);//todo for testing
-						led_toggle( LED_YELLOW);//todo for testing
 						break;
 					}
 					i++;

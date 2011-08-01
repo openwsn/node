@@ -75,14 +75,13 @@
  
 
 #define TiDTP TiDataTreeNetwork
-
+#include "../hal/opennode2010/hal_mcu.h"
 #include "svc_configall.h"
 #include "../rtl/rtl_cache.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_targetboard.h"
-#include "../hal/hal_cc2420.h"
-#include "../hal/hal_uart.h"
-#include "../hal/hal_debugio.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_cc2520.h"
+#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/opennode2010/hal_debugio.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"

@@ -50,18 +50,17 @@
 /* @attention: you can also replace module with "svc_adaptaloha.h" to enable the 
  * Adaptive ALOHA protocol 
  */
+#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/opennode2010/cm3/core/core_cm3.h"
 #include "svc_configall.h"
 #include <string.h>
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/hal_targetboard.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_interrupt.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_cc2420.h"
-#include "../hal/hal_uart.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_assert.h"
+#include "../hal/opennode2010/hal_cpu.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_cc2520.h"
+#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/opennode2010/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
 #include "svc_nio_flood.h"
@@ -106,8 +105,8 @@ TiFloodNetwork * flood_open( TiFloodNetwork * net, TiAloha * mac, TiFunEventHand
 	net->lisowner = lisowner;
 
 	net->txque = frame_open( (char * )( &net->txque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 20, 0);
-	net->rxque = frame_open( (char *)( &net->rxque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 20, 0);
-	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 20, 0);
+	net->rxque = frame_open( (char *)( &net->rxque_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
+	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
 
 	net->cache = flood_cache_open( (char *)( &net->cache_mem), FLOOD_CACHE_HOPESIZE );
 	hal_assert( net->cache != NULL );
@@ -179,8 +178,10 @@ uintx flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uin
  */
 uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 {
-	uintx count=0;
-
+	uintx count;
+    uintx ret;
+    count = 0;
+    ret = 0;
 	flood_evolve( net, NULL );
 
 	if (!frame_empty( net->rxque))
@@ -189,8 +190,12 @@ uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 		count = frame_totalcopyfrom( frame, net->rxque );
 		frame_bufferclear( net->rxque );
 	}
+    if ( count)
+    {
+        ret = frame_length( frame);
+    }
 	
-	return count;
+	return ret;
 }
 
 /* Set the callback listener function of this service. The listener function will
@@ -266,7 +271,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 		
 			// Check if the RX queue is empty, then try to receive one from MAC layer
           	if ((frame_empty(net->rxbuf)) && frame_empty(net->rxque))
-			{   
+			{ 
+                frame_reset(net->rxbuf,0,0,0);//todo 这一句是必须加上去的。
 				cont = true;
 				count = aloha_recv( net->mac, net->rxbuf, 0x00 );
 				
@@ -282,7 +288,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 				// the header of flood protocol as the key to visit the cache.
 				//
 	            if (cont)
-				{   
+				{  
+                    
 					if (flood_cache_visit( net->cache, (char*)frame_startptr(net->rxbuf) ))//todo 我将CONFIG_FLOOD_CACHE_CAPACITY改成了1原先为8，不改的话不再接收新的帧.
 					{   
 						
@@ -292,13 +299,13 @@ void flood_evolve( void * netptr, TiEvent * e )
 				}
 
 				if (cont)
-				{     
+				{ 
+                    frame_reset(net->rxque,0,0,0);//todo 这一句是必须加上去的。
 					frame_totalcopyto( net->rxbuf, net->rxque );
                   
 					// Check whether this frame has reaches its maximum hopcount. 
 					// Discard this frame if this is true.
 					
-					char * pc;
 					pc = frame_startptr( net->rxbuf);
 
 					cur_hopcount = PACKET_CUR_HOPCOUNT( pc );

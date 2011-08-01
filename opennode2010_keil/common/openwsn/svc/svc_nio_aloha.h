@@ -48,23 +48,23 @@
 #define CONFIG_ALOHA_MAX_FRAME_SIZE             128
 
 
-#define CONFIG_ALOHA_MIN_ACK_TIME               5
+#define CONFIG_ALOHA_MIN_ACK_TIME               2
 #define CONFIG_ALOHA_MAX_ACK_TIME               200
 
 #define CONFIG_ALOHA_MAX_BACKOFF                100
-#define CONFIG_ALOHA_MIN_BACKOFF                0
+#define CONFIG_ALOHA_MIN_BACKOFF                2//该宏必须大于0，否则tiemr会出现异常
 
 #define CONFIG_ALOHA_STANDARD
-
+#include "../hal/opennode2010/cm3/core/core_cm3.h"
+#include "../hal/opennode2010/hal_mcu.h"
 #include "svc_configall.h"
 #include "svc_foundation.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_ieee802frame154.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_frame_transceiver.h"
-#include "../hal/hal_timer.h"
-#include "svc_timer.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_frame_transceiver.h"
+#include "../hal/opennode2010/hal_timer.h"
 #include "svc_nio_acceptor.h"
 
 /******************************************************************************* 
@@ -122,7 +122,7 @@ typedef struct{
     TiFrameTxRxInterface * rxtx;
 	TiNioAcceptor *nac;
 	//TiTimerAdapter * timer;
-	TiTimer * timer;
+	TiTimerAdapter * timer;
 	TiFrame * txbuf;
     uint8 retry;
 	uint16 backoff;
@@ -137,7 +137,7 @@ typedef struct{
     TiFunEventHandler listener;
     void * lisowner;
 	uint8 option;
-	char txbuf_memory[FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE)];
+    char txbuf_memory[FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE)];
 	char rxbuf_ack[FRAME154_ACK_FRAME_SIZE];
 	uintx success;//todo
 }TiAloha;
@@ -161,7 +161,7 @@ void aloha_destroy( TiAloha * mac );
  * Open the TiNioAloha object for sending and receiving. 
  */
 TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac, uint8 chn, uint16 panid, 
-	uint16 address, TiTimer * timer, TiFunEventHandler listener, void * lisowner, uint8 option );
+	uint16 address, TiTimerAdapter * timer, TiFunEventHandler listener, void * lisowner, uint8 option );
 
 /**
  * Close the TiNioAloha object. The closing process will release resource applied by 

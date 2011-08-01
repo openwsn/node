@@ -54,28 +54,28 @@
  *
  ******************************************************************************/
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 2
+#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
-
-#include "../../common/openwsn/hal/hal_configall.h"
+#define MAX_IEEE802FRAME154_SIZE                128
+#include "apl_foundation.h"
+#include "../../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
-#include "../../common/openwsn/rtl/rtl_random.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/svc/svc_nio_aloha.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "../../../common/openwsn/rtl/rtl_foundation.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "../../../common/openwsn/rtl/rtl_random.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/svc/svc_nio_aloha.h"
 
 
 #define CONFIG_DEBUG
@@ -92,15 +92,14 @@
 #define VTM_RESOLUTION                          5
 
 
-#define MAX_IEEE802FRAME154_SIZE                128
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
-static TiCc2420Adapter		                    m_cc;
+//static TiCc2520Adapter		                    m_cc;//todo 用2520.c中的全局变量
 static TiFrameRxTxInterface                     m_rxtx;
 static char                                     m_nacmem[NAC_SIZE];
 static TiAloha                                  m_aloha;
-static TiTimerAdapter                           m_timer;
-static TiTimerManager                          	m_vtm;
+static TiTimerAdapter                           m_timer2;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
 void aloha_sendnode(void);
 
@@ -112,64 +111,61 @@ int main(void)
 
 void aloha_sendnode(void)
 {   
-    TiCc2420Adapter * cc;
+    TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor        * nac;
     TiAloha * mac;
-	TiTimerAdapter   *timer;
-	TiTimerManager * vtm;
-	TiTimer * mac_timer;
+	TiTimerAdapter   *timer2;
 	TiFrame * txbuf;
+    TiFrame * mactxbuf;
 	char * pc;
 
 	char * msg = "welcome to aloha sendnode...";
 	uint8 i, seqid=0, option;
 
-	target_init();
-
+    //__disable_irq();
 	led_open();
 	led_on( LED_ALL );
 	hal_delay( 500 );
 	led_off( LED_ALL );
 	
-    rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-    dbc_mem( msg, strlen(msg) );
+    halUartInit( 9600,0);
 
-	cc = cc2420_construct( (char *)(&m_cc), sizeof(TiCc2420Adapter) );
+	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
-    timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
-	vtm = vtm_construct( (void*)&m_vtm, sizeof(m_vtm) );
-	
-	cc2420_open(cc, 0, NULL, NULL, 0x00 );
-    rxtx = cc2420_interface( cc, &m_rxtx );
-
-    hal_assert( rxtx != NULL );
-    // attention: since timer0 is used for the osx kernel, we propose the next 16bit 
-    // timer to be used in this module. If you port this example to other hardware
-    // platform, you may need to adjust the timer_open parameters.
-    //
-    // Q: is the second parameter be 2 or 3 for atmega's 16 bit timer?
-    timer = timer_open( timer, 2, NULL, NULL, 0x00 ); 
-	vtm = vtm_open( vtm, timer, VTM_RESOLUTION );
-	mac_timer = vtm_apply( vtm );
-	vti_open( mac_timer, NULL, mac_timer );
-    // initialize the standard aloha component for sending/recving
-    hal_assert( (rxtx != NULL) && (timer != NULL) );
-	hal_assert((cc != NULL) && (nac != NULL) && (mac != NULL));
-	hal_assert((timer != NULL ) && (vtm != NULL));
-
-	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-    //aloha_open( mac, rxtx, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, CONFIG_ALOHA_LOCAL_ADDRESS, 
-        //timer, NULL, NULL, 0x01);
-	aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
-	CONFIG_ALOHA_LOCAL_ADDRESS, mac_timer , NULL, NULL, 0x00 );//原版本是0x01
-    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );
-    cc2420_settxpower( cc, CC2420_POWER_1);//cc2420_settxpower( cc, CC2420_POWER_2);CC2420_POWER_1
-
-	hal_enable_interrupts();
+    timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
     
 	
+	cc2520_open(cc, 0, NULL, NULL, 0x00 );
+    rxtx = cc2520_interface( cc, &m_rxtx );
+
+    hal_assert( rxtx != NULL );
+    
+    timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
+    
+    timer_setinterval( timer2,1000,7999);
+
+    
+	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
+
+    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+
+	aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
+	CONFIG_ALOHA_LOCAL_ADDRESS, timer2 , NULL, NULL, 0x00 );
+    mac->txbuf = mactxbuf;
+   txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
+	//__enable_irq();
+   /*
+    timer_start( timer2);//todo for testing
+    while (1)//todo for testing
+    {
+        if ( timer_expired( timer2))
+        {
+            timer_CLR_IT( timer2);
+            led_toggle(LED_RED);
+        }
+    }*/
 	while(1) 
 	{
 		aloha_setremoteaddress( mac, CONFIG_ALOHA_REMOTE_ADDRESS );
@@ -207,7 +203,7 @@ void aloha_sendnode(void)
         // suggest you use option 0x00.
         // the default setting is 0x01, which means ACK is required.
         //
-		option = 0x00;
+		option = 0x01;//0x00->no ack,0x01->ack
 		//option = 0x01;//ack  todo
         txbuf->option = option;//todo
 
@@ -218,15 +214,12 @@ void aloha_sendnode(void)
 		    
             if (aloha_send(mac,CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
             {	
-			    dbc_putchar(0x22);		
-                led_toggle( LED_YELLOW );
-                dbo_putchar( 0x11);
-                dbo_putchar( seqid );
+                led_toggle( LED_RED );
+                USART_Send( 0xa9);
                 break;
             }
 			else{
-				dbo_putchar(0x22);
-                dbo_putchar( seqid );
+                USART_Send( 0xb0);
 				nac_evolve( mac->nac, NULL);//todo
 			}
             //hal_delay(2000);
@@ -248,6 +241,6 @@ void aloha_sendnode(void)
 
     frame_close( txbuf );
     aloha_close( mac );
-    cc2420_close( cc );
+    cc2520_close( cc );
 }
 

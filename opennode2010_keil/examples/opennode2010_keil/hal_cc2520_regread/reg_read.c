@@ -1,4 +1,141 @@
 
+/*
+*ÏÂÃæµÄÊÇÉÁµÆ³ÌÐò£¬µ÷ÊÔ³É¹¦
+*/
+/*
+#include "apl_foundation.h"
+
+void main (void)
+{ 
+  	int i;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+  
+    GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);//GPIO_Init(GPIOD, &GPIO_InitStructure);
+	//GPIO_ResetBits( GPIOA,GPIO_Pin_8);
+	GPIO_SetBits( GPIOA, GPIO_Pin_0);
+	GPIO_SetBits( GPIOA, GPIO_Pin_1);
+	GPIO_SetBits( GPIOA, GPIO_Pin_2);
+	GPIO_SetBits( GPIOA, GPIO_Pin_3);
+	GPIO_SetBits( GPIOA, GPIO_Pin_4);
+	GPIO_SetBits( GPIOA, GPIO_Pin_5);
+
+
+  
+  while( 1) {
+  GPIO_SetBits( GPIOA, GPIO_Pin_8);
+  for(i=0;i<100000;i++);
+  GPIO_ResetBits( GPIOA,GPIO_Pin_8);
+  for(i=0;i<100000;i++); 
+   
+  }
+}
+*/
+
+/******************************************************************************/
+
+ /*
+ * ÏÂÃæÊÇ¶¨Ê±Æ÷µÄ³ÌÐò
+ */
+/*
+#include "apl_foundation.h"
+
+/* Private function prototypes -----------------------------------------------*/
+/*void RCC_Configuration(void);
+void NVIC_Configuration(void);
+void GPIO_Configuration(void);
+void TIM3_Configuration(void);
+
+/* Private functions ---------------------------------------------------------*/
+
+ /*
+int main(void)
+{
+	RCC_Configuration();
+	NVIC_Configuration();
+	GPIO_Configuration();
+	TIM3_Configuration();
+
+
+	TIM_ClearFlag(TIM3, TIM_FLAG_Update);/*Çå³ý¸üÐÂ±êÖ¾Î»*/
+/*	TIM_ARRPreloadConfig(TIM3, DISABLE);/*Ô¤×°ÔØ¼Ä´æÆ÷µÄÄÚÈÝ±»Á¢¼´´«ËÍµ½Ó°×Ó¼Ä´æÆ÷ */
+
+/*	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);   
+	TIM_Cmd(TIM3, ENABLE);
+
+	while (1) {
+		
+	};
+}
+
+void TIM3_Configuration(void)
+{
+
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	TIM_TimeBaseStructure.TIM_Period = 1000; 
+	TIM_TimeBaseStructure.TIM_Prescaler = 7199;
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	
+}
+
+void RCC_Configuration(void)
+{
+	SystemInit();
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+}
+
+void NVIC_Configuration(void)
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; 
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+void GPIO_Configuration(void)
+{
+	
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_8|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_4|GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_SetBits( GPIOA, GPIO_Pin_8);
+
+}
+
+
+void TIM3_IRQHandler(void)
+{
+  
+  //TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+  //GPIO_WriteBit(GPIOA, GPIO_Pin_8, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_8)));
+
+	//GPIO_ResetBits( GPIOA,GPIO_Pin_8);
+    
+	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		GPIO_WriteBit(GPIOA, GPIO_Pin_8, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_8)));
+	}
+     
+}
+
+	*/
+	
+
 /***********************************************************************************
   Copyright 2007 Texas Instruments Incorporated. All rights reserved.
 
@@ -16,7 +153,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -46,16 +183,31 @@
  * INCLUDES
  */
 
+
+
 #include "apl_foundation.h"
+#include "../../common/openwsn/rtl/rtl_frame.h"
+#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
+//#include "../../common/openwsn/hal/opennode2010/hal_led.h"
+#define MAX_IEEE802FRAME154_SIZE                128//todo
 
 #define FAILED 1
+#define  channel 11
+
+#define GPIO_SPI GPIOB
+#define SPI_pin_MISO  GPIO_Pin_14
+#define SPI_pin_MOSI  GPIO_Pin_15
+#define SPI_pin_SCK   GPIO_Pin_13
+#define SPI_pin_SS    GPIO_Pin_12
+
 
 /***********************************************************************************
  * CONSTANTS
  */
 
 // Define SREG or FREG for output to serial port
-#define SREG            
+
+#define FREG            
 
 #define KVP(v)	{ v, #v }
 
@@ -65,10 +217,10 @@ typedef struct {
 } regKvp_t;
 
 
-
 /***********************************************************************************
  * LOCAL VARIABLES
  */
+
 
 #ifdef SREG
 // CC2520 SREG names
@@ -170,7 +322,15 @@ static regKvp_t regLookup[]=
 /***********************************************************************************
  * LOCAL FUNCTIONS
  */
+
+static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+TiIEEE802Frame154Descriptor m_desc;
+
 static void appPrintMenu(void);
+void RCC_Configuration(void);
+static void CC2520_Activate( void);
+static void SPI_GPIO_Configuration( void);
+
 
 /******************************************************************************
  * @fn          appPrintMenu
@@ -181,6 +341,8 @@ static void appPrintMenu(void);
  *
  * @return      none
  */
+
+
 static void appPrintMenu(void)
 {
   printStr("------------------------------\n");
@@ -188,6 +350,7 @@ static void appPrintMenu(void)
   printStr("Read Registers\n");
   printStr("------------------------------\n\n");
 }
+
 
 
 /*********************************************************************
@@ -199,18 +362,21 @@ static void appPrintMenu(void)
  *
  * @return  none
  */
+
+
+
 static void appPrintRfRegs(void)
 {
     regKvp_t *p;
+	uint8 state = 0;
+    uint16 iRegVal;
 
     p= regLookup;
 
     while ( p->iRegNum != 0xFF) {
-
-        uint16 iRegVal;
-        uint8 j;
-
-        // Read radio registers
+		led_on( LED_RED );
+		
+		// Read radio registers
         #ifdef SREG
         iRegVal = CC2520_MEMRD8(p->iRegNum);
         #elif defined FREG
@@ -219,10 +385,108 @@ static void appPrintRfRegs(void)
 
         // Print name and contents
         printKvpHex((char*)p->szRegName,iRegVal);
+		led_off( LED_RED );
+		state = CC2520_SNOP();
         
         p++;
     }
 }
+
+
+void RCC_Configuration(void)
+{
+	RCC_PCLK2Config(RCC_HCLK_Div8);
+	RCC_PCLK1Config(RCC_HCLK_Div8);
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+}
+
+static void SPI_GPIO_Configuration( void)
+{
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+}
+
+
+static void CC2520_Activate( void)
+{
+	int i;
+    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+//   /*
+//	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//    */
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+	
+
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+	//GPIO_ResetBits( GPIOA,GPIO_Pin_8);
+
+	/*********************************************************/
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN
+	//GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN
+	//GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_1)//reset the cc2520 nRST
+    //GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+	//GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14);//read the input of the SO.
+    /************************************************************************/
+    GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
+	//hal_delayus( 2 );
+	GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+//hal_delayus( 2 );
+	for ( i=0;i<13500;i++);//wait for the regulator to be stabe.
+
+	GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
+//hal_delayus( 2 );
+	GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+//hal_delayus( 2 );
+	for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
+	hal_assert( GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));//todo¸ÃÓï¾ä±¨´í£¬¿ÉÄÜÊÇÒòÎªSOÒý½ÅµÄ Êä³öÄ£Ê½¸Ä±äµÄÔ­Òò
+	
+    /*
+	//if the output of SO is 1 then set the CSn
+	while( !GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14))
+	{
+	}
+	*/
+	hal_delayus( 2 );
+	GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	hal_delayus( 2 );
+	//GPIO_SetBits( GPIOA,GPIO_Pin_8);
+}
+
 
 
 /***********************************************************************************
@@ -234,35 +498,145 @@ static void appPrintRfRegs(void)
  *
  * @return      none
  */
+
 void main (void)
-{ 
-  // Initialise board peripherals
-  halBoardInit();
+{
+	int i;
+    uint16 g;
+	uint8 len;
+	uint8 state;
+	uint8 k;
+	TiFrame *txbuf;//todo
+	char * ptr;//todo
+	TiIEEE802Frame154Descriptor * desc;//todo
+    g = 0x01;
+	state = 0x00;
+    RCC_Configuration( );
+    led_open();
+    led_off( LED_RED);//todo ÏÂÃæÈý¾äµÄË³Ðò²»ÄÜ±ä
+    CC2520_Activate();
+	SPI_GPIO_Configuration();
+	CC2520_SPI_OPEN( );
+	//CC2520_SPI_BEGIN();
+
+    //ÏÖÔÚ»¹È±ÉÙÏàÓ¦¼Ä´æÆ÷µÄÅäÖÃ;Õâ¿ÉÄÜÊÇµ¼ÖÂ·¢ËÍÊ§°ÜµÄÔ­ÒòÖ®Ò»
+    halRfInit();//todo ÉèÖÃÏàÓ¦µÄ¼Ä´æÆ÷
+
+	halRfSetPower( CC2520_TXPOWER_4_DBM);
+	halRfSetChannel( channel);
+	halRfSetShortAddr( 0x01);
+	halRfSetPanId( 0x01);
+    /*
+	for ( i=0;i<0xff;i++)
+	{
+		CC2520_SPI_BEGIN();
+		CC2520_SPI_TX( 0x02);
+		g = CC2520_SPI_RX();
+		CC2520_SPI_END();
+		//CC2520_SRXON();
+		//CC2520_SRXON();
+		CC2520_SXOSCON();
+		hal_delayus( 10);
+		CC2520_STXON();
+		//CC2520_INS_STROBE( 0x42);
+		hal_delayus( 10);
+		g = CC2520_SNOP();
+	}
+
+	if ( g==0)
+	{
+		led_on( LED_RED);
+	}
+ 
+    appPrintMenu();
   
-  // Initialise hal_rf
-  if(halRfInit()==FAILED) {
-    hal_assert(FALSE);
-  }
+    while(TRUE) 
+    {
   
-  // Indicate that device is powered
-  //halLedSet(1);
-  
-  // Initialise UART
-  halUartInit(HAL_UART_BAUDRATE_38400, 0);
-  
-  // Print Logo and splash screen on LCD
-  //utilPrintLogo("Reg Read");
-  appPrintMenu();
-  
-  // Puts MCU in endless loop
-  while(TRUE) {
-    // Wait for user to press S1 to enter menu
-    while (!BUTTON_1_PUSHED());
-    halMcuWaitMs(350);
-    
-    // Print radio registers
-    appPrintRfRegs();
-  }
+      appPrintRfRegs();
+    }
+	*/
+	desc = ieee802frame154_open( &m_desc );
+	txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+
+	
+	while (1)//todo for testing
+	{
+		frame_reset( txbuf,3,20,0);
+		ptr = frame_startptr( txbuf);
+
+		for ( i = 0;i< 6;i++)
+			ptr[i] = i;
+		frame_skipouter( txbuf,12,2);
+		desc = ieee802frame154_format( desc, frame_startptr( txbuf), frame_capacity( txbuf ), 
+		FRAME154_DEF_FRAMECONTROL_DATA ); 
+		rtl_assert( desc != NULL );
+		ieee802frame154_set_sequence( desc, 0x00); 
+		ieee802frame154_set_panto( desc,  0x01 );
+		ieee802frame154_set_shortaddrto( desc, 0x02 );
+		ieee802frame154_set_panfrom( desc,  0x01 );
+		ieee802frame154_set_shortaddrfrom( desc, 0x02 );
+		frame_setlength( txbuf,20);
+		len = frame_length( txbuf);
+        //todo
+
+		//while (HAL_READ_CC_SFD_PIN() == 1) {};//todo ÕâÒ»¾ä´úÂëÔÚCC2420ÖÐÊÇÀ´ÅÐ¶ÏÉÏÒ»´Î·¢ËÍÊÇ·ñÎª¿Õ£¬2520Ó¦¸ÃÔõÐ´£¿
+
+		
+			CC2520_SFLUSHTX();//cc2420_sendcmd( cc, CC2420_SFLUSHTX );//Ó¦Ð´³ÉÏë2520·¢ËÍtxÊ¹ÄÜÖ¸Áî
+            state = CC2520_SNOP();
+			/*
+			if (state)
+			{
+				led_on( LED_RED);
+			} 
+			else
+			{
+				led_off( LED_RED);
+			}*/
+			CC2520_TXBUF(len,(uint8*)txbuf);//todo ÕâÒ»¾ä¿ÉÄÜÓÐÎÊÌâ
+		    CC2520_SRFOFF();
+			CC2520_STXON();
+			/*
+			while(1)
+			{
+		 	     state = CC2520_SNOP();
+				 if ( state&0x02)
+				 {
+					hal_assert( 0);
+				 }
+			}*/
+
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x01);//µÆÔÚÉÁ£¬page 112.
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x02);//µÆÃ»ÉÁ,ËµÃ÷TX_FRM_DONE£¬°ÑÉÏÒ»¾ä
+			//µÄCC2520_STXON()»òCC2520_TXBUF(len,(uint8*)txbuf);×¢ÊÍµôºóµÆ¾Í¿ªÊ¼ÉÁ 
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x04);//µÆÔÚÉÁ
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x08);//µÆÔÚÉÁ
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x10);//µÆÔÚÉÁ
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x20);//µÆÔÚÉÁ
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x40);//µÆÔÚÉÁ
+			//hal_assert(  CC2520_REGRD8( CC2520_EXCFLAG0)&0x80);//µÆÃ»ÉÁ£¬ËµÃ÷RXENABLE_ZERO
+             
+			//ÈÃ2520ÓÐ×ã¹»µÄÊ±¼ä·¢³öÈ¥
+			hal_delayms( 500);
+
+			led_off( LED_RED);
+			hal_delayms( 500);
+            /*
+			CC2520_SPI_BEGIN();//HAL_CLR_CC_CS_PIN();
+
+			CC2520_SPI_TX( len-1);//_cc2420_spi_put( len-1 );
+
+			for (i=1; i<len; i++) 
+			{
+				CC2520_SPI_TX( txbuf[i]);//_cc2420_spi_put( buf[i] );
+			}
+
+			CC2520_SPI_END();
+			*/
+		}
+	
 }
+
 
 

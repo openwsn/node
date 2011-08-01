@@ -23,21 +23,21 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
-#include "../rtl/rtl_dumpframe.h"
 #include "../rtl/rtl_framequeue.h"
+#include "../rtl/rtl_lightqueue.h"
 #include "../rtl/rtl_debugio.h"
-#include "../hal/hal_cc2420.h"
-#include "../hal/hal_led.h"
-#include "../hal/hal_debugio.h"
+#include "../hal/opennode2010/hal_cc2520.h"
+#include "../hal/opennode2010/hal_led.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_assert.h"
 //#include "../hal/gainz/hpl_cpu.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 
 #ifdef CONFIG_DEBUG
-#include "../rtl/rtl_dumpframe.h"
+//#include "../rtl/rtl_dumpframe.h"
 #endif
 
 #ifdef CONFIG_DYNA_MEMORY
@@ -112,6 +112,12 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	// If you encounter problems here, please check whether you have input enough
 	// memory block to hold the full frame.
 	hal_assert((nac->rxframe != NULL) && (nac->txque != NULL) && (nac->rxque != NULL));
+
+#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+    //nac->rxtx->setlistener( rxtx, nac_on_frame_arrived_listener );
+    cc2520_setlistner( rxtx->provider,nac_on_frame_arrived_listener, nac )
+#endif
+
 	return nac;
 }
 
@@ -176,17 +182,29 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
 intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 {
 	TiFrame * front;
-	
+    intx ret = 0;
+
 	nac_evolve( nac,NULL );
-	front = fmque_front( nac->rxque );
+
+#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+    __disable_irq();//hal_enter_critical();
+#endif
+
+    front = fmque_front( nac->rxque );
 	if (front != NULL)
 	{
-		frame_totalcopyfrom( item, front );
+        //frame_totalcopyfrom( item, front );
+		frame_copyfrom(item,front);//todo for testing
 		fmque_popfront( nac->rxque );
-		return frame_length(front);
+        ret = frame_length(front);
 	}
 	else
-		return 0;
+		ret = 0;
+#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+    __enable_irq();//hal_leave_critical();
+#endif
+
+    return ret;
 }
 
 /** 
@@ -244,7 +262,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	{   
 		
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		hal_enter_critical();
+		__disable_irq();//hal_enter_critical();
 		#endif
         
 		// @pre nac->rxframe must be initialized correctly.
@@ -253,14 +271,14 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	    frame_reset( f, 0, 0, 0 );    		
 		count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
 		if (count > 0)
-		{   
+		{
             frame_setlength( f, count );
             frame_setcapacity( f, count );
 			fmque_pushback( nac->rxque, f );
 		}
 		
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		hal_leave_critical();
+		__enable_irq();//hal_leave_critical();
 		#endif
 	}
 }
@@ -287,10 +305,11 @@ TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session )
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e )
 {
+	uint8 count;
 	TiFrameRxTxInterface * rxtx = nac->rxtx;
 	TiFrame * f = nac->rxframe;
 	
-	hal_atomic_begin();
+	__disable_irq();//hal_atomic_begin();
 	count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), 0x00 );
 	if (count > 0)
 	{
@@ -298,7 +317,7 @@ void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e )
         frame_setcapacity( f, count );
 		fmque_pushback( nac->rxque, f );
 	}
-	hal_atomic_end();
+	__enable_irq();//hal_atomic_end();
 }
 #endif
 

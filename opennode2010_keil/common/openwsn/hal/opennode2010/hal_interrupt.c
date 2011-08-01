@@ -78,10 +78,13 @@ extern "C" {
 
 void hal_disable_interrupt( uintx num )
 {
+	// todo
+/*
     if (num < 8)
     {
         EIMSK |= (1 << num);
     }
+*/
 }
 
 void hal_enable_interrupt( uintx num )
@@ -93,10 +96,14 @@ void hal_enable_interrupt( uintx num )
      * 
      * ref to atmega128 datasheet
      */
+
+	// todo
+	/*
     if (num < 8)
     {
         EIMSK &= (~(1 << num));
     }
+	*/
 }
 
 
@@ -295,27 +302,33 @@ inline void hal_invokehandler( uint8 num, TiEvent * e )
  * #define SIG_OUTPUT_COMPARE3A	_VECTOR(26)
  * ......
  */
- 
+
+/* 
 ISR(INT0_vect)
 {
 	// hal_assert(false);
 }
+*/
 
 /* used to response the cc2420 FIFOP interrupt (external interrupt request 7, _VECTOR(7)) */
+/*
 ISR(INT6_vect)
 {
     hal_invokehandler( INTNUM_CC2420_FIFOP, NULL );
 }
+*/
 
 /* _VECTOR(14)
  * used with the interrupt driven test application in <timer> directory. */
+/*
 ISR(TIMER0_OVF_vect)
 {   
    	hal_invokehandler( INTNUM_TIMER0_OVF, NULL );
 }
+*/
 
 /* _VECTOR(15) */
-
+/*
 ISR(TIMER0_COMP_vect)
 {
    	hal_invokehandler( INTNUM_TIMER0_COMP, NULL );
@@ -351,7 +364,7 @@ ISR(TIMER3_COMPA_vect)
 {
 	hal_invokehandler( INTNUM_TIMER3_COMPA, NULL );
 }
-
+*/
 
 /* used to response the TIMER3 comparison interrupt */
 //void __attribute((interrupt))   __vector_26(void)
@@ -362,57 +375,57 @@ ISR(TIMER3_COMPA_vect)
 	hal_invokehandler( INTNUM_CC2420_SFD, NULL );
 }
 */
+//
+//ISR(ADC_vect)
+//{
+//    hal_invokehandler( INTNUM_ADC_COMPLETE, NULL );
+//}
 
-ISR(ADC_vect)
-{
-    hal_invokehandler( INTNUM_ADC_COMPLETE, NULL );
-}
-
-/* USART0, Rx Complete, formerly SIG_UART0_RECV	*/
-ISR(USART0_RX_vect)
-{
-	hal_invokehandler( INTNUM_USART0_RX, NULL );
-}
-
-/* USART0 Data Register Empty, SIG_UART0_DATA */
-ISR(USART0_UDRE_vect)
-{
-	hal_invokehandler( INTNUM_USART0_UDRE, NULL );
-}
-
-ISR(USART1_RX_vect)
-{
-	//hal_invokehandler( INTNUM_USART1_RX, NULL );
-}
-
-ISR(USART1_UDRE_vect)
-{
-	//hal_invokehandler( INTNUM_USART1_UDRE, NULL );
-}
-
-/* Catch-all interrupt vector
- * If an unexpected interrupt occurs (interrupt is enabled and no handler is installed, 
- * which usually indicates a bug), then the default action is to reset the device 
- * by jumping to the reset vector. You can override this by supplying a function 
- * named BADISR_vect which should be defined with ISR() as such. (The name BADISR_vect 
- * is actually an alias for __vector_default. The latter must be used inside assembly 
- * code in case <avr/interrupt.h> is not included.)
- */
-
-ISR(BADISR_vect)
-{
-	/* attention: in real applications, you'd better reset the whole device here */
-	hal_assert(false);
-}
-
-/* interrupt service routine sharing */
-ISR(INT1_vect, ISR_ALIASOF(INT0_vect));
-ISR(INT3_vect, ISR_ALIASOF(INT0_vect));
-ISR(INT4_vect, ISR_ALIASOF(INT0_vect));
-ISR(INT5_vect, ISR_ALIASOF(INT0_vect));
-
-/* empty interrupt */
-EMPTY_INTERRUPT(INT2_vect);
+///* USART0, Rx Complete, formerly SIG_UART0_RECV	*/
+//ISR(USART0_RX_vect)
+//{
+//	hal_invokehandler( INTNUM_USART0_RX, NULL );
+//}
+//
+///* USART0 Data Register Empty, SIG_UART0_DATA */
+//ISR(USART0_UDRE_vect)
+//{
+//	hal_invokehandler( INTNUM_USART0_UDRE, NULL );
+//}
+//
+//ISR(USART1_RX_vect)
+//{
+//	//hal_invokehandler( INTNUM_USART1_RX, NULL );
+//}
+//
+//ISR(USART1_UDRE_vect)
+//{
+//	//hal_invokehandler( INTNUM_USART1_UDRE, NULL );
+//}
+//
+///* Catch-all interrupt vector
+// * If an unexpected interrupt occurs (interrupt is enabled and no handler is installed, 
+// * which usually indicates a bug), then the default action is to reset the device 
+// * by jumping to the reset vector. You can override this by supplying a function 
+// * named BADISR_vect which should be defined with ISR() as such. (The name BADISR_vect 
+// * is actually an alias for __vector_default. The latter must be used inside assembly 
+// * code in case <avr/interrupt.h> is not included.)
+// */
+//
+//ISR(BADISR_vect)
+//{
+//	/* attention: in real applications, you'd better reset the whole device here */
+//	hal_assert(false);
+//}
+//
+///* interrupt service routine sharing */
+//ISR(INT1_vect, ISR_ALIASOF(INT0_vect));
+//ISR(INT3_vect, ISR_ALIASOF(INT0_vect));
+//ISR(INT4_vect, ISR_ALIASOF(INT0_vect));
+//ISR(INT5_vect, ISR_ALIASOF(INT0_vect));
+//
+///* empty interrupt */
+//EMPTY_INTERRUPT(INT2_vect);
 
 #ifdef __cplusplus
 }

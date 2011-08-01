@@ -26,6 +26,7 @@
 #include "hal_led.h"
 #include "hal_uart.h"
 #include "hal_debugio.h"
+#include "hal_mcu.h"
 
 /* In "hal_cc2520base.h", we implement the most fundamental cc2420 operating functions.
  * If you want to port hal_cc2420 to other platforms, you can simply revise the 
@@ -34,6 +35,13 @@
 #include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
 #include "hal_cc2520.h"
+#include "hal_mcu.h"
+
+NVIC_InitTypeDef NVIC_InitStructure;
+
+TiCc2520Adapter m_cc;
+
+static int _cc2520_read_rxbuf( TiCc2520Adapter *cc, char *buf, uint8 capacity );
 
 TiCc2520Adapter * cc2520_construct( void * mem, uint16 size )
 {
@@ -50,6 +58,7 @@ void cc2520_destroy( TiCc2520Adapter * cc )
 TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, 
 	void * lisowner, uint8 option )
 {
+	int i;
     cc->id = 0;
     cc->state = 0; //CC2420_STATE_RECVING;
     cc->listener = listener;
@@ -59,22 +68,661 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
 	cc->lqi = 0;
 	cc->spistatus = 0;
 	cc->rxlen = 0;
-	
-	// todo
 
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+	
+	GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
+	GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+	for ( i=0;i<13500;i++);//wait for the regulator to be stabe.
+
+	GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
+	GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+	for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
+	hal_assert( GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+	GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	hal_delayus( 2 );
+
+    //SPI_GPIO_Configuration
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	CC2520_SPI_OPEN();
+
+
+	halRfInit();//todo 设置相应的寄存器
+
+	halRfSetPower( TXPOWER_4_DBM);
+	halRfSetChannel( CC2520_DEF_CHANNEL);
+	halRfSetShortAddr( CC2520_DEF_LOCAL_ADDRESS);
+	halRfSetPanId( CC2520_DEF_PANID);
+
+	CC2520_SRFOFF();
+	CC2520_SRXON();
+	//hal_attachhandler( INTNUM_CC2520_FIFOP, _cc2420_fifop_handler, cc );
+	cc2520_enable_fifop( cc );
 
     return cc;
-} 
+}
 
-void cc2520_close( TiCc2520Adapter * cc )
+uint8 cc2520_send( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option )
 {
-	//cc2520_disable_fifop( cc );
-    //hal_detachhandler( INTNUM_CC2520_FIFOP );
+	uint16 count;
+	uint8 status;
+
+
+	hal_assert( len > 0 );
+
+	if ( option)
+	{
+		buf[1] = buf[1]|0x20;
+	}
+    buf[0] = len;//todo for testing
+	
+	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+	CC2520_SFLUSHTX();
+	//CC2520_SFLUSHTX();
+	hal_delayus( 50); // todo
+				
+	// todo: check whether the last sending is complete
+	
+	__disable_irq ();
+    CC2520_TXBUF( len,buf);
+    __enable_irq();
+  	hal_delay( 1);
+	CC2520_STXON();
+	hal_delay(1);
+	count = len;
+	return count;
+}
+uint8 cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option )
+{
+	uint16 count;
+	uint8 status;
+
+	hal_assert( len > 0 );
+
+	buf[1] = buf[1]&0xdf;
+    buf[0] = len;
+
+	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+	CC2520_SFLUSHTX();
+	//CC2520_SFLUSHTX();
+	hal_delayus( 50);
+
+	CC2520_TXBUF( len,buf);
+	CC2520_STXON();
+	hal_delay(1);
+
+	count = len;
+	return count;
+}
+
+uint8 cc2520_recv( TiCc2520Adapter * cc, char * buf, uint8 size, uint8 option )//rxfifo overflow 的情况还没有考虑
+{
+	  uint8 ret = 0;
+		
+	  // enter_critical
+	 __disable_irq();
+
+	 // cc->rxlen should equal to cc->rxbuf[0] + 1 for correct frames
+	if (cc->rxlen > 0)
+	{	
+        // cc->rxlen includes the frame length byte in the cc->rxbuf[0], so it should 
+        // equal to rxbuf[0]+1 for correct frames. but the frame data maybe incorrect.
+		if (cc->rxlen <= size)
+		{
+			memmove( (void *)buf, (void *)(&(cc->rxbuf[0])), cc->rxlen );
+			ret = cc->rxlen;
+			cc->rxlen = 0;
+		}
+		else
+		{
+			ret = 0;
+			cc->rxlen = 0;
+		}
+
+   }
+
+   __enable_irq();
+   // leave critical;
+
+   __disable_irq();
+   if (ret == 0)
+   {
+	   
+		ret = _cc2520_read_rxbuf( cc,buf,size );
+
+   }
+   __enable_irq();
+
+	return ret;
+}
+
+int _cc2520_read_rxbuf( TiCc2520Adapter *cc, char *buf, uint8 capacity )
+{
+	int ret;
+	uint8 state;
+
+	ret = 0;
+
+	if (CC2520_REGRD8( CC2520_EXCFLAG0) & 0x40)//if rxfifo overflow.
+	{
+		buf[0] = CC2520_REGRD8( CC2520_RXFIFOCNT );
+		if ( buf[0] > 0)
+		{
+			CC2520_RXBUF( buf[0],buf+1);
+			ret = buf[0]+1;
+		}
+
+		CC2520_SFLUSHRX();
+		CC2520_SFLUSHRX();
+
+		CC2520_REGWR8(CC2520_EXCFLAG0,0x00);
+    }
+    else{
+		state = CC2520_REGRD8( CC2520_EXCFLAG1);
+		if( state & 0x01)//if (( state && 0x01) && ( state && 0x10)) 
+		{
+			buf[0] = CC2520_RXBUF8();
+
+			if ( buf[0]>0)
+			{
+				CC2520_RXBUF( buf[0],buf+1);
+				ret = buf[0]+1;
+
+			}
+			else
+			{
+				CC2520_SFLUSHRX();
+				CC2520_SFLUSHRX();
+			}
+
+			CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
+		}
+		
+	}
+
+	return ret;
+}
+
+TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterface * intf )
+{
+	memset( intf, 0x00, sizeof(TiFrameTxRxInterface) );
+	intf->provider = cc;
+	intf->send = (TiFunFtrxSend)cc2520_send;
+	intf->recv = (TiFunFtrxRecv)cc2520_recv;
+	intf->evolve = (TiFunFtrxEvolve)cc2520_evolve;
+	
+	intf->switchtomode = (TiFunFtrxSwitchToMode)cc2520_switchtomode;
+	intf->ischnclear = (TiFunFtrxIsChannelClear)cc2520_ischannelclear;
+	intf->enable_autoack = (TiFunFtrxEnableAutoAck)cc2520_enable_autoack;
+	intf->disable_autoack = (TiFunFtrxDisableAutoAck)cc2520_disable_autoack;
+	intf->enable_addrdecode = (TiFunFtrxEnableAddrDecode)cc2520_enable_addrdecode;
+	intf->disable_addrdecode = (TiFunFtrxDisableAddrDecode)cc2520_disable_addrdecode;
+	intf->setchannel = (TiFunFtrxSetChannel)cc2520_setchannel;
+	intf->setpanid = (TiFunFtrxSetPanId)cc2520_setpanid;
+	intf->getpanid = (TiFunFtrxGetPanId)cc2520_getpanid;
+	intf->setshortaddress = (TiFunFtrxSetShortAddress)cc2520_setshortaddress;
+	intf->getshortaddress = (TiFunFtrxGetShortAddress)cc2520_getshortaddress;
+	intf->settxpower = (TiFunFtrxSetTxPower)cc2520_settxpower;
+	intf->getrssi = (TiFunFtrxGetRssi)cc2520_rssi;
+    intf->setlistener = ( TiFunFtrxSetlistener)cc2520_setlistner;//todo for testing
+	return intf;
+}
+
+void cc2520_enable_fifop( TiCc2520Adapter * cc )//PB0->fifop
+{
+
+	CC2520_REGWR8(CC2520_GPIOCTRL0, CC2520_GPIO_FIFOP);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+	EXTI_ClearITPendingBit(EXTI_Line0);
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
+	EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+	
+}
+
+void cc2520_disable_fifop( TiCc2520Adapter * cc )
+{
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    EXTI_ClearITPendingBit(EXTI_Line0);
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
+    EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+    EXTI_Init(&EXTI_InitStructure);
+}
+
+
+void EXTI0_IRQHandler(void)//fifop中断函数  fifphandler指向该中断,不知道handler（）函数还能不能用？
+{
+
+	TiCc2520Adapter * cc = &m_cc;
+
+	hal_delayms(1);
+	__disable_irq();
+
+	/*
+
+	if ( CC2520_REGRD8( CC2520_EXCFLAG0)&0x40)//if rxfifo overflow.
+	{
+		m_cc.rxlen =  CC2520_REGRD8( CC2520_RXFIFOCNT);
+		m_cc.rxbuf[0] = m_cc.rxlen;
+        
+		CC2520_RXBUF( m_cc.rxlen,m_cc.rxbuf+1);
+		CC2520_SFLUSHRX();
+		CC2520_SFLUSHRX();
+		CC2520_REGWR8(CC2520_EXCFLAG0,0x00);
+	}
+
+	if (CC2520_REGRD8( CC2520_EXCFLAG1)&0x11)
+	{
+		USART_Send( 0xc0);
+		m_cc.rxlen = CC2520_RXBUF8();
+        if ( m_cc.rxlen>0)
+        {
+			USART_Send( 0xd0);
+			m_cc.rxbuf[0] = m_cc.rxlen;
+
+			CC2520_RXBUF( m_cc.rxlen,m_cc.rxbuf+1);
+        }
+		else
+		{
+			CC2520_SFLUSHRX();
+			CC2520_SFLUSHRX();
+		}
+		
+        CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
+	}*/
+
+	cc->rxlen = _cc2520_read_rxbuf( cc, cc->rxbuf, 128 );
+
+	__enable_irq();
+	
+    EXTI_ClearITPendingBit(EXTI_Line0);
+}
+
+
+void cc2520_evolve( TiCc2520Adapter * cc )
+{
+	/*
+	if (cc->rxlen > 0) 
+	{
+		if (cc->listener != NULL)
+			cc->listener( cc->lisowner,NULL );
+	}
+	*/
+	// the following section will check flag variable and try to read data from 
+	// cc2420 hardware to MCU's memory when there's incomming frame pending inside
+	// cc2420
+	//
+	//if ((m_fifop_request > 0) && (m_rxbuf_len == 0))
+	//{
+		// @todo
+		//cc2420_readrxfifo( cc );
+		//m_fifop_request --;
+		//m_fifop_request = 0;
+	//}
+}
+
+void cc2520_default_listener( void * ccptr, TiEvent * e )
+{
+
+}
+
+void  cc2520_switchtomode( TiCc2520Adapter * cc, uint8 mode )
+{
+
+}
+
+void cc2520_setlistner(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner )//todo 不知道对不对？
+{
+    cc->listener = listener;
+    cc->lisowner = lisowner;
+}
+
+void cc2520_close( TiCc2520Adapter * cc )//LPM2
+{
+    CC2520_SRES();
+    GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN
+}
+
+void cc2520_sleep( TiCc2520Adapter * cc )//LPM1
+{
+    CC2520_SXOSCOFF();	
+}
+
+void cc2520_restart( TiCc2520Adapter * cc )
+{
+     GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+     GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
+     hal_delay( 5);//wait for the regulator to be stable.
+     GPIO_SetBits( GPIOB,GPIO_Pin_1);//set the cc2520 nRST
+     GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+     while ( !GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));
+     GPIO_SetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+}
+
+void cc2520_wakeup( TiCc2520Adapter * cc )
+{
+    CC2520_SXOSCON();
+    CC2520_SNOP();
+    GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+    while ( !GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));
+    GPIO_SetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
 }
 
 uint8 cc2520_state( TiCc2520Adapter * cc )
 {
 	return cc->state;
+}
+
+/* turn on the cc2520 VREF
+ * attention you should wait long enough to guarantee the voltage is stable and ok 
+ */
+inline uint8 cc2520_vrefon( TiCc2520Adapter * cc )
+{
+    GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN                    //turn-on  
+    hal_delayus( 1800 );    
+	return 0;
+}
+
+/* turn off the cc2520 VREF */
+inline uint8 cc2520_vrefoff( TiCc2520Adapter * cc )
+{
+	 GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN                    //turn-off  
+    hal_delayus( 1800 );  
+	return 0;
+}
+
+inline uint8 cc2520_powerdown( TiCc2520Adapter * cc )
+{
+	return cc2520_vrefoff( cc );
+}
+
+/* Reference
+ *	- cc2520 datasheet: state machine of cc2520.
+ */
+inline uint8 cc2520_powerup( TiCc2520Adapter * cc )// can be placed by cc2520_wakeup or cc2520_restart.
+{
+	return cc2520_vrefon( cc );
+}
+
+void  cc2520_setcoordinator( TiCc2520Adapter * cc, bool flag )
+{
+    if (flag)//Coordinator 
+        CC2520_BSET(CC2520_MAKE_BIT_ADDR(CC2520_FRMFILT0, 1));
+    else    //other device type 
+        CC2520_BCLR(CC2520_MAKE_BIT_ADDR(CC2520_FRMFILT0, 1));
+}
+
+uint8 cc2520_ischannelclear( TiCc2520Adapter * cc )
+{
+   uint8 cca;
+   if ( CC2520_REGRD8( CC2520_FSMSTAT1)&0x10)
+   {
+       cca = 0x01;
+   }
+   else
+   {
+       cca = 0x00;
+   }
+   return cca;
+}
+
+/*The statusbit RSSI_VALID should be checked before reading the RSSI value register. RSSI_VALID 
+*indicates that the RSSI value in the register is in fact valid, which means that the receiver has been enabled 
+*for at least 8 symbol periods. 
+*/
+uint8 cc2520_rssi( TiCc2520Adapter * cc )
+{
+     return CC2520_REGRD8( CC2520_RSSI);
+}
+
+uint8 cc2520_calibrate( TiCc2520Adapter * cc )
+{
+      return CC2520_STXCAL();
+}
+
+uint8 cc2520_snop( TiCc2520Adapter * cc )
+{
+    return CC2520_SNOP();
+}
+
+uint8 cc2520_oscon( TiCc2520Adapter * cc )
+{
+    return CC2520_SXOSCON();
+}
+
+uint8 cc2520_oscoff( TiCc2520Adapter * cc )
+{
+    return CC2520_SXOSCOFF();
+}
+
+
+uint8 cc2520_rxon( TiCc2520Adapter * cc )
+{
+    return CC2520_SRXON();
+}
+
+uint8 cc2520_txon( TiCc2520Adapter * cc )
+{
+    return CC2520_STXON();
+}
+
+uint8 cc2520_txoncca( TiCc2520Adapter * cc )
+{
+    return CC2520_STXONCCA();
+}
+
+uint8 cc2520_rfoff( TiCc2520Adapter * cc )
+{
+    return CC2520_SRFOFF();
+}
+
+uint8 cc2520_flushrx( TiCc2520Adapter * cc )
+{
+    CC2520_SFLUSHRX();
+}
+
+uint8 cc2520_flushtx( TiCc2520Adapter * cc )
+{
+    CC2520_SFLUSHRX();
+}
+
+uint8 cc2520_writeregister( TiCc2520Adapter * cc, uint8 addr, uint8 data)
+{
+     CC2520_REGWR8(addr,data);
+     return 0;
+}
+
+uint8 cc2520_readregister( TiCc2520Adapter * cc, uint8 addr)
+{
+    return CC2520_REGRD8( addr);
+}
+
+
+uint8 cc2520_enable_autoack( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET(CC2520_MAKE_BIT_ADDR(CC2520_FRMCTRL0, 5));
+}
+
+uint8 cc2520_disable_autoack( TiCc2520Adapter * cc )
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMCTRL0,5));
+}
+
+uint8 cc2520_enable_addrdecode( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT0,0));
+}
+
+uint8 cc2520_disable_addrdecode( TiCc2520Adapter * cc )
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT0,0));
+}
+
+uint8 cc2520_enable_filter( TiCc2520Adapter * cc )
+{
+     return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT0,0));
+}
+
+//以下5组函数只有在filter功能实现的时候才有意义
+//define whether the reserved frames are accepted or rejected
+uint8 cc2520_reserved_accept( TiCc2520Adapter * cc )
+{
+     return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,7));
+}
+uint8 cc2520_reserved_reject( TiCc2520Adapter * cc )
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,7));
+}
+
+//define whether the CMD frames are accepted or rejected
+uint8 cc2520_cmd_accept( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,6));
+}
+uint8 cc2520_cmd_reject( TiCc2520Adapter * cc )
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,6));
+}
+
+//define whether the ack frames are accepted or rejected
+uint8 cc2520_ack_accept( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,5));
+}
+uint8 cc2520_ack_reject( TiCc2520Adapter * cc ) 
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,5));
+}
+
+//define whether the data frames are accepted or rejected 
+uint8 cc2520_data_accept( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,4));
+}
+uint8 cc2520_data_reject( TiCc2520Adapter * cc ) 
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,4));
+}
+
+//define whether the beacon frames are accepted or rejected 
+uint8 cc2520_beacon_accept( TiCc2520Adapter * cc )
+{
+    return CC2520_BSET( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,3));
+}
+uint8 cc2520_beacon_reject( TiCc2520Adapter * cc )
+{
+    return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT1,3));
+}
+
+uint8 cc2520_disable_filter( TiCc2520Adapter * cc ) 
+{
+      return CC2520_BCLR( CC2520_MAKE_BIT_ADDR( CC2520_FRMFILT0,0));
+}
+
+uint8 cc2520_setchannel( TiCc2520Adapter * cc, uint8 chn )
+{
+    CC2520_REGWR8(CC2520_FREQCTRL, 0x0B + ((chn - 11) * 5));
+    return 0;
+}
+
+uint8 cc2520_setshortaddress( TiCc2520Adapter * cc, uint16 addr )
+{
+    CC2520_MEMWR16(CC2520_RAM_SHORTADDR, addr);
+    return 0;
+}
+
+uint8 cc2520_getshortaddress( TiCc2520Adapter * cc, uint16 * addr )
+{
+    *addr = CC2520_MEMRD16( CC2520_RAM_SHORTADDR);
+    return 0;
+}
+
+uint8 cc2520_setpanid( TiCc2520Adapter * cc, uint16 id )
+{
+     CC2520_MEMWR16(CC2520_RAM_PANID, id);
+     return 0;
+}
+
+uint8 cc2520_getpanid( TiCc2520Adapter * cc, uint16 * id )
+{
+    *id = CC2520_MEMRD16( CC2520_RAM_PANID);
+    return 0;
+}
+
+/* power           current
+*  0xF7            33.6mA
+*  0xF2            31.3mA
+*  0xAB            28.7mA
+*  0x13            27.9mA
+*  0x32            25.8mA
+*  0x81            24.9mA
+*  0x88            23.1mA
+*  0x2C            19.9mA
+*  0x03            16.2mA
+*/
+uint8 cc2520_settxpower( TiCc2520Adapter * cc, uint8 power )
+{
+    CC2520_REGWR8(CC2520_TXPOWER, power);
+    return 0;
 }
 
 
@@ -91,11 +739,12 @@ uint8 cc2520_state( TiCc2520Adapter * cc )
 #include "hal_mcu.h"
 #include "hal_cpu.h"
 #include "hal_digio.h"
-#include "hal_cc2520.h"
+#include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
+#include "hal_cc2520.h"
 #include "hal_targetboard.h"
 #include "hal_assert.h"
-#include "hal_cc2520vx.h"
+
 
 #define SUCCESS 0
 #define FAILED 1
@@ -290,7 +939,7 @@ HAL_RF_STATUS halRfInit(void)
 	// todo
     // Avoid GPIO0 interrupts during reset
     // halDigioIntDisable(&pinRadio_GPIO0);
-
+    /*todo for testing 临时注释掉
     // Make sure to pull the CC2520 RESETn and VREG_EN pins low
     CC2520_RESET_OPIN(0);
     CC2520_SPI_END();
@@ -307,25 +956,38 @@ HAL_RF_STATUS halRfInit(void)
     // Wait for XOSC stable to be announced on the MISO pin
     if (halRfWaitXoscStable()==FAILED)
         return FAILED;
-
+     临时注释掉*/
     // Write tuning settings
-    halRfWriteReg8(CC2520_TXPOWER, 0xF7);  // Max TX output power
+    halRfWriteReg8(CC2520_TXPOWER, 0x32);  // Max TX output power
     halRfWriteReg8(CC2520_CCACTRL0, 0xF8); // CCA treshold -80dBm
 
     // Recommended RX settings
-    halRfWriteMem8(CC2520_MDMCTRL0, 0x85);
+    halRfWriteMem8(CC2520_MDMCTRL0, 0x85);//推荐85
     halRfWriteMem8(CC2520_MDMCTRL1, 0x14);
     halRfWriteMem8(CC2520_RXCTRL, 0x3F);
     halRfWriteMem8(CC2520_FSCTRL, 0x5A);
-    halRfWriteMem8(CC2520_FSCAL1, 0x2B);
+	hal_delayms(1);
+    halRfWriteMem8(CC2520_FSCAL1, 0x2B);//这一句输出结果不对
+	hal_delayms(1);
     halRfWriteMem8(CC2520_AGCCTRL1, 0x11);
     halRfWriteMem8(CC2520_ADCTEST0, 0x10);
     halRfWriteMem8(CC2520_ADCTEST1, 0x0E);
     halRfWriteMem8(CC2520_ADCTEST2, 0x03);
 
+	halRfWriteReg8(CC2520_FRMCTRL0, 0x60);
+	halRfWriteReg8(CC2520_FRMCTRL1, 0x01);
+	halRfWriteMem8(CC2520_EXTCLOCK, 0x00);
+	halRfWriteReg8(CC2520_GPIOCTRL0, 1 + CC2520_EXC_RX_FRM_DONE);//这一句可能有问题，应该不仅仅是写寄存器那么简单
+	halRfWriteReg8(CC2520_GPIOCTRL1, CC2520_GPIO_SAMPLED_CCA);
+	halRfWriteReg8(CC2520_GPIOCTRL2, CC2520_GPIO_RSSI_VALID);
+	halRfWriteReg8(CC2520_GPIOCTRL3, CC2520_GPIO_SFD);
+	halRfWriteReg8(CC2520_GPIOCTRL4, CC2520_GPIO_SNIFFER_DATA);
+	halRfWriteReg8(CC2520_GPIOCTRL5,  CC2520_GPIO_SNIFFER_CLK);
+
+
     // CC2520 setup
     CC2520_BSET(CC2520_MAKE_BIT_ADDR(CC2520_FRMCTRL0, 5));  // Enable AUTOACK
-
+    /*todo for testing临时注释掉
     // CC2520 GPIO setup
     CC2520_CFG_GPIO_OUT(0, 1 + CC2520_EXC_RX_FRM_DONE);
     CC2520_CFG_GPIO_OUT(1,     CC2520_GPIO_SAMPLED_CCA);
@@ -333,7 +995,7 @@ HAL_RF_STATUS halRfInit(void)
     CC2520_CFG_GPIO_OUT(3,     CC2520_GPIO_SFD);
     CC2520_CFG_GPIO_OUT(4,     CC2520_GPIO_SNIFFER_DATA);
     CC2520_CFG_GPIO_OUT(5,     CC2520_GPIO_SNIFFER_CLK);
-
+    临时注释掉*/
     return SUCCESS;
 }
 
@@ -354,13 +1016,13 @@ HAL_RF_STATUS halRfWaitXoscStable(void)
     // Wait for XOSC stable to be announced on the MISO pin
     i= 100;
     CC2520_CSN_OPIN(0);
-    while (i>0 && !CC2520_MISO_IPIN) {
+    while (i>1 && !CC2520_MISO_IPIN) {
         halMcuWaitUs(10);
         --i;
     }
     CC2520_CSN_OPIN(1);
 
-    return i>0 ? SUCCESS : FAILED;
+    return (i>1) ? SUCCESS : FAILED;
 }
 
 

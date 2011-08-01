@@ -28,32 +28,24 @@
 #include "hal_foundation.h"
 #include "hal_targetboard.h"
 #include "hal_cpu.h"
-#include "hal_led.h"	
+#include "hal_led.h"
+#include "hal_mcu.h"
 
 static uint8 m_ledstate = 0x00;
 
 void led_open()
 {
 	m_ledstate = 0x00;
-//    
-//	// HAL_MAKE_RED_LED_OUTPUT();
-//    // HAL_MAKE_YELLOW_LED_OUTPUT();
-//    // HAL_MAKE_GREEN_LED_OUTPUT();
-//    // HAL_SET_RED_LED_PIN();
-//    // HAL_SET_YELLOW_LED_PIN();
-//    // HAL_SET_GREEN_LED_PIN();
-//    
-//	// for ICT GAINS/GAINZ platform
-//	// set PA0, PA1, and PA2 bit of PORTA as output pin. the initial state of these
-//	// pins are LEDs on. 
-//
-//	DDRA |= (_BV(PA0));
-//	DDRA |= (_BV(PA1));
-//	DDRA |= (_BV(PA2));  
-//
-//	// PORTA &= ~(_BV(PA0)); 
-//	// PORTA &= ~(_BV(PA1)); 
-//	// PORTA &= ~(_BV(PA2));
+
+	// @attention: You should avoid conflictions if you call the following PORTA initialization 
+	// multiple times.
+	//  
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
     led_off( LED_ALL );
 }
@@ -73,6 +65,11 @@ void led( uint8 id, bool state )
 
 void led_off( uint8 id )
 {
+	if (id & LED_RED)
+	{
+		GPIO_SetBits( GPIOA, GPIO_Pin_8);
+	}
+
 //	if (id & LED_RED)
 //	{
 //     	PORTA|=_BV(PA2);
@@ -92,6 +89,10 @@ void led_off( uint8 id )
 
 void led_on( uint8 id )
 {
+	if (id & LED_RED)
+	{
+		GPIO_ResetBits( GPIOA, GPIO_Pin_8);
+	}
 //	if (id & LED_RED)
 //	{
 //      	PORTA&=~_BV(PA2);
@@ -111,18 +112,10 @@ void led_on( uint8 id )
 
 void led_toggle( uint8 id )
 {
-//	if (id & LED_RED)
-//	{
-//		if (m_ledstate & LED_RED)
-//		{
-//      		PORTA&=~_BV(PA2);
-//			m_ledstate &= ~LED_RED;		
-//		}
-//		else{
-//      		PORTA|=_BV(PA2);
-//			m_ledstate |= LED_RED;		
-//		}
-//	}
+	if (id & LED_RED)
+	{
+		GPIO_WriteBit(GPIOA, GPIO_Pin_8, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_8)));
+	}
 //	if (id & LED_GREEN)
 //	{
 //		if (m_ledstate & LED_GREEN)

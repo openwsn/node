@@ -40,10 +40,12 @@ extern "C" {
 
 extern GPIO_InitTypeDef GPIO_InitStructure;
 extern ErrorStatus HSEStartUpStatus;
-extern NVIC_InitTypeDef NVIC_InitStruct;
+//extern NVIC_InitTypeDef NVIC_InitStructure;
 extern EXTI_InitTypeDef EXTI_InitStructure;  
 extern TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 extern TIM_OCInitTypeDef  TIM_OCInitStructure;
+extern SPI_InitTypeDef SPI_InitStructure;
+//extern USART_InitTypeDef USART_InitStructure;
 
 
 /*******************************************************************************

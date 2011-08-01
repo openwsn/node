@@ -16,7 +16,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -78,12 +78,13 @@ extern "C" {
 /***********************************************************************************
  * GLOBAL FUNCTIONS
  */
-void   halUartInit(uint8 baudrate, uint8 options);
+void   halUartInit(uint16 baudrate, uint8 options);
 uint16 halUartWrite(const uint8* buf, uint16 length);
 uint16 halUartRead(uint8* buf, uint16 length);
 uint16 halUartGetNumRxBytes(void);
 void   halUartEnableRxFlow(uint8 enable);
 uint16 halUartBufferedWrite(const uint8* buf, uint16 length);
+uint8 USART_Send( uint8 ch);
 
 
 #ifdef  __cplusplus

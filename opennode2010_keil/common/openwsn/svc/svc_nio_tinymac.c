@@ -39,12 +39,14 @@
 #include <string.h>
 #include "svc_foundation.h"
 #include "../rtl/rtl_frame.h"
-#include "../rtl/rtl_random.h"
 #include "../rtl/rtl_debugio.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_assert.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_debugio.h"
+#include "../rtl/rtl_framequeue.h"
+#include "../rtl/rtl_lightqueue.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/opennode2010/hal_cpu.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_uart.h"
 #include "svc_nio_tinymac.h"
 #include "svc_nio_acceptor.h"
 
@@ -81,14 +83,14 @@ TiTinyMAC * tinymac_open( TiTinyMAC * mac, TiFrameTxRxInterface * rxtx, TiNioAcc
     mac->shortaddrfrom = address;
     mac->seqid = 0;
 	mac->option = option;
-
+    /*todo for testing
 	// we enable ACK mechanism by default
     provider = rxtx->provider;
 	rxtx->setchannel( provider, chn );
 	rxtx->setpanid( provider, panid );
 	rxtx->setshortaddress( provider, address );
     rxtx->enable_addrdecode( provider );
-	rxtx->enable_autoack( provider );
+	rxtx->enable_autoack( provider );*/
 
     ieee802frame154_open( &(mac->desc) );
 
@@ -104,6 +106,8 @@ intx tinymac_send( TiTinyMAC * mac, TiFrame * frame, uint8 option )
 {
 	TiIEEE802Frame154Descriptor * desc;
 	intx ret;
+    uintx len;
+	len = frame_length( frame);
 
 	// according to 802.15.4 specification:
 	// header 12 B = 1B frame length (required by the transceiver driver currently) 
@@ -120,7 +124,8 @@ intx tinymac_send( TiTinyMAC * mac, TiFrame * frame, uint8 option )
 	ieee802frame154_set_shortaddrto( desc, mac->shortaddrto );
 	ieee802frame154_set_panfrom( desc, mac->panfrom );
 	ieee802frame154_set_shortaddrfrom( desc, mac->shortaddrfrom );
-	
+
+	frame_setlength( frame,(len+14));
 	ret = _tinymac_trysend( mac, frame, option );
 	
 	frame_moveinner( frame );
@@ -230,7 +235,7 @@ intx tinymac_recv( TiTinyMAC * mac, TiFrame * frame, uint8 option )
 		// the "curlayer" property to point to it.
 		frame_skipinner( frame, HEADER_SIZE, TAIL_SIZE );
 		
-		frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE );
+		//frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE );
 		frame_setlength( frame, count - HEADER_SIZE - TAIL_SIZE );
 	}
 	else{
@@ -255,12 +260,11 @@ intx tinymac_recv( TiTinyMAC * mac, TiFrame * frame, uint8 option )
  */
 intx _tinymac_trysend( TiTinyMAC * mac, TiFrame * frame, uint8 option )
 {
-	uintx count=0;
-	
-	// frame_length maybe better, but frame_capacity is also Ok because the frame
-	// structure is already fixed.
-	//
-	uintx len = frame_capacity(frame);
+	uintx count;
+    uintx len;
+
+	count = 0;
+	len = frame_length( frame);
 	
     if (len > 0)
 	{   

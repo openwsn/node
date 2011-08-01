@@ -38,18 +38,18 @@
  * 模块的代码读取数据，然后发送回G。
  * 所以状态有两个：WIO_RECEIVING、DATA_COLLECT_AND_SEND
  */
-
+#include "../hal/opennode2010/hal_mcu.h"
 #include "svc_configall.h"  
 #include "../rtl/rtl_iobuf.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_uart.h"
-#include "../hal/hal_led.h"
-#include "../hal/hal_adc.h"
-#include "../hal/hal_luminance.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/opennode2010/hal_led.h"
+//#include "../hal/hal_adc.h"
+//#include "../hal/hal_luminance.h"
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
-#include "svc_timer.h"
+#include "../hal/opennode2010/hal_timer.h"
 
 #define GATEWAYTYPE 1
 #define SENSORTYPE 0
@@ -118,7 +118,6 @@ typedef struct{
 	TiAloha * mac;
 	//TiTimer * timer;
 	//TiTimer * vti;
-	
 	TiFrame * txbuf;
 	TiFrame * rxbuf;
 	TiFrame * tmpbuf;

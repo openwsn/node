@@ -16,7 +16,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -46,6 +46,7 @@
 #include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
 #include "hal_assert.h"
+#include "hal_cpu.h"
 
 /***********************************************************************************
 * CONSTANTS AND DEFINES
@@ -130,14 +131,14 @@ static void clearException(uint32 dwMap)
 */
 static void CC2520_INS_RD_ARRAY(uint16 count, uint8  *pData)
 {
-/* todo
+
     while (count--) {
         CC2520_SPI_TX(0x00);
         CC2520_SPI_WAIT_RXRDY();
         *pData = CC2520_SPI_RX();
         pData++;
     }
-*/
+
 }
 
 
@@ -185,18 +186,17 @@ static uint8 CC2520_INS_MEMCP_COMMON(uint8 instr, uint8 pri, uint16 count, \
 */
 void CC2520_INS_WR_ARRAY(uint16 count, uint8  *pData)
 {
-/* todo
+
     while (count--) {
         CC2520_SPI_TX(*pData);
         pData++;
         CC2520_SPI_WAIT_RXRDY();
 #ifdef CC2520_DTP
-        SPI_STORE_RX(CC2520_SPI_RX());
+       // SPI_STORE_RX(CC2520_SPI_RX());//todo for testing
 #endif
     }
-*/
-}
 
+}
 
 /***********************************************************************************
 * @fn      CC2520_INS_STROBE
@@ -547,9 +547,11 @@ uint8 CC2520_MEMRD8(uint16 addr)
 {
     uint8 value;
     CC2520_SPI_BEGIN();
+	hal_delayus( 1);//todo for testing
     CC2520_SPI_TXRX(CC2520_INS_MEMRD | HIBYTE(addr));
     CC2520_SPI_TXRX(LOBYTE(addr));
     value = CC2520_SPI_TXRX(0x00);
+	hal_delayus(1);//todo for testing
     CC2520_SPI_END();
     return value;
 }
@@ -566,17 +568,22 @@ uint8 CC2520_MEMRD8(uint16 addr)
 */
 uint16 CC2520_MEMRD16(uint16 addr)
 {
-/*
-    EWORD value;
+
+    uint16 value;
+    uint8 low;
+    uint8 high;
     CC2520_SPI_BEGIN();
     CC2520_SPI_TXRX(CC2520_INS_MEMRD | HIBYTE(addr));
     CC2520_SPI_TXRX(LOBYTE(addr));
-    value.b0 = CC2520_SPI_TXRX(0x00);
-    value.b1 = CC2520_SPI_TXRX(0x00);
+    //value.b0 = CC2520_SPI_TXRX(0x00);
+    //value.b1 = CC2520_SPI_TXRX(0x00);
+    low = CC2520_SPI_TXRX(0x00);
+    high = CC2520_SPI_TXRX(0x00);
     CC2520_SPI_END();
-    return value.w;
-*/
-	return 0;
+    value = (uint16)(high);
+    value = ((value<<8)|low);
+    //return value.w;
+	return value;
 }
 
 
@@ -644,9 +651,11 @@ uint8 CC2520_MEMWR8(uint16 addr, uint8 value)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
+	hal_delay(10);
     s = CC2520_SPI_TXRX(CC2520_INS_MEMWR | HIBYTE(addr));
     CC2520_SPI_TXRX(LOBYTE(addr));
     CC2520_SPI_TXRX(value);
+	hal_delay( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -713,8 +722,10 @@ uint8 CC2520_RXBUF(uint8 count, uint8  *pData)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
+	hal_delay( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_RXBUF);
     CC2520_INS_RD_ARRAY(count, pData);
+	hal_delay( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -733,8 +744,10 @@ uint8 CC2520_RXBUF8(void)
 {
     uint8 value;
     CC2520_SPI_BEGIN();
+	hal_delay( 10);
     CC2520_SPI_TXRX(CC2520_INS_RXBUF);
     value = CC2520_SPI_TXRX(0x00);
+	hal_delay(10);
     CC2520_SPI_END();
     return value;
 }
@@ -853,8 +866,10 @@ uint8 CC2520_TXBUF(uint8 count, uint8  *pData)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
+	hal_delayus( 1);
     s = CC2520_SPI_TXRX(CC2520_INS_TXBUF);
     CC2520_INS_WR_ARRAY(count, pData);
+	hal_delayus( 1);
     CC2520_SPI_END();
     return s;
 }
@@ -1502,8 +1517,10 @@ uint8 CC2520_REGRD(uint8 addr, uint8 count, uint8  *pValues)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
+	hal_delay( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_REGRD | addr);
     CC2520_INS_RD_ARRAY(count, pValues);
+	hal_delay( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -1522,8 +1539,10 @@ uint8 CC2520_REGRD8(uint8 addr)
 {
     uint8 value;
     CC2520_SPI_BEGIN();
+	hal_delayus( 1);
     CC2520_SPI_TXRX(CC2520_INS_REGRD | addr);
     value = CC2520_SPI_TXRX(0x00);
+	hal_delayus( 1);
     CC2520_SPI_END();
     return value;
 }
@@ -1593,8 +1612,10 @@ uint8 CC2520_REGWR(uint8 addr, uint8 count, uint8  *pValues)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
+	hal_delay( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_REGWR | addr);
     CC2520_INS_WR_ARRAY(count, pValues);
+	hal_delay( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -1613,8 +1634,10 @@ uint8 CC2520_REGWR(uint8 addr, uint8 count, uint8  *pValues)
 void CC2520_REGWR8(uint8 addr, uint8 value)
 {
     CC2520_SPI_BEGIN();
+	hal_delayms(10);
     CC2520_SPI_TXRX(CC2520_INS_REGWR | addr);
     CC2520_SPI_TXRX(value);
+	hal_delay( 10);
     CC2520_SPI_END();
     return;
 }

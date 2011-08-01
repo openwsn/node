@@ -46,6 +46,7 @@ typedef uint8  (* TiFunFtrxEnableAutoAck)( void * trx );
 typedef uint8  (* TiFunFtrxDisableAutoAck)( void * trx );
 typedef uint8  (* TiFunFtrxEnableAddrDecode)( void * trx );
 typedef uint8  (* TiFunFtrxDisableAddrDecode)( void * trx );
+typedef void   (* TiFunFtrxSetlistener)( void * trx, TiFunEventHandler listener,void * lisowner );//todo for testing
 
 typedef uint8  (* TiFunFtrxSetChannel)( void * trx, uint8 chn );
 typedef uint8  (* TiFunFtrxSetPanId)( void * trx, uint8 panid );
@@ -77,6 +78,7 @@ struct _TiFrameTxRxInterface{
     TiFunFtrxGetShortAddress getshortaddress;
     TiFunFtrxSetTxPower settxpower;
     TiFunFtrxGetRssi getrssi;
+    TiFunFtrxSetlistener setlistener;//todo for testing
     //TiFunFtrxGetLqi getlqi;
     //TiFunFtrxSetListener;
 };
