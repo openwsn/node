@@ -58,24 +58,24 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 #define MAX_IEEE802FRAME154_SIZE                128
 #include "apl_foundation.h"
-#include "../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "../../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
-#include "../../common/openwsn/rtl/rtl_random.h"
-#include "../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../common/openwsn/svc/svc_nio_aloha.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "../../../common/openwsn/rtl/rtl_foundation.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "../../../common/openwsn/rtl/rtl_random.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/svc/svc_nio_aloha.h"
 
 
 #define CONFIG_DEBUG
