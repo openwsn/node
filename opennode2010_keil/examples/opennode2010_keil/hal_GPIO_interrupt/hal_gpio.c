@@ -1,10 +1,10 @@
  #include "apl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
 //#include "../../common/openwsn/hal/opennode2010/hal_led.h"
 
-USART_InitTypeDef USART_InitStructure;
-NVIC_InitTypeDef NVIC_InitStructure;
+//USART_InitTypeDef USART_InitStructure;
+//NVIC_InitTypeDef NVIC_InitStructure;
 
 #define MAX_IEEE802FRAME154_SIZE                128//todo
 
@@ -158,6 +158,7 @@ void main (void)
 	int i;
 	uint8 len;
 	uint8 data[40];
+    USART_InitTypeDef USART_InitStructure;
 	len = 0x00;
     RCC_Configuration( );
     led_open();
@@ -183,7 +184,7 @@ void main (void)
 	//CC2520_REGWR8(CC2520_GPIOCTRL3, CC2520_GPIO_FIFOP);//设置CC2520_GPIO3为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL4, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL5, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
-	CC2520_REGWR8(CC2520_GPIOCTRL0, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
+	CC2520_REGWR8(CC2520_GPIOCTRL3, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL2, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	hal_delay( 2);
 
@@ -254,55 +255,56 @@ void main (void)
 *测试cc2520_GPIO3
 ************************************************/
 
-//void GPIO_Interrupt_Ini( void)
-//{
-//	/* Configure PB.8 as input floating */
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//
-//
-//	/* Enable the EXTI15_10 Interrupt */
-//	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
-//	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;//EXTI15_10_IRQn; //EXTI15_10_IRQChannel;
-//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&NVIC_InitStructure);
-//
-//    EXTI_ClearITPendingBit(EXTI_Line8);
-//	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource8);
-//	// Configure EXTI Line11 to generate an interrupt on falling edge 
-//	EXTI_InitStructure.EXTI_Line = EXTI_Line8;
-//	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-//	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-//	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-//	EXTI_Init(&EXTI_InitStructure);
-//
-//
-//
-//	
-//}
-//
-//
-//void EXTI9_5_IRQHandler(void)
-//{
-//	led_toggle( LED_RED);
-//	CC2520_SFLUSHRX();
-//	CC2520_SFLUSHRX();
-//	EXTI_ClearITPendingBit(EXTI_Line8); 
-////	uint8 len;
-////	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
-////	{
-////		led_toggle( LED_RED);
-////		USART_Send( 0xab);
-////		len = CC2520_RXBUF8();
-////		CC2520_SFLUSHRX();
-////		CC2520_SFLUSHRX();
-////		EXTI_ClearITPendingBit(EXTI_Line8); 
-////	} 
-//}
+void GPIO_Interrupt_Ini( void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+	/* Configure PB.8 as input floating */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
+	/* Enable the EXTI15_10 Interrupt */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;//EXTI15_10_IRQn; //EXTI15_10_IRQChannel;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
+    EXTI_ClearITPendingBit(EXTI_Line8);
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource8);
+	// Configure EXTI Line11 to generate an interrupt on falling edge 
+	EXTI_InitStructure.EXTI_Line = EXTI_Line8;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
+
+
+
+	
+}
+
+
+void EXTI9_5_IRQHandler(void)
+{
+	led_toggle( LED_RED);
+	CC2520_SFLUSHRX();
+	CC2520_SFLUSHRX();
+	EXTI_ClearITPendingBit(EXTI_Line8); 
+//	uint8 len;
+//	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
+//	{
+//		led_toggle( LED_RED);
+//		USART_Send( 0xab);
+//		len = CC2520_RXBUF8();
+//		CC2520_SFLUSHRX();
+//		CC2520_SFLUSHRX();
+//		EXTI_ClearITPendingBit(EXTI_Line8); 
+//	} 
+}
 
 /****************************************************************************
 *测试cc2520_GPIO4
@@ -386,14 +388,16 @@ void main (void)
 
 /********************************************************************
 *测试cc2520_GPIO0
-***********************************************************************/
+***********************************************************************
 void GPIO_Interrupt_Ini( void)
 {
+    NVIC_InitTypeDef NVIC_InitStructure;
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
+    
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
 	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
@@ -419,5 +423,5 @@ void EXTI0_IRQHandler(void)
 	CC2520_SFLUSHRX();
 	EXTI_ClearITPendingBit(EXTI_Line0); 
 
-}
+}*/
 
