@@ -145,7 +145,7 @@
  
 /* Microsoft Visual C++ */
 #ifdef _MSC_VER
-#define CONFIG_COMPILER__MSC
+#define CONFIG_COMPILER__MICROSOFT
 #if (_MSC_VER < 1000)
 #error "Requires MS C/C++ 10.0 or greater"
 #endif

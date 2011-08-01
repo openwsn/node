@@ -43,7 +43,7 @@
  *  - add function iobuf_dump(). the dump function is enabled when CONFIG_DEBUG
  *    defined.
  * @modified by zhangwei on 2011.07.30
- *	- revision
+ *	- revision. Eliminate some compiling warnings.
  */
 
 #include "rtl_configall.h"
@@ -57,6 +57,8 @@
 
 #include "rtl_assert.h"
 #include "rtl_iobuf.h"
+
+#define inline
 
 #ifdef CONFIG_DYNA_MEMORY
 TiIoBuf * iobuf_create( uintx size )
@@ -93,8 +95,9 @@ void iobuf_destroy( TiIoBuf * iobuf )
 #ifdef CONFIG_DYNA_MEMORY
 inline TiIoBuf * iobuf_duplicate( TiIoBuf * iobuf )
 {
+	TiIoBuf * newbuf;
 	rtl_assert( iobuf != NULL );
-	TiIoBuf * newbuf = iobuf_create(iobuf->size);
+	newbuf = iobuf_create(iobuf->size);
 	iobuf_copyfrom( newbuf, iobuf );
     return newbuf;
 }
@@ -212,6 +215,17 @@ inline void iobuf_popfront( TiIoBuf * iobuf, uintx count )
 		iobuf->length = 0;
 }
 
+inline uintx iobuf_getchar( TiIoBuf * iobuf, char * pc )
+{
+	uintx count = 0;
+	count = iobuf_front(iobuf, pc, 1);
+	if (count > 0)
+	{
+		iobuf_popfront(iobuf, count);
+	}
+	return count;
+}
+
 inline bool iobuf_set( TiIoBuf * iobuf, uintx idx, char c )
 {
 	rtl_assert( idx < iobuf_size(iobuf) );
@@ -301,7 +315,7 @@ void iobuf_adjustlength( TiIoBuf * buf, int delta )
 #ifdef CONFIG_DEBUG
 void iobuf_dump( TiIoBuf * buf )
 {
-	int i;
+	uintx i;
 	char * pc;
 	// printf("dump iobuf: memsize=%d, size=%d, length=%d\n", buf->memsize, buf->size, buf->length );
 	if (buf->length > 0)

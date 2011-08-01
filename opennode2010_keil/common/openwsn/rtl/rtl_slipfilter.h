@@ -1,5 +1,5 @@
-#ifndef _RTL_ASSERT_H_7689_
-#define _RTL_ASSERT_H_7689_
+#ifndef _RTL_SLIP_SPLITER_H_6577_
+#define _RTL_SLIP_SPLITER_H_6577_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,47 +26,27 @@
  *
  ******************************************************************************/
 
-
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
+#include "rtl_iobuf.h"
 
-/*******************************************************************************
- * @name rtl_assert.h
- * @author zhangwei on 20050120
- * 
- * assert support for the runtime library.
- * In the past, the rtl_assert() is support inside rtl_foundation. However, the 
- * assert implementation depends on hal layer modules. In order to break this 
- * dependency, i move the rtl_assert() from rtl_foundation and create this file.
- * 
- * In all the rtl library modules, this module is the only one depends on modules
- * outside of rtl.
- * 
- * @modified by zhangwei on 2005-01-20
- *  - released
- * @modified by zhangwei on 200812
- *	- upgraded from the original tk_assert.*
- *	- revision, but not tested
- *	- not tested.
- *	- todo: eliminate the dependence on BCB. it should be ansi/windows only.
- * @modified by zhangwei on 20100713
- *  - fully revised. the rtl_assert() has been moved into rtl_foundation module.
- *    this module is kept for old module's compatible issues.
- *
- ******************************************************************************/ 
+typedef struct{
+  int received;
+  uint8 tx_state; // not used now
+  uint8 rx_state;
+}TiSlipFilter;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* The rtl_assert() function has been moved into rtl_foundation module. Attention 
- * the "rtl" layer should be initialized first before the rtl_assert() can really
- * take effective. 
- */
+TiSlipFilter * slip_filter_open();
+void slip_filter_close( TiSlipFilter * slip );
+int slip_filter_tx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output );
+int slip_filter_rx_handler( TiSlipFilter * filter, TiIoBuf * input, TiIoBuf * output );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _RTL_ASSERT_H_7689_ */
-
+#endif /* _RTL_SLIP_SPLITER_H_6577_ */

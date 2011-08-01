@@ -62,7 +62,8 @@
  * This module reconized the following macros:
  *
  * CONFIG_DYNA_MEMORY
- * If this macro is defined, then iobuf_create() and iobuf_free() will be enabled.
+ * If this macro is defined, then iobuf_create(), iobuf_free() and iobuf_duplicate()
+ * will be enabled.
  */
 
 #include "rtl_configall.h"
@@ -79,6 +80,8 @@
  * as uint8. So you must be very caution that not to exceed the maximum limit. 
  * suggested buffer size <= 0xFF - sizeof(TiIoBuf), which is about 240.
  */
+
+#define iobuf_putchar(iobuf,c) iobuf_pushbyte(iobuf,((char)c))
 
 #ifdef __cplusplus
 extern "C" {
@@ -118,6 +121,7 @@ uintx 			iobuf_pushback( TiIoBuf * iobuf, char * data, uintx len );
 uintx 			iobuf_pushbyte( TiIoBuf * iobuf, unsigned char value );
 uintx           iobuf_front( TiIoBuf * iobuf, char * otherbuf, uintx len );
 void            iobuf_popfront( TiIoBuf * iobuf, uintx count );
+uintx           iobuf_getchar( TiIoBuf * iobuf, char * pc );
 bool            iobuf_set( TiIoBuf * iobuf, uintx idx, char c );
 bool            iobuf_get( TiIoBuf * iobuf, uintx idx, char * c );
 uintx 			iobuf_copyfrom( TiIoBuf * iobuf1, TiIoBuf * iobuf2 );
