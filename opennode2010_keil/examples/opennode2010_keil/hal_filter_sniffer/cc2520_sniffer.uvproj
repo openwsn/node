@@ -43,7 +43,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>D:\temp\keil\</OutputDirectory>
-          <OutputName>hal_cc2520tx</OutputName>
+          <OutputName>hal_cc2520rx</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -126,7 +126,7 @@
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>0</LoadApplicationAtStartup>
+            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
@@ -318,7 +318,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x200000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -386,9 +386,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>cc2520tx.c</FileName>
+              <FileName>cc2520_sniffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\cc2520tx.c</FilePath>
+              <FilePath>.\cc2520_sniffer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -401,19 +401,14 @@
               <FilePath>..\..\common\cm3\core\core_cm3.c</FilePath>
             </File>
             <File>
-              <FileName>core_cm3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\common\cm3\core\core_cm3.h</FilePath>
+              <FileName>system_stm32f10x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\common\cm3\device\stm32f10x\system_stm32f10x.c</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f10x_hd.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\common\cm3\device\stm32f10x\startup\arm\startup_stm32f10x_hd.s</FilePath>
-            </File>
-            <File>
-              <FileName>system_stm32f10x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\common\openwsn\hal\opennode2010\cm3\device\stm32f10x\system_stm32f10x.c</FilePath>
+              <FilePath>..\..\common\cm3\device\stm32f10x\startup_stm32f10x_hd.s</FilePath>
             </File>
           </Files>
         </Group>

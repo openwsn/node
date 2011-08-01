@@ -24,7 +24,7 @@
  *
  ******************************************************************************/
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 2
+#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 /*******************************************************************************
@@ -50,26 +50,29 @@
  *  - upgraded to winavr20090313
  ******************************************************************************/
 
-#include "../../common/openwsn/hal/hal_configall.h"
+
+#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
+#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
+#define MAX_IEEE802FRAME154_SIZE                128
+#include "apl_foundation.h"
+#include "../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "../../common/openwsn/hal/opennode2010/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
+#include "../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "../../common/openwsn/rtl/rtl_foundation.h"
 #include "../../common/openwsn/rtl/rtl_frame.h"
 #include "../../common/openwsn/rtl/rtl_debugio.h"
 #include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
+#include "../../common/openwsn/rtl/rtl_random.h"
+#include "../../common/openwsn/hal/opennode2010/hal_cpu.h"
+#include "../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../common/openwsn/hal/opennode2010/hal_uart.h"
+#include "../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../common/openwsn/hal/opennode2010/hal_debugio.h"
 #include "../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../common/openwsn/rtl/rtl_dumpframe.h"
-#include "nio_apl_output_frame.h"
 
 
 #define CONFIG_DEBUG
@@ -88,20 +91,20 @@
 
 #define BROADCAST_ADDRESS			0xFFFF
 
-#define MAX_IEEE802FRAME154_SIZE    128
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
 #define VTM_RESOLUTION                          5
 
 
-static TiCc2420Adapter		        m_cc;
-static TiFrameRxTxInterface         m_rxtx;
-static TiAloha                      m_aloha;
-static TiTimerAdapter               m_timer;
-static TiTimerManager               m_vtm;
-static char                         m_rxbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                         m_nacmem[NAC_SIZE];
+#define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
+//static TiCc2520Adapter		                    m_cc;//todo 用2520.c中的全局变量
+static TiFrameRxTxInterface                     m_rxtx;
+static char                                     m_nacmem[NAC_SIZE];
+static TiAloha                                  m_aloha;
+static TiTimerAdapter                           m_timer2;
+static char                                     m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
 
 
@@ -118,78 +121,58 @@ int main(void)
 
 void recvnode(void)
 {
-    TiCc2420Adapter * cc;
+    TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
-	TiNioAcceptor * nac;
+    TiNioAcceptor        * nac;
     TiAloha * mac;
-	TiTimerAdapter   *timer;
-	TiTimerManager * vtm;
-	TiTimer * mac_timer;
-	TiFrame * rxbuf;
-	char * msg = "welcome to aloha recv test...";
-	int len=0;
-	target_init();
+    TiTimerAdapter   *timer2;
+    TiFrame * rxbuf;
+    TiFrame * mactxbuf;
+    char * pc;
+    uint8 len;
 
-    // flash the led to indicate the software is successfully running now.
-    //
-	led_open();
-	led_on( LED_ALL );
-	hal_delay( 500 );
-	led_off( LED_ALL );
-	//led_on( LED_RED );
+    char * msg = "welcome to aloha sendnode...";
+    uint8 i, seqid=0, option;
 
-    // initialize the runtime library for debugging input/output and assertion
-    // hal_assert_report is defined in module "hal_assert"
-    //
-	//dbo_open( 38400 );
-    rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-    dbc_putchar( 0xF0 );
-    dbc_mem( msg, strlen(msg) );
+    //__disable_irq();
+    led_open();
+    led_on( LED_ALL );
+    hal_delay( 500 );
+    led_off( LED_ALL );
 
-	cc = cc2420_construct( (void *)(&m_cc), sizeof(TiCc2420Adapter) );
-	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
+    halUartInit( 9600,0);
+
+    cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
+    nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
     mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
-    timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
-	vtm = vtm_construct( (void*)&m_vtm, sizeof(m_vtm) );
-    timer = timer_open( timer, 2, NULL, NULL, 0x00 ); 
-	vtm = vtm_open( vtm, timer, VTM_RESOLUTION );
-	mac_timer = vtm_apply( vtm );
-	vti_open( mac_timer, NULL, NULL );
+    timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
 
-	#ifdef CONFIG_TSET_LISTENER
-	// cc = cc2420_open( cc, 0, _aloha_listener, NULL, 0x00 );
-    cc = cc2420_open( cc, 0, aloha_evolve, mac, 0x00 );
-    rxtx = cc2420_interface( cc, &m_rxtx );
-	mac = aloha_open( mac, rxtx, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, CONFIG_ALOHA_LOCAL_ADDRESS, 
-        mac_timer, _aloha_listener, NULL,0x00 );
-	#endif
 
-    #ifndef CONFIG_TSET_LISTENER
-    cc = cc2420_open( cc, 0, NULL, NULL, 0x00 );
-    rxtx = cc2420_interface( cc, &m_rxtx );
-	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-	mac = aloha_open( mac, rxtx, nac,CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, CONFIG_ALOHA_LOCAL_ADDRESS, 
-        mac_timer, NULL, NULL,0x00 );
-	#endif
+    cc2520_open(cc, 0, NULL, NULL, 0x00 );
+    rxtx = cc2520_interface( cc, &m_rxtx );
+
+    hal_assert( rxtx != NULL );
+
+    timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
+
+    timer_setinterval( timer2,1000,7999);
+
+
+    nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
+
+    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+
+    aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
+        CONFIG_ALOHA_LOCAL_ADDRESS, timer2 , NULL, NULL, 0x00 );
+    mac->txbuf = mactxbuf;
  
-	cc2420_setchannel( cc, CONFIG_ALOHA_CHANNEL );
-	cc2420_setrxmode( cc );							            // enable RX mode
-	cc2420_setpanid( cc, CONFIG_ALOHA_PANID );					// network identifier, seems no use in sniffer mode
-	cc2420_setshortaddress( cc, CONFIG_ALOHA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
-	cc2420_enable_autoack( cc );
-	cc2420_settxpower( cc, CC2420_POWER_1);//cc2420_settxpower( cc, CC2420_POWER_2);CC2420_POWER_1
-
-	#ifdef CONFIG_TEST_ADDRESSRECOGNITION
-	cc2420_enable_addrdecode( cc );
-	#else	
-	cc2420_disable_addrdecode( cc );
-	#endif
-
-	#ifdef CONFIG_TEST_ACK
-	cc2420_enable_autoack( cc );
-	#endif
+	cc2520_setchannel( cc, CONFIG_ALOHA_CHANNEL );
+	cc2520_rxon( cc );							            // enable RX mode
+	cc2520_setpanid( cc, CONFIG_ALOHA_PANID );					// network identifier, seems no use in sniffer mode
+	cc2520_setshortaddress( cc, CONFIG_ALOHA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
+	cc2520_enable_autoack( cc );
  
-    rxbuf = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
     dbc_putchar(0x11);
 
     #ifdef CONFIG_TEST_ACK
@@ -217,7 +200,11 @@ void recvnode(void)
 		if (len > 0)
 		{   
             frame_moveouter( rxbuf );
-            _output_frame( rxbuf, NULL );
+            pc = frame_startptr( rxbuf);
+            for ( i=0;i< frame_length( rxbuf);i++)
+            {
+                USART_Send( pc[i]);
+            }
            frame_moveinner( rxbuf );
 			/*
 			dbc_write( frame_startptr( rxbuf),frame_length( rxbuf));//todo for testing
@@ -244,7 +231,7 @@ void recvnode(void)
 
     frame_close( rxbuf );
     aloha_close( mac );
-    cc2420_close( cc );
+    cc2520_close( cc );
 }
 
 #ifdef CONFIG_TEST_LISTENER

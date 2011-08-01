@@ -13,5 +13,6 @@
 #include "../../common/openwsn/hal/opennode2010/basic_rf.h"
 #include "../../common/openwsn/hal/opennode2010/hal_assert.h"
 #include "../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../common/openwsn/hal/opennode2010/hal_led.h"
 
 #endif /* _APL_FOUNDATION_H_5678_ */

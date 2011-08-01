@@ -12,13 +12,14 @@
   no parity, 1 stop bit, and HW flow control. 
     
 ******************************************************************************/
-
+/*todo for testing
 #include "apl_foundation.h"
 
 
 /******************************************************************************
 * CONSTANTS
 */
+/*todo for testing
 // Application parameters
 #define RF_CHANNEL                25      // 2.4 GHz RF channel
 #define APP_PAYLOAD_LENGTH        103
@@ -47,6 +48,7 @@
 /******************************************************************************
 * LOCAL VARIABLES
 */
+/*todo for testing
 static uint8 pTxData[APP_PAYLOAD_LENGTH];
 static uint8 pRxData[APP_PAYLOAD_LENGTH];
 static uint8 appRole;
@@ -58,10 +60,12 @@ static volatile uint8 appUartRxIdle;
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 
 /* Private define ------------------------------------------------------------*/
+/*todo for testing
 #define BufferSize  32
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/*todo for testing
 SPI_InitTypeDef  SPI_InitStructure;
 u16 SPI1_Buffer_Tx[BufferSize] = {0x0102, 0x0304, 0x0506, 0x0708, 0x090A, 0x0B0C,
                                   0x0D0E, 0x0F10, 0x1112, 0x1314, 0x1516, 0x1718,
@@ -95,6 +99,7 @@ static const uint8 deviceValues[2] = {DEVICE_1, DEVICE_2};
 /******************************************************************************
 * LOCAL FUNCTIONS
 */
+/*todo for testing
 static void appConfigTimer(uint16 rate);
 static void appPrintMenu(void);
 static void appReceiverTask(void); 
@@ -118,6 +123,7 @@ static void spi_config(void);
 *
 * @return      none
 */
+/*todo for testing
 int main(void)
 {    
 	/*!< At this stage the microcontroller clock setting is already configured, 
@@ -125,7 +131,8 @@ int main(void)
 	 * file (startup_stm32f10x_xx.s) before to branch to application main.
 	 * To reconfigure the default setting of SystemInit() function, refer to
 	 * system_stm32f10x.c file.
-	 */      
+	 */
+	 /*todo for testing      
     mcu_init();
 	
 	spi_config();
@@ -194,6 +201,7 @@ int main(void)
 */    
     // No return from here. 
     // Run appReceiverTask() and appSenderTask() sequentially. 
+	/*todo for testing
     while(TRUE) {
         appReceiverTask();
         appSenderTask();
@@ -212,6 +220,7 @@ int main(void)
 *
 * @return      none
 */
+/*todo for testing
 static void appTimerISR(void)
 {
     appUartRxIdle = TRUE;
@@ -228,10 +237,12 @@ static void appTimerISR(void)
 *
 * @return      none
 */
+/*todo for testing
 static void appConfigTimer(uint16 rate)
 {/*
     halTimer32kInit(TIMER_32K_CLK_FREQ/rate);
     halTimer32kIntConnect(&appTimerISR);				*/
+	/*todo for testing
 }
 
 
@@ -244,6 +255,7 @@ static void appConfigTimer(uint16 rate)
 *
 * @return      none
 */
+/*todo for testing
 static void appPrintMenu(void)
 {
     printStr("--------------------------\n");
@@ -265,6 +277,7 @@ static void appPrintMenu(void)
 *
 * @return      none
 */
+/*todo for testing
 static void appReceiverTask(void) 
 {
     uint8 numBytes=0;
@@ -290,6 +303,7 @@ static void appReceiverTask(void)
         }*/
         // Signal RX flow on
         //halUartEnableRxFlow(TRUE);
+		/*todo for testing
     }
 }
 
@@ -305,6 +319,7 @@ static void appReceiverTask(void)
 *
 * @return      none
 */
+/*todo for testing
 static void appSenderTask(void) 
 {  /*
     uint8 ch=0;
@@ -374,6 +389,7 @@ static void appSenderTask(void)
         // Reset idle fimer flag
         // appUartRxIdle = FALSE;
     */
+	/*todo for testing
 }
 
 
@@ -386,6 +402,7 @@ static void appSenderTask(void)
 *
 * @return      uint8 - Application role chosen
 */
+/*todo for testing
 static uint8 appSelectRole(void)
 {
     uint8 index;
@@ -416,6 +433,7 @@ GPIO_Init(GPIOA, &GPIO_InitStructure);
   SPI_Cmd(SPI1, DISABLE);
 
 	/* SPI1 configuration ------------------------------------------------------*/
+	/*todo for testing
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_16b;
@@ -432,11 +450,13 @@ GPIO_Init(GPIOA, &GPIO_InitStructure);
   //SPI_Init(SPI2, &SPI_InitStructure);
 
   /* Enable SPI1 CRC calculation */
+  /*todo for testing
   SPI_CalculateCRC(SPI1, ENABLE);
   /* Enable SPI2 CRC calculation */
   //SPI_CalculateCRC(SPI2, ENABLE);
 
   /* Enable SPI1 */
+  /*todo for testing
   SPI_Cmd(SPI1, ENABLE);
   /* Enable SPI2 */
   //SPI_Cmd(SPI2, ENABLE);
@@ -511,5 +531,267 @@ GPIO_Init(GPIOA, &GPIO_InitStructure);
   //CRC1Value = SPI_I2S_ReceiveData(SPI1);
   /* Read SPI2 received CRC value */
   //CRC2Value = SPI_I2S_ReceiveData(SPI2);
+  /*todo for testing
 
 }
+todo for testing*/
+
+
+/********************************************************************************
+*********************************************************************************/
+
+#include "apl_foundation.h"
+#include "../../common/openwsn/rtl/rtl_frame.h"
+#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
+//#include "../../common/openwsn/hal/opennode2010/hal_led.h"
+
+USART_InitTypeDef USART_InitStructure;
+
+#define MAX_IEEE802FRAME154_SIZE                128//todo
+
+#define FAILED 1
+#define RXFIFO_START 0x180
+#define  channel 11
+
+#define GPIO_SPI GPIOB
+#define SPI_pin_MISO  GPIO_Pin_14
+#define SPI_pin_MOSI  GPIO_Pin_15
+#define SPI_pin_SCK   GPIO_Pin_13
+#define SPI_pin_SS    GPIO_Pin_12
+
+
+/***********************************************************************************
+ * LOCAL FUNCTIONS
+ */
+
+static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+TiIEEE802Frame154Descriptor m_desc;
+
+void RCC_Configuration(void);
+static void CC2520_Activate( void);
+static void SPI_GPIO_Configuration( void);
+static void USART_GPIO_Configuration( void);
+static uint8 USART_Send( uint8 ch);
+
+
+void RCC_Configuration(void)
+{
+	RCC_PCLK2Config(RCC_HCLK_Div8);
+	RCC_PCLK1Config(RCC_HCLK_Div8);
+
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+
+}
+
+static void SPI_GPIO_Configuration( void)
+{
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+}
+
+static void USART_GPIO_Configuration( void)
+{
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+
+	// Configure USART2 Rx (PA.3) as input floating 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
+static void CC2520_Activate( void)
+{
+	int i;
+    //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+//   /*
+//	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//    */
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+	
+
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+	//GPIO_ResetBits( GPIOA,GPIO_Pin_8);
+
+	/*********************************************************/
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN
+	//GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_5);//reset the VREG_EN
+	//GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_1)//reset the cc2520 nRST
+    //GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	//GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+	//GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14);//read the input of the SO.
+    /************************************************************************/
+    GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
+	GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
+	for ( i=0;i<13500;i++);//wait for the regulator to be stabe.
+
+	GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
+	GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+	for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
+	hal_assert( GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+	GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	hal_delayus( 2 );
+}
+
+
+static uint8 USART_Send( uint8 ch)
+{
+	USART_SendData( USART2,ch);
+	while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
+	{
+	}
+}
+
+
+
+/***********************************************************************************
+ * @fn          main
+ *
+ * @brief       This is the main entry of the "Read Regs" application
+ *
+ * @param       none
+ *
+ * @return      none
+ */
+
+void main (void)
+{
+	int i;
+    uint16 g;
+	uint8 len;
+	uint8 state;
+	uint8 k;
+	uint8 data[40];
+	TiFrame *rxbuf;//todo
+	char * ptr;//todo
+	TiIEEE802Frame154Descriptor * desc;//todo
+    g = 0x01;
+	state = 0x00;
+	len = 0x00;
+    RCC_Configuration( );
+    led_open();
+    led_off( LED_RED);//todo 下面三句的顺序不能变
+    CC2520_Activate();
+	SPI_GPIO_Configuration();
+	CC2520_SPI_OPEN( );
+	//CC2520_SPI_BEGIN();
+    USART_GPIO_Configuration();
+
+	/***********************************************/
+	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+	USART_Init( USART2,&USART_InitStructure);
+	USART_Cmd( USART2,ENABLE);
+	/***********************************************/
+    //现在还缺少相应寄存器的配置;这可能是导致发送失败的原因之一
+    halRfInit();//todo 设置相应的寄存器
+
+	halRfSetPower( TXPOWER_4_DBM);
+	halRfSetChannel( channel);
+	halRfSetShortAddr( 0x02);
+	halRfSetPanId( 0x01);
+	//desc = ieee802frame154_open( &m_desc );
+	//rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+
+	CC2520_SRFOFF();
+	CC2520_SRXON();
+	while (1)//todo for testing
+	{
+		hal_delayus( 2);
+        state = CC2520_SNOP();
+		//len = CC2520_RXBUF8();//从fifo中读取字节的长度
+		//USART_Send( state);
+		//串口显示state = 0x20，即rx_underflow exception产生
+		//有时显示state = 0x30,即 rx_underflow 及tx_overflow都产生了
+//		USART_Send( 0xff);
+//		//USART_Send( state);CC2520_FSCAL1
+//		USART_Send( CC2520_MEMRD8( CC2520_FRMCTRL0));
+//		USART_Send( CC2520_MEMRD8( CC2520_FSCAL1));
+//		USART_Send( CC2520_MEMRD8( CC2520_TXPOWER));
+//		state = CC2520_MEMRD8( CC2520_CHIPID);
+//		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG0));
+//		USART_Send( CC2520_REGRD8( CC2520_FRMCTRL0));
+//		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG1));//一开始输出结果是06，即SRC_MATCH_DONE exception和
+//		//RX_FRM_ACCEPTED exception产生，后来变成0x26即又增加了SFD excepyion;0x26符合逻辑但是没有node发送frame，为什么会有这几个exception呢？
+//		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG2));
+//		USART_Send( CC2520_REGRD8( CC2520_RXFIFOCNT));//输出结果是0说明rxfifo中根本没有数据,但是为什么CC2520_EXCFLAG1不是0呢？
+//		USART_Send( 0xff);
+//        hal_delay( 10);
+//		//CC2520_SFLUSHRX();
+		//CC2520_SFLUSHRX();
+		if (CC2520_REGRD8( CC2520_EXCFLAG1)&0x11)
+		{
+			led_toggle( LED_RED);
+
+			len = CC2520_RXBUF8();
+
+			
+			
+			CC2520_RXBUF( len,data);
+			 
+
+			for ( i=0;i<len;i++)
+			{
+				USART_Send( data[i]);
+			}
+            CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
+            CC2520_SFLUSHRX();//todo clear the rxfifo
+			CC2520_SFLUSHRX();//todo clear the rxfifo
+//			for( i=0;i<20;i++)
+//			{
+//                USART_Send( CC2520_MEMRD8( RXFIFO_START+i));
+//			}
+		}
+		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG0));
+		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG1));
+		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG2));
+		USART_Send( CC2520_REGRD8( CC2520_RXFIFOCNT));
+		hal_delay( 1000);
+	}
+	
+}
+
+
+
