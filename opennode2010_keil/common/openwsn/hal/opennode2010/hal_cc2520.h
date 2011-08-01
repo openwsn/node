@@ -30,7 +30,18 @@
 extern "C"{
 #endif
 
-#define CC2520_RXBUF_SIZE 0x7F
+#define CC2520_RXBUF_SIZE 128
+
+#define GPIO_SPI GPIOB
+#define SPI_pin_MISO  GPIO_Pin_14
+#define SPI_pin_MOSI  GPIO_Pin_15
+#define SPI_pin_SCK   GPIO_Pin_13
+#define SPI_pin_SS    GPIO_Pin_12
+
+#define CC2520_DEF_PANID                0x0001
+#define CC2520_DEF_LOCAL_ADDRESS        0x0001   
+#define CC2520_DEF_REMOTE_ADDRESS       0x0002
+#define CC2520_DEF_CHANNEL              11
 
 /* TiCc2520Adapter
  * is a lightweight wrapper of TI/Chipcon's cc2420 2.4G transceiver. 
@@ -49,13 +60,15 @@ typedef struct{
 	void * lisowner;
     uint8 option;
 	volatile uint8 rxlen;
-	volatile char rxbuf[CC2520_RXBUF_SIZE];
+	volatile uint8 rxbuf[CC2520_RXBUF_SIZE];
 	//char ackbuf[CC2520_ACKBUFFER_SIZE];
 	uint8 rssi;
 	uint8 lqi;
 	volatile uint8 spistatus;
 	uint16 param[14];
 }TiCc2520Adapter;
+
+extern TiCc2520Adapter m_cc;//临时定义的一个全局变量
 
 
 /*******************************************************************************
@@ -88,10 +101,17 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
  * allocated in the cc2520_open() function.
  ******************************************************************************/
 void cc2520_close( TiCc2520Adapter * cc );
+void cc2520_sleep( TiCc2520Adapter * cc );
 
 uint8 cc2520_state( TiCc2520Adapter * cc );
 
 void cc2520_restart( TiCc2520Adapter * cc );
+void cc2520_wakeup( TiCc2520Adapter * cc );
+
+uint8 cc2520_vrefon( TiCc2520Adapter * cc );
+uint8 cc2520_vrefoff( TiCc2520Adapter * cc );
+uint8 cc2520_powerdown( TiCc2520Adapter * cc );
+uint8 cc2520_powerup( TiCc2520Adapter * cc );
 
 #define cc2520_write(cc,buf,len,option) cc2520_send(cc,buf,len,option)
 #define cc2520_read(cc,buf,len,option) cc2520_recv(cc,buf,len,option)
@@ -110,6 +130,68 @@ void cc2520_disable_sfd( TiCc2520Adapter * cc );
 
 void cc2520_default_listener( void * ccptr, TiEvent * e ); 
 
+void cc2520_evolve( TiCc2520Adapter * cc );
+
+uint8 cc2520_ischannelclear( TiCc2520Adapter * cc );
+uint8 cc2520_snop( TiCc2520Adapter * cc );
+uint8 cc2520_oscon( TiCc2520Adapter * cc );
+uint8 cc2520_oscoff( TiCc2520Adapter * cc );
+uint8 cc2520_calibrate( TiCc2520Adapter * cc );
+uint8 cc2520_rxon( TiCc2520Adapter * cc );
+uint8 cc2520_txon( TiCc2520Adapter * cc );
+uint8 cc2520_txoncca( TiCc2520Adapter * cc );
+uint8 cc2520_rfoff( TiCc2520Adapter * cc );   
+void  cc2520_switchtomode( TiCc2520Adapter * cc, uint8 mode );
+
+uint8 cc2520_flushrx( TiCc2520Adapter * cc );
+uint8 cc2520_flushtx( TiCc2520Adapter * cc );
+
+uint8 cc2520_writeregister( TiCc2520Adapter * cc, uint8 addr, uint8 data);
+uint8 cc2520_readregister( TiCc2520Adapter * cc, uint8 addr);
+
+uint8 cc2520_enable_autoack( TiCc2520Adapter * cc ) ;
+uint8 cc2520_disable_autoack( TiCc2520Adapter * cc );
+
+uint8 cc2520_enable_addrdecode( TiCc2520Adapter * cc );
+uint8 cc2520_disable_addrdecode( TiCc2520Adapter * cc ) ;
+
+uint8 cc2520_enable_filter( TiCc2520Adapter * cc );
+uint8 cc2520_disable_filter( TiCc2520Adapter * cc ) ;
+
+//以下5组函数只有在filter功能实现的时候才有意义
+//define whether the reserved frames are accepted or rejected
+uint8 cc2520_reserved_accept( TiCc2520Adapter * cc );
+uint8 cc2520_reserved_reject( TiCc2520Adapter * cc ) ;
+
+//define whether the CMD frames are accepted or rejected
+uint8 cc2520_cmd_accept( TiCc2520Adapter * cc );
+uint8 cc2520_cmd_reject( TiCc2520Adapter * cc ) ;
+
+//define whether the CMD frames are accepted or rejected
+uint8 cc2520_ack_accept( TiCc2520Adapter * cc );
+uint8 cc2520_ack_reject( TiCc2520Adapter * cc ) ;
+
+//define whether the data frames are accepted or rejected 
+uint8 cc2520_data_accept( TiCc2520Adapter * cc );
+uint8 cc2520_data_reject( TiCc2520Adapter * cc ) ;
+
+//define whether the beacon frames are accepted or rejected 
+uint8 cc2520_beacon_accept( TiCc2520Adapter * cc );
+uint8 cc2520_beacon_reject( TiCc2520Adapter * cc ) ;
+
+void  cc2520_setcoordinator( TiCc2520Adapter * cc, bool flag );
+
+uint8 cc2520_setchannel( TiCc2520Adapter * cc, uint8 chn );
+uint8 cc2520_setshortaddress( TiCc2520Adapter * cc, uint16 addr );
+uint8 cc2520_getshortaddress( TiCc2520Adapter * cc, uint16 * addr );
+uint8 cc2520_setpanid( TiCc2520Adapter * cc, uint16 id );
+uint8 cc2520_getpanid( TiCc2520Adapter * cc, uint16 * id );
+
+uint8 cc2520_settxpower( TiCc2520Adapter * cc, uint8 power );
+
+uint8 cc2520_rssi( TiCc2520Adapter * cc );
+
+void cc2520_setlistner(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner );
 
 
 /***********************************************************************************
@@ -119,6 +201,8 @@ void cc2520_default_listener( void * ccptr, TiEvent * e );
 #include "hal_foundation.h"
 #include "hal_cc2520.h"
 
+
+TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterface * intf );
 /***********************************************************************************
 * TYPEDEFS
 */

@@ -16,7 +16,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -149,66 +149,42 @@ static uint8 halUartRxGetByte(void)
 *
 * @return  none
 */
-void halUartInit(uint8 baudrate, uint8 options)
+void halUartInit(uint16 baudrate, uint8 options)
 {
-/*
-    // For the moment, this UART implementation only
-    // supports communication settings 115200 8N1
-    // i.e. ignore baudrate and options arguments.
+	USART_InitTypeDef USART_InitStructure;
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    UCA0CTL1 |= UCSWRST;                   // Keep USART1 in reset state
 
-    UCA0CTL1 |= UCSSEL1;                  // Set clock source SMCLK
-    UCA0CTL1 &= ~UCSSEL0;
+	// Configure USART2 Rx (PA.3) as input floating 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    P3SEL |= BIT4;                    // P3.4 = USART1 TXD
-    P3SEL |= BIT5;                    // P3.5 = USART1 RXD
+	USART_InitStructure.USART_BaudRate = baudrate;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-    switch (baudrate) {
-    case HAL_UART_BAUDRATE_9600:
-        UCA0BR0 = 0x41;                     // 8MHz 9600
-        UCA0BR1 = 0x03;                     // 8MHz 9600
-        break;
-
-    case HAL_UART_BAUDRATE_19200:
-        UCA0BR0 = 0xA0;                     // 8MHz 19200
-        UCA0BR1 = 0x01;                     // 8MHz 19200
-        break;
-
-    case HAL_UART_BAUDRATE_38400:
-        UCA0BR0 = 0xD0;                     // 8MHz 38400
-        UCA0BR1 = 0x00;                     // 8MHz 38400
-        break;
-
-    case HAL_UART_BAUDRATE_57600:
-        UCA0BR0 = 0x8A;                     // 8MHz 57600
-        UCA0BR1 = 0x00;                     // 8MHz 57600
-        break;
-
-    case HAL_UART_BAUDRATE_115200:
-        UCA0BR0 = 0x45;                     // 8MHz 115200
-        UCA0BR1 = 0x00;                     // 8MHz 115200
-        break;
-
-    default:
-        break;
-    }
-
-    UCA0CTL0 &= ~UCPEN;                   // No parity
-    UCA0CTL0 &= ~UCSPB;                   // 1 stop bit
-    UCA0CTL0 &= ~UC7BIT;                  // 8 data bits
-
-    UCA0CTL1 &= ~UCSWRST;                   // Initialize USART1 state machine
-
-    // Enable RX interrupt
-    halUartRxIntEnable();
-
-    // Set RTS pin to output
-    HAL_RTS_DIR_OUT();
-    // Enable RX Flow
-    halUartEnableRxFlow(TRUE);
-*/
+	USART_Init( USART2,&USART_InitStructure);
+	USART_Cmd( USART2,ENABLE);
 }
+
+uint8 USART_Send( uint8 ch)
+{
+	USART_SendData( USART2,ch);
+	while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
+	{
+	}
+}
+
 
 
 /***********************************************************************************
@@ -246,7 +222,7 @@ uint16 halUartWrite(const uint8* buf, uint16 length)
 *          uint16 length - number of bytes to write
 *
 * @return  none
-*/
+*
 uint16 halUartBufferedWrite(const uint8* buf, uint16 length)
 {
     uint16 nBytes=0;
@@ -257,7 +233,7 @@ uint16 halUartBufferedWrite(const uint8* buf, uint16 length)
     // UCA0TXIFG is set after Power Up Clear of MSP430
     halUartTxIntEnable();
     return nBytes;
-}
+} */
 #endif
 
 /***********************************************************************************
@@ -269,7 +245,7 @@ uint16 halUartBufferedWrite(const uint8* buf, uint16 length)
 *          uint16 length - number of bytes to read
 *
 * @return  none
-*/
+*
 uint16 halUartRead(uint8* buf, uint16 length)
 {
     return bufGet(&rbRxBuf, (uint8 *)buf, length);
@@ -284,7 +260,7 @@ uint16 halUartRead(uint8* buf, uint16 length)
 * @param   none
 *
 * @return  uint8
-*/
+*
 uint16 halUartGetNumRxBytes(void)
 {
     return bufNumBytes(&rbRxBuf);

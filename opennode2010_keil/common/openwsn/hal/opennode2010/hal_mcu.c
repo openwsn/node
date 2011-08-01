@@ -16,7 +16,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -39,6 +39,7 @@
 ***********************************************************************************/
 
 #include "hal_foundation.h"
+//#include <intrins.h>
 #include "hal_cpu.h"
 #include "hal_mcu.h"
 #include "cm3/device/stm32f10x/stm32f10x.h"
@@ -119,14 +120,15 @@ void _NVIC_Configuration(void)
 
 #ifdef  VECT_TAB_RAM  
   /* Set the Vector Table base location at 0x20000000 */ 
-  NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0); 
+  //NVIC_SetVectorTableNVIC_SetVectorTableNVIC_SetVectorTableNVIC_SetVectorTableNVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0); 
 #else  /* VECT_TAB_FLASH  */
   /* Set the Vector Table base location at 0x08000000 */ 
-  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   
+  //NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   
 #endif
 
   /* Configure the NVIC Preemption Priority Bits[ÅäÖÃÓÅÏÈ¼¶×é] */  
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+ // todo
+ // NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
   
   /* Enable the TIM1 gloabal Interrupt [ÔÊÐíTIM1È«¾ÖÖÐ¶Ï]*/
 /*  
@@ -323,10 +325,12 @@ void halMcuInit(void)
 //#pragma optimize=none
 void halMcuWaitUs(uint16 usec) // 5 cycles for calling
 {
-/*
+	int j;
+
 #ifdef CONFIG_TOOLCHAIN_MDK
-    // The least we can wait is 3 usec:
-    // ~1 usec for call, 1 for first compare and 1 for return 
+/*
+	// The least we can wait is 3 usec:
+    // ~1 one cycle for call, 1 for first compare and 1 for return 
     while(usec > 3)       // 2 cycles for compare
     {                     // 2 cycles for jump
         __asm("NOP");       // 1 cycles for nop
@@ -339,10 +343,17 @@ void halMcuWaitUs(uint16 usec) // 5 cycles for calling
         __asm("NOP");       // 1 cycles for nop
         usec -= 2;        // 1 cycles for optimized decrement
     }
+*/
+	while(usec > 1)       
+	{            
+		for ( j=0;j<70;j++)
+			 __nop();
+		usec --;            // 1 cycles for optimized decrement
+	}
 #else
 	#error "unsupported compiler"
 #endif
-*/
+
 }                         // 4 cycles for returning
 
 

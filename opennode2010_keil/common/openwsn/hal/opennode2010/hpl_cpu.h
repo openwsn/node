@@ -177,9 +177,9 @@ inline void cpu_delay250ns()
  * @attention
  * the input parameter value should not large than the maximum value of int16 type
  */
-inline void cpu_delayus( int16 usec )
+inline void cpu_delayus( uint16 usec )
 {
-	while (usec > 0) 
+	while (usec > 1) 
 	{
 		asm volatile  ("nop" ::);
 		asm volatile  ("nop" ::);
@@ -196,9 +196,9 @@ inline void cpu_delayus( int16 usec )
 /* attention: 
  * the input msec value should not exceed the maximum value of uint16 type 
  */
-inline void cpu_delay(int16 msec) 
+inline void cpu_delay(uint16 msec) 
 {
-    while (msec > 0)
+    while (msec > 1)
     {
         cpu_delayus( 1000 );
         msec --;
