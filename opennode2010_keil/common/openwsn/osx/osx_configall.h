@@ -1,5 +1,5 @@
-#ifndef _DEVX_FOUNDATION_H_3721_
-#define _DEVX_FOUNDATION_H_3721_
+#ifndef _OSX_CONFIGALL_7898_
+#define _OSX_CONFIGALL_7898_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,20 +26,24 @@
  * 
  ******************************************************************************/ 
 
-/*******************************************************************************
- * foundation.h
- * this is the base foundation file of all the files in the application.
- *
- * @author zhangwei on 20060906
- * @modified by zhangwei on 20060906
- * - add "signed" in the typedef of int8
- * this is because some compile will assume char as unsigned type, while here
- * we need a signed char.
- ******************************************************************************/
+#include "../configall.h"
 
-#include "configall.h"
-#include "./rtl/rtl_foundation.h"
-#include "./hal/hal_foundation.h"
-#include "./svc/svc_foundation.h"
 
-#endif /* _DEVX_FOUNDATION_H_3721_ */
+/* controls whether to use malloc() to allocate memory to hold the osx kernel */
+#define CONFIG_OSX_DYNAMIC_MEMORY 
+#undef CONFIG_OSX_DYNAMIC_MEMORY 
+
+/* configure the maximum event count in the system event queue */
+#define CONFIG_OSX_QUEUE_CAPACITY 8
+
+/* configure how many objects can be placed in the dispatcher list 
+ * 
+ * @attention
+ *	If you want to support more than 8 dispatchers, you MUST enlarge this macro 
+ */
+#define CONFIG_OSX_DISPATCHER_CAPACITY 8
+
+/* enable debug agent */
+#define CONFIG_DBA_ENABLE
+
+#endif

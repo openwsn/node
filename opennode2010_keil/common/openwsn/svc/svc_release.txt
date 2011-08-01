@@ -1,0 +1,24 @@
+21:31 2007-03-04
+add new module: svc_opensec. 
+
+2006-12-26
+add new module on sensing service: svc_sensor
+
+14:03 2006-09-12
+将所有文件名增加前缀svc_，以保证唯一性
+增加svc_mac*.*
+增加了svc.h，包含所有service头文件，方便应用使用
+
+11:55 2006-08-25
+删除原先的wlsroute模块，用新的wlsnet模块代替
+增加了remotepc模块，此模块由原先的pc模块改名得到，删除了原先的..\ARm_PC目录
+
+21:47 2006-08-21
+增加了wlsroute.*模块
+该模块被设计用来实现routing功能。
+对RfModem应用而言，无需实现。
+
+
+17:01 2006-10-19
+remove file svc_application.* 
+for application layer module, they should be placed into test folder.

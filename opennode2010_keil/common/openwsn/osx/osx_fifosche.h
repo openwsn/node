@@ -1,5 +1,5 @@
-#ifndef _DEVX_FOUNDATION_H_3721_
-#define _DEVX_FOUNDATION_H_3721_
+#ifndef _OSX_FIFOSCHE_H_4698_
+#define _OSX_FIFOSCHE_H_4698_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,20 +26,65 @@
  * 
  ******************************************************************************/ 
 
-/*******************************************************************************
- * foundation.h
- * this is the base foundation file of all the files in the application.
- *
- * @author zhangwei on 20060906
- * @modified by zhangwei on 20060906
- * - add "signed" in the typedef of int8
- * this is because some compile will assume char as unsigned type, while here
- * we need a signed char.
- ******************************************************************************/
+#include "osx_configall.h"
+#include "osx_foundation.h"
+#include "osx_taskpool.h"
 
-#include "configall.h"
-#include "./rtl/rtl_foundation.h"
-#include "./hal/hal_foundation.h"
-#include "./svc/svc_foundation.h"
+#define CONFIG_OSX_FIFOSCHE_CAPACITY
 
-#endif /* _DEVX_FOUNDATION_H_3721_ */
+#define TiOsxFifoSchedulerItem TiOsxTaskPoolItem
+
+typedef struct{
+    uint8 count;
+    TiOsxFifoSchedulerItem * items[CONFIG_OSX_FIFOSCHE_CAPACITY];
+    TiOsxTaskPool * taskpool;
+}TiOsxFifoScheduler;
+
+TiOsxFifoScheduler * osx_fifosche_construct( char * mem, uint16 memsize )
+{
+
+}
+
+void osx_fifosche_destroy( TiOsxFifoScheduler * sche )
+{
+
+}
+
+TiOsxFifoScheduler * osx_fifosche_open( TiOsxFifoScheduler * heap, TiOsxTaskPool * tpl );
+{
+}
+
+void osx_fifosche_close( TiOsxFifoScheduler * heap );
+{
+}
+
+int8 osx_fifosche_taskspawn( TiOsxFifoScheduler * sche, void * taskfunction, void * taskdata, int16 starttime, uint8 option )
+{
+
+}
+
+
+/**
+ * Check the task queue and execute them. After exection, the task will be removed
+ * from the internal task queue and return to the osx task pool.
+ */
+void osx_fifosche_evolve( TiOsxFifoScheduler * sche, void * e )
+{
+
+}
+
+void osx_fifosche_execute( TiOsxFifoScheduler * sche )
+{
+
+}
+
+void osx_fifosche_kill( TiOsxFifoScheduler * sche, uint8 id )
+{
+
+}
+
+void osx_fifosche_restart( TiOsxFifoScheduler * sche, uint8 id )
+{
+}
+
+#endif /* _OSX_FIFOSCHE_H_4698_ */

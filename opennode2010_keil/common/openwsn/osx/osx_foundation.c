@@ -1,5 +1,3 @@
-#ifndef _DEVX_FOUNDATION_H_3721_
-#define _DEVX_FOUNDATION_H_3721_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,20 +24,17 @@
  * 
  ******************************************************************************/ 
 
+#include "osx_configall.h"
+#include "../hal/hal_timer.h"
+#include "../hal/hal_uart.h"
+#include "../hal/hal_interrupt.h"
+#include "../rtl/rtl_ringqueue.h"
+#include "osx_foundation.h"
+
 /*******************************************************************************
- * foundation.h
- * this is the base foundation file of all the files in the application.
- *
- * @author zhangwei on 20060906
- * @modified by zhangwei on 20060906
- * - add "signed" in the typedef of int8
- * this is because some compile will assume char as unsigned type, while here
- * we need a signed char.
+ * Initialize the core hardware to support the osx kernel to run. 
  ******************************************************************************/
+//void osx_init()
+//{
 
-#include "configall.h"
-#include "./rtl/rtl_foundation.h"
-#include "./hal/hal_foundation.h"
-#include "./svc/svc_foundation.h"
-
-#endif /* _DEVX_FOUNDATION_H_3721_ */
+//}

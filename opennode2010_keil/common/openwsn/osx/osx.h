@@ -1,5 +1,5 @@
-#ifndef _DEVX_FOUNDATION_H_3721_
-#define _DEVX_FOUNDATION_H_3721_
+#ifndef _OSX_H_7698_
+#define _OSX_H_7698_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,20 +26,24 @@
  * 
  ******************************************************************************/ 
 
-/*******************************************************************************
- * foundation.h
- * this is the base foundation file of all the files in the application.
- *
- * @author zhangwei on 20060906
- * @modified by zhangwei on 20060906
- * - add "signed" in the typedef of int8
- * this is because some compile will assume char as unsigned type, while here
- * we need a signed char.
- ******************************************************************************/
+/*****************************************************************************
+ * OS kernel and its extension
+ ****************************************************************************/ 
 
-#include "configall.h"
-#include "./rtl/rtl_foundation.h"
-#include "./hal/hal_foundation.h"
-#include "./svc/svc_foundation.h"
+#include "osx_configall.h"
+#include "osx_foundation.h"
+#include "osx_dba.h"
+#include "osx_ticker.h"
+#include "osx_queue.h"
+#include "osx_taskpool.h"
+#include "osx_taskheap.h"
+// #include "osx_fifosche.h"
+#include "osx_tlsche.h"
+#include "osx_kernel.h"
 
-#endif /* _DEVX_FOUNDATION_H_3721_ */
+/* @attention
+ *	if you encounter link error when you use osx, please add the related .c files
+ * into your project.
+ */
+
+#endif
