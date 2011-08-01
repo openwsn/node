@@ -1,10 +1,9 @@
  #include "apl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
 //#include "../../common/openwsn/hal/opennode2010/hal_led.h"
 
 USART_InitTypeDef USART_InitStructure;
-NVIC_InitTypeDef NVIC_InitStructure;
 ADC_InitTypeDef ADC_InitStructure;
 
 
