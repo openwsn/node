@@ -26,9 +26,9 @@
  
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
-#include "rtl_cache.h"
-#include "..\hal\opennode2010\hal_debugio.h"
 #include <string.h>
+#include "rtl_cache.h"
+#include "rtl_debugio.h"
 
 static inline uintx _cache_displace( TiCache * cache, char * item, uint16 itemlen, uintx idx );
 

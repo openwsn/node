@@ -47,7 +47,6 @@
  ******************************************************************************/
  
 #include "rtl_configall.h"
-#include "../hal/opennode2010/hal_uart.h"
 #ifdef CONFIG_DEBUG
 #include <stdlib.h>
 #endif
@@ -99,15 +98,19 @@ void frame_free( TiFrame * frame )
 TiFrame * frame_open( char * buf, uintx memsize, uintx init_layerindex, uintx init_layerstart, uintx init_layercapacity )
 {
     TiFrame * frame;
+
     /* for GAINZ platform, you should define "uintx" as "uint16" in configall.h */
 #ifdef CONFIG_TARGET_GAINZ
     rtl_assert( sizeof(uintx) == 2 );
 #endif
+
     rtl_assert( init_layercapacity <= memsize - sizeof(TiFrame) - init_layerstart );
+
     memset( buf, 0x00, memsize );
     frame = (TiFrame *)(buf);
     frame->memsize = memsize;
     frame_reset( frame, init_layerindex, init_layerstart, init_layercapacity );
+
     return frame;
 }
 
@@ -213,13 +216,7 @@ uintx frame_buffercapacity( TiFrame * frame )
 
 uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from )
 {
-	//USART_Send( 0xb0);//todo for testing
-	//USART_Send( from->memsize);//todo for testing
-	rtl_assert( frame->memsize == from->memsize );
-    //uint32 memsize = frame->memsize;
 	memmove( frame, from, from->memsize );
-    //frame->memsize = memsize;
-	//USART_Send( 0xc0);//todo for testing
 	return from->memsize;
 }
 

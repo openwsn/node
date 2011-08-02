@@ -63,27 +63,27 @@ TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
 	return que;
 }
 
- void lwque_destroy( TiLightQueue * que )
+void lwque_destroy( TiLightQueue * que )
 {
 	return;
 }
 
- uint8 lwque_count( TiLightQueue * que )
+uint8 lwque_count( TiLightQueue * que )
 {
 	return que->count;
 }
 
- uint8 lwque_capacity( TiLightQueue * que )
+uint8 lwque_capacity( TiLightQueue * que )
 {
 	return que->capacity;
 }
 
- bool lwque_empty( TiLightQueue * que )
+bool lwque_empty( TiLightQueue * que )
 {
 	return (que->count == 0);
 }
 
- bool lwque_full( TiLightQueue * que )
+bool lwque_full( TiLightQueue * que )
 {
 	return ((que->count != 0) && (que->count == que->capacity));
 }
@@ -92,7 +92,7 @@ TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
  * This function returns the memory address of specified item with index input. It helps
  * to manipulate the item directly.
  */
- void * lwque_getbuf( TiLightQueue * que, uint8 idx )
+void * lwque_getbuf( TiLightQueue * que, uint8 idx )
 {
 	rtl_assert( idx < que->capacity );
 	return (char*)que + sizeof(TiLightQueue) + (idx * que->itemsize);
@@ -104,7 +104,7 @@ TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
  * Returns the memory address of the front item in the queue. If the queue is empty, 
  * then NULL will be returned.
  */
- void * lwque_front( TiLightQueue * que )
+void * lwque_front( TiLightQueue * que )
 {
 	void * item = (que->count > 0) ? lwque_getbuf(que,que->front) : NULL;
 	

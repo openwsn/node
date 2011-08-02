@@ -76,7 +76,6 @@
 #include <string.h>
 #include "svc_foundation.h"
 #include "../rtl/rtl_frame.h"
-#include "svc_timer.h"
 #include "../rtl/rtl_random.h"
 #include "../rtl/rtl_debugio.h"
 #include "../rtl/rtl_ieee802frame154.h"
@@ -85,6 +84,7 @@
 #include "../hal/hal_assert.h"
 #include "../hal/hal_cpu.h"
 #include "../hal/hal_debugio.h"
+#include "svc_timer.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
 

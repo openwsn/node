@@ -71,8 +71,6 @@
  *	- Revised and tested.
  *
  ******************************************************************************/
-#include "../hal/opennode2010/hal_mcu.h"
-#include "../hal/opennode2010/hal_timer.h"
 #include "svc_configall.h"
 #include <string.h>
 #include "svc_foundation.h"
@@ -80,10 +78,13 @@
 #include "../rtl/rtl_random.h"
 #include "../rtl/rtl_debugio.h"
 #include "../rtl/rtl_ieee802frame154.h"
+#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/opennode2010/hal_timer.h"
 #include "../hal/opennode2010/hal_foundation.h"
 #include "../hal/opennode2010/hal_assert.h"
 #include "../hal/opennode2010/hal_cpu.h"
 #include "../hal/opennode2010/hal_debugio.h"
+#include "svc_timer.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
 

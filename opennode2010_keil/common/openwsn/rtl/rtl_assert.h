@@ -59,8 +59,10 @@
 extern "C" {
 #endif
 
-// rtl_assert
-// rtl_assert_init()
+/* The rtl_assert() function has been moved into rtl_foundation module. Attention 
+ * the "rtl" layer should be initialized first before the rtl_assert() can really
+ * take effective. 
+ */
 
 #ifdef __cplusplus
 }
