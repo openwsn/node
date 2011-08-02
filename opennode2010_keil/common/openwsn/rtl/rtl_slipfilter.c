@@ -180,6 +180,7 @@
 #include "rtl_foundation.h"
 #include <string.h>
 #include "rtl_slipfilter.h"
+#include "rtl_iobuf.h"
 
 /* SLIP special character codes */
 
