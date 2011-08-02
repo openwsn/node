@@ -40,8 +40,12 @@ typedef struct{
 extern "C" {
 #endif
 
-TiSlipFilter * slip_filter_open();
-void slip_filter_close( TiSlipFilter * slip );
+#ifdef CONFIG_DYNA_MEMORY
+TiSlipFilter * slip_filter_create();
+void slip_filter_free( TiSlipFilter * slip );
+#endif
+TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size );
+void slip_filter_destroy( TiSlipFilter * slip );
 int slip_filter_tx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output );
 int slip_filter_rx_handler( TiSlipFilter * filter, TiIoBuf * input, TiIoBuf * output );
 

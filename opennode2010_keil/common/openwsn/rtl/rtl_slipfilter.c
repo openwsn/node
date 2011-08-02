@@ -196,7 +196,8 @@
 /**
  * Initialize the TiSlipFilter object.
  */
-TiSlipFilter * slip_filter_open()
+#ifdef CONFIG_DYNA_MEMORY
+TiSlipFilter * slip_filter_create()
 {
 	TiSlipFilter * slip;
 
@@ -209,14 +210,31 @@ TiSlipFilter * slip_filter_open()
 
 	return slip;
 }
+#endif
 
-void slip_filter_close( TiSlipFilter * slip )
+#ifdef CONFIG_DYNA_MEMORY
+void slip_filter_free( TiSlipFilter * slip )
 {
 	if (slip)
 	{
 		free(slip);
 	}
 }
+#endif
+
+TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size )
+{
+	rtl_assert( sizeof(TiSlipFilter) <= size ); 
+	memset( slip, 0x00, sizeof(TiSlipFilter) );
+	slip->rx_state = SLIP_STATE_IDLE;
+	return slip;
+}
+
+void slip_filter_destroy( TiSlipFilter * slip )
+{
+	slip = slip;
+}
+
 
 /**
  * Process the packet to be sent. 
@@ -374,6 +392,7 @@ int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
 				//assert( false );
 				iobuf_putchar(output, ESC);
 				iobuf_putchar(output, c);
+				slip->rx_state = SLIP_STATE_RECVING;
 			}
 			break;
 		}
