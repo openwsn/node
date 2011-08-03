@@ -58,8 +58,6 @@
 #include "rtl_assert.h"
 #include "rtl_iobuf.h"
 
-#define inline
-
 #ifdef CONFIG_DYNA_MEMORY
 TiIoBuf * iobuf_create( uintx size )
 {
@@ -93,7 +91,7 @@ void iobuf_destroy( TiIoBuf * iobuf )
 }
 
 #ifdef CONFIG_DYNA_MEMORY
-inline TiIoBuf * iobuf_duplicate( TiIoBuf * iobuf )
+TiIoBuf * iobuf_duplicate( TiIoBuf * iobuf )
 {
 	TiIoBuf * newbuf;
 	rtl_assert( iobuf != NULL );
@@ -103,7 +101,7 @@ inline TiIoBuf * iobuf_duplicate( TiIoBuf * iobuf )
 }
 #endif
 
-inline char * iobuf_data( TiIoBuf * iobuf )
+char * iobuf_data( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 
@@ -113,60 +111,60 @@ inline char * iobuf_data( TiIoBuf * iobuf )
 		return NULL;
 }
 
-inline uintx iobuf_length( TiIoBuf * iobuf )
+uintx iobuf_length( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	return iobuf->length;
 }
 
-inline uintx iobuf_size( TiIoBuf * iobuf )
+uintx iobuf_size( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	return iobuf->size;
 }
 
-inline char * iobuf_ptr( TiIoBuf * iobuf )
+char * iobuf_ptr( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	return (char*)iobuf + sizeof(TiIoBuf);
 }
 
-inline char * iobuf_endptr( TiIoBuf * iobuf )
+char * iobuf_endptr( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	return iobuf_ptr(iobuf) + iobuf_length(iobuf);
 }
 
-inline void iobuf_clear( TiIoBuf * iobuf )
+void iobuf_clear( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	iobuf->length = 0;
 }
 
-inline bool iobuf_full( TiIoBuf * iobuf )
+bool iobuf_full( TiIoBuf * iobuf )
 {
 	rtl_assert( iobuf != NULL );
 	return (iobuf->length == iobuf->size);
 }
 
-inline bool iobuf_empty( TiIoBuf * iobuf )
+bool iobuf_empty( TiIoBuf * iobuf )
 {
 	return (iobuf->length == 0);
 }
 
-inline uintx iobuf_available( TiIoBuf * iobuf )
+uintx iobuf_available( TiIoBuf * iobuf )
 {
 	return (iobuf->size - iobuf->length);
 }
 
-inline uintx iobuf_read( TiIoBuf * iobuf, char * databuf, uintx size )
+uintx iobuf_read( TiIoBuf * iobuf, char * databuf, uintx size )
 {
 	uintx count = min( size, iobuf->length );
 	memmove( databuf, iobuf_ptr(iobuf), count );
 	return count;
 }
 
-inline uintx iobuf_write( TiIoBuf * iobuf, char * data, uintx len )
+uintx iobuf_write( TiIoBuf * iobuf, char * data, uintx len )
 {
 	uintx count = min( iobuf->size, len );
 	memmove( iobuf_ptr(iobuf)+iobuf->length, data, count );
@@ -178,7 +176,7 @@ inline uintx iobuf_write( TiIoBuf * iobuf, char * data, uintx len )
  * append the data at the end of the original data. If there's not enough space,
  * then only the (size-length) characters will be padded.
  */
-inline uintx iobuf_pushback( TiIoBuf * iobuf, char * data, uintx len )
+uintx iobuf_pushback( TiIoBuf * iobuf, char * data, uintx len )
 {
 	uintx count = min(iobuf->size - iobuf->length, len);
 	memmove( iobuf_ptr(iobuf)+iobuf->length, data, count );
@@ -189,7 +187,7 @@ inline uintx iobuf_pushback( TiIoBuf * iobuf, char * data, uintx len )
 /* iobuf_pushbyte
  * append a single byte at the end of the original data
  */
-inline uintx iobuf_pushbyte( TiIoBuf * iobuf, unsigned char value )
+uintx iobuf_pushbyte( TiIoBuf * iobuf, unsigned char value )
 {
 	char * ptr = iobuf_ptr(iobuf) + iobuf->length;
 	*ptr = value;
@@ -197,14 +195,14 @@ inline uintx iobuf_pushbyte( TiIoBuf * iobuf, unsigned char value )
 	return 1;
 }
 
-inline uintx iobuf_front( TiIoBuf * iobuf, char * otherbuf, uintx len )
+uintx iobuf_front( TiIoBuf * iobuf, char * otherbuf, uintx len )
 {
 	uintx count = min( len, iobuf->length );
 	memmove( otherbuf, iobuf_ptr(iobuf), count );
 	return count;
 }
 
-inline void iobuf_popfront( TiIoBuf * iobuf, uintx count )
+void iobuf_popfront( TiIoBuf * iobuf, uintx count )
 {
 	if (count < iobuf->length)
 	{
@@ -215,7 +213,7 @@ inline void iobuf_popfront( TiIoBuf * iobuf, uintx count )
 		iobuf->length = 0;
 }
 
-inline uintx iobuf_getchar( TiIoBuf * iobuf, char * pc )
+uintx iobuf_getchar( TiIoBuf * iobuf, char * pc )
 {
 	uintx count = 0;
 	count = iobuf_front(iobuf, pc, 1);
@@ -226,7 +224,7 @@ inline uintx iobuf_getchar( TiIoBuf * iobuf, char * pc )
 	return count;
 }
 
-inline bool iobuf_set( TiIoBuf * iobuf, uintx idx, char c )
+bool iobuf_set( TiIoBuf * iobuf, uintx idx, char c )
 {
 	rtl_assert( idx < iobuf_size(iobuf) );
 	if (idx < iobuf_size(iobuf))
@@ -238,7 +236,7 @@ inline bool iobuf_set( TiIoBuf * iobuf, uintx idx, char c )
 		return false;
 }
 
-inline bool iobuf_get( TiIoBuf * iobuf, uintx idx, char * c )
+bool iobuf_get( TiIoBuf * iobuf, uintx idx, char * c )
 {
 	rtl_assert( idx < iobuf_length(iobuf) );
 	if (idx < iobuf_length(iobuf))
@@ -302,7 +300,7 @@ uintx iobuf_append( TiIoBuf * iobuf1, TiIoBuf * iobuf2 )
 	return count;
 }
 
-inline void	iobuf_setlength( TiIoBuf * buf, uintx count )
+ void	iobuf_setlength( TiIoBuf * buf, uintx count )
 {
 	buf->length = count;
 }

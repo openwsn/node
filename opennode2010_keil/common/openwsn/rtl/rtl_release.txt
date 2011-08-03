@@ -1,0 +1,22 @@
+20070410
+add module: rtl_int2str
+conversion between integer and string values
+
+20070405
+add module: rtl_binaryxml(not test), rtl_version.h, rtl_bits.h
+
+09:01 2006-10-31
+first version released.
+
+different to "service" directory, the service and utility functions in "rtl" is 
+application-independent. while, a lot of "service" are quite complex and depend 
+on specfic application.
+
+RTL is also hardware-independt. they may be used by HAL and Service. 
+
+generally, most of the fundamental data structure can be implemented in "rtl".
+
+released today:
+rtl_foundation.*
+rtl_configall.*
+rtl_queue.* in develeping

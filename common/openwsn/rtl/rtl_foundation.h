@@ -196,6 +196,10 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 #define ADDR(arr) (&((arr)[0]))
 #define ADDRAT(arr,n) (&(arr[0])+(n))
 
+#ifdef CONFIG_COMPILER_BORLAND
+//#define max(a,b) (((a)>(b)) ? (a) : (b))
+//#define min(a,b) (((a)<(b)) ? (a) : (b))
+#endif
 
 /* @attention:
  * you must guarantee sizeof(TiHandle) == sizeof(void*)

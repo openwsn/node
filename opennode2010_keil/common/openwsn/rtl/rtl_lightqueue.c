@@ -32,6 +32,10 @@
  * @author zhangwei in 200503
  * @modified by zhangwei in 200803
  *	- eliminate the call of malloc() and free().
+ * @modified by zhangwei in 2011.08.03
+ *  - change the variable "itemsize" to "datasize"
+ * 	- add lwque_datasize(), lwque_setbuf(), lwque_applyfront(), lwque_applyback(),
+ *		lwque_readdata(), lwque_writedata()
  */
 
 #include "rtl_configall.h"
@@ -48,63 +52,88 @@
 #include "rtl_foundation.h"
 #include "rtl_lightqueue.h"
 
-TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 itemsize )
+TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 datasize )
 {
 	TiLightQueue * que;
 	que = (TiLightQueue *)buf;
 	que->front = 0;
 	que->rear = 0;
-	que->capacity = (size - sizeof(TiLightQueue))/itemsize;
+	que->capacity = (size - sizeof(TiLightQueue))/datasize;
 	que->count=0;
-	que->itemsize = itemsize;
+	que->datasize = datasize;
 
 	// capacity must be larger than 1 in order to create a queue.
 	rtl_assert( que->capacity > 0 );
 	return que;
 }
 
- void lwque_destroy( TiLightQueue * que )
+void lwque_destroy( TiLightQueue * que )
 {
 	return;
 }
 
- uint8 lwque_count( TiLightQueue * que )
+uint8 lwque_count( TiLightQueue * que )
 {
 	return que->count;
 }
 
- uint8 lwque_capacity( TiLightQueue * que )
+uint8 lwque_capacity( TiLightQueue * que )
 {
 	return que->capacity;
 }
 
- bool lwque_empty( TiLightQueue * que )
+bool lwque_empty( TiLightQueue * que )
 {
 	return (que->count == 0);
 }
 
- bool lwque_full( TiLightQueue * que )
+bool lwque_full( TiLightQueue * que )
 {
 	return ((que->count != 0) && (que->count == que->capacity));
+}
+
+uint16 lwque_datasize( TiLightQueue * que )
+{
+	return que->datasize;
 }
 
 /* lwque_getbuf()
  * This function returns the memory address of specified item with index input. It helps
  * to manipulate the item directly.
  */
- void * lwque_getbuf( TiLightQueue * que, uint8 idx )
+void * lwque_getbuf( TiLightQueue * que, uint8 idx )
 {
 	rtl_assert( idx < que->capacity );
-	return (char*)que + sizeof(TiLightQueue) + (idx * que->itemsize);
-	
-	
+	return (char*)que + sizeof(TiLightQueue) + (idx * que->datasize);
+}
+
+uint16 lwque_readdata( TiLightQueue * que, uint8 idx, void * buf, uint16 size )
+{
+	void * data;
+	uint16 count;
+	rtl_assert((idx < que->capacity) && (size >= que->datasize));
+	data = lwque_getbuf(que, idx);
+	count = min(que->datasize, size);
+	memmmove(buf, data, count);
+	return count;
+}
+
+uint16 lwque_writedata( TiLightQueue * que, uint8 idx, void * data, uint16 len  )
+{
+	char * buf;
+	uint16 count;
+	rtl_assert((idx < que->capacity) && (len <= que->datasize));
+	buf = lwque_getbuf(que, idx);
+	count = min(que->datasize, len);
+	memmmove(buf, data, count);
+	return count;
 }
 
 /* lwque_front()
  * Returns the memory address of the front item in the queue. If the queue is empty, 
  * then NULL will be returned.
  */
- void * lwque_front( TiLightQueue * que )
+void * lwque_front( TiLightQueue * que )
 {
 	void * item = (que->count > 0) ? lwque_getbuf(que,que->front) : NULL;
 	
@@ -133,14 +162,14 @@ bool lwque_pushback( TiLightQueue * que, void * item )
 	{   
 		que->rear = 0;
 		que->front = 0;
-		memmove( lwque_getbuf(que,0), item, que->itemsize );
+		memmove( lwque_getbuf(que,0), item, que->datasize );
 		que->count++;
 		ret = true;
 	}
 	else if (que->count < que->capacity)
 	{
 		que->rear = (que->rear == 0) ? (que->capacity - 1) : (que->rear-1);
-		memmove( lwque_getbuf(que,que->rear), item, que->itemsize );
+		memmove( lwque_getbuf(que,que->rear), item, que->datasize );
 		que->count ++;
 		ret = true;
 	}
@@ -158,7 +187,7 @@ bool lwque_pushfront( TiLightQueue * que, void * item )
 	{
 		que->rear = 0;
 		que->front = 0;
-		memmove( lwque_getbuf(que,0), item, que->itemsize );
+		memmove( lwque_getbuf(que,0), item, que->datasize );
 		que->count++;
 		ret = true;
 	}
@@ -166,7 +195,7 @@ bool lwque_pushfront( TiLightQueue * que, void * item )
 	{
 		que->front ++;
 		que->front %= que->capacity;
-		memmove( lwque_getbuf(que,que->front), item, que->itemsize );
+		memmove( lwque_getbuf(que,que->front), item, que->datasize );
 		que->count ++;
 		ret = true;
 	}
@@ -216,3 +245,62 @@ bool lwque_poprear( TiLightQueue * que )
 
 	return ret;
 }
+
+/**
+ * Apply an empty item in the queue buffer and push it to the back of the queue. 
+ *
+ * @param pidx It's the item index/id in the queue's internal buffer. You can use
+ * 		lwque_setbuf(...), lwque
+ * @return True if success, or else failed.
+ */
+bool lwque_applyback( TiLightQueue * que, uint8 * pidx )
+{
+	bool ret;
+	
+	if (que->count == 0)
+	{   
+		que->rear = 0;
+		que->front = 0;
+		*pidx = 0;
+		que->count++;
+		ret = true;
+	}
+	else if (que->count < que->capacity)
+	{
+		que->rear = (que->rear == 0) ? (que->capacity - 1) : (que->rear-1);
+		*pidx = que->rear;
+		que->count ++;
+		ret = true;
+	}
+	else
+		ret = false;
+
+	return ret;
+}
+
+bool lwque_applyfront( TiLightQueue * que, uint8 * pidx )
+{
+	bool ret;
+
+	if (que->count == 0)
+	{
+		que->rear = 0;
+		que->front = 0;
+		*pidx = 0;
+		que->count++;
+		ret = true;
+	}
+	else if (que->count < que->capacity)
+	{
+		que->front ++;
+		que->front %= que->capacity;
+		*pidx = que->front;
+		que->count ++;
+		ret = true;
+	}
+	else
+		ret = false;
+
+	return ret;
+}
+

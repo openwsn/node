@@ -44,8 +44,8 @@
  ******************************************************************************/
 
 #include "configall.h"
-#include "./rtl/rtl_foundation.h" 
-#include "./hal/hal_foundation.h" 
+#include "./rtl/rtl_foundation.h"
+#include "./hal/hal_foundation.h"
 #include "./svc/svc_foundation.h"
 
 /* Includes ------------------------------------------------------------------*/

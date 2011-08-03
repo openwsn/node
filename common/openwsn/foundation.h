@@ -35,6 +35,12 @@
  * - add "signed" in the typedef of int8
  * this is because some compile will assume char as unsigned type, while here
  * we need a signed char.
+ *
+ * @modified by zhangwei on 2011.06.03 
+ * - First created this file. It's based on the stm32f10x_conf.h in example 
+ *   STM32F10x_StdPeriph_Examples/SPI/Simplex_Interrupt in STM32F10x_StdPeriph_Library 3.5.0
+ *   Some contents may be modified to adapt to the current project.
+ *
  ******************************************************************************/
 
 #include "configall.h"

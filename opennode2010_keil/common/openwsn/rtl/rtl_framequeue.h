@@ -49,6 +49,9 @@
  *      	return lwque_construct( buf, size, sizeof(TiFrame) );
  *    it should be:
  *      	return lwque_construct( buf, size, FRAMEQUEUE_ITEMSIZE );
+ * 
+ * @modified by zhangwei on 2011.08.03
+ *	- add fmque_readdata(), fmque_writedata(), fmque_applyfront(), fmque_applyback().
  *
  ******************************************************************************/
   
@@ -57,7 +60,7 @@
 #include "rtl_lightqueue.h"
 
 #ifdef CONFIG_DEBUG
-//#include "rtl_dumpframe.h"
+#include "rtl_dumpframe.h"
 #include "rtl_debugio.h"
 #endif
 
@@ -108,6 +111,23 @@ inline bool fmque_full( TiFrameQueue * que )
 inline void * fmque_getbuf( TiFrameQueue * que, uintx idx )
 {
 	return lwque_getbuf(que,idx);
+}
+
+inline uint16 fmque_readdata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
+{
+	return lwque_readdata( que, idx, frame, lwque_datasize(que) );
+}
+
+inline uint16 fmque_writedata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
+{
+	rtl_assert( frame->memsize <= lwque_datasize(que) );
+	return lwque_writedata( que, idx, frame, lwque_datasize(que) );
+}
+
+inline uint16 fmque_writedata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
+{
+	rtl_assert( frame->memsize <= lwque_datasize(que) );
+	return lwque_writedata( que, idx, frame, lwque_datasize(que) );
 }
 
 inline TiFrame * fmque_front( TiFrameQueue * que )
@@ -161,6 +181,16 @@ inline bool fmque_popfront( TiFrameQueue * que )
 inline bool fmque_poprear( TiFrameQueue * que )
 {
 	return lwque_poprear(que);
+}
+
+inline bool fmque_applyback( TiFrameQueue * que, uint8 * pidx )
+{
+	return lwque_applyback(que, pidx);
+}
+
+inline bool fmque_applyfront( TiFrameQueue * que, uint8 * pidx )
+{
+	return lwque_applyfront(que, pidx);
 }
 
 /* The TiFrameQueue and its ancester object TiLightQueue doesn't support memory extending.

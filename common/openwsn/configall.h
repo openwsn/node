@@ -135,6 +135,9 @@
 #define CONFIG_TARGET_OPENNODE_30
 #undef  CONFIG_TARGET_OPENNODE_30
 
+#define CONFIG_TARGETBOARD_OPENNODE2010
+#undef  CONFIG_TARGETBOARD_OPENNODE2010
+
 #define CONFIG_TARGET_WLSMODEM_11
 #undef  CONFIG_TARGET_WLSMODEM_11
 
@@ -154,6 +157,11 @@
  *	- WinARM (GNU compilers for ARM)
  *	- WinAVR for GAINZ platform
  *	- AVR Studio for GAINZ platform
+ * 
+ * CONFIG_TOOLCHAIN_MDK
+ * ARM Development Kit(MDK) is provided by ARM. It's used by Keil uVision IDE.
+ * Which is the default developing software for OpenNode-2010.  
+ * Another suggestion for OpenNode-2010 is TrueSTUDIO from ST.com. 
  */
 #define CONFIG_COMPILER_ADS
 #undef  CONFIG_COMPILER_ADS
@@ -184,6 +192,11 @@
   #define INLINE __inline__
 #else
   #define INLINE inline
+#endif
+
+/* Keil MDK cannot recognize "inline", but it do support "__inline". */
+#ifdef CONFIG_TOOLCHAIN_MDK
+  #define inline __inline
 #endif
 
 #ifdef CONFIG_COMPILER_UNKNOWN
