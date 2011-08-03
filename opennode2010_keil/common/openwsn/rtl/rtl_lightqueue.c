@@ -114,7 +114,7 @@ uint16 lwque_readdata( TiLightQueue * que, uint8 idx, void * buf, uint16 size )
 	rtl_assert((idx < que->capacity) && (size >= que->datasize));
 	data = lwque_getbuf(que, idx);
 	count = min(que->datasize, size);
-	memmmove(buf, data, count);
+	memmove(buf, data, count);
 	return count;
 }
 
@@ -125,7 +125,7 @@ uint16 lwque_writedata( TiLightQueue * que, uint8 idx, void * data, uint16 len  
 	rtl_assert((idx < que->capacity) && (len <= que->datasize));
 	buf = lwque_getbuf(que, idx);
 	count = min(que->datasize, len);
-	memmmove(buf, data, count);
+	memmove(buf, data, count);
 	return count;
 }
 

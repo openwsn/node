@@ -85,7 +85,7 @@ uint16 halUartGetNumRxBytes(void);
 void   halUartEnableRxFlow(uint8 enable);
 uint16 halUartBufferedWrite(const uint8* buf, uint16 length);
 uint8 USART_Send( uint8 ch);
-
+uint8 USART_Get( uint8 ch);
 
 #ifdef  __cplusplus
 }

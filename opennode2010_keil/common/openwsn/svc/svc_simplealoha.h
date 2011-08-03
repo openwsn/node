@@ -92,10 +92,10 @@
 
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_frame_transceiver.h"
-#include "../hal/hal_timer.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_frame_transceiver.h"
+#include "../hal/opennode2010/hal_timer.h"
 #include "../rtl/rtl_ieee802frame154.h"
 #include "svc_foundation.h"
 

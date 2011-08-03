@@ -68,7 +68,7 @@
  * to your own hardware platform */
 
 /* choose which uart hardware module */
-#define CONFIG_DBO_UART0
+#define CONFIG_DBO_UART2
 #undef  CONFIG_DBO_UART1
 
 #define CONFIG_DBO_TXBUFFER_SIZE 64

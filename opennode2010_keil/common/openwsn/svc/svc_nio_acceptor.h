@@ -66,7 +66,7 @@
 #endif
 
 #include "svc_configall.h"
-#include "../hal/hal_frame_transceiver.h"
+#include "../hal/opennode2010/hal_frame_transceiver.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
 #include "svc_foundation.h"

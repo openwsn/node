@@ -129,7 +129,8 @@ void aloha_sendnode(void)
 	hal_delay( 500 );
 	led_off( LED_ALL );
 	
-    halUartInit( 9600,0);
+   // halUartInit( 9600,0);
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
@@ -210,16 +211,16 @@ void aloha_sendnode(void)
 		//dbc_putchar(*(pc+1));
 
         while (1)
-        {   
+        {  
+            //dbc_mem( msg,strlen(msg));//todo for testing
 		    
             if (aloha_send(mac,CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
             {	
                 led_toggle( LED_RED );
-                USART_Send( 0xa9);
                 break;
             }
 			else{
-                USART_Send( 0xb0);
+                //USART_Send( 0xb0);
 				nac_evolve( mac->nac, NULL);//todo
 			}
             //hal_delay(2000);

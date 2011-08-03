@@ -262,7 +262,7 @@ uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from )
 
 uintx frame_totalcopyto( TiFrame * frame, TiFrame * to )
 {
-	return frame_totalcopyfrom(to, from);
+	return frame_totalcopyfrom(to, frame);
 }
 
 uintx frame_layerstart( TiFrame * frame, uint8 layer )
@@ -291,7 +291,7 @@ uintx frame_layerend( TiFrame * frame, uint8 layer )
 uintx frame_layerlength( TiFrame * frame, uint8 layer )
 {
 	/* assert the layer exists */
-    rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
+    rtl_assert((layer >= frame->firstlayer) && (layer < (frame->firstlayer + frame->layercount)));
     return frame->layerlength[layer];
 }
 
@@ -317,7 +317,7 @@ void frame_setlayerlength( TiFrame * frame, uint8 layer, uintx len )
 	rtl_assert(frame_layerexists(frame,layer));
 
 	/* assert the layer length not exceeds the layer capacity previously configured */
-	rtl_assert((len < frame->layercapacity[layer]);
+	rtl_assert(len < frame->layercapacity[layer]);
 	
     frame->layerlength[layer] = len;
 }
@@ -340,13 +340,14 @@ bool frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx capacity )
 {
 	bool ret=false;
 
-	rtl_assert(frame_layerexists(frame,layer)) && (frame_layerlength(layer) < capacity));
+	rtl_assert(frame_layerexists(frame,layer) && (frame_layerlength(frame,layer) < capacity));
+    
 
     if (frame->layercount > 0)
     {
-		rtl_assert((frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity()));
+		rtl_assert((frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity(frame)));
 		
-		if (frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity())
+		if ((frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity(frame)))
 		{
 			frame->layercapacity[layer] = capacity;
 			ret = true;
@@ -386,7 +387,7 @@ void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx count )
 
 void frame_layerexpand( TiFrame * frame, uint8 layer, uintx count )
 {
-	frame_shrinklayer( TiFrame * frame, uint8 layer, uintx count );
+	frame_shrinklayer(  frame,  layer,  count );
 }
 
 bool frame_layerexists( TiFrame * frame, uint8 layer )
@@ -702,8 +703,9 @@ uintx frame_start( TiFrame * frame )
 
 uintx frame_end( TiFrame * frame )
 {
+    uintx cur;
     rtl_assert(frame_layerexists(frame, frame->curlayer));
-    uintx cur = frame->curlayer;
+    cur = frame->curlayer;
     return frame->layerstart[cur] + frame->layerlength[cur] - 1;
 }
 
@@ -981,7 +983,8 @@ bool frame_get( TiFrame * frame, uintx idx, char * c )
 uintx frame_copyfrom( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame1), frame_length(frame2) );
-	rtl_assert(frame_layerexists(frame, frame->curlayer));
+	rtl_assert(frame_layerexists(frame1, frame1->curlayer));
+    rtl_assert(frame_layerexists(frame2, frame2->curlayer));
 	memmove( frame_startptr(frame1), frame_startptr(frame2), count );
 	frame1->layerlength[frame1->curlayer] = count;
 	return count;
@@ -990,7 +993,8 @@ uintx frame_copyfrom( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_copyto( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame2), frame_length(frame1) );
-	rtl_assert(frame_layerexists(frame, frame->curlayer));
+	rtl_assert(frame_layerexists(frame1, frame1->curlayer));
+    rtl_assert(frame_layerexists(frame2, frame2->curlayer));
 	memmove( frame_startptr(frame2), frame_startptr(frame1), count );
 	frame2->layerlength[frame2->curlayer] = count;
 	return count;
@@ -999,7 +1003,8 @@ uintx frame_copyto( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_movefrom( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame1), frame_length(frame2) );
-	rtl_assert(frame_layerexists(frame, frame->curlayer));
+	rtl_assert(frame_layerexists(frame1, frame1->curlayer));
+    rtl_assert(frame_layerexists(frame2, frame2->curlayer));
 	memmove( frame_startptr(frame1), frame_startptr(frame2), count );
 	frame1->layerlength[frame1->curlayer] = count;
 	frame_popfront(frame2, count);
@@ -1010,7 +1015,8 @@ uintx frame_movefrom( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_moveto( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame2), frame_length(frame1) );
-	rtl_assert(frame_layerexists(frame, frame->curlayer));
+	rtl_assert(frame_layerexists(frame1, frame1->curlayer));
+    rtl_assert(frame_layerexists(frame2, frame2->curlayer));
 	memmove( frame_startptr(frame2), frame_dataptr(frame1), count );
 	frame2->layerlength[frame2->curlayer] = count;
 	frame_popfront(frame1, count);

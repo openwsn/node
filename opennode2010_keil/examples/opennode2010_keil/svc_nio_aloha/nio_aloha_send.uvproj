@@ -655,6 +655,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_random.c</FilePath>
             </File>
+            <File>
+              <FileName>rtl_dumpframe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_dumpframe.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -36,7 +36,7 @@
 
 #include "svc_configall.h"
 #include "../rtl/rtl_foundation.h"
-#include "../hal/hal_assert.h"
+#include "../hal/opennode2010/hal_assert.h"
 
 #define svc_assert(cond) hal_assert(cond)
 

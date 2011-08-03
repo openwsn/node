@@ -84,7 +84,7 @@
 #include "../hal/opennode2010/hal_assert.h"
 #include "../hal/opennode2010/hal_cpu.h"
 #include "../hal/opennode2010/hal_debugio.h"
-#include "svc_timer.h"
+//#include "svc_timer.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
 

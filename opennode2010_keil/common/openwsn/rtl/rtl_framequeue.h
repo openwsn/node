@@ -123,13 +123,13 @@ inline uint16 fmque_writedata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
 	rtl_assert( frame->memsize <= lwque_datasize(que) );
 	return lwque_writedata( que, idx, frame, lwque_datasize(que) );
 }
-
-inline uint16 fmque_writedata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
+/*
+ uint16 fmque_writedata( TiFrameQueue * que, uint8 idx, TiFrame * frame )
 {
 	rtl_assert( frame->memsize <= lwque_datasize(que) );
 	return lwque_writedata( que, idx, frame, lwque_datasize(que) );
 }
-
+*/
 inline TiFrame * fmque_front( TiFrameQueue * que )
 {
 	return lwque_front(que);

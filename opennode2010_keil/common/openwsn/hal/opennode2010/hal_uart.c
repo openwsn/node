@@ -186,6 +186,16 @@ uint8 USART_Send( uint8 ch)
 }
 
 
+uint8 USART_Get( uint8 ch)
+{
+    while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
+    {
+    }
+    ch = (USART_ReceiveData(USART2) & 0x7F); 
+
+    return ch;
+}
+
 
 /***********************************************************************************
 * @fn      halUartWrite
