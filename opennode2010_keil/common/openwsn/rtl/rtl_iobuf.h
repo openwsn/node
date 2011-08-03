@@ -1,7 +1,9 @@
+#ifndef _RTL_IOBUF_H_4662_
+#define _RTL_IOBUF_H_4662_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -23,10 +25,8 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-#ifndef _RTL_IOBUF_H_4662_
-#define _RTL_IOBUF_H_4662_
 
-/*******************************************************************************
+/**
  * TiIoBuf
  * An array based high performance input/output buffer. It can also be used as a 
  * byte based queue.
@@ -38,8 +38,9 @@
  * 
  * Related modules:
  *	TiFrame in rtl_frame, TiLightQueue in rtl_lightqueue
- *
- * @state
+ */
+ 
+/* @state
  * 	released
  *
  * @modified by zhangwei on 2009.05.xx
@@ -55,7 +56,9 @@
  *    defined.
  * @modified by zhangwei on 2011.07.30
  *	- revision
- ******************************************************************************/
+ *	- revision. Eliminate some compiling warnings.
+ *  - add iobuf_putchar() and iobuf_getchar()
+ */
 
 /**
  * attention
@@ -71,7 +74,8 @@
 
 #define IOBUF_HOPESIZE(size) (sizeof(TiIoBuf)+size)
 
-/* @attention
+/**
+ * @attention
  * @warning:
  * The maximum I/O buffer length is decided by "uintx" type, which can be configured
  * in the configuration file (usually configall.h).

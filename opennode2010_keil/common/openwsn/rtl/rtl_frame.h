@@ -26,30 +26,16 @@
  *
  ******************************************************************************/
 
-#include "rtl_configall.h"
-#include "rtl_foundation.h"
-
 /*******************************************************************************
  * rtl_frame
  * TiFrame object to help manipulating nested layer frame structures.
  *
- * @author zhangwei in 2005
- * @modified by zhangwei in 200604
- *  - revision
- * @modified by openwsn in 20100706
- *  - full revised. compile passed. not fully tested yet.
- * @modified by zhangwei on 2010.08.07
- *  - revision
- * @modified by zhangwei on 2010.12.27
- *  - add a new member variable option. This variable can be used to keep some 
- *    information when passing the frame between different objects.
- * @modified by zhangwei in 2011.02
- *  - add member variable "option" to save some configurations when passing between
- *    different layers. 
- * @modified by zhangwei in 2011.03
- *  - add four new functions: frame_addlayerinterior, frame_addlayerexterior, 
- *    frame_removelayerinterior, frame_removelayerexterior.
+ * @see rtl_iobuf module. Most of the interface functions of TiFrame is the same 
+ * as TiIoBuf, except the layer management.
  ******************************************************************************/
+
+#include "rtl_configall.h"
+#include "rtl_foundation.h"
 
 /** 
  * CONFIG_FRAME_LAYER_CAPACITY 
@@ -92,6 +78,10 @@
  * We use TiFrame to management the frame/packet description and it's data together.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** 
  * TiFrame
  * TiMioBuffer contains multiple sections. each section can be regarded as a separate 
@@ -130,14 +120,7 @@ typedef struct{
     uintx layerstart[CONFIG_FRAME_LAYER_CAPACITY];
     uintx layerlength[CONFIG_FRAME_LAYER_CAPACITY];
     uintx layercapacity[CONFIG_FRAME_LAYER_CAPACITY];
-	
-	//struct TiFrame * next;
 }TiFrame;
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * create a frame
@@ -193,7 +176,6 @@ void frame_bufferclear( TiFrame * frame );
 
 uintx frame_buffercapacity( TiFrame * frame );
 
-
 #define frame_totalstart(frame) frame_layerstart(frame,(frame)->firstlayer)
 #define frame_totalstartptr(frame) frame_layerstartptr(frame,(frame)->firstlayer)
 #define frame_totalend(frame) frame_layerend(frame,(frame)->firstlayer)
@@ -202,8 +184,8 @@ uintx frame_buffercapacity( TiFrame * frame );
 #define frame_totalcapacity(frame) frame_layercapacity(frame,(frame)->firstlayer)
 #define frame_settotalcapacity(frame,count) frame_setlayerlength(frame,(frame)->firstlayer,count)
 
-#define frame_totalcopyto(frame,to) frame_totalcopyfrom(to,frame)
 uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from );
+uintx frame_totalcopyto( TiFrame * frame, TiFrame * to );
 
 uintx frame_layerstart( TiFrame * frame, uint8 layer );
 char * frame_layerstartptr( TiFrame * frame, uint8 layer );
@@ -211,7 +193,12 @@ uintx frame_layerend( TiFrame * frame, uint8 layer );
 uintx frame_layerlength( TiFrame * frame, uint8 layer );
 void frame_setlayerlength( TiFrame * frame, uint8 layer, uintx count );
 uintx frame_layercapacity( TiFrame * frame, uint8 layer );
-void frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count );
+bool frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count );
+
+// todo
+void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx count );
+void frame_layerexpand( TiFrame * frame, uint8 layer, uintx count );
+// end
 
 /**
  * return the current layer index in the byte buffer. the outer most layer is with 
@@ -219,6 +206,8 @@ void frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count );
  * by macro CONFIG_FRAME_LAYER_CAPACITY.
  */
 uintx frame_curlayer( TiFrame * frame );
+
+bool frame_layerexists( TiFrame * frame, uint8 layer );
 
 /**
  * change the current item

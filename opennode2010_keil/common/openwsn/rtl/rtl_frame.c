@@ -44,16 +44,22 @@
  * @modified by zhangwei in 2011.03
  *  - add four new functions: frame_addlayerinterior, frame_addlayerexterior, 
  *    frame_removelayerinterior, frame_removelayerexterior.
+ * @modified by zhangwei on 2011.08.03
+ *	- improved frame_close(). We needn't to memset() here. The old code will lose
+ *    the memsize value, which will lead to unexpected failed if calling frame_open()
+ *    to initialize it again.
  ******************************************************************************/
  
 #include "rtl_configall.h"
 #ifdef CONFIG_DEBUG
 #include <stdlib.h>
 #endif
+
 #include <string.h>
 
 #include "rtl_foundation.h"
 #include "rtl_frame.h"
+
 #ifdef CONFIG_DEBUG
 #include "rtl_debugio.h"
 #endif
@@ -93,17 +99,27 @@ void frame_free( TiFrame * frame )
 #endif
 
 /**
- * construct an TiFrame object on a pre-allocated memory block
+ * @param init_layerstart From 0 to layer (capacity-1).
+ * Construct an initialize an TiFrame object on a pre-allocated memory block.
  */
 TiFrame * frame_open( char * buf, uintx memsize, uintx init_layerindex, uintx init_layerstart, uintx init_layercapacity )
 {
     TiFrame * frame;
 
-    /* for GAINZ platform, you should define "uintx" as "uint16" in configall.h */
+    /**
+     * @attention Since the TiFrame object requires a large memory block, we strongly
+     * suggest you define "uintx" as "uint16" in "configall.h" even in 8-bit architecture 
+     * systems. You should be very caution when "uintx" is defined as "uint8" if 
+     * TiFrame is used in such projects.
+	 */
+	
 #ifdef CONFIG_TARGET_GAINZ
     rtl_assert( sizeof(uintx) == 2 );
+#else
+    rtl_assert( sizeof(uintx) >= 2 );
 #endif
 
+	/* guarantee the initial layer can be placed in the frame */
     rtl_assert( init_layercapacity <= memsize - sizeof(TiFrame) - init_layerstart );
 
     memset( buf, 0x00, memsize );
@@ -115,11 +131,10 @@ TiFrame * frame_open( char * buf, uintx memsize, uintx init_layerindex, uintx in
 }
 
 /**
- * destroy an TiFrame object
+ * Destroy an TiFrame object
  */
 void frame_close( TiFrame * frame )
 {
-    memset( frame, 0x00, frame->memsize );
     return;
 }
 
@@ -143,17 +158,33 @@ TiFrame * frame_duplicate( TiFrame * frame )
 }
 #endif
 
+/**
+ * Reset the TiFrame object. After resetting, the frame object is the same as it
+ * is just initialized by calling frame_open(). There will be only one layer existed 
+ * after resetting for reading and writing.
+ * 
+ * @see TiIoBuf object, iobuf_clear(), frame_totalclear(), frame_bufferclear()
+ * 
+ * @param frame The pointer to the frame object to be reset
+ * @param init_layerindex Indicate the index of the initial layer. 
+ * @param init_layerstart Indicate where the initial layer start in the frame internal buffer.
+ * @param init_layercapacity The capacity of the initial layer.
+ * @return None
+ */
+/**
+ */
 void frame_reset( TiFrame * frame, uintx init_layerindex, uintx init_layerstart, uintx init_layercapacity )
 {
 	uintx memsize;
 	
 	rtl_assert( frame != NULL );
 
-	// clear the memory block while still keeping the "memsize" property
+	/* clear the memory block while still keeping the "memsize" property */
 	memsize = frame->memsize;
 	memset( (char*)frame, 0x00, memsize );
 	frame->memsize = memsize;
 
+	/* guarantee the layer can be placed inside frame buffer */
     rtl_assert( init_layercapacity <= memsize - sizeof(TiFrame) - init_layerstart );
 
 	frame->option = 0x00;
@@ -165,18 +196,22 @@ void frame_reset( TiFrame * frame, uintx init_layerindex, uintx init_layerstart,
     frame->layercapacity[init_layerindex] = ((init_layercapacity == 0) ? (frame->memsize - sizeof(TiFrame) - init_layerstart ) : init_layercapacity);
 }
 
+/** Returns the TiFrame's internal buffer which is used to save data 
+ * @return An memory pointer to the internal buffer.
+ */
 char * frame_buffer( TiFrame * frame )
 {
 	return ((char*)frame) + sizeof(TiFrame);
 }
 
 /**
- * clear the TiFrame object. after the clear, there's only one item inside the frame
+ * Clear the TiFrame buffer. after the clear, there's only one item inside the frame
  * and it occupies all the memory available.
  * 
  * Q: what's the difference between frame_reset() and frame_bufferclear()?
  * R: frame_reset() can choose where the initial layer is and frame_bufferclear assumes
- * layer 0 is the initial layer.
+ * layer 0 is the initial layer. And frame_bufferclear() also allocate all available 
+ * memory to this unique layer.
  * 
  * @modified by zhangwei on 2010.08.07
  *  - in the past, this function will automatically create the first layer. however,
@@ -186,13 +221,15 @@ char * frame_buffer( TiFrame * frame )
  */
 void frame_bufferclear( TiFrame * frame )
 {
+	frame_reset(frame, 0, 0, 0);
+/*
 	uintx memsize;
     
 	rtl_assert( frame != NULL );
 	memsize = frame->memsize;
 	memset( (char*)frame, 0x00, memsize );
 	frame->memsize = memsize;
-
+*/
 	/*
     memset( (char*)frame + sizeof(TiFrame), 0x00, frame->memsize - sizeof(TiFrame) );
     
@@ -206,8 +243,8 @@ void frame_bufferclear( TiFrame * frame )
 }
 
 /**
- * total capacity of the TiFrame object. it's usually the maximum size of the lowest 
- * layer frame.
+ * Total capacity of the TiFrame object. It's biggest frame size that TiFrame can 
+ * accepted. It's also the maximum size of the lowest layer frame.
  */
 uintx frame_buffercapacity( TiFrame * frame )
 {
@@ -216,19 +253,29 @@ uintx frame_buffercapacity( TiFrame * frame )
 
 uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from )
 {
+	uintx memsize = frame->memsize;
+	rtl_assert( frame->memsize >= from->memsize );
 	memmove( frame, from, from->memsize );
+	frame->memsize = memsize;
 	return from->memsize;
+}
+
+uintx frame_totalcopyto( TiFrame * frame, TiFrame * to )
+{
+	return frame_totalcopyfrom(to, from);
 }
 
 uintx frame_layerstart( TiFrame * frame, uint8 layer )
 {
-   rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
+	/* assert the layer exists */
+    rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
 	
     return frame->layerstart[layer];
 }
 
 char * frame_layerstartptr( TiFrame * frame, uint8 layer )
 {
+	/* assert the layer exists */
     rtl_assert((layer+1 > frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
 	
     return (char*)frame + sizeof(TiFrame) + (frame->layerstart[layer]);
@@ -236,28 +283,77 @@ char * frame_layerstartptr( TiFrame * frame, uint8 layer )
 
 uintx frame_layerend( TiFrame * frame, uint8 layer )
 {
+	/* assert the layer exists */
     rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
     return frame->layerstart[layer] + frame->layerlength[layer] - 1;
 }
 
 uintx frame_layerlength( TiFrame * frame, uint8 layer )
 {
+	/* assert the layer exists */
     rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
     return frame->layerlength[layer];
 }
 
 uintx frame_layercapacity( TiFrame * frame, uint8 layer )
 {
+	/* assert the layer exists */
     rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
 	
     return frame->layercapacity[layer];
 }
 
-// set the data length of the current layer
-void frame_setlayerlength( TiFrame * frame, uint8 layer, uintx count )
+/** 
+ * Set data length of the current layer.
+ * This function will check the layer length value against layer capacity. The length
+ * should be smaller than or equal to layer capacity. 
+ * 
+ * @warning
+ * This function doesn't check with the above layer length or the below layer length.
+ * So there maybe inconsistence between two adjacent layers.
+ */
+void frame_setlayerlength( TiFrame * frame, uint8 layer, uintx len )
 {
-    rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
-    frame->layerlength[layer] = count;
+	rtl_assert(frame_layerexists(frame,layer));
+
+	/* assert the layer length not exceeds the layer capacity previously configured */
+	rtl_assert((len < frame->layercapacity[layer]);
+	
+    frame->layerlength[layer] = len;
+}
+
+/**
+ * Set the capacity of current layer. The new capacity should larger than data length.
+ * 
+ * @warning
+ * Since this function doesn't check the above/below layer data length or capacity 
+ * restrictions, the incorrect value of new capacity may lead to inconsistent between 
+ * difference layers.
+ */
+ 
+// set the capacity of current layer. attention the difference between setlayerlength 
+// and setlayercapacity
+// - length, and capacity
+// - setlayercapacity will adjust upper layer's capacity.
+//
+bool frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx capacity )
+{
+	bool ret=false;
+
+	rtl_assert(frame_layerexists(frame,layer)) && (frame_layerlength(layer) < capacity));
+
+    if (frame->layercount > 0)
+    {
+		rtl_assert((frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity()));
+		
+		if (frame->layerlength[layer] <= capacity) && (capacity <= frame_buffercapacity())
+		{
+			frame->layercapacity[layer] = capacity;
+			ret = true;
+		}
+	}
+			
+	return ret;
 }
 
 // set the capacity of current layer. attention the difference between setlayerlength 
@@ -265,12 +361,13 @@ void frame_setlayerlength( TiFrame * frame, uint8 layer, uintx count )
 // - length, and capacity
 // - setlayercapacity will adjust upper layer's capacity.
 //
-void frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count )
+//void frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count )
+void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx count )
 {
     intx delta;
     uint8 i;
 
-    rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
+	rtl_assert(frame_layerexists(frame,layer));
 
     if (frame->layercount > 0)
     {
@@ -287,13 +384,26 @@ void frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx count )
     }
 }
 
+void frame_layerexpand( TiFrame * frame, uint8 layer, uintx count )
+{
+	frame_shrinklayer( TiFrame * frame, uint8 layer, uintx count );
+}
+
+bool frame_layerexists( TiFrame * frame, uint8 layer )
+{
+	return ((frame->layercount > 0) && (layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
+}
+
+/**
+ * Return the index of current layer.
+ */
 uintx frame_curlayer( TiFrame * frame )
 {
     return frame->curlayer;
 }
 
 /**
- * change the current item
+ * Change the current item
  * if failed, then nothing changed. 
  *
  * @warning
@@ -303,6 +413,8 @@ uintx frame_curlayer( TiFrame * frame )
 bool frame_setcurlayer( TiFrame * frame, uintx layer )
 {
     bool ret = false;
+
+	/* guarantee the layer exists */
     rtl_assert((layer >= frame->firstlayer) && (layer < frame->firstlayer + frame->layercount));
 
     if (frame->layercount > 0)
@@ -556,10 +668,13 @@ bool frame_removelayerexterior( TiFrame * frame )
 	return ret;
 }
 
+/**
+ * Clear the current layer.
+ */
 void frame_clear( TiFrame * frame )
 {
-    rtl_assert( frame->curlayer > 0 );
-    frame->layerlength[frame->curlayer] = 0;
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
+	frame->layerlength[frame->curlayer] = 0;
 }
 
 /**
@@ -574,34 +689,38 @@ void frame_clear( TiFrame * frame )
  */
 uintx frame_resize( TiFrame * frame, uintx newsize )
 {
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     frame_setlayercapacity( frame, frame->curlayer, newsize );
     return 0;
 }
 
 uintx frame_start( TiFrame * frame )
 {
-    rtl_assert( frame->curlayer > 0 );
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     return frame->layerstart[frame->curlayer];
 }
 
 uintx frame_end( TiFrame * frame )
 {
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     uintx cur = frame->curlayer;
     return frame->layerstart[cur] + frame->layerlength[cur] - 1;
 }
 
 uintx frame_length( TiFrame * frame )
 {
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     return frame->layerlength[frame->curlayer];
 }
 
 uintx frame_capacity( TiFrame * frame )
 {
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     return frame->layercapacity[frame->curlayer];
 }
 
 /**
- * return an memory pointer to the first byte of the current item's data. if there's
+ * Return an memory pointer to the first byte of the current item's data. if there's
  * no data in the current item, then return NULL. it's almost the same as frame_startptr()
  * except it will return NULL when the item is empty.
  */
@@ -609,7 +728,8 @@ char * frame_dataptr( TiFrame * frame )
 {
     char * ptr;
     uintx cur = frame->curlayer;
-
+	
+    rtl_assert(frame_layerexists(frame, cur));
     if (frame->layerlength[cur] == 0)
         ptr = NULL;
     else
@@ -620,15 +740,20 @@ char * frame_dataptr( TiFrame * frame )
 
 char * frame_startptr( TiFrame * frame )
 {
+    rtl_assert(frame_layerexists(frame, frame->curlayer));
     return (char *)frame + sizeof(TiFrame) + frame->layerstart[frame->curlayer];
 }
 
+/**
+ * Get the memory pointer to the last byte in the data buffer. if there's no data
+ * in the bufer then returns NULL.
+ */ 
 char * frame_endptr( TiFrame * frame )
 {
-    uintx cur;
     char * ptr;
+    uintx cur = frame->curlayer;
 
-    cur = frame->curlayer;
+    rtl_assert(frame_layerexists(frame, cur));
     if (frame->layerlength[cur] == 0)
         ptr = NULL;
     else
@@ -637,18 +762,25 @@ char * frame_endptr( TiFrame * frame )
     return ptr;
 }
 
+/**
+ * Returns the memory pointer to the frame header. 
+ * @param psize *pSize will be the header size. 
+ */
 char * frame_header( TiFrame * frame, uintx * psize )
 {
     uintx cur;
+	
     if (psize != NULL)
     {
         cur = frame->curlayer;
+		rtl_assert(frame_layerexists(frame, cur));
+		
         if (cur < frame_lastlayer(frame))
         {
             *psize = frame->layerstart[cur+1] - frame->layerstart[cur];
         }
         else{
-            *psize = frame->layercapacity[cur];
+            *psize = 0;
         }
     }
     return frame_startptr(frame);
@@ -679,6 +811,7 @@ char * frame_interior( TiFrame * frame, uintx * psize )
     char * ptr;
     uintx cur = frame->curlayer;
 
+	rtl_assert(frame_layerexists(frame, cur));
     if (cur < frame_lastlayer(frame))
     {
         if (psize != NULL)
@@ -697,15 +830,20 @@ char * frame_interior( TiFrame * frame, uintx * psize )
     return ptr;
 }
 
+/**
+ * Get the tail of current layer.
+ */
 char * frame_tail( TiFrame * frame, uintx * psize )
 {
     uintx next;
     char * ptr;
 	uint8 cur = frame->curlayer;
 
-    if (frame->curlayer < frame->layercount - 1)
+	rtl_assert(frame_layerexists(frame, cur));
+	
+    if (cur < frame->layercount - 1)
     {
-        next = frame->curlayer+1;
+        next = cur + 1;
         if (psize != NULL)
         {
             *psize = frame->layerstart[cur] + frame->layercapacity[cur] - frame->layerstart[next] - frame->layercapacity[next];
@@ -724,24 +862,28 @@ char * frame_tail( TiFrame * frame, uintx * psize )
 
 bool frame_full( TiFrame * frame )
 {
-    uintx cur = frame->curlayer;
+    uintx cur = frame->curlayer;	
+	rtl_assert(frame_layerexists(frame, cur));
     return (frame->layerlength[cur] == frame->layercapacity[cur]);
 }
 
 bool frame_empty( TiFrame * frame )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
     return (frame->layerlength[frame->curlayer] == 0);
 }
 
 uintx frame_available( TiFrame * frame )
 {
     uintx cur = frame->curlayer;
+	rtl_assert(frame_layerexists(frame, cur));
     return (frame->layercapacity[cur] - frame->layerlength[cur]);
 }
 
 uintx frame_read( TiFrame * frame, char * buf, uintx size )
 {
 	uintx count = min( size, frame_length(frame) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( buf, frame_startptr(frame), count );
 	return count;
 }
@@ -749,6 +891,7 @@ uintx frame_read( TiFrame * frame, char * buf, uintx size )
 uintx frame_write( TiFrame * frame, char * data, uintx len )
 {
 	uintx count = min( frame_capacity(frame), len );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_startptr(frame), data, count );
 	frame->layerlength[frame->curlayer] = count;
 	return count;
@@ -761,6 +904,7 @@ uintx frame_write( TiFrame * frame, char * data, uintx len )
  uintx frame_pushback( TiFrame * frame, char * data, uintx len )
 {
 	uintx count = min(frame_available(frame), len);
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_endptr(frame), data, count );
 	frame->layerlength[frame->curlayer] += count;
 	return count;
@@ -774,6 +918,7 @@ uintx frame_pushbyte( TiFrame * frame, unsigned char value )
     char * ptr = frame_startptr(frame) + frame_length(frame);
     uintx cur = frame->curlayer;
 
+	rtl_assert(frame_layerexists(frame, cur));
     if (frame->layerlength[cur] < frame->layercapacity[cur])
     {
 	    *ptr = value;
@@ -787,12 +932,15 @@ uintx frame_pushbyte( TiFrame * frame, unsigned char value )
 uintx frame_front( TiFrame * frame, char * buf, uintx len )
 {
 	uintx count = min( len, frame_length(frame) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( buf, frame_startptr(frame), count );
 	return count;
 }
 
 void frame_popfront( TiFrame * frame, uintx count )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
+	
 	if (count < frame_length(frame))
 	{
 		memmove( frame_startptr(frame), frame_startptr(frame)+count, frame_length(frame) - count );
@@ -804,7 +952,9 @@ void frame_popfront( TiFrame * frame, uintx count )
 
 bool frame_set( TiFrame * frame, uintx idx, char c )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	rtl_assert( idx < frame_capacity(frame) );
+	
 	if (idx < frame_capacity(frame))
 	{
 		frame_startptr(frame)[idx] = c;
@@ -816,7 +966,9 @@ bool frame_set( TiFrame * frame, uintx idx, char c )
 
 bool frame_get( TiFrame * frame, uintx idx, char * c )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	rtl_assert( idx < frame_length(frame) );
+	
 	if (idx < frame_length(frame))
 	{
 		*c = frame_startptr(frame)[idx];
@@ -829,6 +981,7 @@ bool frame_get( TiFrame * frame, uintx idx, char * c )
 uintx frame_copyfrom( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame1), frame_length(frame2) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_startptr(frame1), frame_startptr(frame2), count );
 	frame1->layerlength[frame1->curlayer] = count;
 	return count;
@@ -837,6 +990,7 @@ uintx frame_copyfrom( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_copyto( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame2), frame_length(frame1) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_startptr(frame2), frame_startptr(frame1), count );
 	frame2->layerlength[frame2->curlayer] = count;
 	return count;
@@ -845,6 +999,7 @@ uintx frame_copyto( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_movefrom( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame1), frame_length(frame2) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_startptr(frame1), frame_startptr(frame2), count );
 	frame1->layerlength[frame1->curlayer] = count;
 	frame_popfront(frame2, count);
@@ -855,6 +1010,7 @@ uintx frame_movefrom( TiFrame * frame1, TiFrame * frame2 )
 uintx frame_moveto( TiFrame * frame1, TiFrame * frame2 )
 {
 	uintx count = min( frame_capacity(frame2), frame_length(frame1) );
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	memmove( frame_startptr(frame2), frame_dataptr(frame1), count );
 	frame2->layerlength[frame2->curlayer] = count;
 	frame_popfront(frame1, count);
@@ -867,6 +1023,9 @@ uintx frame_append( TiFrame * frame1, TiFrame * frame2 )
 	uintx count=0;
 
 	rtl_assert( (frame1 != NULL) && (frame2 != NULL) );
+	rtl_assert(frame_layerexists(frame1, frame1->curlayer));
+	rtl_assert(frame_layerexists(frame2, frame2->curlayer));
+
 	count = min(frame_available(frame1), frame_length(frame2));
 	if (count > 0)
 	{
@@ -878,11 +1037,13 @@ uintx frame_append( TiFrame * frame1, TiFrame * frame2 )
 
 void frame_setlength( TiFrame * frame, uintx count )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	frame->layerlength[frame->curlayer] = count;
 }
 
 void frame_adjustlength( TiFrame * frame, int delta )
 {
+	rtl_assert(frame_layerexists(frame, frame->curlayer));
 	frame->layerlength[frame->curlayer] += delta;
 }
 

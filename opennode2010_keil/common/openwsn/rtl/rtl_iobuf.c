@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -24,11 +24,13 @@
  *
  ******************************************************************************/
 
-/* TiIoBuf
+/**
+ * TiIoBuf
  * An array based high performance input/output buffer. It can also be used as a 
  * byte based queue.
- *
- * @state
+ */
+  
+/* @state
  * 	released
  *
  * @modified by zhangwei on 2009.05.xx
@@ -44,17 +46,16 @@
  *    defined.
  * @modified by zhangwei on 2011.07.30
  *	- revision. Eliminate some compiling warnings.
+ *  - add iobuf_putchar() and iobuf_getchar()
  */
 
 #include "rtl_configall.h"
-#include "rtl_foundation.h"
 #include <stdlib.h>
 #include <string.h>
-
 #ifdef CONFIG_DEBUG
-#include <stdio.h>
+  #include <stdio.h>
 #endif
-
+#include "rtl_foundation.h"
 #include "rtl_assert.h"
 #include "rtl_iobuf.h"
 
@@ -318,14 +319,14 @@ void iobuf_dump( TiIoBuf * buf )
 	// printf("dump iobuf: memsize=%d, size=%d, length=%d\n", buf->memsize, buf->size, buf->length );
 	if (buf->length > 0)
 	{
-		// putchar('=');
-		// putchar('>');
+		dbc_putchar('=');
+		dbc_putchar('>');
 		pc = iobuf_ptr(buf);
 		for (i=0; i<buf->length; i++)
         {
-			// putchar(pc[i]);
+			dbc_putchar(pc[i]);
         }
-		// putchar('\n');
+		dbc_putchar('\n');
 	}
 }
 #endif
