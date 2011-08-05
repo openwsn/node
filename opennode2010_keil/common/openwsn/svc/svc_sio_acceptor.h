@@ -1,19 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #ifndef _AVC_IO4RS232_H_2143_
 #define _AVC_IO4RS232_H_2143_
 
@@ -26,7 +10,6 @@
 
 #include "../common/devx/devx_configall.h"
 #include <stdint.h>
-
 
 #define CONFIG_IO4RS232_TXBUF_CAPACITY 254
 #define CONFIG_IO4RS232_RXBUF_CAPACITY 254
@@ -76,11 +59,48 @@
 extern "C" {
 #endif
 
-DLLFUNC TiHandleId io_rs232_open( const TCHAR * name, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 parity );
+
+    
+/**
+ * TiSioAcceptor component
+ * 
+ * Q: What's the difference between TiSioAcceptor and TiUartAdapter/TxUartAdapter?
+ * R: TiUartAdapter/TxUartAdapter implements a byte-oriented transceiver which is
+ * an light-weight encapsulation of the UART/USART/Serial Port hardware.
+ *
+ * TiSioAcceptor is running on top of TiUartAdapter/TxUartAdapter component. It
+ * further implements a frame based transceiver interface. Everytime you call read()/write()
+ * function of TiSioAcceptor, you will read/write an complete packet/frame.
+ * The framing mechanism currently is based on the rules in SLIP protocol. 
+ */
+typedef struct{
+	uint8 state;
+	TiUartAdapter * device;
+	TiIoBuf * rxbuf;
+	TiIoBuf * txbuf;
+    #ifdef RS232_IOSERVICE_SLIP_ENABLE
+	TiIoBuf * tmpbuf;
+	uint8 rx_accepted;
+	TiSlipFilter slipfilter;
+    #endif
+	// you can add your variables here
+}TiSioAcceptor;
+
+extern TiSioAcceptor m_sio;
+
+/*DLLFUNC TiHandleId io_rs232_open( const TCHAR * name, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 parity );
 DLLFUNC void io_rs232_close( TiHandleId service );
 DLLFUNC int32 io_rs232_read( TiHandleId service, char * buf, uint32 size, uint32 option );
 DLLFUNC int32 io_rs232_write( TiHandleId service, char * buf, uint32 len, uint32 option );
-DLLFUNC void io_rs232_evolve(  TiHandleId service );
+DLLFUNC void io_rs232_evolve(  TiHandleId service );*/
+
+void sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option ); 
+void sac_read( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
+void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
+void sac_close( TiSioAcceptor * sac );
+TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart );
+
+
 
 #ifdef __cplusplus
 }

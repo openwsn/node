@@ -1,7 +1,9 @@
+
+/*
 intx sac_send( TiNioAcceptor * nac, TiFrame * frame, uint8 option );
 
 /** Move the frame received inside rxque into frame object */
-intx sac_recv( TiNioAcceptor * nac, TiFrame * frame ,uint8 option);
+/*intx sac_recv( TiNioAcceptor * nac, TiFrame * frame ,uint8 option);*/
 
 
 
@@ -18,30 +20,6 @@ intx sac_recv( TiNioAcceptor * nac, TiFrame * frame ,uint8 option);
 #undef RS232_IOSERVICE_SLIP_ENABLE
 #define RS232_IOSERVICE_SLIP_ENABLE 1
 
-/**
- * TiSioAcceptor component
- * 
- * Q: What's the difference between TiSioAcceptor and TiUartAdapter/TxUartAdapter?
- * R: TiUartAdapter/TxUartAdapter implements a byte-oriented transceiver which is
- * an light-weight encapsulation of the UART/USART/Serial Port hardware.
- *
- * TiSioAcceptor is running on top of TiUartAdapter/TxUartAdapter component. It
- * further implements a frame based transceiver interface. Everytime you call read()/write()
- * function of TiSioAcceptor, you will read/write an complete packet/frame.
- * The framing mechanism currently is based on the rules in SLIP protocol. 
- */
-typedef struct{
-	uint8 state;
-	TxUartAdapter * device;
-	TiIoBuf * rxbuf;
-	TiIoBuf * txbuf;
-    #ifdef RS232_IOSERVICE_SLIP_ENABLE
-	TiIoBuf * tmpbuf;
-	uint8 rx_accepted;
-	TiSlipFilter * slipfilter;
-    #endif
-	// you can add your variables here
-}TiSioAcceptor;
 
 /**
  * Create an TiSioAcceptor object and returns the pointer to it.
@@ -56,31 +34,20 @@ typedef struct{
  * @return An pointer value to the TxUartAdapter object created. This value is used
  * to call io_rs232_close, rs232_read and io_rs232_write.
  */
-TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart )
-//Ti io_rs232_open( const TCHAR * name, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 parity )
-{
-	TiSioAcceptor * io = &m_io;
 
-	io_rs232_close((TiHandleId)io);
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, size_t size, TiUartAdapter * uart )
+{
+	TiSioAcceptor * io = sac;
+
+	sac_close(io);
 
 	memset(io, 0x00, sizeof(TiSioAcceptor) );
-	io->device = NULL;
-	try{
-		io->device = new TxUartAdapter( name );
-	}
-	catch (...)
-	{
-		if (io->device != NULL)
-			delete io->device;
-		io->device = NULL;
-	}
 
+    
+	io->device = uart;
+	
 	if (io->device != NULL)
 	{
-		io->device->setBitRate( baudrate );
-		io->device->setDataBits( (TxUartAdapter::DataBits)databits );
-		io->device->setStopBits( (TxUartAdapter::StopBits)stopbits );
-		io->device->setParity( (TxUartAdapter::Parity)parity );
 
 		io->rxbuf = iobuf_create( CONFIG_IO4RS232_RXBUF_CAPACITY );
 		io->txbuf = iobuf_create( CONFIG_IO4RS232_TXBUF_CAPACITY );
@@ -88,7 +55,7 @@ TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart
 		#ifdef RS232_IOSERVICE_SLIP_ENABLE
 		io->tmpbuf = iobuf_create( CONFIG_IO4RS232_TMPBUF_CAPACITY );
 		io->rx_accepted = 0;
-		io->slipfilter = slip_filter_open();
+		slip_filter_construct((void *)(&sac->slipfilter),sizeof( sac->slipfilter) );
 		#endif
 	}
 	else{
@@ -101,7 +68,7 @@ TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart
 		if (io->tmpbuf != NULL)
 			iobuf_free(io->tmpbuf);
 		if (io->slipfilter != NULL)
-			slip_filter_close(io->slipfilter);
+			slip_filter_destroy(io->slipfilter);
 		#endif
 
 		io = NULL;
@@ -114,15 +81,13 @@ TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart
  * Close an TiSioAcceptor object and release resources allocated in io_rs232_open() function.
  */
 void sac_close( TiSioAcceptor * sac ) 
-//void io_rs232_close( TiHandleId service )
 {
-	TiSioAcceptor * io = (TiSioAcceptor *)service;
+	TiSioAcceptor * io = (TiSioAcceptor *)sac;
 
 	if (io != NULL)
 	{
 		if (io->device != NULL)
 		{
-			io->device->close();
 			delete io->device;
 		}
 
@@ -135,7 +100,7 @@ void sac_close( TiSioAcceptor * sac )
 		if (io->tmpbuf != NULL)
 			iobuf_free(io->tmpbuf);
 		if (io->slipfilter != NULL)
-			slip_filter_close(io->slipfilter);
+			slip_filter_free(io->slipfilter);
 		#endif
 
 		memset(io, 0x00, sizeof(TiSioAcceptor));
@@ -145,11 +110,10 @@ void sac_close( TiSioAcceptor * sac )
 /**
  * Retrieve the first frame received through the rs232 serial port. 
  */
-void sac_read( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
-//int32 io_rs232_read( TiHandleId service, char * buf, uint32 size, uint32 option )
+void sac_read( TiSioAcceptor * sac, TiFrame * buf,uint8 size, uint8 option ) 
 {
-	assert( service != NULL );
-	TiSioAcceptor * io = (TiSioAcceptor *)service;
+	assert( sac != NULL );
+	TiSioAcceptor * io = (TiSioAcceptor *)sac;
 	int32 count=0;
 
 	#ifdef RS232_IOSERVICE_SLIP_ENABLE
@@ -173,7 +137,7 @@ void sac_read( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
 	}
 	#endif
 
-	io_rs232_evolve((TiHandleId)io);
+	sac_evolve(io);
 
 	return count;
 }
@@ -189,11 +153,10 @@ void sac_read( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
  *	But it may be not equal if some exception occurs. Attention the internal io->rxbuf
  *  should be large enough to accept all the buf data inputed.
  */
-void sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 option );  
-//int32 io_rs232_write( TiHandleId service, char * buf, uint32 len, uint32 option )
+void sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option )  
 {
-	assert( service != NULL );
-	TiSioAcceptor * io = (TiSioAcceptor *)service;
+	assert( sac != NULL );
+	TiSioAcceptor * io = (TiSioAcceptor *)sac;
 	int32 count=0;
 	#ifdef RS232_IOSERVICE_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
@@ -221,16 +184,15 @@ void sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
 	}
 	#endif
 
-	io_rs232_evolve((TiHandleId)io);
+	sac_evolve((TiHandleId)io);
 
 	return count;
 }
 
-void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
-//void io_rs232_evolve(  TiHandleId service )
+void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option ) 
 {
-	assert( service != NULL );
-	TiSioAcceptor * io = (TiSioAcceptor *)service;
+	assert( sac != NULL );
+	TiSioAcceptor * io = (TiSioAcceptor *)sac;
 	int count;
 
 	/* If io->rxbuf is empty, then try to retrieve data from the device adapter(io->device). */
@@ -247,7 +209,8 @@ void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
 		/* Read some data into io->tmpbuf first and do framing on this buffer. The frame
 		 * found will be placed into io->rxbuf by the framing process.
 		 */
-		count = io->device->read(iobuf_endptr(io->tmpbuf)+1, iobuf_available(io->tmpbuf));
+		//count = io->device->read(iobuf_endptr(io->tmpbuf)+1, iobuf_available(io->tmpbuf));
+        count = uart_read( io->device,iobuf_endptr(io->tmpbuf)+1, iobuf_available(io->tmpbuf),0);
 		iobuf_adjustlength( io->rxbuf, count );
 	}
 
@@ -278,7 +241,8 @@ void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
 	#ifndef RS232_IOSERVICE_SLIP_ENABLE
 	if (iobuf_empty(io->rxbuf))
 	{
-		count = io->device->read(iobuf_endptr(io->rxbuf)+1, iobuf_available(io->rxbuf));
+		//count = io->device->read(iobuf_endptr(io->rxbuf)+1, iobuf_available(io->rxbuf));
+        count = uart_read( io->device,iobuf_endptr(io->tmpbuf)+1, iobuf_available(io->tmpbuf),0);
 		iobuf_adjustlength( io->rxbuf, count );
 	}
 	#endif
@@ -286,7 +250,8 @@ void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option );
 	/* If there's data in io->txbuf, then try to send it through io->device. */
 	if (!iobuf_empty(io->txbuf))
 	{
-		count = io->device->write(iobuf_ptr(io->rxbuf), iobuf_length(io->rxbuf));
+		//count = io->device->write(iobuf_ptr(io->rxbuf), iobuf_length(io->rxbuf));
+        count = uart_write(io->device,iobuf_ptr(io->rxbuf), iobuf_length(io->rxbuf),0);
 		iobuf_popfront(io->rxbuf, count);
 	}
 

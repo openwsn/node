@@ -75,6 +75,7 @@
 #include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
 #include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
 #include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_dumpframe.h"
 #include "../../../common/openwsn/svc/svc_nio_aloha.h"
 
 
@@ -204,7 +205,7 @@ void aloha_sendnode(void)
         // suggest you use option 0x00.
         // the default setting is 0x01, which means ACK is required.
         //
-		option = 0x01;//0x00->no ack,0x01->ack
+		option = 0x00;//0x00->no ack,0x01->ack
 		//option = 0x01;//ack  todo
         txbuf->option = option;//todo
 
@@ -213,6 +214,8 @@ void aloha_sendnode(void)
         while (1)
         {  
             //dbc_mem( msg,strlen(msg));//todo for testing
+
+            ieee802frame154_dump( txbuf);//todo for testing
 		    
             if (aloha_send(mac,CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
             {	
