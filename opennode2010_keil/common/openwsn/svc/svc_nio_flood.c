@@ -45,6 +45,11 @@
  * but there is somepoint related to our logical frame struct  I am not sure need to be certained .
  *line 80 ,85, 106,158,297
  *  test ok with no problems
+ * 
+ * @modified by zhangwei on 2011.08.03
+ * - change frame_bufferclear() to frame_totoalclear(). Since the behavior definition
+ *   of this function has been changed, the flood module should revised and be tested
+ *   again.
  ******************************************************************************/
 
 /* @attention: you can also replace module with "svc_adaptaloha.h" to enable the 
@@ -188,7 +193,8 @@ uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 	{
 		
 		count = frame_totalcopyfrom( frame, net->rxque );
-		frame_bufferclear( net->rxque );
+		//frame_bufferclear( net->rxque );
+		frame_totalclear( net->rxque ); // todo 2011.08.04 by zw
 	}
     if ( count)
     {
@@ -257,7 +263,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 				
 				if (len > 0)
 				{
-					frame_bufferclear( net->txque );
+					//frame_bufferclear( net->txque );
+					frame_totalclear( net->txque ); // todo 2011.08.04 by zw
 				}
 
 				// @attention
@@ -293,7 +300,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 					if (flood_cache_visit( net->cache, (char*)frame_startptr(net->rxbuf) ))//todo 我将CONFIG_FLOOD_CACHE_CAPACITY改成了1原先为8，不改的话不再接收新的帧.
 					{   
 						
-						frame_bufferclear( net->rxbuf );
+						//frame_bufferclear( net->rxbuf );
+						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
 						cont = false;
 					}
 				}
@@ -312,7 +320,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 					max_hopcount = PACKET_MAX_HOPCOUNT( pc);
 					cur_hopcount ++;
 					if (cur_hopcount > max_hopcount)
-						frame_bufferclear( net->rxbuf );
+						//frame_bufferclear( net->rxbuf );
+						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
 					else
 						PACKET_SET_HOPCOUNT( pc, cur_hopcount );
 				}

@@ -1,8 +1,7 @@
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
 
-
-TiFunAssert         g_assert_report = NULL;
+TiFunAssertReport   g_assert_report = NULL;
 void *              g_dbc_io_provider = NULL;
 TiFunDebugIoPutChar g_dbc_putchar = NULL;
 TiFunDebugIoGetChar g_dbc_getchar = NULL;

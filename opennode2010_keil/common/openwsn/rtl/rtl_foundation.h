@@ -103,7 +103,7 @@ typedef void (* TiFunEventHandler)(void * object, TiEvent * e);
  * run time library through an function pointer.
  ******************************************************************************/
 
-typedef void (* TiFunAssert)( bool cond, char * file, uint16 line );
+typedef void (* TiFunAssertReport)( bool cond, char * file, uint16 line );
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,7 +115,7 @@ extern "C" {
   #define rtl_assert(cond) 
 #endif
 
-extern TiFunAssert g_assert_report;
+extern TiFunAssertReport g_assert_report;
 void _rtl_assert_report( bool cond, char * file, uint16 line );
 
 #ifdef __cplusplus
@@ -154,7 +154,7 @@ extern TiFunDebugIoGetChar g_dbc_getchar;
  *  rtl_init( dbio, (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
  */
 void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDebugIoGetChar debugio_getchar, 
-    TiFunAssert assert_report );
+    TiFunAssertReport assert_report );
 
 
 
@@ -216,6 +216,10 @@ typedef union{
   int value;
 }TiHandle;
 #define TiHandle uint32
+#define TiHandleId uint32
+#define TiId uint32
+#define TiObjectHandle uint32
+#define TiObjectId uint32
 */
 
 
