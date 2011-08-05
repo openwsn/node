@@ -1,6 +1,13 @@
 #ifndef _AVC_IO4RS232_H_2143_
 #define _AVC_IO4RS232_H_2143_
 
+
+#undef RS232_IOSERVICE_SLIP_ENABLE
+#define RS232_IOSERVICE_SLIP_ENABLE 1
+
+#define CONFIG_DYNA_MEMORY 1
+
+
 /* Library for RS232 serial port manipulation with frame filter capability.
  * @author Zhang Wei (TJU) on 2011.07.28
  */
@@ -8,8 +15,6 @@
 /* devx_configall will recognized the following macro and give correct definition of DLLFUNC */
 #define CONFIG_DLL
 
-#include "../common/devx/devx_configall.h"
-#include <stdint.h>
 
 #define CONFIG_IO4RS232_TXBUF_CAPACITY 254
 #define CONFIG_IO4RS232_RXBUF_CAPACITY 254
@@ -39,7 +44,6 @@
 #endif
 */
 
-#define DLLFUNC __declspec(dllexport) 
 
 /* attention
  * If sizeof(void*) == 4, then:
@@ -80,13 +84,13 @@ typedef struct{
 	TiIoBuf * txbuf;
     #ifdef RS232_IOSERVICE_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
+    TiIoBuf * rmpbuf;
 	uint8 rx_accepted;
-	TiSlipFilter slipfilter;
+	TiSlipFilter *slipfilter;
     #endif
 	// you can add your variables here
 }TiSioAcceptor;
 
-extern TiSioAcceptor m_sio;
 
 /*DLLFUNC TiHandleId io_rs232_open( const TCHAR * name, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 parity );
 DLLFUNC void io_rs232_close( TiHandleId service );
@@ -94,12 +98,11 @@ DLLFUNC int32 io_rs232_read( TiHandleId service, char * buf, uint32 size, uint32
 DLLFUNC int32 io_rs232_write( TiHandleId service, char * buf, uint32 len, uint32 option );
 DLLFUNC void io_rs232_evolve(  TiHandleId service );*/
 
-void sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option ); 
-void sac_read( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
-void sac_evolve( TiSioAcceptor * sac, TiFrame * buf, uint8 option ); 
+uint8 sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option ); 
+uint8 sac_read( TiSioAcceptor * sac, TiFrame * buf,uint8 size, uint8 option ); 
+void sac_evolve( TiSioAcceptor * sac); 
 void sac_close( TiSioAcceptor * sac );
-TiSioAcceptor * sac_open( TiSioAcceptor * buf, size_t size, TiUartAdapter * uart );
-
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip,TiUartAdapter * uart );
 
 
 #ifdef __cplusplus

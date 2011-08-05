@@ -64,7 +64,7 @@
 TiIoBuf * iobuf_create( uintx size )
 {
 	TiIoBuf * iobuf = (TiIoBuf *)malloc( IOBUF_HOPESIZE(size) );
-	iobuf_construct( iobuf, size );
+	iobuf_construct( iobuf, IOBUF_HOPESIZE(size) );//iobuf_construct( iobuf, size );
 	return iobuf;
 }
 #endif
