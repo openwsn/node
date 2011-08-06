@@ -184,11 +184,11 @@ uint8 sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option )
 	#ifdef RS232_IOSERVICE_SLIP_ENABLE
 	if (iobuf_empty(io->txbuf))
 	{
-		//tmpbuf = iobuf_create(len);
+		tmpbuf = iobuf_create(len);
         //tmpbuf = iobuf_construct( ( void *)(&m_rmpbuf),IOBUF_HOPESIZE(len));
 		iobuf_write(io->tmpbuf, frame_startptr(buf), len);//todo 这一句是有问题的
 		count = slip_filter_tx_handler( io->slipfilter, io->tmpbuf, io->txbuf );
-		//iobuf_free(tmpbuf);
+		iobuf_free(tmpbuf);
 	}
 	#endif
 
