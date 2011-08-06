@@ -81,7 +81,7 @@ void sendnode1(void)
    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
 
 
-    sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
+   sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
 
     desc = ieee802frame154_open( &m_desc );
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
@@ -132,7 +132,7 @@ void sendnode1(void)
            // }
 
           led_toggle( LED_RED);
-          sac_send( sac,txbuf,0);
+          //sac_send( sac,txbuf,0);
        // }
        sac_evolve(sac,NULL);
         hal_delay( 1000);
