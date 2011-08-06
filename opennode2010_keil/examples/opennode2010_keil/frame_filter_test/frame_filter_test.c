@@ -54,6 +54,8 @@ void sendnode1(void)
     uint8 i, first, seqid, option, len;
     char * ptr;
 
+    char buf[40];//todo for testing
+
     seqid = 0;
 
     led_open();
@@ -76,10 +78,10 @@ void sendnode1(void)
     uart = uart_construct( ( void*)(&m_uart),sizeof(m_uart));
     uart = uart_open(uart,2,9600,8,1,0);
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+   slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
 
 
-    sac = sac_open( (void *)(&m_sac),slip,uart);
+    sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
 
     desc = ieee802frame154_open( &m_desc );
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
@@ -89,6 +91,7 @@ void sendnode1(void)
     while(1)  
     {
         frame_reset( txbuf,3,20,0);
+      
         ptr = frame_startptr( txbuf);
 
         for ( i = 0;i< 6;i++)
@@ -117,9 +120,28 @@ void sendnode1(void)
 
         //uart_write(uart,frame_layerstartptr(txbuf,first),frame_length( txbuf),0);
 
-        sac_write( sac,txbuf,frame_length( txbuf),0);
-        sac_evolve(sac);
+        //led_toggle( LED_RED);
+        //len = sac_recv(sac,txbuf,0);
+      // if ( len)//todo for testing
+        //{
+           // ptr = frame_startptr(txbuf);
+
+           // for ( i=0;i<len;i++)
+           // {
+               // USART_Send(ptr[i]);
+           // }
+
+          led_toggle( LED_RED);
+          sac_send( sac,txbuf,0);
+       // }
+       sac_evolve(sac,NULL);
         hal_delay( 1000);
+
+        //len = uart_read( sac->device,buf,40,0);
+        //for ( i=0;i<len;i++)
+        //{
+           // USART_Send( buf[i]);
+       // }
 
 
     }

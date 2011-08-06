@@ -85,7 +85,7 @@
 #define _frame_layer_length(frame,idx) (frame->layerlength[idx])
 #define _frame_layer_capacityframe,idx) (frame->layercapacity[idx])
 
-static _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity );
+static void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity );
 
 /** 
  * create an TiFrame object with required capacity.
@@ -436,6 +436,7 @@ bool frame_setlayercapacity( TiFrame * frame, uint8 layer, uintx capacity )
 void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 choice )
 {
     intx delta;
+    int i;
     uintx from, to;
 
     if (frame_layerexists(frame,layer))
@@ -448,7 +449,7 @@ void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 		rtl_assert( choice < 4 );
 		from=0; to=0;
 		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
-		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer ;
+		to = (((choice == 1) || (choice == 3))) ? (frame->firstlayer + frame->layercount-1) : layer ;
 		
         for (i=from; i<=to; i++)
         {
@@ -488,19 +489,20 @@ void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 void frame_expandlayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 choice )
 {
     intx delta;
+    int i;
     uintx from, to;
 
     if (frame_layerexists(frame,layer))
     {
-		rtl_assert((frame->layercapacity[layer] <= newcapacity) && (newcapacity <= frame_totalcapacity(frame));
+		rtl_assert((frame->layercapacity[layer] <= newcapacity) && (newcapacity <= frame_totalcapacity(frame)));
         frame->layercapacity[layer] = newcapacity;
 
         delta = newcapacity - frame->layercapacity[layer];
 		
 		rtl_assert( choice < 4 );
 		from=0; to=0;
-		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
-		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer ;
+		from = (((choice == 2) || (choice == 3))) ? frame->firstlayer : layer;
+		to = (((choice == 1) || (choice == 3))) ? (frame->firstlayer + frame->layercount-1) : layer ;
 		
         for (i=from; i<=to; i++)
         {
@@ -571,7 +573,7 @@ bool frame_movehigher( TiFrame * frame )
 
 /** Change the current layer to the lower one */
 #define frame_moveouter(f) frame_movelower(f)
-bool frame_movelower( TiFrame * frame );
+bool frame_movelower( TiFrame * frame )
 {
     bool ret = false;
     if (frame->curlayer > frame->firstlayer)
@@ -1300,3 +1302,4 @@ void frame_dump( TiFrame * frame )
     dbc_putchar( '\n' );
 }
 #endif
+
