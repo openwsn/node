@@ -47,6 +47,9 @@
  *  - review the source code.
  *  - format the source code.
  *
+ * @modified by zhangwei on 2011.08.06
+ *	- Enable the definition of TiHandle(TiObjectHandle) and TiHandleId(TiObjectId).
+ *
  ******************************************************************************/
 
 #include "rtl_configall.h"
@@ -58,16 +61,9 @@
  * furthermore, you need to include <windows.h>.
  *
  * reference
- * [-] Windows环境下Unicode编程总结 (ZZ), http://yangwei.blogbus.com/logs/3192116.html
+ * - Windows环境下Unicode编程总结 (ZZ), http://yangwei.blogbus.com/logs/3192116.html
  *
  ****************************************************************************/
-
-/*
-#ifdef CONFIG_WINDOWS
-  #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
-#endif
-*/
 
 #ifdef __cplusplus
 extern "C" {
@@ -201,28 +197,29 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 //#define min(a,b) (((a)<(b)) ? (a) : (b))
 #endif
 
-/* @attention:
- * you must guarantee sizeof(TiHandle) == sizeof(void*)
- *
- * the old definition is:
- * 	define TiHandle uint32
- * zhangwei changed it to the following union.
+/**
+ * TiHandle is used to save an object handle. The handle can be a unique identifier 
+ * of the object or an pointer to the object. 
+ * 
+ * @attention:
+ * You MUST guarantee sizeof(TiHandleId) == sizeof(void*). Currently, TiHandleId
+ * is defined as "unsigned int". In most systems, sizeof(unsigned int) equals sizeof(void*),
+ * but it's not always the truth.
+ * 
+ * This is checked in rtl_init() by an assertion. You may need to adjust the definition
+ * here to adapt to your own system.
  */
 
-/*
 typedef union{
   int id;
   void * ptr;
   int value;
 }TiHandle;
-#define TiHandle uint32
-#define TiHandleId uint32
-#define TiId uint32
-#define TiObjectHandle uint32
-#define TiObjectId uint32
-*/
 
+#define TiHandleId unsigned int
 
+#define TiObjectHandle TiHandle
+#define TiObjectId TiHandleId
 
 /******************************************************************/
 #ifdef __cplusplus

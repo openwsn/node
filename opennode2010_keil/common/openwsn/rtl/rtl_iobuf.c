@@ -64,7 +64,10 @@
 TiIoBuf * iobuf_create( uintx size )
 {
 	TiIoBuf * iobuf = (TiIoBuf *)malloc( IOBUF_HOPESIZE(size) );
-	iobuf_construct( iobuf, IOBUF_HOPESIZE(size) );//iobuf_construct( iobuf, size );
+	if (iobuf != NULL)
+	{
+		iobuf_construct( iobuf, IOBUF_HOPESIZE(size) );
+	}
 	return iobuf;
 }
 #endif
@@ -72,8 +75,11 @@ TiIoBuf * iobuf_create( uintx size )
 #ifdef CONFIG_DYNA_MEMORY
 void iobuf_free( TiIoBuf * iobuf )
 {
-	iobuf_destroy( iobuf );
-	free( iobuf );
+	if (iobuf != NULL)
+	{
+		iobuf_destroy( iobuf );
+		free( iobuf );
+	}
 }
 #endif
 
@@ -83,6 +89,8 @@ TiIoBuf * iobuf_construct( void * mem, uintx memsize )
 	iobuf->memsize = memsize;
 	iobuf->size = memsize - sizeof(TiIoBuf);
 	iobuf->length = 0;
+	
+	rtl_assert( sizeof(TiIoBuf) < memsize );
 	return iobuf;
 }
 

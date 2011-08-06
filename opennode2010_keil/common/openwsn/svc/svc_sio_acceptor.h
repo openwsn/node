@@ -1,58 +1,72 @@
-#ifndef _AVC_IO4RS232_H_2143_
-#define _AVC_IO4RS232_H_2143_
+#ifndef _SVC_SIOACCEPTOR_H_2143_
+#define _SVC_SIOACCEPTOR_H_2143_
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
+ ******************************************************************************/
 
-
-#undef RS232_IOSERVICE_SLIP_ENABLE
-#define RS232_IOSERVICE_SLIP_ENABLE 1
-
-#define CONFIG_DYNA_MEMORY 1
-
-
-/* Library for RS232 serial port manipulation with frame filter capability.
- * @author Zhang Wei (TJU) on 2011.07.28
+/**
+ * Serial I/O Acceptor
+ * The serial I/O architecture is as the following
+ * 
+ * - Top Layer: I/O Service (provides the high level abstraction of the serial I/O functions)
+ * - Middle Layer: I/O Protocols
+ * - Bottom Layer: I/O Acceptors (provides the basic frame based I/O operations and 
+ *  		frame queue management if necessary)
+ * - Platform: Serial I/O Devivce Adapters
+ * 
+ * @author zhangwei in 2009
+ * @modified by JiangRidong(TongJi University, BeiHang University) on 2011.08.06
+ * - Finished and compile passed.
  */
 
-/* devx_configall will recognized the following macro and give correct definition of DLLFUNC */
-#define CONFIG_DLL
+#include "svc_configall.h"
+#include "svc_foundation.h"
+#include "../rtl/rtl_frame.h"
+#include "../rtl/rtl_slipfilter.h"
+//#include "../hal/hal_uart.h"
+#include "../hal/opennode2010/hal_uart.h"
 
+//#define CONFIG_DYNA_MEMORY 1
+//#undef  CONFIG_DYNA_MEMORY 
 
-#define CONFIG_IO4RS232_TXBUF_CAPACITY 254
-#define CONFIG_IO4RS232_RXBUF_CAPACITY 254
-#define CONFIG_IO4RS232_TMPBUF_CAPACITY 64
+#undef  SIO_ACCEPTOR_SLIP_ENABLE
+#define SIO_ACCEPTOR_SLIP_ENABLE 1
 
-/* Reference
- * - 从 DLL 导出, http://msdn.microsoft.com/zh-cn/library/z4zxe9k8(v=VS.80).aspx
- * - 确定要使用的导出方法, 
- *   http://msdn.microsoft.com/zh-cn/library/900axts6(v=VS.80).aspx
- * - 使用 DEF 文件从 DLL 导出, 
- *   http://msdn.microsoft.com/zh-cn/library/d91k01sh(v=VS.80).aspx
- * - 使用 __declspec(dllexport) 从 DLL 导出, 
- *   http://msdn.microsoft.com/zh-cn/library/a90k134d(VS.80).aspx
- * - 导出 C++ 函数以用于 C 语言可执行文件, 
- *   http://msdn.microsoft.com/zh-cn/library/wf2w9f6x(v=VS.80).aspx
- * - 导出 C 函数以用于 C 或 C++ 语言可执行文件, 
- *   http://msdn.microsoft.com/zh-cn/library/ys435b3s(v=VS.80).aspx
- * - 串口通信问题
- *   http://social.msdn.microsoft.com/Forums/zh-CN/1729/thread/5c485ca1-f62e-45a6-8e35-2a1803e4467a/
- */
-
-/*
-#ifdef CONFIG_APPLICATION
-#define DLLFUNC __declspec(dllimport) 
-#else
-#define DLLFUNC __declspec(dllexport) 
+#ifndef CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 
+#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
 #endif
-*/
 
+#ifndef CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 
+#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 192
+#endif
 
-/* attention
- * If sizeof(void*) == 4, then:
- * 	#define TiHandleId uint32_t
- * If sizeof(void*) == 8, then:
- * 	#define TiHandleId uint32_t
- */
- 
-#define TiHandleId uint32
+#ifndef CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY 
+#define CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY 64
+#endif
+
+#define SIO_ACCEPTOR_MEMSIZE(bufsize) sizeof(TiSioAcceptor)
 
 /**
  * This module defined the interface of librs232 dynamic link library
@@ -62,18 +76,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
     
 /**
  * TiSioAcceptor component
  * 
- * Q: What's the difference between TiSioAcceptor and TiUartAdapter/TxUartAdapter?
- * R: TiUartAdapter/TxUartAdapter implements a byte-oriented transceiver which is
+ * Q: What's the difference between TiSioAcceptor and TiUartAdapter?
+ * R: TiUartAdapter implements a byte-oriented transceiver which is
  * an light-weight encapsulation of the UART/USART/Serial Port hardware.
  *
- * TiSioAcceptor is running on top of TiUartAdapter/TxUartAdapter component. It
- * further implements a frame based transceiver interface. Everytime you call read()/write()
+ * TiSioAcceptor is running on top of TiUartAdapter component. It further
+ * implements a frame based transceiver interface. Everytime you call read()/write()
  * function of TiSioAcceptor, you will read/write an complete packet/frame.
  * The framing mechanism currently is based on the rules in SLIP protocol. 
  */
@@ -82,28 +94,31 @@ typedef struct{
 	TiUartAdapter * device;
 	TiIoBuf * rxbuf;
 	TiIoBuf * txbuf;
-    #ifdef RS232_IOSERVICE_SLIP_ENABLE
+    #ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
-    TiIoBuf * rmpbuf;
-	uint8 rx_accepted;
-	TiSlipFilter *slipfilter;
+    uint8 rx_accepted;
+	TiSlipFilter slipfilter;
     #endif
-	// you can add your variables here
+	char txbuf_block[CONFIG_SIOACCEPTOR_TXBUF_CAPACITY];
+	char rxbuf_block[CONFIG_SIOACCEPTOR_RXBUF_CAPACITY];
+    #ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	char tmpbuf_block[CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY];
+    #endif
 }TiSioAcceptor;
 
+#ifdef CONFIG_DYNA_MEMORY
+TiSioAcceptor * sac_create( TiUartAdapter * uart )
+#endif
 
-/*DLLFUNC TiHandleId io_rs232_open( const TCHAR * name, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 parity );
-DLLFUNC void io_rs232_close( TiHandleId service );
-DLLFUNC int32 io_rs232_read( TiHandleId service, char * buf, uint32 size, uint32 option );
-DLLFUNC int32 io_rs232_write( TiHandleId service, char * buf, uint32 len, uint32 option );
-DLLFUNC void io_rs232_evolve(  TiHandleId service );*/
+#ifdef CONFIG_DYNA_MEMORY
+void sac_free( TiSioAcceptr * sac );
+#endif
 
-uint8 sac_write( TiSioAcceptor * sac, TiFrame * buf, uint8 len,uint8 option ); 
-uint8 sac_read( TiSioAcceptor * sac, TiFrame * buf,uint8 size, uint8 option ); 
-void sac_evolve( TiSioAcceptor * sac); 
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip,TiUartAdapter * uart );
-
+TiIoResult sac_send( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+void sac_evolve( TiSioAcceptor * sac, TiEvent * event ); 
 
 #ifdef __cplusplus
 }

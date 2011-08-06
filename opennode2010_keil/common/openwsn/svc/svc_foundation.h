@@ -38,6 +38,13 @@
 #include "../rtl/rtl_foundation.h"
 #include "../hal/opennode2010/hal_assert.h"
 
+/*
+#ifdef CONFIG_WINDOWS
+  #define WIN32_LEAN_AND_MEAN
+  #include <windows.h>
+#endif
+*/
+
 #define svc_assert(cond) hal_assert(cond)
 
 #endif

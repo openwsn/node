@@ -65,7 +65,7 @@ extern "C" {
  * retrieve the object if you know its handle. 
  *****************************************************************************/
 
-#define TiHandle intx
+//#define TiHandle intx
 
 typedef struct{
 	uintx id;
