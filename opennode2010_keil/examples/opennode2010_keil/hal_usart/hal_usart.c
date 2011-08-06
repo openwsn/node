@@ -158,7 +158,7 @@ int main( void)
 	RCC_Configuration();
 	GPIO_Configuration();
 
-	USART_InitStructure.USART_BaudRate = 19200;
+	USART_InitStructure.USART_BaudRate = 9600;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -195,14 +195,16 @@ int main( void)
 		    }
 		ch = (USART_ReceiveData(USART2) & 0x7F); 
 
+        led_toggle(LED_RED);
+
 		USART_SendData( USART2,ch);
 		while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
 		{
 		}
-        led_on( LED_RED);
-		hal_delay( 500);
-		led_off( LED_RED);
-		hal_delay( 500);
+       // led_on( LED_RED);
+		//hal_delay( 500);
+		//led_off( LED_RED);
+		//hal_delay( 500);
 	}
 
 }
