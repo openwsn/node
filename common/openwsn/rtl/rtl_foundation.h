@@ -73,7 +73,29 @@
 extern "C" {
 #endif
 
+#ifndef min
 #define min(x,y) (((x)<(y))?(x):(y))
+#endif
+
+/**
+ * TiIoResult is used to represent the return value of I/O operations such as 
+ * serial send/recv, network send/recv, I/O buffer read/write, and etc. 
+ * 
+ * Usually:
+ * - Postive values indicates how many bytes are processed successfully.
+ * - 0 means success but nothing is processed.
+ * - Negtive values indicates error occured during I/O operation. 
+ * 
+ * @attention 
+ * For most of the embedded systems, int16 is enough to represent I/O results. 
+ * But you can define it as int32 as your wish. 
+ * 
+ * @warning
+ * Be great careful if define this macro as int8 due to the highly limitation of 
+ * its number range (-128~127).
+ */
+#define TiIoResult intx
+#define TiIoOption uint8 
 
 /*******************************************************************************
  * TiEvent and TiFunEventHandler
@@ -103,7 +125,7 @@ typedef void (* TiFunEventHandler)(void * object, TiEvent * e);
  * run time library through an function pointer.
  ******************************************************************************/
 
-typedef void (* TiFunAssert)( bool cond, char * file, uint16 line );
+typedef void (* TiFunAssertReport)( bool cond, char * file, uint16 line );
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,8 +137,8 @@ extern "C" {
   #define rtl_assert(cond) 
 #endif
 
-extern TiFunAssert g_assert_report;
-void _rtl_assert_report( bool cond, char * file, uint16 line );
+extern TiFunAssertReport g_assert_report;
+void _rtl_assert_report( bool cond, char * file, int line );
 
 #ifdef __cplusplus
 }
@@ -154,7 +176,7 @@ extern TiFunDebugIoGetChar g_dbc_getchar;
  *  rtl_init( dbio, (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
  */
 void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDebugIoGetChar debugio_getchar, 
-    TiFunAssert assert_report );
+    TiFunAssertReport assert_report );
 
 
 

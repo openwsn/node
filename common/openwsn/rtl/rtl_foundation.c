@@ -17,7 +17,7 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
     g_dbc_getchar = debugio_getchar;
 }
 
-void _rtl_assert_report( bool cond, char * file, uint16 line )
+void _rtl_assert_report( bool cond, char * file, int line )
 {
     if (g_assert_report)
         g_assert_report( cond, file, line );

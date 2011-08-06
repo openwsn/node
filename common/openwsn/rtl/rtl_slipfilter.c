@@ -222,7 +222,7 @@ void slip_filter_free( TiSlipFilter * slip )
 }
 #endif
 
-TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size )
+TiSlipFilter * slip_filter_open( TiSlipFilter * slip, uintx size )
 {
 	rtl_assert( sizeof(TiSlipFilter) <= size ); 
 	memset( slip, 0x00, sizeof(TiSlipFilter) );
@@ -230,7 +230,7 @@ TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size )
 	return slip;
 }
 
-void slip_filter_destroy( TiSlipFilter * slip )
+void slip_filter_close( TiSlipFilter * slip )
 {
 	slip = slip;
 }
