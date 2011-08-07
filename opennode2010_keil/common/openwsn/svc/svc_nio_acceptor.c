@@ -37,7 +37,7 @@
 #include "svc_nio_acceptor.h"
 
 #ifdef CONFIG_DEBUG
-//#include "../rtl/rtl_dumpframe.h"
+#include "../rtl/rtl_dumpframe.h"
 #endif
 
 #ifdef CONFIG_DYNA_MEMORY

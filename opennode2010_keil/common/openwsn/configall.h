@@ -228,7 +228,6 @@
 #define CONFIG_STDC
 #endif
 
-
 /* "openwsn" is designed to be integrated with existed mature OS. currently, it
  * only support uCOS-II. you can change the following macro to configure the OS
  * to be integrated.

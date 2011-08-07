@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,10 +25,11 @@
  ******************************************************************************/
 
 #include "svc_configall.h"
-#include "svc_foundation.h"
+#include <string.h>
 #ifdef CONFIG_DYNA_MEMORY
   #include <stdlib.h>
 #endif
+#include "svc_foundation.h"
 #include "../rtl/rtl_iobuf.h"
 #include "../rtl/rtl_slipfilter.h"
 #include "../rtl/rtl_frame.h"
@@ -64,7 +65,7 @@ void sac_free( TiSioAcceptr * sac )
 }
 #endif
 
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize, TiUartAdapter * uart )
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart )
 {
 	rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
 	
@@ -77,10 +78,12 @@ TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize, TiUartAdapter * u
 		sac->rxbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_RXBUF_CAPACITY );
 		#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 		sac->rx_accepted = false;
-		slip_filter_open( &sac->slipfilter, sizeof(slipfilter) );
+		slip_filter_open( &sac->slipfilter, sizeof(TiSlipFilter) );
 		sac->tmpbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY );
 		#endif
 	}
+
+	return sac;
 }
 
 void sac_close( TiSioAcceptor * sac )
@@ -108,11 +111,11 @@ TiIoResult sac_send( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 	 * If not, then the frame data will be truncated.
 	 */
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-	if (iobuf_empty(io->txbuf))
+	if (iobuf_empty(sac->txbuf))
 	{
 		tmpbuf = iobuf_open( &tmpbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
 		iobuf_write(tmpbuf, frame_startptr(buf), frame_length(buf));
-		count = slip_filter_tx_handler( sac->slipfilter, tmpbuf, sac->txbuf );
+		count = slip_filter_txhandler( &sac->slipfilter, tmpbuf, sac->txbuf );
 		iobuf_close(tmpbuf);
 	}
 	#endif
@@ -125,7 +128,7 @@ TiIoResult sac_send( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
     
 	#endif
 
-	sac_evolve(io);
+	sac_evolve(sac, NULL);
 
 	return count;
 }
@@ -140,15 +143,15 @@ TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
     hal_assert( sac != NULL );
 	
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-	if (sio->rx_accepted)
+	if (sac->rx_accepted)
 	{
-		hal_assert(iobuf_length(io->rxbuf) > 0);
-		if (iobuf_length(io->rxbuf) > 0)
+		hal_assert(iobuf_length(sac->rxbuf) > 0);
+		if (iobuf_length(sac->rxbuf) > 0)
 		{
 			count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
-			iobuf_clear(io->rxbuf);
+			iobuf_clear(sac->rxbuf);
 		}
-		io->rx_accepted = 0;
+		sac->rx_accepted = 0;
 	}
 	#endif
 
@@ -156,11 +159,11 @@ TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 	if (iobuf_length(sac->rxbuf) > 0)
 	{
 		count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
-		iobuf_clear(io->rxbuf);
+		iobuf_clear(sac->rxbuf);
 	}
 	#endif
 
-	sac_evolve(io);
+	sac_evolve(sac, NULL);
 
 	return count;
 }
@@ -168,7 +171,7 @@ TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 void sac_evolve( TiSioAcceptor * sac, TiEvent * event )
 {
 	_sac_txbuf_to_device( sac );
-	_device_txbuf_to_sac( sac );
+	_sac_device_to_rxbuf( sac );
 	return;
 }
 
@@ -180,7 +183,7 @@ void _sac_txbuf_to_device( TiSioAcceptor * sac )
 	if (!iobuf_empty(sac->txbuf))
 	{
 		//count = io->device->write(iobuf_ptr(io->rxbuf), iobuf_length(io->rxbuf));
-        count = uart_write(sac->device, iobuf_ptr(io->txbuf), iobuf_length(io->txbuf), 0x00);
+        count = uart_write(sac->device, iobuf_ptr(sac->txbuf), iobuf_length(sac->txbuf), 0x00);
 		iobuf_popfront(sac->txbuf, count);
 	}
 }
@@ -205,8 +208,8 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		/* Read some data into sio->tmpbuf first and do framing on this buffer. The frame
 		 * found will be placed into io->rxbuf by the framing process.
 		 */
-        count = uart_read( io->device, iobuf_endptr(io->tmpbuf), iobuf_available(io->tmpbuf), 0x00);
-		iobuf_adjustlength( io->rxbuf, count );
+        count = uart_read( sac->device, iobuf_endptr(sac->tmpbuf), iobuf_available(sac->tmpbuf), 0x00);
+		iobuf_adjustlength( sac->rxbuf, count );
 	}
 
 	if ((sac->rx_accepted == 0) && (!iobuf_empty(sac->tmpbuf)))
@@ -226,7 +229,7 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		/* slip_filter_rx_handler return a positive value means an frame found. The frame
 		 * is placed in io->rxbuf 
 		 */
-		if (slip_filter_rx_handler(sac->slipfilter, sac->tmpbuf, sac->rxbuf) > 0)
+		if (slip_filter_rxhandler(&sac->slipfilter, sac->tmpbuf, sac->rxbuf) > 0)
 		{
 			/* set the rx_accept flag to indicate an entire frame is successfully identified
 			 * and be placed inside io->rxbuf. */

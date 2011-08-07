@@ -1,3 +1,5 @@
+#ifndef _RTL_LIGHTQUEUE_H_9032_
+#define _RTL_LIGHTQUEUE_H_9032_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -23,8 +25,6 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-#ifndef _RTL_LIGHTQUEUE_H_9032_
-#define _RTL_LIGHTQUEUE_H_9032_
 
 /* TiLightQueue Data Structure
  * this is a C language based queue data structure. it's actaully an ring queue.
@@ -48,13 +48,16 @@
  * @modified by zhangwei in 200905
  *	- change the name as TiLightQueue. the original name is TiRingQueue
  *    the new predix "lwque_" means "light weight queue"
+ * @modified by zhangwei in 2011.08.03
+ *  - change the variable "itemsize" to "datasize"
+ * 	- add lwque_datasize(), lwque_setbuf(), lwque_applyfront(), lwque_applyback(),
+ *		lwque_readdata(), lwque_writedata()
  */
 
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
 
-#define LIGHTQUEUE_HOPESIZE(itemsize,capacity) (sizeof(TiLightQueue) + (itemsize)*(capacity))
-
+#define LIGHTQUEUE_HOPESIZE(datasize,capacity) (sizeof(TiLightQueue) + (datasize)*(capacity))
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,22 +68,31 @@ typedef struct{
 	uint8 rear;
 	uint8 capacity;
 	uint8 count;
-	uint16 itemsize;
+	uint16 datasize;
 }TiLightQueue;
 
-TiLightQueue *  lwque_construct( void * buf, uint16 size, uint16 itemsize );
+TiLightQueue *  lwque_construct( void * buf, uint16 size, uint16 datasize );
 void		    lwque_destroy( TiLightQueue * que );
 uint8           lwque_count( TiLightQueue * que );
 uint8           lwque_capacity( TiLightQueue * que );
 bool            lwque_empty( TiLightQueue * que );
 bool            lwque_full( TiLightQueue * que );
+uint16 			lwque_datasize( TiLightQueue * que );
 void *          lwque_getbuf( TiLightQueue * que, uint8 idx );
+
+#define lwque_setbuf(que,idx,data,len) lwque_writedata(que,idx,data,len)
+
+uint16 			lwque_readdata( TiLightQueue * que, uint8 idx, void * buf, uint16 size );
+uint16 			lwque_writedata( TiLightQueue * que, uint8 idx, void * data, uint16 len );
 void *          lwque_front( TiLightQueue * que );
 void *          lwque_rear( TiLightQueue * que );
 bool            lwque_pushback( TiLightQueue * que, void * item );
 bool            lwque_pushfront( TiLightQueue * que, void * item );
 bool            lwque_popfront( TiLightQueue * que );
 bool            lwque_poprear( TiLightQueue * que );
+bool 			lwque_applyback( TiLightQueue * que, uint8 * pidx );
+bool 			lwque_applyfront( TiLightQueue * que, uint8 * pidx );
+
 /* bool            lwque_extend( TiLightQueue * que, uint16 newsize ); */
 
 

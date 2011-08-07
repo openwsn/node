@@ -31,8 +31,8 @@
 #include "rtl_iobuf.h"
 
 typedef struct{
-  int received;
-  uint8 tx_state; // not used now
+  // int received;
+  // uint8 tx_state; // not used now
   uint8 rx_state;
 }TiSlipFilter;
 

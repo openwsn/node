@@ -174,8 +174,3 @@
 #endif
 
 #endif /* _AUTOSCAN_H_7484_ */
-
-
-
- 
- 

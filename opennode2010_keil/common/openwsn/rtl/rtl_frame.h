@@ -215,8 +215,8 @@ uintx frame_totalcapacity( TiFrame * frame );
 #define frame_totalend(frame) frame_layerend((frame),((frame)->firstlayer))
 #define frame_totallength(frame) frame_layerlength((frame),((frame)->firstlayer))
 #define frame_settotallength(frame,len) frame_setlayerlength((frame),((frame)->firstlayer),(len))
-#define frame_totalcapacity(frame) frame_layercapacity((frame),((frame)->firstlayer))
-#define frame_settotalcapacity(frame,capacity) frame_setlayerlength((frame),((frame)->firstlayer),(capacity))
+//#define frame_totalcapacity(frame) frame_layercapacity((frame),((frame)->firstlayer))
+//#define frame_settotalcapacity(frame,capacity) frame_setlayerlength((frame),((frame)->firstlayer),(capacity))
 
 /** Copy an TiFrame entirely from one to another */
 uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from );
@@ -376,16 +376,6 @@ bool frame_addlayerexterior( TiFrame * frame, uintx offset, uintx left );
  */
 bool frame_removelayerinterior( TiFrame * frame );
 
-bool frame_removelayerexterior( TiFrame * frame );
-
-/** 
- * add inner item and also change the current to it
- * 
- * @param skiplen: header size of the current item
- * @param left: tail size of the current item
- */
-bool frame_skipinner( TiFrame * frame, uintx skiplen, uintx left );
-
 /**
  * Remove the lowest level layer from the frame object.
  *
@@ -397,6 +387,23 @@ bool frame_skipinner( TiFrame * frame, uintx skiplen, uintx left );
  * 
  * @return true when success.
  */
+bool frame_removelayerexterior( TiFrame * frame );
+
+/** 
+ * Add an inner layer and also change the current layer to it. If the destination layer
+ * is already exist, then simply switch the "curlayer" property to that one.
+ * 
+ * @param skiplen: header size of the current item
+ * @param left: tail size of the current item
+ */
+#define frame_disassemble(f,headersize,tailsize) frame_skipinner((f),(headersize),(tailsize))
+bool frame_skipinner( TiFrame * frame, uintx skiplen, uintx left );
+
+/**
+ * Add an outer layer and also change the current layer to it. If the destination layer
+ * is already exist, then simply switch the "curlayer" property to that one.
+ */
+#define frame_assemble(f,headersize,tailsize) frame_skipouter((f),(headersize),(tailsize))
 bool frame_skipouter( TiFrame * frame, uintx skiplen, uintx left );
 
 /**
@@ -501,7 +508,7 @@ void frame_popfront( TiFrame * frame, uintx count );
 
 #define frame_putchar(iobuf,c) frame_pushbyte(iobuf,((char)c))
 
-uintx frame_getchar( TiFrame * frame, char * pc )
+uintx frame_getchar( TiFrame * frame, char * pc );
 
 bool frame_set( TiFrame * frame, uintx idx, char c );
 bool frame_get( TiFrame * frame, uintx idx, char * c );

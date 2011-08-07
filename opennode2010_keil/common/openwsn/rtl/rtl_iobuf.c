@@ -56,7 +56,9 @@
   #include <stdio.h>
 #endif
 #include "rtl_foundation.h"
+#ifdef CONFIG_DEBUG
 #include "rtl_debugio.h"
+#endif
 #include "rtl_assert.h"
 #include "rtl_iobuf.h"
 

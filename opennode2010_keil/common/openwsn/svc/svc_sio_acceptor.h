@@ -43,6 +43,8 @@
 
 #include "svc_configall.h"
 #include "svc_foundation.h"
+#include "../rtl/rtl_configall.h"
+#include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_slipfilter.h"
 //#include "../hal/hal_uart.h"
@@ -114,7 +116,7 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart )
 void sac_free( TiSioAcceptr * sac );
 #endif
 
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiUartAdapter * uart );
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
 TiIoResult sac_send( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
 TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 

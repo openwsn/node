@@ -163,6 +163,22 @@
  * Which is the default developing software for OpenNode-2010.  
  * Another suggestion for OpenNode-2010 is TrueSTUDIO from ST.com. 
  */
+ 
+/*
+ * Detect compiler type automatically. If the following macro segment cannot detect
+ * your compiler, then you can assign the compiler macro manually.
+ */
+
+/* @attention
+ * - Macro __arm__ is always defined for the ARM compiler. Using __ARMCC_VERSION to 
+ * to distinguish between RVCT and other tools that define __arm__.
+ * - The ARM compiler in Keil also support __GNUC__ macro in GNU mode.
+ */
+#ifdef __arm__
+#ifdef __ARMCC_VERSION
+#endif
+#endif
+ 
 #define CONFIG_COMPILER_ADS
 #undef  CONFIG_COMPILER_ADS
 
@@ -305,7 +321,7 @@ typedef unsigned int        uintx;
 
 #ifndef CONFIG_WINDOWS
 	#ifndef NULL
-		#define NULL 0
+		#define NULL (void *)0
 	#endif
 #endif
 

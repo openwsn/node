@@ -48,20 +48,24 @@
  * so the encoded length is twice of its original format.
  */
 
+#ifdef CONFIG_DYNA_MEMORY
 TiSplitFilter * split_create( uintx rxbufsize, uintx txbufsize )
 {
 	uintx size = sizeof(TiSplitFilter) + IOBUF_HOPESIZE(rxbufsize) + IOBUF_HOPESIZE(txbufsize);
 	void * mem = malloc( size );
 	return split_construct( mem, size, rxbufsize, txbufsize );
 }
+#endif
 
+#ifdef CONFIG_DYNA_MEMORY
 void split_free( TiSplitFilter * split )
 {
 	split_destroy( split );
 	free( split );
 }
+#endif
 
-TiSplitFilter * split_construct( void * mem, uintx size, uintx rxbufsize, uintx txbufsize )
+TiSplitFilter * split_open( void * mem, uintx size, uintx rxbufsize, uintx txbufsize )
 {
 	TiSplitFilter * split = (TiSplitFilter *)mem;
 	memset( mem, 0x00, size );
@@ -73,7 +77,7 @@ TiSplitFilter * split_construct( void * mem, uintx size, uintx rxbufsize, uintx 
 	return split;
 }
 
-void split_destroy( TiSplitFilter * split )
+void split_close( TiSplitFilter * split )
 {
 	return;
 }
