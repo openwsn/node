@@ -23,11 +23,11 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_dumpframe.h"
 #include "../rtl/rtl_framequeue.h"
+#include "../rtl/rtl_lightqueue.h"
 #include "../rtl/rtl_debugio.h"
 #include "../hal/hal_cc2420.h"
 #include "../hal/hal_led.h"

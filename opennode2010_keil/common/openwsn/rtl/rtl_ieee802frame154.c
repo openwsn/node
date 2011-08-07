@@ -4,12 +4,11 @@
 #include "rtl_ieee802frame154.h"
 #include "rtl_debugio.h"
 
-static inline void _write_n16( char * buf, uint16 value );
-static inline uint16 _read_n16( char * buf );
+// static void _write_n16( char * buf, uint16 value );
+// static uint16 _read_n16( char * buf );
 static inline void _ieee802frame154_swapbyte( char * b1, char * b2 );
 static TiIEEE802Frame154Descriptor * _ieee802frame154_cast_as( TiIEEE802Frame154Descriptor * desc, 
     bool empty, char * buf, uint8 len, uint16 ctrl, uint8 option );
-
 
 TiIEEE802Frame154Descriptor * ieee802frame154_open( TiIEEE802Frame154Descriptor * desc )
 {
@@ -434,19 +433,19 @@ TiIEEE802Frame154Descriptor * _ieee802frame154_cast_as( TiIEEE802Frame154Descrip
 
 	return ret;
 }
-
-static inline void _write_n16( char * buf, uint16 value )
+/*
+inline void _write_n16( char * buf, uint16 value )
 {
 	buf[0] = (char)(value & 0xFF);
 	buf[1] = (char)((value >> 8) & 0xFF);
 }
 
-static inline uint16 _read_n16( char * buf )
+inline uint16 _read_n16( char * buf )
 {
     return (((uint16)buf[1]) << 8) | ((uint16)buf[0]);
 }
-
-static inline void _ieee802frame154_swapbyte( char * b1, char * b2 )
+*/
+inline void _ieee802frame154_swapbyte( char * b1, char * b2 )
 {
 	char tmp = *b1;
 	*b1 = *b2;

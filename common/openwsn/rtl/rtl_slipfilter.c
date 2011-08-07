@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -180,6 +180,7 @@
 #include "rtl_foundation.h"
 #include <string.h>
 #include "rtl_slipfilter.h"
+#include "rtl_iobuf.h"
 
 /* SLIP special character codes */
 

@@ -102,6 +102,9 @@ TiIoBuf * 	    iobuf_create( uintx size );
 void 			iobuf_free( TiIoBuf * iobuf );
 #endif
 
+#define iobuf_open(iobuf,memsize) iobuf_construct((iobuf),(memsize))
+#define iobuf_close(iobuf) iobuf_destroy((iobuf))
+
 TiIoBuf * 	    iobuf_construct( void * iobuf, uintx memsize );
 void 			iobuf_destroy( TiIoBuf * iobuf );
 

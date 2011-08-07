@@ -60,10 +60,16 @@ typedef struct{
  * txbuf is actaully not used in this object. it maybe eliminate in the future
  */
 
+#ifdef CONFIG_DYNA_MEMORY
 TiSplitFilter *     split_create( uintx rxbufsize, uintx txbufsize );
+#endif
+
+#ifdef CONFIG_DYNA_MEMORY
 void 				split_free( TiSplitFilter * split );
-TiSplitFilter *     split_construct( void * mem, uintx size, uintx rxbufsize, uintx txbufsize );
-void 				split_destroy( TiSplitFilter * split );
+#endif
+
+TiSplitFilter *     split_open( void * mem, uintx size, uintx rxbufsize, uintx txbufsize );
+void 				split_close( TiSplitFilter * split );
 TiIoBuffer * 		split_rxbuf( TiSplitFilter * split );
 TiIoBuffer * 		split_txbuf( TiSplitFilter * split );
 uintx 				split_rxhandle( TiSplitFilter * split, TiIoBuffer * input, TiIoBuffer * output );
