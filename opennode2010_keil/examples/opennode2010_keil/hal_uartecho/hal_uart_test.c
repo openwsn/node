@@ -13,7 +13,7 @@ TiUartAdapter               m_uart;
 void main( void)
 {
     TiUartAdapter * uart;
-    char ch;
+    uint8 ch;
     char buf[40];
     uintx count;
 
@@ -28,12 +28,13 @@ void main( void)
 
     while ( 1)
     {
-        count = uart_read(uart,buf,40,0);
+        //count = uart_read(uart,buf,40,0);
 
-        if ( count)
-        {
-            uart_write( uart,buf,count,0);
-        }
+        //if ( count)
+        //{
+            //uart_write( uart,buf,count,0);
+            //uart_putchar(uart,0xa0);//todo for testing
+        //}
         /*
         if ( uart_getchar(uart,&ch))
         {
@@ -41,6 +42,11 @@ void main( void)
             led_toggle(LED_RED);
 
         }*/
+
+        if ( uart_getchar(uart,&ch))
+        {
+            uart_putchar(uart,ch);
+        }
 
     }
 }

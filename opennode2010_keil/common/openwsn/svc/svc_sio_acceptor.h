@@ -51,15 +51,15 @@
 //#define CONFIG_DYNA_MEMORY 1
 //#undef  CONFIG_DYNA_MEMORY 
 
-//#undef  SIO_ACCEPTOR_SLIP_ENABLE
-//#define SIO_ACCEPTOR_SLIP_ENABLE 1
+#undef  SIO_ACCEPTOR_SLIP_ENABLE
+#define SIO_ACCEPTOR_SLIP_ENABLE 1
 
 #ifndef CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 
-#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
+#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 128//#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
 #endif
 
 #ifndef CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 
-#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 192
+#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 128//#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 192
 #endif
 
 #ifndef CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY 
@@ -96,6 +96,7 @@ typedef struct{
 	TiIoBuf * txbuf;
     #ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
+    TiIoBuf * rmpbuf;
     uint8 rx_accepted;
 	TiSlipFilter *slipfilter;
     #endif
@@ -110,7 +111,9 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart );
 void sac_free( TiSioAcceptor * sac );
 #endif
 
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize,TiSlipFilter *slip, TiUartAdapter * uart );
+TiSioAcceptor * sac_construct( char * buf, uint16 size );
+
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip, TiUartAdapter * uart );//TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize,TiSlipFilter *slip, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
 uintx sac_send( TiSioAcceptor * sac, TiFrame * buf, uintx option ); 
 uintx sac_recv( TiSioAcceptor * sac, TiFrame * buf,uintx option ); 

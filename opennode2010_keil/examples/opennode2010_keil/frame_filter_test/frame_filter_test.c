@@ -1,5 +1,6 @@
 
 
+
 #include "apl_foundation.h"
 #include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
 #include <stdlib.h>
@@ -34,6 +35,13 @@ TiUartAdapter               m_uart;
 TiSioAcceptor               m_sac;
 TiSlipFilter                m_slip;
 
+char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
+char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+#endif
+
 void sendnode1(void);
 //void sendnode2(void);
 
@@ -54,8 +62,10 @@ void sendnode1(void)
     uint8 i, first, seqid, option, len;
     char * ptr;
 
-    char buf[40];//todo for testing
-
+    TiIoBuf *buf_1;
+    TiIoBuf *buf_2;
+    TiIoBuf *buf_3;
+    TiIoBuf *buf_4;
     seqid = 0;
 
     led_open();
@@ -74,14 +84,27 @@ void sendnode1(void)
     cc2520_setshortaddress( cc, LOCAL_ADDRESS );	//ÍøÄÚ±êÊ¶
     cc2520_enable_autoack( cc );
      */
-
+    buf_1 = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
+    buf_2 = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+    buf_3 = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+    buf_4 = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+#endif
     uart = uart_construct( ( void*)(&m_uart),sizeof(m_uart));
     uart = uart_open(uart,2,9600,8,1,0);
 
-   slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
 
+    sac = sac_construct( (void *)(&m_sac),sizeof(m_sac));//todo for testing
+    sac = sac_open( sac,slip,uart);//sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
 
-   sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
+    sac->txbuf = buf_1;
+    sac->rxbuf = buf_2;
+
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+   sac->rmpbuf = buf_4;
+   sac->tmpbuf = buf_3;
+#endif
 
     desc = ieee802frame154_open( &m_desc );
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
@@ -90,6 +113,7 @@ void sendnode1(void)
 
     while(1)  
     {
+        
         frame_reset( txbuf,3,20,0);
       
         ptr = frame_startptr( txbuf);
@@ -121,21 +145,26 @@ void sendnode1(void)
         //uart_write(uart,frame_layerstartptr(txbuf,first),frame_length( txbuf),0);
 
         //led_toggle( LED_RED);
-        //len = sac_recv(sac,txbuf,0);
-      // if ( len)//todo for testing
-        //{
-           // ptr = frame_startptr(txbuf);
+        len = sac_recv(sac,txbuf,0);
+       if ( len)//todo for testing
+       {
+            ptr = frame_startptr(txbuf);
 
-           // for ( i=0;i<len;i++)
-           // {
-               // USART_Send(ptr[i]);
-           // }
+           for ( i=0;i<len;i++)
+           {
+                USART_Send(ptr[i]);
+           }
 
+            USART_Send( 0xff);
+             USART_Send(0xff);
+          //sac->txbuf->length = 0;//todo for testing
+          //sac->rxbuf->length =0;//todo for testing
           led_toggle( LED_RED);
-          //sac_send( sac,txbuf,0);
-       // }
-       sac_evolve(sac,NULL);
-        hal_delay( 1000);
+           sac_send( sac,txbuf,0);
+         
+       }
+       
+        sac_evolve(sac,NULL);
 
         //len = uart_read( sac->device,buf,40,0);
         //for ( i=0;i<len;i++)

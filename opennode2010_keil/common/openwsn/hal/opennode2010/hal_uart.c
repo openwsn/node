@@ -521,7 +521,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 1:
             if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART1) & 0x7F); 
+                *pc = (USART_ReceiveData(USART1) & 0xFF); 
                 ret = 1;
             }
             else
@@ -534,7 +534,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 2:
             if ( USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART2) & 0x7F); 
+                *pc = (USART_ReceiveData(USART2) & 0xFF); 
                 ret = 1;
             }
             else
@@ -546,7 +546,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 3:
             if ( USART_GetFlagStatus(USART3, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART3) & 0x7F); 
+                *pc = (USART_ReceiveData(USART3) & 0xFF); 
                 ret = 1;
             }
             else

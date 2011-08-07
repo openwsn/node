@@ -332,7 +332,7 @@ int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
 {
 	char c = 0x00;
 	char done = 0;
-
+    slip->rx_state = SLIP_STATE_IDLE;
     while ((!iobuf_empty(input)) && (!done)) 
 	{
 		/* Output buffer full means the frame is too long. We had no better idea but to 
@@ -347,7 +347,7 @@ int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
 
 		/* get a character from input buffer to process */
         iobuf_getchar( input, &c );
-
+        
 		switch (slip->rx_state)
 		{
 		/* This's the default state of receiving mechanism. */
