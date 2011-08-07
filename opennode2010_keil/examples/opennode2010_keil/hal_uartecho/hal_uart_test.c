@@ -28,13 +28,13 @@ void main( void)
 
     while ( 1)
     {
-        //count = uart_read(uart,buf,40,0);
+        count = uart_read(uart,buf,40,0);
 
-        //if ( count)
-        //{
-            //uart_write( uart,buf,count,0);
-            //uart_putchar(uart,0xa0);//todo for testing
-        //}
+        if ( count)
+        {
+            uart_write( uart,buf,count,0);
+            led_toggle(LED_RED);
+        }
         /*
         if ( uart_getchar(uart,&ch))
         {
@@ -43,10 +43,10 @@ void main( void)
 
         }*/
 
-        if ( uart_getchar(uart,&ch))
-        {
-            uart_putchar(uart,ch);
-        }
+//        if ( uart_getchar(uart,&ch))
+//        {
+//            uart_putchar(uart,ch);
+//        }
 
     }
 }
