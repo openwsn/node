@@ -99,8 +99,8 @@ typedef struct{
     TiIoBuf * rmpbuf;
     uint8 rx_accepted;
 	TiSlipFilter *slipfilter;
-    #endif
-	
+    #endif	
+    // todo: you should allocate memory here
 }TiSioAcceptor;
 
 #ifdef CONFIG_DYNA_MEMORY
