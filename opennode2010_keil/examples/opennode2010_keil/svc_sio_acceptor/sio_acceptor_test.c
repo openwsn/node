@@ -2,10 +2,25 @@
 /**
  * Test TiSioAcceptor which contains the framing mechanism based on serial communication.
  */
+/*
 #include "apl_configall.h"
 #include <stdlib.h>
 #include <string.h>
 #include "apl_foundation.h"
+*/
+#include "apl_foundation.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include <stdlib.h>
+#include <string.h>
+#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_slipfilter.h"
+#include "../../../common/openwsn/svc/svc_sio_acceptor.h"
 
 #ifdef CONFIG_DEBUG
 #define GDEBUG
@@ -21,6 +36,21 @@
 
 #define FRAME_MEMSIZE (FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE))
 
+static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+
+TiIEEE802Frame154Descriptor m_desc;
+TiUartAdapter               m_uart;
+TiSioAcceptor               m_sac;
+TiSlipFilter                m_slip;
+
+char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
+char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+#endif
+
 static void sio_acceptor_sender(void);
 static void sio_acceptor_echo(void);
 static void process( TiFrame * request, TiFrame * response );
@@ -29,8 +59,9 @@ static void dumpframe( TiFrame * f );
 
 int main(void)
 {
-    // sio_acceptor_sender();
-    sio_acceptor_echo();
+    sio_acceptor_sender();
+    //sio_acceptor_echo();
+    return 0;
 }
 
 /**
@@ -38,13 +69,19 @@ int main(void)
  */
 void sio_acceptor_sender(void)
 {
-    char m_txbuf[FRAME_MEMSIZE];
-    TiUartAdapter m_uart;
-    TiSioAcceptor m_sioacceptor;
+    //char m_txbuf[FRAME_MEMSIZE];
+    //TiUartAdapter m_uart;
+    //TiSioAcceptor m_sioacceptor;
     
     TiFrame * txbuf;
     TiUartAdapter * uart;
     TiSioAcceptor * sio;
+    TiSlipFilter       * slip;
+
+    TiIoBuf *sio_buf_tx;
+    TiIoBuf *sio_buf_rx;
+    TiIoBuf *sio_buf_tmpx;
+    TiIoBuf *sio_buf_rmpx;
 
     /* step 1: target board initialization */
      
@@ -61,8 +98,29 @@ void sio_acceptor_sender(void)
     uart = uart_construct( ( void*)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, 2, 9600, 8, 1, 0);
     rtl_init( (void *)uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar, hal_assert_report );
+    
+    sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
+    sio_buf_rx = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+    sio_buf_tmpx = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+    sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+#endif
 
-    sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
+    //sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
+
+    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+
+    sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
+    sio = sac_open( sio,slip,uart);
+
+    sio->txbuf = sio_buf_tx;
+    sio->rxbuf = sio_buf_rx;
+
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+    sio->rmpbuf = sio_buf_rmpx;
+    sio->tmpbuf = sio_buf_tmpx;
+#endif
+
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_MEMSIZE, 3, 20, 2 );
     
     while(1)  
@@ -88,15 +146,21 @@ void sio_acceptor_sender(void)
  */
 void sio_acceptor_echo(void)
 {
-    char m_txbuf[FRAME_MEMSIZE];
-    char m_rxbuf[FRAME_MEMSIZE];
-    TiUartAdapter m_uart;
-    TiSioAcceptor m_sioacceptor;
+    //char m_txbuf[FRAME_MEMSIZE];
+    //char m_rxbuf[FRAME_MEMSIZE];
+    //TiUartAdapter m_uart;
+    //TiSioAcceptor m_sioacceptor;
     
     TiFrame * rxbuf;
     TiFrame * txbuf;
     TiUartAdapter * uart;
     TiSioAcceptor * sio;
+    TiSlipFilter  * slip;
+
+    TiIoBuf *sio_buf_tx;
+    TiIoBuf *sio_buf_rx;
+    TiIoBuf *sio_buf_tmpx;
+    TiIoBuf *sio_buf_rmpx;
 
     /* step 1: target board initialization */
      
@@ -114,7 +178,29 @@ void sio_acceptor_echo(void)
     uart = uart_open(uart, 2, 9600, 8, 1, 0);
     rtl_init( (void *)uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar, hal_assert_report );
 
-    sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
+    sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
+    sio_buf_rx = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+    sio_buf_tmpx = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+    sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+#endif
+
+
+    //sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
+
+    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+
+    sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
+    sio = sac_open( sio,slip,uart);
+
+    sio->txbuf = sio_buf_tx;
+    sio->rxbuf = sio_buf_rx;
+
+#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+    sio->rmpbuf = sio_buf_rmpx;
+    sio->tmpbuf = sio_buf_tmpx;
+#endif
+
     rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_MEMSIZE, 0, 0, 0 );
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_MEMSIZE, 3, 20, 2 );
     
@@ -123,7 +209,10 @@ void sio_acceptor_echo(void)
         if (frame_empty(rxbuf))
         {
             if (sac_recv(sio, rxbuf, 0x00) > 0)
+            {
                 process( rxbuf, txbuf );
+                led_toggle( LED_RED);
+            }
         }
         
         if (!frame_empty(txbuf))

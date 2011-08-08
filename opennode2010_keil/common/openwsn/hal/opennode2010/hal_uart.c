@@ -1,19 +1,57 @@
 
+/***********************************************************************************
+  Copyright 2007 Texas Instruments Incorporated. All rights reserved.
+
+  IMPORTANT: Your use of this Software is limited to those specific rights
+  granted under the terms of a software license agreement between the user
+  who downloaded the software, his/her employer (which must be your employer)
+  and Texas Instruments Incorporated (the "License").  You may not use this
+  Software unless you agree to abide by the terms of the License. The License
+  limits your use, and you acknowledge, that the Software may not be modified,
+  copied or distributed unless embedded on a Texas Instruments microcontroller
+  or used solely and exclusively in conjunction with a Texas Instruments radio
+  frequency transceiver, which is integrated into your product.  Other than for
+  the foregoing purpose, you may not use, reproduce, copy, prepare derivative
+  works of, modify, distribute, perform, display or sell this Software and/or
+  its documentation for any purpose.
+
+  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
+  PROVIDED 揂S IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
+  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
+  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
+  NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR OTHER
+  LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
+  INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE
+  OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT
+  OF SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
+  (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
+
+  Should you have any questions regarding your right to use this Software,
+  contact Texas Instruments Incorporated at www.TI.com. 
+***********************************************************************************/
+
+/***********************************************************************************
+  Filename:     hal_uart.c
+
+  Description:  hal UART library
+
+***********************************************************************************/
+
+/***********************************************************************************
+* INCLUDES
+*
 #include "hal_configall.h"
-#include <stdio.h> 
-#include <stdlib.h>
-#include <string.h>
 #include "hal_foundation.h"
-#include "hal_targetboard.h"
 #include "hal_uart.h"
+#include "hal_targetboard.h"
 #include "util_buffer.h"
 #include "hal_cpu.h"
 #include "hal_mcu.h"
 
-#include "hal_device.h"
-#include "hal_led.h"
-#include "hal_assert.h"
-
+/***********************************************************************************
+* LOCAL VARIABLES
+*
 static ringBuf_t rbRxBuf;
 
 #ifndef HAL_DIRECT_UART_TX
@@ -28,13 +66,13 @@ static ringBuf_t rbTxBuf;
 * @param   none
 *
 * @return  none
-*/
+*
 static void halUartRxIntEnable(void)
 {
 	// todo
 	/*
     IE2 |= UCA0RXIE;
-	*/
+	*
 }
 
 
@@ -46,7 +84,7 @@ static void halUartRxIntEnable(void)
 * @param   none
 *
 * @return  none
-*/
+*
 #ifndef HAL_DIRECT_UART_TX
 static void halUartTxIntEnable(void)
 {
@@ -63,7 +101,7 @@ static void halUartTxIntEnable(void)
 * @param   none
 *
 * @return  none
-*/
+*
 static void halUartRxIntDisable(void)
 {
     //IE2 &= ~UCA0RXIE;
@@ -78,7 +116,7 @@ static void halUartRxIntDisable(void)
 * @param   none
 *
 * @return  none
-*/
+*
 #ifndef HAL_DIRECT_UART_TX
 static void halUartTxIntDisable(void)
 {
@@ -94,7 +132,7 @@ static void halUartTxIntDisable(void)
 * @param   none
 *
 * @return  none
-*/
+*
 static uint8 halUartRxGetByte(void)
 {
     return 0;//return UCA0RXBUF; 
@@ -110,7 +148,7 @@ static uint8 halUartRxGetByte(void)
 *          uint8 options - this parameter is ignored
 *
 * @return  none
-*/
+*
 void halUartInit(uint16 baudrate, uint8 options)
 {
 	USART_InitTypeDef USART_InitStructure;
@@ -168,7 +206,7 @@ uint8 USART_Get( uint8 ch)
 *          uint16 length - number of bytes to write
 *
 * @return  uint16 - number of bytes written
-*/
+*
 uint16 halUartWrite(const uint8* buf, uint16 length)
 {
 /*
@@ -179,7 +217,7 @@ uint16 halUartWrite(const uint8* buf, uint16 length)
         UCA0TXBUF = buf[i];            // Output character
     }
     return (i+1);
-*/
+*
 	return 0;
 }
 
@@ -205,7 +243,7 @@ uint16 halUartBufferedWrite(const uint8* buf, uint16 length)
     // UCA0TXIFG is set after Power Up Clear of MSP430
     halUartTxIntEnable();
     return nBytes;
-} */
+} *
 #endif
 
 /***********************************************************************************
@@ -217,7 +255,7 @@ uint16 halUartBufferedWrite(const uint8* buf, uint16 length)
 *          uint16 length - number of bytes to read
 *
 * @return  none
-*/
+*
 uint16 halUartRead(uint8* buf, uint16 length)
 {
     return bufGet(&rbRxBuf, (uint8 *)buf, length);
@@ -232,7 +270,7 @@ uint16 halUartRead(uint8* buf, uint16 length)
 * @param   none
 *
 * @return  uint8
-*/
+*
 uint16 halUartGetNumRxBytes(void)
 {
     return bufNumBytes(&rbRxBuf);
@@ -248,7 +286,7 @@ uint16 halUartGetNumRxBytes(void)
 *                         FALSE to signal not ready to receive on UART
 *
 * @return  none
-*/
+*
 void halUartEnableRxFlow(uint8 enable)
 {
 /*
@@ -260,7 +298,7 @@ void halUartEnableRxFlow(uint8 enable)
     else {
         HAL_RTS_SET();
     }
-*/
+*
 }
 
 
@@ -276,7 +314,7 @@ void halUartEnableRxFlow(uint8 enable)
 /*
 #pragma vector=USCIAB0RX_VECTOR
 __interrupt void usciA0Rx_ISR(void)
-*/
+*
 // todo interrupt ISR
 void usciA0Rx_ISR(void)
 {
@@ -284,7 +322,7 @@ void usciA0Rx_ISR(void)
     uint8 ch = halUartRxGetByte();
     bufPut(&rbRxBuf,&ch,1);
     __low_power_mode_off_on_exit();
-*/
+*
 }
 
 #ifndef HAL_DIRECT_UART_TX
@@ -296,7 +334,7 @@ void usciA0Rx_ISR(void)
 * @param   none
 *
 * @return  none
-*/
+*
 //#pragma vector=USCIAB0TX_VECTOR
 //__interrupt void usciB0Tx_ISR(void)
 void usciB0Tx_ISR(void)
@@ -312,15 +350,27 @@ void usciB0Tx_ISR(void)
         halUartTxIntDisable();
     }
     __low_power_mode_off_on_exit();
-*/	
+*	
 }
 
 #endif
+*/
 
 /*
 *目前用的都是查询方式，中断方式还没有解决
 */
 
+#include "hal_configall.h"
+#include <stdio.h> 
+#include <stdlib.h>
+#include <string.h>
+#include "hal_foundation.h"
+#include "hal_device.h"
+#include "hal_targetboard.h"
+#include "hal_led.h"
+#include "hal_assert.h"
+#include "hal_cpu.h"
+#include "hal_uart.h"
 
 
 
@@ -471,7 +521,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 1:
             if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART1) & 0x7F); 
+                *pc = (USART_ReceiveData(USART1) & 0xFF); 
                 ret = 1;
             }
             else
@@ -484,7 +534,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 2:
             if ( USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART2) & 0x7F); 
+                *pc = (USART_ReceiveData(USART2) & 0xFF); 
                 ret = 1;
             }
             else
@@ -496,7 +546,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         case 3:
             if ( USART_GetFlagStatus(USART3, USART_FLAG_RXNE) != RESET)
             {
-                *pc = (USART_ReceiveData(USART3) & 0x7F); 
+                *pc = (USART_ReceiveData(USART3) & 0xFF); 
                 ret = 1;
             }
             else
@@ -827,7 +877,6 @@ void halUartInit(uint16 baudrate, uint8 options)
     USART_Init( USART2,&USART_InitStructure);
     USART_Cmd( USART2,ENABLE);
 }
-
 
 uint8 USART_Send( uint8 ch)
 {

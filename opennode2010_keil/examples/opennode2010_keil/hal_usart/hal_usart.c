@@ -3,6 +3,7 @@
 #include "apl_foundation.h"
 
 USART_InitTypeDef USART_InitStructure;
+USART_ClockInitTypeDef USART_ClockInitStructure;
 NVIC_InitTypeDef NVIC_InitStructure;
 
 /*
@@ -158,7 +159,7 @@ int main( void)
 	RCC_Configuration();
 	GPIO_Configuration();
 
-	USART_InitStructure.USART_BaudRate = 9600;
+	USART_InitStructure.USART_BaudRate = 19200;
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -193,7 +194,7 @@ int main( void)
 		while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
 			{
 		    }
-		ch = (USART_ReceiveData(USART2) & 0x7F); 
+		ch = (USART_ReceiveData(USART2) & 0xFF); 
 
         led_toggle(LED_RED);
 

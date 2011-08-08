@@ -60,7 +60,7 @@ static void _NVIC_Configuration(void);
 * Description    : Configures System Clocks
 *******************************************************************************/
 void _RCC_Configuration(void)
-{
+{/*todo for testing
   RCC_DeInit();
   RCC_HSEConfig(RCC_HSE_ON);
   HSEStartUpStatus = RCC_WaitForHSEStartUp();
@@ -79,6 +79,7 @@ void _RCC_Configuration(void)
   }
    
   /* Enable GPIOA|B*/
+    /*todo for testing
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB,ENABLE);
 
   //RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
@@ -92,10 +93,13 @@ void _RCC_Configuration(void)
   /* ADC1 clock enable */
   //RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
   /* GPIOA, GPIOB and SPI1 clock enable */
+    /*todo for testing
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
   /* SPI2 Periph clock enable */
+    /*todo for testing
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+  todo for testing*/
 }
 
 /*******************************************************************************
