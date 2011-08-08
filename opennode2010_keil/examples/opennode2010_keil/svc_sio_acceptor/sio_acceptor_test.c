@@ -59,8 +59,8 @@ static void dumpframe( TiFrame * f );
 
 int main(void)
 {
-    //sio_acceptor_sender();
-    sio_acceptor_echo();
+    sio_acceptor_sender();
+    //sio_acceptor_echo();
     return 0;
 }
 
@@ -209,7 +209,10 @@ void sio_acceptor_echo(void)
         if (frame_empty(rxbuf))
         {
             if (sac_recv(sio, rxbuf, 0x00) > 0)
+            {
                 process( rxbuf, txbuf );
+                led_toggle( LED_RED);
+            }
         }
         
         if (!frame_empty(txbuf))
