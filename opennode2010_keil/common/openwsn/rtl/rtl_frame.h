@@ -115,7 +115,7 @@ typedef struct{
  * @return An memory pointer to the TiFrame object created. Or return NULL when failed.
  */
 #ifdef CONFIG_DYNA_MEMORY
-TiFrame * frame_create( uintx capacity );
+TiFrame * frame_create( uintx buffercapacity, uintx init_layerindex, uintx init_layerstart, uintx init_layercapacity );
 #endif
 
 /** free a frame created by frame_create() */

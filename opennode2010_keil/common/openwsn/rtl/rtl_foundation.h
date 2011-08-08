@@ -26,8 +26,7 @@
  *
  ******************************************************************************/
 
-
-/*******************************************************************************
+/*****************************************************************************
  * rtl_foundation
  *
  * system wide definitions for runtime library (RTL)
@@ -67,10 +66,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifndef min
-#define min(x,y) (((x)<(y))?(x):(y))
 #endif
 
 /**
@@ -214,10 +209,6 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 #define ADDR(arr) (&((arr)[0]))
 #define ADDRAT(arr,n) (&(arr[0])+(n))
 
-#ifdef CONFIG_COMPILER_BORLAND
-//#define max(a,b) (((a)>(b)) ? (a) : (b))
-//#define min(a,b) (((a)<(b)) ? (a) : (b))
-#endif
 
 /**
  * TiHandle is used to save an object handle. The handle can be a unique identifier 

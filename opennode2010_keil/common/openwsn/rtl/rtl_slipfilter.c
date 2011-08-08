@@ -179,6 +179,9 @@
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
 #include <string.h>
+#ifdef CONFIG_DYNA_MEMORY
+#include <stdlib.h>
+#endif
 #include "rtl_slipfilter.h"
 #include "rtl_iobuf.h"
 
@@ -407,8 +410,11 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 	 * The caller of this function should guarantee this. 
 	 */
 	if (slip->rx_state == SLIP_STATE_ACCEPTTED)
+    {
+        rx_state == SLIP_STATE_IDLE;
 		return iobuf_length(output); /* may return 0 */
-	else
+	}
+    else
 		return 0;
 }
 

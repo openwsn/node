@@ -1,4 +1,5 @@
 #include "rtl_configall.h"
+#include <stdlib.h>
 #include "rtl_foundation.h"
 
 TiFunAssertReport   g_assert_report = NULL;
@@ -18,8 +19,8 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
     g_dbc_getchar = debugio_getchar;
 }
 
-void rtl_assert_report( bool cond, char * file, uint16 line )
+void rtl_assert_report( bool cond, char * file, int line )
 {
-    if (g_assert_report)
+    if (g_assert_report != NULL)
         g_assert_report( cond, file, line );
 }

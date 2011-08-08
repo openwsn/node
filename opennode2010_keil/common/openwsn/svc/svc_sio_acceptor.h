@@ -116,10 +116,17 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart )
 void sac_free( TiSioAcceptr * sac );
 #endif
 
+#define sac_send(sac,buf,option) sac_framesend((sac),(buf),(option))
+#define sac_recv(sac,buf,option) sac_framerecv((sac),(buf),(option))
+
 TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
-TiIoResult sac_send( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
-TiIoResult sac_recv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_iobufrecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_rawrecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
 void sac_evolve( TiSioAcceptor * sac, TiEvent * event ); 
 
 #ifdef __cplusplus

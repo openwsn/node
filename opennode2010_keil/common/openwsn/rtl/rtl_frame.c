@@ -100,7 +100,7 @@ TiFrame * frame_create( uintx buffercapacity, uintx init_layerindex, uintx init_
     buf = (char *)malloc( memsize );
     rtl_assert( buf != NULL );
     if (buf != NULL);
-        frame_open( buf, buffercapacity, init_layerindex, init_layerstart, layer_layercapacity );
+        frame_open( buf, buffercapacity, init_layerindex, init_layerstart, init_layercapacity );
 
     return (TiFrame *)buf;
 }

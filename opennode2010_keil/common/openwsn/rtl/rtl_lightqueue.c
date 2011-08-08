@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -50,6 +50,7 @@
 #endif
 
 #include "rtl_foundation.h"
+#include "rtl_assert.h"
 #include "rtl_lightqueue.h"
 
 TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 datasize )
