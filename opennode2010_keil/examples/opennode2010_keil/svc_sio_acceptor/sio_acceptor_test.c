@@ -59,8 +59,8 @@ static void dumpframe( TiFrame * f );
 
 int main(void)
 {
-    sio_acceptor_sender();
-    //sio_acceptor_echo();
+    //sio_acceptor_sender();
+    sio_acceptor_echo();
     return 0;
 }
 
