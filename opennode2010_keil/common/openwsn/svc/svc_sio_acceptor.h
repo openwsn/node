@@ -99,8 +99,8 @@ typedef struct{
     TiIoBuf * rmpbuf;
     uint8 rx_accepted;
 	TiSlipFilter *slipfilter;
-    #endif
-	
+    #endif	
+    // todo: you should allocate memory here
 }TiSioAcceptor;
 
 #ifdef CONFIG_DYNA_MEMORY
@@ -111,12 +111,19 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart );
 void sac_free( TiSioAcceptor * sac );
 #endif
 
+#define sac_send(sac,buf,option) sac_framesend((sac),(buf),(option))
+#define sac_recv(sac,buf,option) sac_framerecv((sac),(buf),(option))
+
 TiSioAcceptor * sac_construct( char * buf, uint16 size );
 
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip, TiUartAdapter * uart );//TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize,TiSlipFilter *slip, TiUartAdapter * uart );
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip, TiUartAdapter * uart );//TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
-uintx sac_send( TiSioAcceptor * sac, TiFrame * buf, uintx option ); 
-uintx sac_recv( TiSioAcceptor * sac, TiFrame * buf,uintx option ); 
+TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option );//TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, uintx len, TiIoOption option );//TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_iobufrecv( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option );//TiIoResult sac_iobufrecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
+TiIoResult sac_rawrecv( TiSioAcceptor * sac, char * buf, uintx size, TiIoOption option );//TiIoResult sac_rawrecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
 void sac_evolve( TiSioAcceptor * sac, TiEvent * event ); 
 
 #ifdef __cplusplus

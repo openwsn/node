@@ -25,7 +25,6 @@
  ******************************************************************************/
 
 #include "svc_configall.h"
-#include "svc_foundation.h"
 #ifdef CONFIG_DYNA_MEMORY
   #include <stdlib.h>
 #endif
@@ -113,7 +112,7 @@ void sac_close( TiSioAcceptor * sac )
 /**
  * Send a frame through serial communication through the TiSioAcceptor object. 
  */
-uintx sac_send( TiSioAcceptor * sac, TiFrame * buf, uintx option )
+TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 {
 	uintx count=0;
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
@@ -132,18 +131,16 @@ uintx sac_send( TiSioAcceptor * sac, TiFrame * buf, uintx option )
 	{
 		//tmpbuf = iobuf_construct((void *)(&mtmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
 		iobuf_write(sac->tmpbuf, frame_startptr(buf), frame_length(buf));
-		count = slip_filter_tx_handler( sac->slipfilter, sac->tmpbuf, sac->txbuf );
+		count = slip_filter_txhandler( sac->slipfilter, sac->tmpbuf, sac->txbuf );
 		iobuf_clear(sac->tmpbuf);
 	}
 	#endif
 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
-
 	if (iobuf_empty(sac->txbuf))
 	{
 		count = iobuf_write(sac->txbuf, frame_startptr(buf), frame_length(buf));
 	}
-    
 	#endif
 
 	sac_evolve(sac,NULL);
@@ -152,9 +149,93 @@ uintx sac_send( TiSioAcceptor * sac, TiFrame * buf, uintx option )
 }
 
 /**
+ * Send a frame through serial communication through the TiSioAcceptor object. 
+ */
+TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option )
+{
+	TiIoResult count=0;
+
+    hal_assert( sac != NULL );
+
+	/* @attention
+	 * @warning
+	 * The following assumes io->txbuf can accept all data inputed from parameter "buf". 
+	 * If not, then the frame data will be truncated.
+	 */
+	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_empty(sac->txbuf))
+	{
+		count = slip_filter_txhandler( sac->slipfilter, buf, sac->txbuf );
+	}
+	#endif
+
+	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_empty(sac->txbuf))
+	{
+		count = iobuf_write(sac->txbuf, iobuf_ptr(buf), iobuf_length(buf));
+	}
+	#endif
+
+	sac_evolve(sac, NULL);
+
+	return count;
+}
+
+/**
+ * Send a frame through the rs232 data channel. 
+ *
+ * @param buf Contains the frame to be sent.
+ * @param len Length of the frame tobe send.
+ * @param option Reserved. It should be 0x00 currently.
+ * 
+ * @return The data length successfully sent. It should equal to parameter "len". 
+ *	But it may be not equal if some exception occurs. Attention the internal io->rxbuf
+ *  should be large enough to accept all the buf data inputed.
+ */
+/**
+ * Send a frame through serial communication through the TiSioAcceptor object. 
+ */
+TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, uintx len, TiIoOption option )
+{
+	TiIoResult count=0;
+	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	TiIoBuf * tmpbuf;
+	char tmpbuf_block[CONFIG_SIOACCEPTOR_TXBUF_CAPACITY];
+	#endif
+
+    hal_assert( sac != NULL );
+
+	/* @attention
+	 * @warning
+	 * The following assumes io->txbuf can accept all data inputed from parameter "buf". 
+	 * If not, then the frame data will be truncated.
+	 */
+	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_empty(sac->txbuf))
+	{
+		tmpbuf = iobuf_open( &tmpbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
+		iobuf_write(tmpbuf, frame_startptr(buf), frame_length(buf));
+		count = slip_filter_txhandler( sac->slipfilter, tmpbuf, sac->txbuf );
+		iobuf_close(tmpbuf);
+	}
+	#endif
+
+	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_empty(sac->txbuf))
+	{
+		count = iobuf_write(sac->txbuf, frame_startptr(buf), frame_length(buf));
+	}
+	#endif
+
+	sac_evolve(sac, NULL);
+
+	return count;
+}
+
+/**
  * Retrieve the first frame pending inside the TiSioAcceptor object.
  */
-uintx sac_recv( TiSioAcceptor * sac, TiFrame * buf, uintx option )
+TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 {
 	uintx count=0;
 	
@@ -187,6 +268,77 @@ uintx sac_recv( TiSioAcceptor * sac, TiFrame * buf, uintx option )
 
 	return count;
 }
+
+/**
+ * Retrieve the first frame pending inside the TiSioAcceptor object.
+ */
+TiIoResult sac_iobufrecv( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option )
+{
+	TiIoResult count=0;
+	
+    hal_assert( sac != NULL );
+	
+	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	if (sac->rx_accepted)
+	{
+		hal_assert(iobuf_length(sac->rxbuf) > 0);
+		if (iobuf_length(sac->rxbuf) > 0)
+		{
+			count = iobuf_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
+			iobuf_clear(sac->rxbuf);
+		}
+		sac->rx_accepted = 0;
+	}
+	#endif
+
+	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_length(sac->rxbuf) > 0)
+	{
+		count = iobuf_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
+		iobuf_clear(sac->rxbuf);
+	}
+	#endif
+
+	sac_evolve(sac, NULL);
+
+	return count;
+}
+
+/**
+ * Retrieve the first frame pending inside the TiSioAcceptor object.
+ */
+TiIoResult sac_rawrecv( TiSioAcceptor * sac, char * buf, uintx size, TiIoOption option )
+{
+	TiIoResult count=0;
+	
+    hal_assert( sac != NULL );
+	
+	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	if (sac->rx_accepted)
+	{
+		hal_assert(iobuf_length(sac->rxbuf) > 0);
+		if (iobuf_length(sac->rxbuf) > 0)
+		{
+			count = iobuf_read(sac->rxbuf, buf, size);
+			iobuf_clear(sac->rxbuf);
+		}
+		sac->rx_accepted = 0;
+	}
+	#endif
+
+	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
+	if (iobuf_length(sac->rxbuf) > 0)
+	{
+			count = iobuf_read(sac->rxbuf, buf, size);
+			iobuf_clear(sac->rxbuf);
+	}
+	#endif
+
+	sac_evolve(sac, NULL);
+
+	return count;
+}
+
 
 void sac_evolve( TiSioAcceptor * sac, TiEvent * event )
 {
@@ -249,7 +401,7 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		/* slip_filter_rx_handler return a positive value means an frame found. The frame
 		 * is placed in io->rxbuf 
 		 */
-		if (slip_filter_rx_handler(sac->slipfilter, sac->rmpbuf, sac->rxbuf) > 0)
+		if (slip_filter_rxhandler(sac->slipfilter, sac->rmpbuf, sac->rxbuf) > 0)
 		{
 			/* set the rx_accept flag to indicate an entire frame is successfully identified
 			 * and be placed inside io->rxbuf. */

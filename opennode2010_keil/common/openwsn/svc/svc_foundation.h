@@ -1,3 +1,5 @@
+#ifndef _SVC_FOUNDATION_H_4278_
+#define _SVC_FOUNDATION_H_4278_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -23,9 +25,6 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-
-#ifndef _SVC_FOUNDATION_H_4278_
-#define _SVC_FOUNDATION_H_4278_
 
 /*****************************************************************************
  * @author zhangwei on 2006-08-20

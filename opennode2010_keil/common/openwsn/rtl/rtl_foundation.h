@@ -26,8 +26,7 @@
  *
  ******************************************************************************/
 
-
-/*******************************************************************************
+/*****************************************************************************
  * rtl_foundation
  *
  * system wide definitions for runtime library (RTL)
@@ -134,7 +133,7 @@ extern "C" {
 #endif
 
 extern TiFunAssertReport g_assert_report;
-void rtl_assert_report( bool cond, char * file, uint16 line );
+void rtl_assert_report( bool cond, char * file, int line );//void rtl_assert_report( bool cond, char * file, uint16 line );
 
 #ifdef __cplusplus
 }
@@ -214,10 +213,6 @@ void rtl_init( void * io_provider, TiFunDebugIoPutChar debugio_putchar, TiFunDeb
 #define ADDR(arr) (&((arr)[0]))
 #define ADDRAT(arr,n) (&(arr[0])+(n))
 
-#ifdef CONFIG_COMPILER_BORLAND
-//#define max(a,b) (((a)>(b)) ? (a) : (b))
-//#define min(a,b) (((a)<(b)) ? (a) : (b))
-#endif
 
 /**
  * TiHandle is used to save an object handle. The handle can be a unique identifier 

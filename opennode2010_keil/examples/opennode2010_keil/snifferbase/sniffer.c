@@ -124,6 +124,7 @@ typedef struct{
   uint32 dropped;
 }TiSnifferStatistics;
 
+//TiCc2520Adapter m_cc;  //todo已在cc2520.c中定义了
 TiUartAdapter m_uart;
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
@@ -187,6 +188,7 @@ void nss_execute(void)
     char *pc;
 	#endif
 
+	//target_init();
 	led_open();
 	led_on( LED_RED );
 	hal_delay( 500 );
@@ -216,7 +218,8 @@ void nss_execute(void)
 #endif
 
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    //slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));//
+    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
 
     sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
@@ -237,11 +240,14 @@ void nss_execute(void)
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
     sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+
+	
 	memset( &stat, 0x00, sizeof(stat) );
     uart_write( uart,msg,strlen( msg),0x00);
 
 	while(1) 
 	{
+		// Query arrived frames from the wireless network communication component
 		
 		len = 0;
 		count = 0;
@@ -254,6 +260,11 @@ void nss_execute(void)
             frame_setlength( nio_rxbuf, len );
 			stat.received ++;
 			
+			// @attention: The supervisory upper computer should retrieve the frames
+			// out as soon as possible. If there're too many frames inside the queue,
+			// then the later frames will failed to be queued, and it will be dropped
+			// naturely by the fmque_pushback() function. 
+			//
 			if (fmque_pushback(nio_rxque, nio_rxbuf) == 0)
 				stat.dropped ++;
 			
@@ -266,6 +277,8 @@ void nss_execute(void)
 		
 		#ifndef CONFIG_ACTIVE_SENDING_MODE
 		
+		// Query arrived commands from the serial network communication
+		// component. 
 		
 		count = 0;
 		len = 0;

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -179,6 +179,9 @@
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
 #include <string.h>
+#ifdef CONFIG_DYNA_MEMORY
+#include <stdlib.h>
+#endif
 #include "rtl_slipfilter.h"
 #include "rtl_iobuf.h"
 
@@ -223,7 +226,7 @@ void slip_filter_free( TiSlipFilter * slip )
 }
 #endif
 
-TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size )
+TiSlipFilter * slip_filter_open( TiSlipFilter * slip, uintx size )
 {
 	rtl_assert( sizeof(TiSlipFilter) <= size ); 
 	memset( slip, 0x00, sizeof(TiSlipFilter) );
@@ -231,7 +234,7 @@ TiSlipFilter * slip_filter_construct( TiSlipFilter * slip, uintx size )
 	return slip;
 }
 
-void slip_filter_destroy( TiSlipFilter * slip )
+void slip_filter_close( TiSlipFilter * slip )
 {
 	slip = slip;
 }
@@ -254,10 +257,10 @@ void slip_filter_destroy( TiSlipFilter * slip )
  *		May return 0 or negetive value if failed. Attention the data inside input 
  *      buffer will be cleared if they were processed successfully into output buffer.
  */
-int slip_filter_tx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
+int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
 {
 	int count = 0;
-	char c;
+	unsigned char c;
 
     /* send an initial END character to flush out any data that may
      * have accumulated in the receiver due to line noise
@@ -328,11 +331,10 @@ int slip_filter_tx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
  *      > 0				Indicate there's an entire frame inside output buffer. 
  *		0               not found yet. but there maybe data already pending inside output buffer.
  */
-int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
+int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
 {
-	char c = 0x00;
+	unsigned char c = 0x00;
 	char done = 0;
-    slip->rx_state = SLIP_STATE_IDLE;
     while ((!iobuf_empty(input)) && (!done)) 
 	{
 		/* Output buffer full means the frame is too long. We had no better idea but to 
@@ -347,7 +349,7 @@ int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
 
 		/* get a character from input buffer to process */
         iobuf_getchar( input, &c );
-        
+
 		switch (slip->rx_state)
 		{
 		/* This's the default state of receiving mechanism. */
@@ -407,147 +409,12 @@ int slip_filter_rx_handler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outp
 	 * The caller of this function should guarantee this. 
 	 */
 	if (slip->rx_state == SLIP_STATE_ACCEPTTED)
+    {
+        slip->rx_state = SLIP_STATE_IDLE;
 		return iobuf_length(output); /* may return 0 */
-	else
+	}
+    else
 		return 0;
 }
 
-
-
-//----------------------------------------------------------------------------------
-// The following are obsolete functions defined in RFC
-
-
-#define send_char(x) (x)
-#define recv_char() (ESC)
-
-/** 
- * Sends a packet of length "len", starting at location "p".
- * 
- * Reference
- * - A NONSTANDARD FOR TRANSMISSION OF IP DATAGRAMS OVER SERIAL LINES: SLIP
- *   http://tools.ietf.org/html/rfc1055
- */
-void slip_send_packet(char * p, int len)
-{
-    /* send an initial END character to flush out any data that may
-     * have accumulated in the receiver due to line noise
-     */
-    send_char(END);
-
-    /* for each byte in the packet, send the appropriate character
-     * sequence
-     */
-    while(len--)
-	{
-        switch(*p){
-        /* if it's the same code as an END character, we send a
-         * special two character code so as not to make the
-         * receiver think we sent an END
-         */
-        case END:
-			send_char(ESC);
-            send_char(ESC_END);
-            break;
-
-        /* if it's the same code as an ESC character,
-         * we send a special two character code so as not
-         * to make the receiver think we sent an ESC
-         */
-        case ESC:
-            send_char(ESC);
-            send_char(ESC_ESC);
-            break;
-
-
-        /* otherwise, we just send the character
-        */
-        default:
-            send_char(*p);
-        }
-
-        p++;
-	}
-
-    /* tell the receiver that we're done sending the packet */
-    send_char(END);
-}
-
-/**
- * receives a packet into the buffer located at "p".
- *      If more than len bytes are received, the packet will
- *      be truncated.
- *      Returns the number of bytes stored in the buffer.
- * 
- * @todo: you'd better discard the frame if its length is too long.
- *     we should NOT allow such a frame lead to unexpect errors in some critical system.
- */
-int slip_recv_packet(char * p, int len)
-{
-    char c;
-    int received = 0;
-
-    /* sit in a loop reading bytes until we put together
-    * a whole packet.
-    * Make sure not to copy them into the packet if we
-    * run out of room.
-    */
-    while(1) 
-	{
-        /* get a character to process */
-        c = recv_char();
-
-        /* handle bytestuffing if necessary */
-        switch(c) 
-		{
-
-        /* if it's an END character then we're done with
-         * the packet
-         */
-        case END:
-            /* a minor optimization: if there is no
-             * data in the packet, ignore it. This is
-             * meant to avoid bothering IP with all
-             * the empty packets generated by the
-             * duplicate END characters which are in
-             * turn sent to try to detect line noise.
-             */
-            if(received)
-				return received;
-            else
-                break;
-
-        /* if it's the same code as an ESC character, wait
-         * and get another character and then figure out
-         * what to store in the packet based on that.
-         */
-        case ESC:
-			c = recv_char();
-
-            /* if "c" is not one of these two, then we
-             * have a protocol violation.  The best bet
-             * seems to be to leave the byte alone and
-             * just stuff it into the packet
-             */
-            switch(c) 
-			{
-            case ESC_END:
-				c = END;
-                break;
-            case ESC_ESC:
-                c = ESC;
-                break;
-            }
-
-        /* here we fall into the default handler and let
-        * it store the character for us
-        */
-        default:
-            if(received < len)
-			{
-				p[received++] = c;
-			}
-        }
-	}
-}
 
