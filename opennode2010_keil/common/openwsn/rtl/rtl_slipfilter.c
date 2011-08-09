@@ -341,7 +341,6 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
      */
 	unsigned char c = 0x00;
 	char done = 0;
-
     while ((!iobuf_empty(input)) && (!done)) 
 	{
 		/* Output buffer full means the frame is too long. We had no better idea but to 

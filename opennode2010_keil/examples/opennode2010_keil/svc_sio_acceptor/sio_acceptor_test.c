@@ -108,7 +108,7 @@ void sio_acceptor_sender(void)
 
     //sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
 
     sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
     sio = sac_open( sio,slip,uart);
@@ -188,7 +188,7 @@ void sio_acceptor_echo(void)
 
     //sio = sac_open((void *)(&m_sioacceptor), sizeof(TiSioAcceptor), uart);
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
 
     sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
     sio = sac_open( sio,slip,uart);

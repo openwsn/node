@@ -54,6 +54,7 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart )
 #endif
 
 #ifdef CONFIG_DYNA_MEMORY
+void sac_free( TiSioAcceptor * sac )
 void sac_free( TiSioAcceptr * sac )
 {
 	if (sac != NULL)
@@ -64,6 +65,7 @@ void sac_free( TiSioAcceptr * sac )
 }
 #endif
 
+TiSioAcceptor * sac_construct( char * buf, uint16 size )//todo for testing
 TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart )
 {
 	rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
@@ -148,14 +150,14 @@ TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option 
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = slip_filter_txhandler( &sac->slipfilter, buf, sac->txbuf );
+		count = slip_filter_txhandler( sac->slipfilter, buf, sac->txbuf );
 	}
 	#endif
 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = iobuf_write(io->txbuf, iobuf_ptr(buf), iobuf_length(buf));
+		count = iobuf_write(sac->txbuf, iobuf_ptr(buf), iobuf_length(buf));
 	}
 	#endif
 
@@ -178,7 +180,7 @@ TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option 
 /**
  * Send a frame through serial communication through the TiSioAcceptor object. 
  */
-TiIoResult sac_rawsend( TiSioAcceptor * sac, char * buf, uintx len, TiIoOption option )
+TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, uintx len, TiIoOption option )
 {
 	TiIoResult count=0;
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
@@ -198,7 +200,7 @@ TiIoResult sac_rawsend( TiSioAcceptor * sac, char * buf, uintx len, TiIoOption o
 	{
 		tmpbuf = iobuf_open( &tmpbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
 		iobuf_write(tmpbuf, frame_startptr(buf), frame_length(buf));
-		count = slip_filter_txhandler( &sac->slipfilter, tmpbuf, sac->txbuf );
+		count = slip_filter_txhandler( sac->slipfilter, tmpbuf, sac->txbuf );
 		iobuf_close(tmpbuf);
 	}
 	#endif
@@ -206,7 +208,7 @@ TiIoResult sac_rawsend( TiSioAcceptor * sac, char * buf, uintx len, TiIoOption o
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = iobuf_write(io->txbuf, frame_startptr(buf), frame_length(buf));
+		count = iobuf_write(sac->txbuf, frame_startptr(buf), frame_length(buf));
 	}
 	#endif
 

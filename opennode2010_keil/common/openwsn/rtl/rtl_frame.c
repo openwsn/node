@@ -267,10 +267,7 @@ void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx lay
     if (frame->layercount == 0)
     {
 		frame->firstlayer = layer;
-        // frame->curlayer = layerindex;
     }
-            
-    // frame->layercount ++;
 }
 
 /** 

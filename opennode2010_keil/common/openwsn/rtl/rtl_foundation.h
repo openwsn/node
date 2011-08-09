@@ -75,6 +75,10 @@ extern "C" {
 // #define min(x,y) (((x)<(y))?(x):(y))
 // #endif
 
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
+
 /**
  * TiIoResult is used to represent the return value of I/O operations such as 
  * serial send/recv, network send/recv, I/O buffer read/write, and etc. 
@@ -136,7 +140,7 @@ extern "C" {
 #endif
 
 extern TiFunAssertReport g_assert_report;
-void rtl_assert_report( bool cond, char * file, uint16 line );
+void rtl_assert_report( bool cond, char * file, int line );//void rtl_assert_report( bool cond, char * file, uint16 line );
 
 #ifdef __cplusplus
 }

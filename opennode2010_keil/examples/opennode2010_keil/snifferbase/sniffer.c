@@ -124,7 +124,7 @@ typedef struct{
   uint32 dropped;
 }TiSnifferStatistics;
 
-TiCc2520Adapter m_cc;
+//TiCc2520Adapter m_cc;  //todo已在cc2520.c中定义了
 TiUartAdapter m_uart;
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
@@ -218,7 +218,8 @@ void nss_execute(void)
 #endif
 
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    //slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));//
+    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
 
     sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
@@ -238,31 +239,10 @@ void nss_execute(void)
 	
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 
-	// initialize the TiUartAdapter component for serial network communication 
-	// 
-	// @attention
-	// @warning
-	//	Actually the following source code uses uart 0 which is conflicted with 
-	// the "dbc" component. Because the "dbc_" functions will use uart 0 by default
-	// and also use the query mode driven uart read/write. If you still prefer use
-	// the same uart hardware with "dbc" component, you should NOT also use the 
-	// query driven mode R/W instead of the interrupt driven R/W operation. 
-	//
-	// That's why I don't modifiy the following source code. It should run smoothly.
-
-	uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-	uart = uart_open( uart, 0, 38400, 8, 1, 0 );
-	hal_assert( uart != NULL );
-
-	// Start listening to the wireless network arrivals and the serial network arrivals.
-	// If it founds new frame arrived from the network interface, then push it into
-	// the RX frame queue. If it receives the DATA REQUEST command from the serial interface,
-	// then send all the data inside the RX frame queue out through the serial interface.
 	
 	memset( &stat, 0x00, sizeof(stat) );
-	hal_enable_interrupts();
     uart_write( uart,msg,strlen( msg),0x00);
 
 	while(1) 

@@ -227,6 +227,7 @@ int main(void)
 		len = dtp_recv( dtp, rxbuf, 0x00 );
 		if (len > 0)
 		{
+            USART_Send( 0xa0);//todo for testing
 
 			request = frame_startptr( rxbuf );
 

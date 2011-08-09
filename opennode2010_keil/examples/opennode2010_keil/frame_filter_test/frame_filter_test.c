@@ -93,7 +93,7 @@ void sendnode1(void)
     uart = uart_construct( ( void*)(&m_uart),sizeof(m_uart));
     uart = uart_open(uart,2,9600,8,1,0);
 
-    slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
+    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));//slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));
 
     sac = sac_construct( (void *)(&m_sac),sizeof(m_sac));//todo for testing
     sac = sac_open( sac,slip,uart);//sac = sac_open( (void *)(&m_sac),sizeof( m_sac),slip,uart);
