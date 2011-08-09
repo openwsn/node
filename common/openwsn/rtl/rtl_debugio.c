@@ -26,6 +26,7 @@
 
 #include "rtl_configall.h"
 #include <string.h>
+#include <stdlib.h> 
 #include "rtl_foundation.h"
 #include "rtl_debugio.h"
 

@@ -34,7 +34,6 @@
 #include "../hal/hal_debugio.h"
 #include "rtl_assert.h"
 
-
 #ifdef CONFIG_DYNA_MEMORY
 inline TiTextSpliter * tspl_create( uintx pktsize )
 {

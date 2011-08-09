@@ -85,6 +85,7 @@
  * suggested buffer size <= 0xFF - sizeof(TiIoBuf), which is about 240.
  */
 
+#define iobuf_capacity(iobuf) iobuf_size(iobuf)
 #define iobuf_putchar(iobuf,c) iobuf_pushbyte(iobuf,((char)c))
 
 #ifdef __cplusplus

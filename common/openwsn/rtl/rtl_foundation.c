@@ -1,4 +1,5 @@
 #include "rtl_configall.h"
+#include <stdlib.h>
 #include "rtl_foundation.h"
 
 TiFunAssertReport   g_assert_report = NULL;

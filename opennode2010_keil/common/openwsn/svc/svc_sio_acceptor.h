@@ -55,18 +55,18 @@
 #define SIO_ACCEPTOR_SLIP_ENABLE 1
 
 #ifndef CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 
-#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 128//#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
+#define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
 #endif
 
 #ifndef CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 
-#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 128//#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 192
+#define CONFIG_SIOACCEPTOR_RXBUF_CAPACITY 192
 #endif
 
 #ifndef CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY 
 #define CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY 64
 #endif
 
-#define SIO_ACCEPTOR_MEMSIZE(bufsize) sizeof(TiSioAcceptor)+bufsize
+#define SIO_ACCEPTOR_MEMSIZE(bufsize) sizeof(TiSioAcceptor)
 
 /**
  * This module defined the interface of librs232 dynamic link library
@@ -96,19 +96,22 @@ typedef struct{
 	TiIoBuf * txbuf;
     #ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
-    TiIoBuf * rmpbuf;
     uint8 rx_accepted;
-	TiSlipFilter *slipfilter;
-    #endif	
-    // todo: you should allocate memory here
+	TiSlipFilter slipfilter;
+    #endif
+	char txbuf_block[CONFIG_SIOACCEPTOR_TXBUF_CAPACITY];
+	char rxbuf_block[CONFIG_SIOACCEPTOR_RXBUF_CAPACITY];
+    #ifdef SIO_ACCEPTOR_SLIP_ENABLE
+	char tmpbuf_block[CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY];
+    #endif
 }TiSioAcceptor;
 
 #ifdef CONFIG_DYNA_MEMORY
-TiSioAcceptor * sac_create( TiUartAdapter * uart );
+TiSioAcceptor * sac_create( TiUartAdapter * uart )
 #endif
 
 #ifdef CONFIG_DYNA_MEMORY
-void sac_free( TiSioAcceptor * sac );
+void sac_free( TiSioAcceptr * sac );
 #endif
 
 #define sac_send(sac,buf,option) sac_framesend((sac),(buf),(option))

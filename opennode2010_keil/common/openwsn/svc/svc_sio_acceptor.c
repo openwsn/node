@@ -25,31 +25,21 @@
  ******************************************************************************/
 
 #include "svc_configall.h"
+#include <string.h>
 #ifdef CONFIG_DYNA_MEMORY
   #include <stdlib.h>
 #endif
+#include "svc_foundation.h"
 #include "../rtl/rtl_iobuf.h"
 #include "../rtl/rtl_slipfilter.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/opennode2010/hal_uart.h"
 #include "svc_sio_acceptor.h"
 
 static void _sac_txbuf_to_device( TiSioAcceptor * sac );
 static void _sac_device_to_rxbuf( TiSioAcceptor * sac );
 
-/*
-char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
-char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
-#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
-char mtmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
-#endif
-*/
-
-
-
 #ifdef CONFIG_DYNA_MEMORY
-TiSioAcceptor * sac_create( TiSioAcceptor * sac, TiUartAdapter * uart )
+TiSioAcceptor * sac_create( TiUartAdapter * uart )
 {
 	TiSioAcceptor * sac;
 	uint32 memsize = SIO_ACCEPTOR_MEMSIZE(0);
@@ -64,7 +54,7 @@ TiSioAcceptor * sac_create( TiSioAcceptor * sac, TiUartAdapter * uart )
 #endif
 
 #ifdef CONFIG_DYNA_MEMORY
-void sac_free( TiSioAcceptor * sac )
+void sac_free( TiSioAcceptr * sac )
 {
 	if (sac != NULL)
 	{
@@ -74,33 +64,25 @@ void sac_free( TiSioAcceptor * sac )
 }
 #endif
 
-TiSioAcceptor * sac_construct( char * buf, uint16 size )//todo for testing
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart )
 {
-    hal_assert( sizeof(TiSioAcceptor) <= size );
-    memset( buf, 0x00, size );
-    return (TiSioAcceptor *)buf;
-}
-
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip, TiUartAdapter * uart )//TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint32 memsize,TiSlipFilter *slip, TiUartAdapter * uart )
-{
-	//rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
+	rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
 	
 	if (sac != NULL)
 	{
-		//memset( sac, 0x00, memsize );
+		memset( sac, 0x00, memsize );
 		sac->state = 0;
 		sac->device = uart;
-		//sac->txbuf = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
-		//sac->rxbuf = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
+		sac->txbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
+		sac->rxbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_RXBUF_CAPACITY );
 		#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 		sac->rx_accepted = false;
-        sac->slipfilter = slip;
-		//sac->tmpbuf = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+		slip_filter_open( &sac->slipfilter, sizeof(TiSlipFilter) );
+		sac->tmpbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY );
 		#endif
 	}
 
-    return sac;
-
+	return sac;
 }
 
 void sac_close( TiSioAcceptor * sac )
@@ -114,9 +96,10 @@ void sac_close( TiSioAcceptor * sac )
  */
 TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 {
-	uintx count=0;
+	TiIoResult count=0;
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	TiIoBuf * tmpbuf;
+	char tmpbuf_block[CONFIG_SIOACCEPTOR_TXBUF_CAPACITY];
 	#endif
 
     hal_assert( sac != NULL );
@@ -129,21 +112,21 @@ TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option 
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		//tmpbuf = iobuf_construct((void *)(&mtmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
-		iobuf_write(sac->tmpbuf, frame_startptr(buf), frame_length(buf));
-		count = slip_filter_tx_handler( sac->slipfilter, sac->tmpbuf, sac->txbuf );
-		iobuf_clear(sac->tmpbuf);
+		tmpbuf = iobuf_open( &tmpbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
+		iobuf_write(tmpbuf, frame_startptr(buf), frame_length(buf));
+		count = slip_filter_txhandler( &sac->slipfilter, tmpbuf, sac->txbuf );
+		iobuf_close(tmpbuf);
 	}
 	#endif
 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = iobuf_write(sac->txbuf, frame_startptr(buf), frame_length(buf));
+		count = iobuf_write(io->txbuf, frame_startptr(buf), frame_length(buf));
 	}
 	#endif
 
-	sac_evolve(sac,NULL);
+	sac_evolve(sac, NULL);
 
 	return count;
 }
@@ -237,7 +220,7 @@ TiIoResult sac_rawsend( TiSioAcceptor * sac, char * buf, uintx len, TiIoOption o
  */
 TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option )
 {
-	uintx count=0;
+	TiIoResult count=0;
 	
     hal_assert( sac != NULL );
 	
@@ -247,8 +230,7 @@ TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option 
 		hal_assert(iobuf_length(sac->rxbuf) > 0);
 		if (iobuf_length(sac->rxbuf) > 0)
 		{
-			//count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
-            count = frame_write(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));//Ó¦¸ÃÊÇwrite°É£¿
+			count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
 			iobuf_clear(sac->rxbuf);
 		}
 		sac->rx_accepted = 0;
@@ -258,13 +240,12 @@ TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_length(sac->rxbuf) > 0)
 	{
-		//count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
-        count = frame_write(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
+		count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
 		iobuf_clear(sac->rxbuf);
 	}
 	#endif
 
-	sac_evolve(sac,NULL);
+	sac_evolve(sac, NULL);
 
 	return count;
 }
@@ -343,13 +324,13 @@ TiIoResult sac_rawrecv( TiSioAcceptor * sac, char * buf, uintx size, TiIoOption 
 void sac_evolve( TiSioAcceptor * sac, TiEvent * event )
 {
 	_sac_txbuf_to_device( sac );
-	 _sac_device_to_rxbuf( sac );
+	_sac_device_to_rxbuf( sac );
 	return;
 }
 
 void _sac_txbuf_to_device( TiSioAcceptor * sac )
 {
-    uintx count=0;
+	TiIoResult count=0;
 	
 	/* If there're data in io->txbuf, then try to send it through sac->device. */
 	if (!iobuf_empty(sac->txbuf))
@@ -370,7 +351,7 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 
 	/* If framing is enabled, then do framing here */
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-	if (!iobuf_full(sac->rmpbuf))
+	if (!iobuf_full(sac->tmpbuf))
 	{
 		// @attention
 		// @todo
@@ -380,12 +361,11 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		/* Read some data into sio->tmpbuf first and do framing on this buffer. The frame
 		 * found will be placed into io->rxbuf by the framing process.
 		 */
-        count = uart_read( sac->device, iobuf_endptr(sac->rmpbuf), iobuf_available(sac->rmpbuf), 0x00);
-       
-		iobuf_adjustlength( sac->rmpbuf, count );
+        count = uart_read( sac->device, iobuf_endptr(sac->tmpbuf), iobuf_available(sac->tmpbuf), 0x00);
+		iobuf_adjustlength( sac->rxbuf, count );
 	}
 
-	if ((sac->rx_accepted == 0) && (!iobuf_empty(sac->rmpbuf)))
+	if ((sac->rx_accepted == 0) && (!iobuf_empty(sac->tmpbuf)))
 	{
 		/**
          * @attention 
@@ -398,15 +378,15 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		{
 			iobuf_clear(sac->rxbuf);
 		}
+
 		/* slip_filter_rx_handler return a positive value means an frame found. The frame
 		 * is placed in io->rxbuf 
 		 */
-		if (slip_filter_rx_handler(sac->slipfilter, sac->rmpbuf, sac->rxbuf) > 0)
+		if (slip_filter_rxhandler(&sac->slipfilter, sac->tmpbuf, sac->rxbuf) > 0)
 		{
 			/* set the rx_accept flag to indicate an entire frame is successfully identified
 			 * and be placed inside io->rxbuf. */
 			sac->rx_accepted = 1;
-            iobuf_clear( sac->rmpbuf);//todo for testing
 		}
 	}
 	#endif

@@ -34,6 +34,12 @@
  * @status 
  * - Released. Tested ok.
  *
+ * @history
+ * @modified by zhangwei on 2006-07-24
+ * 		this file replace the old "include.h".
+ * @modified by zhangwei on 2006-09-01
+ * 		add type TInterruptHandler and TEventHandler. these two are function
+ * 		pointer types. they are often used when setting callback functions.
  * @modified by zhangwei on 20060906
  * add "signed" in the typedef of int8
  * this is because some compile will assume char as unsigned type, while here
