@@ -75,11 +75,11 @@
 #include "osx_configall.h"
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_lightqueue.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_interrupt.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_assert.h"
-#include "../hal/hal_ticker.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_interrupt.h"
+#include "../hal/opennode2010/hal_cpu.h"
+#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/opennode2010/hal_timer.h"
 
 #define osx_assert(x) hal_assert(x)
 
@@ -117,7 +117,7 @@ inline void osx_atomic_begin()
 
 inline void osx_atomic_end() 
 {
-	hal_atomic_end();
+	////hal_atomic_end();
 }
 
 /*******************************************************************************

@@ -49,8 +49,8 @@
 #endif
 
 #include "osx_foundation.h"
-#include "../hal/hal_assert.h"
-#include "../hal/hal_debugio.h"
+#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/opennode2010/hal_debugio.h"
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
 
@@ -270,7 +270,7 @@ void _osx_execute( TiOSX * osx )
 
 void _osx_hardevolve( TiOSX * osx, TiEvent * e )
 {
-	hal_atomic_begin();
+	//hal_atomic_begin();
 	// to do:
 	
 	/*
@@ -285,7 +285,7 @@ void _osx_hardevolve( TiOSX * osx, TiEvent * e )
 	*/
 	_osx_evolve( osx, NULL );
 	
-	hal_atomic_end();
+	//hal_atomic_end();
 }
 
 void _osx_hardexecute( TiOSX * osx )

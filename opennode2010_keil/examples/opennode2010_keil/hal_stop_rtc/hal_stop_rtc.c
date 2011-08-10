@@ -11,7 +11,6 @@ static uint8 USART_Send( uint8 ch);
 static void NVIC_Configuration( void);
 static void RTC_Configuration( void);
 static void Start_RTC( void);
-//void RTC_IRQHandler(void);
 void RTCAlarm_IRQHandler( void );
 void EXTI_Configuration(void);
 

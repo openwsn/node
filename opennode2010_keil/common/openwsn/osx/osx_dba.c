@@ -28,10 +28,10 @@
 #include <string.h>
 #include <assert.h>
 #include "osx_foundation.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_interrupt.h"
-#include "../hal/hal_assert.h"
-#include "../hal/hal_uart.h"
+#include "../hal/opennode2010/hal_cpu.h"
+#include "../hal/opennode2010/hal_interrupt.h"
+#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/opennode2010/hal_uart.h"
 #include "osx_dba.h"
 
 /*****************************************************************************

@@ -40,7 +40,7 @@
 #include <string.h>
 #include "rtl_foundation.h"
 #include "rtl_dispatcher.h"
-#include "../hal/hal_debugio.h"
+#include "../hal/opennode2010/hal_debugio.h"
 
 
 inline _TiDispatcherItem * _dispa_items( TiDispatcher * dispa );

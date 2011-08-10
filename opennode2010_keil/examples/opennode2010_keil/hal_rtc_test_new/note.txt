@@ -1,0 +1,8 @@
+对封装后的rtc进行了测试，second interrupt and alarm interrupt.
+
+所谓的秒中断实际上是基本单位时间中断，并非1s钟中断。但是单位时间最长只能是1S
+
+通过设定prescaler可以改变秒中断和alarm中断的基本时间单位，与AVR相比十分灵活。
+
+注意：在采用stop模式测试alarm中断时，设定中断间隔与进入stop模式的两个函数之间要
+保留一点延时，现在程序里是延时1ms。
