@@ -71,9 +71,9 @@
 extern "C" {
 #endif
 
-// #ifndef min
-// #define min(x,y) (((x)<(y))?(x):(y))
-// #endif
+ #ifndef min//这几句不能注释掉
+ #define min(x,y) (((x)<(y))?(x):(y))
+ #endif
 
 #ifndef NULL
 #define NULL ((void*)0)
