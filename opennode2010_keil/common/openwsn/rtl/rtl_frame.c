@@ -232,7 +232,7 @@ void frame_reset( TiFrame * frame, uintx init_layerindex, uintx init_layerstart,
     frame->layercount = 1;
     frame->layerstart[init_layerindex] = init_layerstart;
     frame->layerlength[init_layerindex] = 0;
-    frame->layercapacity[init_layerindex] = (init_layercapacity == 0) ? (frame->memsize - sizeof(TiFrame) - init_layerstart ) : init_layercapacity;
+    frame->layercapacity[init_layerindex] = ((init_layercapacity == 0) ? (frame->memsize - sizeof(TiFrame) - init_layerstart ) : init_layercapacity);
 }
 
 /**
@@ -267,10 +267,7 @@ void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx lay
     if (frame->layercount == 0)
     {
 		frame->firstlayer = layer;
-        // frame->curlayer = layerindex;
     }
-            
-    // frame->layercount ++;
 }
 
 /** 
@@ -452,8 +449,8 @@ void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 		rtl_assert( choice < 4 );
 		from=0; 
 		to=0;
-		from = ((choice == 2) || (choice == 3)) ? frame->firstlayer : layer;
-		to = ((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer;
+		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
+		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer);
 		
         for (i=from; i<=to; i++)
         {
@@ -505,8 +502,8 @@ void frame_expandlayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 		
 		rtl_assert( choice < 4 );
 		from=0; to=0;
-		from = ((choice == 2) || (choice == 3)) ? frame->firstlayer : layer;
-		to = ((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer;
+		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
+		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer);
 		
         for (i=from; i<=to; i++)
         {

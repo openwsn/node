@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -29,13 +29,11 @@
 // Ç³Ì¸Base64±àÂë
 //---------------------------------------------------------------------------
 
-#pragma hdrstop
 #include <stdlib.h>
 #include <stdio.h>
 #include "rtl_base64.h"
 
 //---------------------------------------------------------------------------
-#pragma package(smart_init)
 
 __inline int _get_b64index(char ch);
 

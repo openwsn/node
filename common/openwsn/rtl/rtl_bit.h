@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -34,9 +34,11 @@
  * bit manipulation macros in runtime library(RTL)
  * 
  * @history
- * @modified by xxx on 200704
+ * @modified by zhangwei on 200704
  * @modified by zhangwei on 200905
  *	- revision
+ * @modified by zhangwei on 20100109
+ * 	- revision
  * 
  ****************************************************************************/ 
 
@@ -82,64 +84,6 @@ bit_xor
 bit_rotate
 
 */
-
-
-
-//--------------------------------------------------------------------
-
-typedef union _BYTE_VAL
-{
-    struct
-    {
-        unsigned int b0:1;
-        unsigned int b1:1;
-        unsigned int b2:1;
-        unsigned int b3:1;
-        unsigned int b4:1;
-        unsigned int b5:1;
-        unsigned int b6:1;
-        unsigned int b7:1;
-    } bits;
-    BYTE Val;
-} BYTE_VAL;
-
-typedef union _WORD_VAL
-{
-    BYTE v[2];
-    WORD Val;
-    struct
-    {
-        BYTE LSB;
-        BYTE MSB;
-    } byte;
-} WORD_VAL;
-
-#define LSB(a)          ((a).v[0])
-#define MSB(a)          ((a).v[1])
-
-typedef union _DWORD_VAL
-{
-    DWORD Val;
-    struct
-    {
-        BYTE LOLSB;
-        BYTE LOMSB;
-        BYTE HILSB;
-        BYTE HIMSB;
-    } byte;
-    struct
-    {
-        WORD LSW;
-        WORD MSW;
-    } word;
-    BYTE v[4];
-} DWORD_VAL;
-
-
-#define LOWER_LSB(a)    ((a).v[0])
-#define LOWER_MSB(a)    ((a).v[1])
-#define UPPER_LSB(a)    ((a).v[2])
-#define UPPER_MSB(a)    ((a).v[3])
 
 #endif
 

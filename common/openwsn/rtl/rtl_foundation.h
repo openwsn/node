@@ -26,8 +26,7 @@
  *
  ******************************************************************************/
 
-
-/*******************************************************************************
+/*****************************************************************************
  * rtl_foundation
  *
  * system wide definitions for runtime library (RTL)
@@ -54,6 +53,9 @@
 
 #include "rtl_configall.h"
 
+/* min() and max() are defined in this header file */
+#include <stdlib.h>
+
 /*****************************************************************************
  * Q: how to enable unicode programming?
  * R:
@@ -69,9 +71,9 @@
 extern "C" {
 #endif
 
-#ifndef min
-#define min(x,y) (((x)<(y))?(x):(y))
-#endif
+// #ifndef min
+// #define min(x,y) (((x)<(y))?(x):(y))
+// #endif
 
 /**
  * TiIoResult is used to represent the return value of I/O operations such as 

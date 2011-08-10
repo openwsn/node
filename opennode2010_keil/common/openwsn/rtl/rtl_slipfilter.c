@@ -187,10 +187,10 @@
 
 /* SLIP special character codes */
 
-#define END             192 // 0300    /* indicates end of packet */
-#define ESC             219 // 0333    /* indicates byte stuffing */
-#define ESC_END         220 // 0334    /* ESC ESC_END means END data byte */
-#define ESC_ESC         221 // 0335    /* ESC ESC_ESC means ESC data byte */
+#define END             0xC0 // 192 // 0300    /* indicates end of packet */
+#define ESC             0xDB // 219 // 0333    /* indicates byte stuffing */
+#define ESC_END         0xDC // 220 // 0334    /* ESC ESC_END means END data byte */
+#define ESC_ESC         0xDD // 221 // 0335    /* ESC ESC_ESC means ESC data byte */
 
 #define SLIP_STATE_IDLE			0
 #define SLIP_STATE_RECVING		1
@@ -333,6 +333,12 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
  */
 int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
 {
+	/* @modified by Jiang Ridong on 2011.08.09
+     * - Bug fixed. In the past, we use signed char, so the comparison between a 
+     * signed char and END character (0xC0) is always false. This is at least occured
+     * in MSVC DotNET 2010 because VC will truncate 0xC0 as a signed char which value 
+     * is 0x40(64). This bug is fixed by define variable c as unsigned type.
+     */
 	unsigned char c = 0x00;
 	char done = 0;
     while ((!iobuf_empty(input)) && (!done)) 
@@ -354,7 +360,7 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 		{
 		/* This's the default state of receiving mechanism. */
 		case SLIP_STATE_IDLE:
-			if (c != END)
+			if (c != ((unsigned char)END))
 			{
 				iobuf_putchar(output, c);
 			}
@@ -381,11 +387,11 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 		case SLIP_STATE_RECV_ESCAPE:
 			switch (c)
 			{
-			case ESC_END:
+			case ((unsigned char)ESC_END):
 				iobuf_putchar(output, END);
 				slip->rx_state = SLIP_STATE_RECVING;
 				break;
-			case ESC_ESC:
+			case ((unsigned char)ESC_ESC):
 				iobuf_putchar(output, ESC);
 				slip->rx_state = SLIP_STATE_RECVING;
 				break;

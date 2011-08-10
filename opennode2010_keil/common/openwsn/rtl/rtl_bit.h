@@ -34,7 +34,7 @@
  * bit manipulation macros in runtime library(RTL)
  * 
  * @history
- * @modified by xxx on 200704
+ * @modified by zhangwei on 200704
  * @modified by zhangwei on 200905
  *	- revision
  * @modified by zhangwei on 20100109
