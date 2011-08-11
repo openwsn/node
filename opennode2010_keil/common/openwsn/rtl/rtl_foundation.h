@@ -54,7 +54,7 @@
 #include "rtl_configall.h"
 
 /* min() and max() are defined in this header file */
-#include <stdlib.h>
+// #include <stdlib.h>
 
 /*****************************************************************************
  * Q: how to enable unicode programming?
@@ -71,9 +71,9 @@
 extern "C" {
 #endif
 
- #ifndef min//这几句不能注释掉
- #define min(x,y) (((x)<(y))?(x):(y))
- #endif
+#ifndef min
+#define min(x,y) (((x)<(y))?(x):(y))
+#endif
 
 #ifndef NULL
 #define NULL ((void*)0)

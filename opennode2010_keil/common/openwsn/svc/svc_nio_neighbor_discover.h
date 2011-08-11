@@ -50,6 +50,8 @@
 #include "svc_nio_aloha.h"
 #include "../hal/opennode2010/hal_timer.h"
 
+#include "svc_nodebase.h"
+
 #ifndef NeiNum
 #define NeiNum  4//the number of the node
 #endif
@@ -86,13 +88,62 @@
 #define NHB_SET_SHORTADDRFROM(pkt,addr) {(pkt)[5]=((uint8)(addr&0xFF)); (pkt)[6]=((uint8)(addr>>8));}
 #define NHB_SET_PANFROME(pkt,pan) {(pkt)[7]=((uint8)(pan&0xFF)); (pkt)[8]=((uint8)(pan>>8));}
 
+
 typedef struct{
-    uint16 addr;
-    uint16 pan;
-    uint16 rssi;
-    uint16 state;
+    uint8 state;
+    TiNodeBase * nbase;
     uint8 seqid;
-}TiNeiInf;
+    //TiAloha * mac;
+}TiNioNeighborDiscover;
+
+nio_ndp_open()
+{
+    time axis: put some thing
+    or start a timer;
+}
+
+nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
+{
+    payload = frame_startptr;
+    extrace frame payload
+    save information into nbase;
+    frame_clear( output );
+    return 0;
+}
+
+nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
+{
+}
+
+nio_ndp_evolve( void * object, TiEvent * e);
+{
+    //if timer expired
+    if e == NDP_REQUEST_INITIATE
+        assemble a frame
+        if aloha_send( request ) failed
+            task create( nio_ndp_initiate_task, delay time );
+        endif
+    endif
+}
+
+nio_ndp_initiate_task()
+{
+    TiEvent e;
+    e.id = NDP_REQUEST_INITIATE
+    ndo_ndp_evolve( object, e)
+}
+
+
+typedef struct{
+    uint8 state;
+    void * object;
+    TiFunRxHandler rxhandler;
+    TiFunTxHandler txhandler;
+    TiFunEventHandler evolve;
+}_TiNioNetLayerDispatcherItem;
+
+
+
 
 typedef struct{
 	uint8 state;
@@ -108,7 +159,7 @@ typedef struct{
 	char tmpbuf_memory[FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE)];
 	TiIEEE802Frame154Descriptor desc;
     TiNeiInf nodeinf[NeiNum];
-}TiNeighbourNode;
+}TiNioNeighbourNode;
 
 TiNeighbourNode * neighbournode_construct( void * mem, uint16 memsize );
 

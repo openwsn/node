@@ -93,13 +93,6 @@ void _dbc_asciiputchar( TiDebugConsole * dbc, uint8 val )
     DBC_ASCIIOUTPUT_CHAR(c);
 }
 
-//DBC_ASCIIOUTPUT(c)
-//void DBC_ASCIIOUTPUT_CHAR( uint8 val )
-//{
-//	_dbc_putchar(_dbc_digit2hexchar(((val)&0xF0) >> 4));	
-//	_dbc_putchar(_dbc_digit2hexchar((val)&0x0F));	
-//}
-
 void _dbc_write( TiDebugConsole * dbc, char * buf, uintx len )
 {
     uintx i;

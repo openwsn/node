@@ -60,6 +60,96 @@
 extern "C" {
 #endif
 
+typedef (uintx *)(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+typedef (uintx *)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
+typedef struct{
+    uint8 state;
+    void * object;
+    TiFunRxHandler rxhandler;
+    TiFunTxHandler txhandler;
+    TiFunEventHandler evolve;
+}_TiNioNetLayerDispatcherItem;
+
+#define CONFIG_NIO_NETLAYER_DISP_CAPACITY 4
+
+typedef struct{
+    _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
+    TiFrame * rxbuf;
+    TiFrame * txbuf;
+    char rxbuf_memory[FRAME_HOPESIZE()];
+    char txbak_memory[FRAME_HOPESIZE()];
+}TiNioNetLayerDispatcher;
+
+net_disp_open
+net_disp_close
+net_disp_send( TiFrame * f ) 
+{
+    aloha_send
+}
+
+net_disp_recv( TiFrame * f )
+{
+    rxbuf -> f;
+}
+
+net_disp_evolve( object, TiEvent * e )
+{
+    _TiNioNetLayerDispatcherItem * item;
+    
+    if (rxbuf.empty)
+    {
+        count = aloha_recv(rxbuf);
+        if (count > 0)
+        {
+            payload = frame_startptr(rxbuf);
+            proto_id = payload[0];
+            item = search for this proto_id in the dispatcher table;
+            
+            if (item->rxhandler(item->object, rxbuf, rxbak, 0x00) > 0)
+                rxbak -> rxbuf;
+            else
+                clear rxbuf;       
+        }
+    }
+    
+    for each item in items
+        call their evolve
+    
+}
+
+
+
+/**
+ * @param proto_id: Protocol Identifier. 
+ */
+net_disp_register( uint8 proto_id, void * object, TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve )
+{
+    if (found)
+    {
+        dispatcher->item[idx].state = 1;
+        dispatcher->item[idx].proto_id = proto_id;
+        dispatcher->item[idx].object = object;
+        dispatcher->item[idx].rxhandler = rxhandler;
+        dispatcher->item[idx].txhandler = txhandler;
+        dispatcher->item[idx].evolve = evovle;
+    }
+}
+
+net_disp_unregister( void * object );
+
+
+
+
+
+
+
+
+
+
+
+
+
 typedef (uint8)(* TiNioProcess)( void * object, TiNioSession * session );
 
 /* component id is used to map the index in the array */
