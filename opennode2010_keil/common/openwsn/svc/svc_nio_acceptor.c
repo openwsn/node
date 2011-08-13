@@ -32,7 +32,7 @@
 #include "../hal/opennode2010/hal_led.h"
 #include "../hal/opennode2010/hal_debugio.h"
 #include "../hal/opennode2010/hal_assert.h"
-#include "../hal/opennode2010/hal_timesynchro.h"
+#include "../hal/opennode2010/hal_timesync.h"
 #include "../hal/opennode2010/hal_uart.h"
 //#include "../hal/gainz/hpl_cpu.h"
 #include "svc_foundation.h"
@@ -346,11 +346,11 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
                 // @warning: The 802.15.4 header not always occupy 12 bytes! So you 
                 // must adapte the following code to your own system.
                 //
-                pc = frame_startptr(item) + 12;
+                pc = frame_startptr(f) + 12;
                 
                 if (pc[0] == TSYNC_PROTOCAL_ID)
                 {
-                    hal_tsync_rxhandler(nac->timesync, item, item, 0x00);
+                    hal_tsync_rxhandler(nac->timesync, f, f, 0x00);
                 }
             }
 

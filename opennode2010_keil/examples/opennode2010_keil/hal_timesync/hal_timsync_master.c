@@ -77,7 +77,7 @@
 #include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
 #include "../../../common/openwsn/rtl/rtl_dumpframe.h"
 #include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timesynchro.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_timesync.h"
 #include "../../../common/openwsn/hal/opennode2010/hal_rtc.h"
 
 
@@ -104,6 +104,8 @@ static TiTimerAdapter                           m_timer2;
 TiRtcAdapter                                    m_rtc;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+TiTimeSyncAdapter                               m_syn;
+
 
 void aloha_sendnode(void);
 void RTC_IRQHandler(void);
@@ -124,10 +126,8 @@ void aloha_sendnode(void)
 	TiFrame * txbuf;
     TiFrame * mactxbuf;
     TiRtcAdapter * rtc;
-    TiTimsynchroAdapter *syn;
+    TiTimeSyncAdapter *syn;
 	char * pc;
-
-	char * msg = "welcome to aloha sendnode...";
 	uint8 i, seqid=0, option;
 
 	led_open();
@@ -166,9 +166,9 @@ void aloha_sendnode(void)
 
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,1,1);
-    syn = hal_syn_construct( (void *)&m_syn,sizeof( m_syn));
     rtc_setprscaler( rtc,327);//rtc_setprscaler( rtc,32767);
-    syn = hal_syn_open( syn,rtc);
+    syn =  hal_tsync_open( &m_syn,rtc);
+    nac_set_timesync( nac, syn);
     rtc_start( rtc);
 	
 	while(1) 

@@ -70,7 +70,7 @@
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
 #include "svc_foundation.h"
-#include "../hal/opennode2010/hal_timesynchro.h"
+#include "../hal/opennode2010/hal_timesync.h"
 // #include "svc_nio_session.h"
 
 #undef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
