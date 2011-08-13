@@ -1,3 +1,0 @@
-svc_nio_neighbournode_found collect the information of the nodes around the gateway.
-
-test successfully

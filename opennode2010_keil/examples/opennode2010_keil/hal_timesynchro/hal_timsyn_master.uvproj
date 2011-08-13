@@ -43,7 +43,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\</OutputDirectory>
-          <OutputName>nio_welssensor</OutputName>
+          <OutputName>nio_aloha_send</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -126,7 +126,7 @@
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>0</LoadApplicationAtStartup>
+            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
@@ -391,9 +391,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>nio_neighbour_node.c</FileName>
+              <FileName>hal_timsyn_master.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\nio_neighbour_node.c</FilePath>
+              <FilePath>.\hal_timsyn_master.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -615,16 +615,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_timesynchro.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_timesynchro.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_rtc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>rtl</GroupName>
           <Files>
-            <File>
-              <FileName>rtl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\rtl\rtl_cache.c</FilePath>
-            </File>
             <File>
               <FileName>rtl_debugio.c</FileName>
               <FileType>1</FileType>
@@ -660,6 +665,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_random.c</FilePath>
             </File>
+            <File>
+              <FileName>rtl_dumpframe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_dumpframe.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -674,11 +684,6 @@
               <FileName>svc_nio_aloha.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\svc\svc_nio_aloha.c</FilePath>
-            </File>
-            <File>
-              <FileName>svc_nio_neighbournode_found.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\svc\svc_nio_neighbournode_found.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -35,14 +35,19 @@
  *	- first created. inspired by rtl_notifier. 
  */
 
-#include "rtl_configall.h"
+#include "../rtl/rtl_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "rtl_foundation.h"
-#include "rtl_dispatcher.h"
-#include "../hal/hal_debugio.h"
+#include "../rtl/rtl_foundation.h"
+#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/opennode2010/hal_configall.h"
+#include "../hal/opennode2010/hal_foundation.h"
+#include "../hal/opennode2010/hal_mcu.h"
+#include "svc_nio_aloha.h"
+#include "svc_nio_dispatcher.h"
 
 
+/*
 inline _TiDispatcherItem * _dispa_items( TiDispatcher * dispa );
 inline bool _dispa_search( _TiDispatcherItem * items, uint8 capacity, uint8 eid, uint8 * pidx );
 inline bool _dispa_apply( _TiDispatcherItem * items, uint8 capacity, uint8 * pidx );
@@ -87,6 +92,7 @@ void dispa_destroy( TiDispatcher * dpa )
  * The "handler" paramter should NOT be NULL, or an assert() in dispa_send() will failed.
  * However, the "object" parameter can be NULL.
  */
+/*
 bool dispa_attach( TiDispatcher * dpa, uint8 id, TiFunEventHandler handler, void * object )
 {
 	_TiDispatcherItem * items = _dispa_items( dpa );
@@ -144,6 +150,7 @@ void dispa_detach( TiDispatcher * dpa, uint8 id )
  *	- dispa_send() can be the listener of other components. because it's a standard 
  *    TiFunEventHandler type.
  */
+/*
 void dispa_send( TiDispatcher * dpa, TiEvent * e )
 {
 	_TiDispatcherItem * items = _dispa_items( dpa );
@@ -171,6 +178,7 @@ void dispa_send( TiDispatcher * dpa, TiEvent * e )
 		 * values of "handler" to the dispa_attach() function. The "handler" parameter
 		 * shouldn't be NULL.
 		 */ 
+/*
 		rtl_assert( items[idx].handler != NULL );
 		items[idx].handler( items[idx].object, e );
 	}
@@ -185,6 +193,7 @@ inline _TiDispatcherItem * _dispa_items( TiDispatcher * dpa )
  * parameter
  *  pidx			     the final index after execution if found.
  */
+/*
 inline bool _dispa_search( _TiDispatcherItem * items, uint8 capacity, uint8 id, uint8 * pidx )
 {
 	bool found = false;
@@ -229,6 +238,7 @@ inline bool _dispa_search( _TiDispatcherItem * items, uint8 capacity, uint8 id, 
  * return
  *  true when success, and false if failed. *pidx is the index if success.
  */
+/*
 inline bool _dispa_apply( _TiDispatcherItem * items, uint8 capacity, uint8 * pidx )
 {
 	bool found = false;
@@ -263,6 +273,7 @@ inline bool _dispa_apply( _TiDispatcherItem * items, uint8 capacity, uint8 * pid
  * parameter
  *	idx             initial start search position
  */
+/*
 bool _dispa_release( _TiDispatcherItem * items, uint8 capacity, uint8 id, uint8 idx )
 {
 	bool found = false;
@@ -271,8 +282,163 @@ bool _dispa_release( _TiDispatcherItem * items, uint8 capacity, uint8 id, uint8 
 	// to do in the future
 	rtl_assert( false );
 */
+/*
 	return found;
 }
+
+*/
+
+TiNioNetLayerDispatcher * net_disp_construct( void * mem, uint16 memsize )
+{
+    memset( mem, 0x00, memsize );
+    return (TiNioNetLayerDispatcher*)mem;
+}
+
+
+TiNioNetLayerDispatcher * net_disp_open( TiNioNetLayerDispatcher * dispatcher,TiAloha *mac)
+{
+    dispatcher->rxbuf = frame_open( (char*)(&dispatcher->rxbuf_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    dispatcher->txbuf = frame_open( (char*)(&dispatcher->txbak_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    dispatcher->rxbake = frame_open( (char*)(&dispatcher->rxbake_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    dispatcher->mac = mac;
+}
+
+TiNioNetLayerDispatcher *net_disp_close( TiNioNetLayerDispatcher * dispacher,TiAloha *mac)
+{
+
+}
+
+uint8 net_disp_send( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint16 addr,uint8 option) 
+{
+    uint8 count;
+    count = aloha_send(dispacher->mac,addr,f,option);
+    return count;
+}
+
+uint8 net_disp_broadcast( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint8 option)
+{
+    uint8 count;
+    count = aloha_broadcast(dispacher->mac,f,option);
+    return count;
+}
+
+uint8 net_disp_recv(  TiNioNetLayerDispatcher * dispacher,TiFrame * f )
+{
+   uint8 count;
+   count =0;
+   frame_reset( f,3,20,0);
+   if ( !frame_empty( dispacher->rxbuf))
+   {
+       count = frame_totalcopyfrom( f,dispacher->rxbuf);
+       frame_clear( dispacher->rxbuf);
+   }
+
+   return count;
+}
+
+void net_disp_evolve(void* object, TiEvent * e )
+{
+    uint8 count;
+    char *payload;
+    uint8 proto_id;
+    int i;
+    TiNioNetLayerDispatcher * item = ( TiNioNetLayerDispatcher *)object;
+
+    count = 0;
+    
+    if ( frame_empty( item->rxbuf))
+    {
+        frame_reset( item->rxbuf,3,20,0);
+        count = aloha_recv(item->mac,item->rxbuf,0x00);
+        if (count > 0)
+        {
+            payload = frame_startptr(item->rxbuf);
+            proto_id = payload[0]&0x02;//if the second bit is set, then the protocal is the ndp.
+            for ( i=0;i< CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
+            {
+                if ( item->items[i].proto_id==proto_id)
+                {
+                    break;
+                }
+            }
+
+            if ( i< CONFIG_NIO_NETLAYER_DISP_CAPACITY)
+            {
+                if ( item->items[i].rxhandler( item->items[i].object,item->rxbuf,item->rxbake,0x00)>0)
+                {
+                    if ( !frame_empty( item->rxbake))
+                    {
+                        frame_totalcopyfrom( item->rxbuf,item->rxbake);
+                        frame_clear( item->rxbake);
+                    }
+                }
+                else
+                {
+                    frame_clear( item->rxbuf);
+                    frame_clear( item->rxbake);
+                }
+            }
+               
+        }
+    }
+
+    //todo 有必要让每一个evolve都跑一边吗？
+
+    for ( i=0;i<CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
+    {
+        if ( item->items[i].state)
+        {
+            item->items[i].evolve;//todo 这一句是否正确？
+        }
+    }
+    
+    
+    
+}
+
+
+
+/**
+ * @param proto_id: Protocol Identifier. 
+ */
+void net_disp_register(  TiNioNetLayerDispatcher * dispatcher,uint8 proto_id, void * object, TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve )
+{
+    uint8 i;
+    bool found = false;
+
+    for ( i=0;i<CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
+    {
+        if ( dispatcher->items[i].state == 0)
+        {
+            found = true;
+            break;
+        }
+    }
+
+    if (found)
+    {
+        dispatcher->items[i].state = 1;
+        dispatcher->items[i].proto_id = proto_id;
+        dispatcher->items[i].object = object;
+        dispatcher->items[i].rxhandler = rxhandler;
+        dispatcher->items[i].txhandler = txhandler;
+        dispatcher->items[i].evolve = evolve;
+    }
+}
+
+void net_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id )
+{
+    int i;
+
+    for ( i=0;i<CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
+    {
+        if(dispatcher->items[i].proto_id==proto_id)
+        {
+            dispatcher->items[i].state=0;
+        }
+    }
+}
+
 
 
 

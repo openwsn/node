@@ -20,6 +20,8 @@
 
 #define NBASE_MARK_DELETED(state) ((state) &= 0xFE)
 #define NBASE_MARK_ACTIVE(state) ((state) |= 0x01);
+
+#include "svc_configall.h"
  
 typedef struct{
     uint8   state;
@@ -28,6 +30,7 @@ typedef struct{
     uint8   weight;
     uint8   tag;
     uint8   lifetime;
+    uint8   rssi;
     //uint8   reliable;
 }TiNodeDescriptor;
 
@@ -53,29 +56,35 @@ typedef struct{
     uint8 version;
     uint16 pan;
     uint16 shortaddress;
-    char[8] longaddress;
+    uint64 longaddress;
     uint8 weight;
     uint8 capability;
     uint8 nio_channel;
     uint8 nio_txpower;
     uint8 nio_backoff_rule;
     uint8 nio_backoff_interval;
-    uin32 uart_datarate; 
+    uint32 uart_datarate; 
     uint8 uart_databits;
     uint8 uart_stopsbits;
     uint8 uart_parity;
     uint16 sleeplast;
     uint16 sleepduration;
     uint16 sleepinterval;
-    TiNodeDescriptor nodes[CONFIG_NBASE_NODE_CAPACITY]
+    TiNodeDescriptor nodes[CONFIG_NBASE_NODE_CAPACITY];
     TiRelationDescriptor relations[CONFIG_NBASE_RELATION_CAPACITY];
 }TiNodeBase;
 
-TiNodeBase * nbase_open( TiNodeBase * nbase );
+
+TiNodeBase * nbase_construct( void * mem, uint16 memsize );
+
+TiNodeBase * nbase_open( TiNodeBase * nbase,uint8 state,uint16 pan, uint16 shortaddress,uint8 nio_channel,uint8 capability );
+
 void nbase_close( TiNodeBase * nbase );
+
 void nbase_clear( TiNodeBase * nbase );
 
 bool nbase_save( TiNodeBase * nbase );
+
 bool nbase_load( TiNodeBase * nbase );
 
 /**
@@ -83,13 +92,16 @@ bool nbase_load( TiNodeBase * nbase );
  * node table. It's the same as _nbase_getnodeptr(nbase,0).
  */
 TiNodeDescriptor * nbase_getnodetable( TiNodeBase * nbase );
+
 TiNodeDescriptor * nbase_getnodetptr( TiNodeBase * nbase, uint16 address );
 
 TiRelationDescriptor * nbase_getrelationtable( TiNodeBase * nbase );
+
 TiRelationDescriptor * nbase_getrelationptr( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
 
 TiNodeDescriptor * nbase_getnodebyaddress( TiNodeBase * nbase, uint16 address );
-TiRelationDescriptor * nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 addrfrom, addrto );
+
+TiRelationDescriptor * nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
 
 /** Put one node descriptor into database */
 TiNodeDescriptor * nbase_setnode( TiNodeBase * nbase, uint16 address, TiNodeDescriptor * node );
@@ -112,6 +124,7 @@ uint8 nbase_getnodeneighbors( TiNodeBase * nbase, uint16 address, TiNodeDescript
 uint8 nbase_getnoderelations( TiNodeBase * nbase, uint16 address, TiRelationDescriptor ** relptr, uint8 capacity );
 
 bool nbase_deletenode( TiNodeBase * nbase, uint16 address );
+
 bool nbase_deleterelation( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
 
 
