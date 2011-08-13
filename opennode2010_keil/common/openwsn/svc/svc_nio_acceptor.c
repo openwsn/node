@@ -130,6 +130,11 @@ void nac_close( TiNioAcceptor * nac )
 	frame_close( nac->rxframe );
 }
 
+void nac_set_timesync( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
+{
+    nac->timesync = tsync;
+}
+
 TiFrameTxRxInterface * nac_rxtx_interface( TiNioAcceptor * nac )
 {
 	return &(nac->rxtx);
@@ -159,19 +164,19 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
 {
     TiFrameRxTxInterface * rxtx;
     uint8 first;
-
     char *pc;
     uint8 length;
-    uint8 protocalid;
-    length = frame_length( item);
-    frame_movehigher( item);
-    pc = frame_startptr( item);
-    protocalid = pc[0];
-    frame_movelower( item);
-    frame_setlength( item,length);
-    if ( protocalid == 0x04)
+    uint8 proto_id;
+    
+    if (nac->timesync != NULL)
     {
-        hal_syn_txhandler( item);
+        frame_movehigher(item);
+        pc = frame_startptr(item);
+        if (pc[0] == TSYNC_PROTOCAL_ID)
+        {
+            hal_tsync_txhandler(nac->timesync, item, item, 0x00);
+        }
+        frame_movelower( item);
     }
 
     //the code above is added for hal_timesynchro on 2011/8/13
@@ -239,6 +244,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	TiFrameRxTxInterface * rxtx = &(nac->rxtx);
 	uint8 count, first;
 	TiFrame * f;
+    char *pc;
 
     if (!fmque_empty(nac->txque))
 	{   
@@ -287,6 +293,42 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		__disable_irq();//hal_enter_critical();
 		#endif
         
+        /*
+        idx = 0x00;
+        if (fmque_applyback(nac->rxque, &idx))
+        {
+            tmpframe = fmque_getbuf(nac->rxque, idx);
+            frame_open(tmpframe, fmque_datasize(fmque), 0, 0, 0);
+            count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
+            if (count > 0)
+            {
+                frame_setlength( f, count );
+                frame_setcapacity( f, count );
+                
+                if (nac->timesync != NULL)
+                {
+                    // Since currently there's only one layer in the TiFrame object, we 
+                    // cannot use frame_movehigher() to change the current layer index
+                    // to the higher one. We had no better choice but use "+12" to skip 
+                    // the 802.15.4 header only. 
+                    // 
+                    // @warning: The 802.15.4 header not always occupy 12 bytes! So you 
+                    // must adapte the following code to your own system.
+                    //
+                    pc = frame_startptr(item) + 12;
+                    
+                    if (pc[0] == TSYNC_PROTOCAL_ID)
+                    {
+                        hal_tsync_rxhandler(nac->timesync, item, item, 0x00);
+                    }
+                }
+            }
+            else
+                fmque_popback(nac->rxque);
+        }
+        */
+        
+        
 		// @pre nac->rxframe must be initialized correctly.
 		f = nac->rxframe;
 		hal_assert( f != NULL );
@@ -294,13 +336,22 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
 		if (count > 0)
 		{
-            char *pc;
-            uint8 protocalid;
-            pc = frame_startptr( f);
-            protocalid = pc[12];//前面12个字节是MAC头，不能用movehigher()使指针指向里层，也许是从2520直接收到的缘故。
-            if ( protocalid == 0x04)
+            if (nac->timesync != NULL)
             {
-                hal_syn_rxhandler( f);
+                // Since currently there's only one layer in the TiFrame object, we 
+                // cannot use frame_movehigher() to change the current layer index
+                // to the higher one. We had no better choice but use "+12" to skip 
+                // the 802.15.4 header only. 
+                // 
+                // @warning: The 802.15.4 header not always occupy 12 bytes! So you 
+                // must adapte the following code to your own system.
+                //
+                pc = frame_startptr(item) + 12;
+                
+                if (pc[0] == TSYNC_PROTOCAL_ID)
+                {
+                    hal_tsync_rxhandler(nac->timesync, item, item, 0x00);
+                }
             }
 
             //the code above is added for hal_timesynchro on 2011/8/13.

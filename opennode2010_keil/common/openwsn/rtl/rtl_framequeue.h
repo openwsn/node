@@ -98,6 +98,11 @@ inline uintx fmque_capacity( TiFrameQueue * que )
 	return lwque_capacity(que);
 }
 
+inline uintx fmque_datasize( TiFrameQueue * que )
+{
+    return lwque_datasize(que);
+}
+
 inline bool fmque_empty( TiFrameQueue * que )
 {
 	return lwque_empty(que);
