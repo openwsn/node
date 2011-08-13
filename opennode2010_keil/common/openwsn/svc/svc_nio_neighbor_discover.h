@@ -51,11 +51,16 @@
 #include "../hal/opennode2010/hal_timer.h"
 
 #include "svc_nodebase.h"
+#include "svc_nio_dispatcher.h"
+#include "../osx/osx_tlsche.h"
 
 #ifndef NeiNum
 #define NeiNum  4//the number of the node
 #endif
 
+#define  INIT_STATE 0
+#define  WAIT_RESPONSE_STATE 1
+#define  RESEND_STATE 2
 
 #define GATEWAYTYPE 1
 #define SENSORTYPE 0
@@ -73,77 +78,60 @@
 #define MAC_GATE_REMOTE 0xFF
 
 #define NHB_MAKEWORD(high,low) (((uint16)high<<8) | ((uint8)low))
+//
+//protocalid: 0x03->neibournode_discove response. 0x02->neibournode_discover request.  
+//            when the second bit is one means the protocal is ndp.
+//
+#define NHB_PROTOID(pkt) ((pkt)[0])
+#define NHB_SEQUENCEID(pkt) ((pkt)[1])
+#define NHB_SHORTADDRTO(pkt) NHB_MAKEWORD((pkt)[3],(pkt)[2])
+#define NHB_PANTO(pkt) NHB_MAKEWORD((pkt)[5],(pkt)[4])
+#define NHB_SHORTADDRFROM(pkt) NHB_MAKEWORD((pkt)[7],(pkt)[6])
+#define NHB_PANFROM(pkt) NHB_MAKEWORD((pkt)[9],(pkt)[8])
 
-#define NHB_SEQUENCEID(pkt) ((pkt)[0])
-#define NHB_SHORTADDRTO(pkt) NHB_MAKEWORD((pkt)[2],(pkt)[1])
-#define NHB_PANTO(pkt) NHB_MAKEWORD((pkt)[4],(pkt)[3])
-#define NHB_SHORTADDRFROM(pkt) NHB_MAKEWORD((pkt)[6],(pkt)[5])
-#define NHB_PANFROM(pkt) NHB_MAKEWORD((pkt)[8],(pkt)[7])
+#define NHB_PAYLOAD_PTR(pkt) ((char*)(pkt)+10)
 
-#define NHB_PAYLOAD_PTR(pkt) ((char*)(pkt)+9)
-
-#define NHB_SET_SEQUENCEID(pkt,value) (pkt)[0]=(value)
-#define NHB_SET_SHORTADDRTO(pkt,addr) {(pkt)[1]=((uint8)(addr&0xFF)); (pkt)[2]=((uint8)(addr>>8));}
-#define NHB_SET_PANTO(pkt,pan) {(pkt)[3]=((uint8)(pan&0xFF)); (pkt)[4]=((uint8)(pan>>8));}
-#define NHB_SET_SHORTADDRFROM(pkt,addr) {(pkt)[5]=((uint8)(addr&0xFF)); (pkt)[6]=((uint8)(addr>>8));}
-#define NHB_SET_PANFROME(pkt,pan) {(pkt)[7]=((uint8)(pan&0xFF)); (pkt)[8]=((uint8)(pan>>8));}
+#define NHB_SET_PROTOID(pkt,value) (pkt)[0]=(value)
+#define NHB_SET_SEQUENCEID(pkt,value) (pkt)[1]=(value)
+#define NHB_SET_SHORTADDRTO(pkt,addr) {(pkt)[2]=((uint8)(addr&0xFF)); (pkt)[3]=((uint8)(addr>>8));}
+#define NHB_SET_PANTO(pkt,pan) {(pkt)[4]=((uint8)(pan&0xFF)); (pkt)[5]=((uint8)(pan>>8));}
+#define NHB_SET_SHORTADDRFROM(pkt,addr) {(pkt)[6]=((uint8)(addr&0xFF)); (pkt)[7]=((uint8)(addr>>8));}
+#define NHB_SET_PANFROME(pkt,pan) {(pkt)[8]=((uint8)(pan&0xFF)); (pkt)[9]=((uint8)(pan>>8));}
 
 
 typedef struct{
     uint8 state;
     TiNodeBase * nbase;
     uint8 seqid;
-    //TiAloha * mac;
+    TiTimerAdapter *timer;
+    TiOsxTimeLineScheduler * scheduler;
+    TiNioNetLayerDispatcher *dispatcher;
 }TiNioNeighborDiscover;
 
+/*
 nio_ndp_open()
 {
     time axis: put some thing
     or start a timer;
 }
+*/
 
-nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
-{
-    payload = frame_startptr;
-    extrace frame payload
-    save information into nbase;
-    frame_clear( output );
-    return 0;
-}
-
-nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
-{
-}
-
-nio_ndp_evolve( void * object, TiEvent * e);
-{
-    //if timer expired
-    if e == NDP_REQUEST_INITIATE
-        assemble a frame
-        if aloha_send( request ) failed
-            task create( nio_ndp_initiate_task, delay time );
-        endif
-    endif
-}
-
-nio_ndp_initiate_task()
-{
-    TiEvent e;
-    e.id = NDP_REQUEST_INITIATE
-    ndo_ndp_evolve( object, e)
-}
+uint8 nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame * output, uint8 option );
 
 
-typedef struct{
-    uint8 state;
-    void * object;
-    TiFunRxHandler rxhandler;
-    TiFunTxHandler txhandler;
-    TiFunEventHandler evolve;
-}_TiNioNetLayerDispatcherItem;
+uint8 nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
+
+void nio_ndp_request_evolve( void * object, TiEvent * e);
+
+void nio_ndp_response_evolve( void * object, TiEvent * e);
+
+void nio_ndp_initiate_task();
 
 
 
+
+/*
 
 typedef struct{
 	uint8 state;
@@ -161,38 +149,44 @@ typedef struct{
     TiNeiInf nodeinf[NeiNum];
 }TiNioNeighbourNode;
 
-TiNeighbourNode * neighbournode_construct( void * mem, uint16 memsize );
+*/
 
-void neighbournode_destroy( TiNeighbourNode * nei );
+TiNioNeighborDiscover * ndp_construct( void * mem, uint16 memsize );
 
-TiNeighbourNode * neighbournode_open( TiNeighbourNode * nei, TiAloha * mac );
+void ndp_destroy( TiNioNeighborDiscover * nei );
 
-void neighbournode_close( TiNeighbourNode * nei );
+TiNioNeighborDiscover * ndp_open( TiNioNeighborDiscover * nei, TiNioNetLayerDispatcher *dispatcher, TiNodeBase * nbase ,TiOsxTimeLineScheduler * scheduler,TiTimerAdapter *timer);
 
-void neighbournode_evolve( void * svcptr, TiEvent * e );
+void ndp_close( TiNioNeighborDiscover * nei );
 
-uint8 neighbournode_send( TiNeighbourNode * svc,uint16 addr,TiFrame * frame, uint8 option );
+void ndp_evolve( void * svcptr, TiEvent * e );
 
-uint8 neighbournode_broadcast( TiNeighbourNode * svc, TiFrame * buf, uint8 option );
+uint8 ndp_send( TiNioNeighborDiscover * svc,uint16 addr,TiFrame * frame, uint8 option );
 
-uint8 neighbournode_recv( TiNeighbourNode * svc,TiFrame * buf, uint8 option );
+uint8 ndp_response( TiNioNeighborDiscover *svc,uint16 addr,TiFrame * frame,uint8 option);
 
-uint8 neighbournode_found( TiNeighbourNode * svc );
+uint8 ndp_broadcast( TiNioNeighborDiscover * svc, TiFrame * frame, uint8 option );
 
-uint8 neighbournode_getrssi( TiNeighbourNode *svc,uint8 id,uint8 rssi);
+uint8 ndp_request( TiNioNeighborDiscover * svc,TiFrame * frame,uint8 option);
 
-uint8 neighbournode_getaddr( TiNeighbourNode *svc,uint8 id,uint16 addr);
+uint8 ndp_recv( TiNioNeighborDiscover * svc,TiFrame * buf, uint8 option );
 
-uint8 neighbournode_getpan( TiNeighbourNode *svc,uint8 id,uint16 pan);
+uint8 ndp_found( TiNioNeighborDiscover * svc );
 
-uint8 neighbournode_getstate( TiNeighbourNode *svc,uint8 id);
+uint8 ndp_getrssi( TiNioNeighborDiscover *svc,uint8 id,uint8 rssi);
 
-bool neighbournode_empty( TiNeighbourNode *svc);
+uint8 ndp_getaddr( TiNioNeighborDiscover *svc,uint8 id,uint16 addr);
 
-bool neighbournode_full( TiNeighbourNode *svc);
+uint8 ndp_getpan( TiNioNeighborDiscover *svc,uint8 id,uint16 pan);
 
-void neighbournode_clear( TiNeighbourNode * svc);
-void neighbournode_delete( TiNeighbourNode * svc,uint8 id);
-void dump_nodeinf( TiNeighbourNode *svc,uint8 id);
+uint8 ndp_getstate( TiNioNeighborDiscover *svc,uint8 id);
+
+bool ndp_empty( TiNioNeighborDiscover *svc);
+
+bool ndp_full( TiNioNeighborDiscover *svc);
+
+void ndp_clear( TiNioNeighborDiscover * svc);
+void ndp_delete( TiNioNeighborDiscover * svc,uint8 id);
+void dump_nodeinf(TiNioNeighborDiscover *svc,uint8 id);
 
 #endif 

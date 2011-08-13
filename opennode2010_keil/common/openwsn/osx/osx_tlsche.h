@@ -28,8 +28,8 @@
 
 #include "osx_configall.h"
 #include "osx_foundation.h"
-#include "../hal/hal_rtc.h"
-#include "../hal/hal_timer.h"
+#include "../hal/opennode2010/hal_rtc.h"
+#include "../hal/opennode2010/hal_timer.h"
 #include "osx_taskpool.h"
 #include "osx_taskheap.h"
 

@@ -26,12 +26,10 @@
 #include "osx_configall.h"
 #include <string.h>
 #include "osx_foundation.h"
-#include "../hal/hal_led.h"
+#include "../hal/opennode2010/hal_led.h"
 #include "osx_tlsche.h"
 #include "osx_taskheap.h"
 #include "osx_taskpool.h"
-
-#include <avr/sleep.h>
 
 void _osx_taskheap_item_dump( TiOsxTaskHeap * heap, int8 idx );//jiade
 void _osx_taskheap_dump( TiOsxTaskHeap * heap );//jiade
@@ -68,7 +66,7 @@ int8 osx_tlsche_taskspawn( TiOsxTimeLineScheduler * sche, TiOsxTask taskfunction
 
 void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
 {    
-    TiOsxTaskHeapItem * desc;
+    TiOsxTaskHeapItem * desc;.
 	
 
     do{
@@ -85,23 +83,26 @@ void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
             break;
     }while (true);
 
-    osx_tlsche_stepforward( sche, CONFIG_OSX_TIMER_INTERVAL );
+    //osx_tlsche_stepforward( sche, CONFIG_OSX_TIMER_INTERVAL );
 }
 
 void osx_tlsche_execute( TiOsxTimeLineScheduler * sche )
 {
-	rtc_setinterval( sche->timer, 0, 2, 0x01); //定时周期为一秒 
-	hal_enable_interrupts();
-	rtc_start( sche->timer );
+	//rtc_setinterval( sche->timer, 0, 2, 0x01); //定时周期为一秒 
+	//rtc_start( sche->timer );
+
+    rtc_setprscaler( sche->timer,32767);
+    rtc_start( sche->timer);
 
     while (1)
     {
         osx_tlsche_evolve( sche, NULL );
-	
+	    /*
         set_sleep_mode(SLEEP_MODE_IDLE);
 	    sleep_enable();
 	    sleep_cpu();
 	    sleep_disable();
+        */
     }
 
     // rtc_stop( sche->rtc );

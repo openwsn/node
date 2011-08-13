@@ -80,6 +80,7 @@
 #include "../hal/opennode2010/hal_cpu.h"
 #include "../hal/opennode2010/hal_assert.h"
 #include "../hal/opennode2010/hal_timer.h"
+#include "../hal/opennode2010/hal_rtc.h"
 
 #define osx_assert(x) hal_assert(x)
 
@@ -142,7 +143,7 @@ inline void _osx_target_on_sleep( void * svcptr, TiEvent * e )
 	// todo
 	// do something before sleep
 	// such as saving data in the RAM
-	cpu_sleep();
+	//cpu_sleep();
 }
 
 inline void _osx_target_on_wakeup( void * svcptr, TiEvent * e )

@@ -46,13 +46,18 @@
  *    implement the event->handler map itself. 
  ******************************************************************************/ 
 
-#include "rtl_configall.h"
-#include "rtl_foundation.h"
+#include "../rtl/rtl_configall.h"
+#include "../rtl/rtl_foundation.h"
+#include "svc_nio_aloha.h"
 
 /******************************************************************************* 
  * attention
  * You should avoid to use id 0. Event id 0 is used by the dispatcher.
  ******************************************************************************/ 
+
+#ifndef MAX_IEEE802FRAME154_SIZE
+#define MAX_IEEE802FRAME154_SIZE 128
+#endif
 
 #define NIO_DISPA_HOPESIZE(capacity) (sizeof(TiNioDispatcher) + sizeof(_TiNioDispatcherItem)*capacity)
 
@@ -60,8 +65,12 @@
 extern "C" {
 #endif
 
-typedef (uintx *)(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
-typedef (uintx *)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+//typedef (uintx *)(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+typedef uint8(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
+//typedef (uintx *)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+typedef uint8(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
 
 typedef struct{
     uint8 state;
@@ -69,74 +78,45 @@ typedef struct{
     TiFunRxHandler rxhandler;
     TiFunTxHandler txhandler;
     TiFunEventHandler evolve;
+    uint8 proto_id;
 }_TiNioNetLayerDispatcherItem;
 
 #define CONFIG_NIO_NETLAYER_DISP_CAPACITY 4
 
 typedef struct{
-    _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
     TiFrame * rxbuf;
     TiFrame * txbuf;
-    char rxbuf_memory[FRAME_HOPESIZE()];
-    char txbak_memory[FRAME_HOPESIZE()];
+    TiFrame * rxbake;
+    TiAloha * mac;
+    char rxbuf_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+    char rxbake_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+    char txbak_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+    _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
 }TiNioNetLayerDispatcher;
 
-net_disp_open
-net_disp_close
-net_disp_send( TiFrame * f ) 
-{
-    aloha_send
-}
+TiNioNetLayerDispatcher * net_disp_construct( void * mem, uint16 memsize );
 
-net_disp_recv( TiFrame * f )
-{
-    rxbuf -> f;
-}
+TiNioNetLayerDispatcher * net_disp_open( TiNioNetLayerDispatcher * dispacher,TiAloha * mac);
 
-net_disp_evolve( object, TiEvent * e )
-{
-    _TiNioNetLayerDispatcherItem * item;
-    
-    if (rxbuf.empty)
-    {
-        count = aloha_recv(rxbuf);
-        if (count > 0)
-        {
-            payload = frame_startptr(rxbuf);
-            proto_id = payload[0];
-            item = search for this proto_id in the dispatcher table;
-            
-            if (item->rxhandler(item->object, rxbuf, rxbak, 0x00) > 0)
-                rxbak -> rxbuf;
-            else
-                clear rxbuf;       
-        }
-    }
-    
-    for each item in items
-        call their evolve
-    
-}
+TiNioNetLayerDispatcher * net_disp_close( TiNioNetLayerDispatcher * dispacher,TiAloha *mac);
+
+uint8 net_disp_send( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint16 addr,uint8 option);
+
+uint8 net_disp_broadcast( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint8 option);
+
+uint8 net_disp_recv(  TiNioNetLayerDispatcher * dispacher,TiFrame * f );
+
+void net_disp_evolve(void * object, TiEvent * e );
 
 
 
 /**
  * @param proto_id: Protocol Identifier. 
  */
-net_disp_register( uint8 proto_id, void * object, TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve )
-{
-    if (found)
-    {
-        dispatcher->item[idx].state = 1;
-        dispatcher->item[idx].proto_id = proto_id;
-        dispatcher->item[idx].object = object;
-        dispatcher->item[idx].rxhandler = rxhandler;
-        dispatcher->item[idx].txhandler = txhandler;
-        dispatcher->item[idx].evolve = evovle;
-    }
-}
+void net_disp_register(  TiNioNetLayerDispatcher * dispatcher,uint8 proto_id, void * object, TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve );
 
-net_disp_unregister( void * object );
+
+void net_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id );
 
 
 
@@ -148,11 +128,12 @@ net_disp_unregister( void * object );
 
 
 
-
+/*
 
 typedef (uint8)(* TiNioProcess)( void * object, TiNioSession * session );
 
 /* component id is used to map the index in the array */
+/*
 typedef struct{
 	TiNioSession session;
 	void * object;
@@ -263,6 +244,7 @@ delete the following
  *	handler		handler, an function pointer with TiFunEventHandler type
  *	object      handler owner. = event.objectto
  */
+/*
 typedef struct{
 	uint8       id;
 	TiFunEventHandler handler;
@@ -281,12 +263,13 @@ TiDispatcher *  nio_dispa_construct( char * buf, uint16 size, uint8 capacity );
 void            nio_dispa_destroy( TiDispatcher * dpa );
 bool            nio_dispa_attach( TiDispatcher * dpa, uint8 id, TiFunEventHandler handler, void * object );
 void            nio_dispa_detach( TiDispatcher * dpa, uint8 id );
-void            nio_dispa_send( TiDispatcher * dispa, TiEvent * e => TiFrame * frame );
+void            nio_dispa_send( TiDispatcher * dispa, TiEvent * e => TiFrame * frame ); */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif 
+#endif
+
 
 
