@@ -49,7 +49,13 @@ extern SPI_InitTypeDef SPI_InitStructure;
 
 
 /*******************************************************************************
-* Function Name  : fputc
+* Function Name  : fputc#include "common\devx_configall.h"
+#include "common\devx_foundation.h"
+#include "common\rtl\rtl_frame.h"
+#include "common\rtl\rtl_debugio.h"
+#include "common\rtl\rtl_ieee802frame154.h"
+#include "common\rtl\rtl_dumpframe.h"
+
 * Description    : Retargets the C library printf function to the USART.
 *******************************************************************************/
 int fputc(int ch, FILE *f);
