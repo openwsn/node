@@ -32,6 +32,8 @@
 #include "../hal/opennode2010/hal_led.h"
 #include "../hal/opennode2010/hal_debugio.h"
 #include "../hal/opennode2010/hal_assert.h"
+#include "../hal/opennode2010/hal_timesynchro.h"
+#include "../hal/opennode2010/hal_uart.h"
 //#include "../hal/gainz/hpl_cpu.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
@@ -154,9 +156,29 @@ TiFrameQueue * nac_rxque( TiNioAcceptor * nac )
  * @return true if success and false is failed.
  */
 intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
-{   
-	TiFrameRxTxInterface * rxtx = &(nac->rxtx);
-	uint8 first = frame_firstlayer(item);
+{
+    TiFrameRxTxInterface * rxtx;
+    uint8 first;
+
+    char *pc;
+    uint8 length;
+    uint8 protocalid;
+    length = frame_length( item);
+    frame_movehigher( item);
+    pc = frame_startptr( item);
+    protocalid = pc[0];
+    frame_movelower( item);
+    frame_setlength( item,length);
+    if ( protocalid == 0x04)
+    {
+        hal_syn_txhandler( item);
+    }
+
+    //the code above is added for hal_timesynchro on 2011/8/13
+    //
+
+	 rxtx = &(nac->rxtx);
+	 first = frame_firstlayer(item);
 	//return rxtx->send( rxtx->provider, frame_layerstartptr(item,first), frame_layercapacity(item,first), item->option );
 	return rxtx->send( rxtx->provider, frame_startptr( item), frame_length( item), item->option );
 
@@ -272,6 +294,18 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
 		if (count > 0)
 		{
+            char *pc;
+            uint8 protocalid;
+            pc = frame_startptr( f);
+            protocalid = pc[12];//前面12个字节是MAC头，不能用movehigher()使指针指向里层，也许是从2520直接收到的缘故。
+            if ( protocalid == 0x04)
+            {
+                hal_syn_rxhandler( f);
+            }
+
+            //the code above is added for hal_timesynchro on 2011/8/13.
+            //
+
             frame_setlength( f, count );
             frame_setcapacity( f, count );
 			fmque_pushback( nac->rxque, f );

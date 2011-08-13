@@ -48,8 +48,10 @@
  */
 #ifdef CONFIG_TARGET_GAINZ 
   #define TiRtcAdapterTime uint16
+#elif defined( CONFIG_TARGETBOARD_OPENNODE2010)
+  #define TiRtcAdapterTime uint32
 #else
-  #pragma error "you should choose correct TiRtcAdapterTime type on your hardware architecture!"
+  #error "you should choose correct TiRtcAdapterTime type on your hardware architecture!"
 #endif
 
 /**
@@ -114,6 +116,7 @@ typedef struct{
 typedef struct{
   TiCalTime curtime;
   TiCalTime deadline;
+  uint32 currenttime;
 
   TiFunEventHandler listener;
   void * lisowner;

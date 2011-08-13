@@ -184,7 +184,8 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
 	rtc->listener = listener;
   	rtc->lisowner = object;
   	rtc->option = option;
-    rtc->id = id;  
+    rtc->id = id;
+    rtc->currenttime = 0;
 	return rtc;
 }
 
