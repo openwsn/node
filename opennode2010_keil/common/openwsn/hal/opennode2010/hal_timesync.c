@@ -6,13 +6,12 @@
 #include "hal_mcu.h"
 #include "hal_uart.h"
 #include "hal_led.h"
-#include "hal_timesynchro.h"
+#include "hal_timesync.h"
 
 #define TSYNC_MAKE_DWORD(highest,high,lowe,lowest) (((uint32)highest<<24) | ((uint32)high<<16)|((uint16)lowe<<8)|((uint8)lowest))
 
 TiTimeSyncAdapter * hal_tsync_open( TiTimeSyncAdapter * tsync, TiRtcAdapter *rtc)
 {
-    hal_assert( sizeof(TiTimeSyncAdapter) <= size );
     memset( (void *)tsync, 0x00, sizeof(TiTimeSyncAdapter) );
     tsync->rtc = rtc;
     return tsync;
@@ -55,7 +54,7 @@ intx hal_tsync_txhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
     char *ptr;
     uint32 sendtime;
 
-    ptr = frame_startptr( txbuf);
+    ptr = frame_startptr( input);
     
     if (ptr[0] == TSYNC_PROTOCAL_ID)
     {
