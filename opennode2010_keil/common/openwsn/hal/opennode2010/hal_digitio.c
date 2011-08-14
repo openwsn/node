@@ -41,17 +41,17 @@
 /***********************************************************************************
 * INCLUDES
 */
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_targetboard.h"
-#include "hal_cpu.h"
-#include "hal_digio.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_targetboard.h"
+#include "../hal_cpu.h"
+#include "../hal_digitio.h"
 
 /***********************************************************************************
 * LOCAL VARIABLES
 */
-static ISR_FUNC_PTR port1_isr_tbl[8] = {0};
-static ISR_FUNC_PTR port2_isr_tbl[8] = {0};
+//static ISR_FUNC_PTR port1_isr_tbl[8] = {0};
+//static ISR_FUNC_PTR port2_isr_tbl[8] = {0};
 
 
 /***********************************************************************************

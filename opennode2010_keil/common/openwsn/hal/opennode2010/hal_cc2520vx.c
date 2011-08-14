@@ -1,7 +1,8 @@
-#include "hal_configall.h"
-#include "hal_foundation.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_cpu.h"
+#include "../hal_mcu.h"
 #include "hal_cc2520vx.h"
-#include "hal_mcu.h"
 
 // todo
 #define BIT3 3

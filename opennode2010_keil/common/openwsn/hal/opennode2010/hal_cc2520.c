@@ -1,12 +1,4 @@
-// @todo
-// @todo
-// @todo
-// @todo
-// @todo
-// @todo
-// @todo
-// @todo
-// @todo
+
 
 /* @attention
  * If you want to disable all the assertions in this macro, you should undef CONFIG_DEBUG.
@@ -15,27 +7,28 @@
 #undef  CONFIG_DEBUG
 #define CONFIG_DEBUG
 
-#include "hal_configall.h"
+#include "../hal_configall.h"
 #include <string.h>
 #include <stdio.h>
-#include "hal_foundation.h"
-#include "hal_cpu.h"
-#include "hal_interrupt.h"
-#include "hal_assert.h"
-#include "hal_targetboard.h"
-#include "hal_led.h"
-#include "hal_uart.h"
-#include "hal_debugio.h"
-#include "hal_mcu.h"
+#include "../hal_foundation.h"
+#include "../hal_cpu.h"
+#include "../hal_interrupt.h"
+#include "../hal_assert.h"
+#include "../hal_targetboard.h"
+#include "../hal_led.h"
+#include "../hal_uart.h"
+#include "../hal_debugio.h"
+#include "../hal_mcu.h"
+#include "../hal_digitio.h"
 
 /* In "hal_cc2520base.h", we implement the most fundamental cc2420 operating functions.
- * If you want to port hal_cc2420 to other platforms, you can simply revise the 
- * hal_cc2420vx.h. The other part inside hal_cc2420.h can keep unchanged.
+ * If you want to port hal_cc2520 to other platforms, you can simply revise the 
+ * hal_cc2520vx.h. The other part inside hal_cc2520.h can keep unchanged.
  */
 #include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
-#include "hal_cc2520.h"
-#include "hal_mcu.h"
+#include "../hal_cc2520.h"
+
 
 NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -158,9 +151,9 @@ uint8 cc2520_send( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option )
 	__disable_irq ();
     CC2520_TXBUF( len,buf);
     __enable_irq();
-  	hal_delay( 1);
+  	hal_delayms( 1);
 	CC2520_STXON();
-	hal_delay(1);
+	hal_delayms(1);
 	count = len;
 	return count;
 }
@@ -181,7 +174,7 @@ uint8 cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 optio
 
 	CC2520_TXBUF( len,buf);
 	CC2520_STXON();
-	hal_delay(1);
+	hal_delayms(1);
 
 	count = len;
 	return count;
@@ -451,7 +444,7 @@ void cc2520_restart( TiCc2520Adapter * cc )
 {
      GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
      GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
-     hal_delay( 5);//wait for the regulator to be stable.
+     hal_delayms( 5);//wait for the regulator to be stable.
      GPIO_SetBits( GPIOB,GPIO_Pin_1);//set the cc2520 nRST
      GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
      while ( !GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));
@@ -733,17 +726,6 @@ uint8 cc2520_settxpower( TiCc2520Adapter * cc, uint8 power )
 
 ***********************************************************************************/
 
-/***********************************************************************************
-* INCLUDES
-*/
-#include "hal_mcu.h"
-#include "hal_cpu.h"
-#include "hal_digio.h"
-#include "hal_cc2520vx.h"
-#include "hal_cc2520base.h"
-#include "hal_cc2520.h"
-#include "hal_targetboard.h"
-#include "hal_assert.h"
 
 
 #define SUCCESS 0
@@ -895,9 +877,9 @@ void halRfPowerUp(void)
 {
     // Power up CC2520
     CC2520_VREG_EN_OPIN(1);
-    halMcuWaitUs(CC2520_VREG_MAX_STARTUP_TIME);
+    hal_delayus(CC2520_VREG_MAX_STARTUP_TIME);
     CC2520_RESET_OPIN(1);
-    halMcuWaitUs(CC2520_XOSC_MAX_STARTUP_TIME);
+    hal_delayus(CC2520_XOSC_MAX_STARTUP_TIME);
 }
 
 
@@ -918,7 +900,7 @@ void halRfResetChip(void)
     CC2520_RESET_OPIN(0);
     CC2520_VREG_EN_OPIN(1);
 
-    halMcuWaitUs(CC2520_VREG_MAX_STARTUP_TIME);  // us
+    hal_delayus(CC2520_VREG_MAX_STARTUP_TIME);  // us
     CC2520_RESET_OPIN(1);
     halRfWaitXoscStable();
 }
@@ -944,11 +926,11 @@ HAL_RF_STATUS halRfInit(void)
     CC2520_RESET_OPIN(0);
     CC2520_SPI_END();
     CC2520_VREG_EN_OPIN(0);
-    halMcuWaitUs(1100);
+    hal_delayus(1100);
 
     // Enable the voltage regulator and wait for it (CC2520 power-up)
     CC2520_VREG_EN_OPIN(1);
-    halMcuWaitUs(CC2520_VREG_MAX_STARTUP_TIME);
+    hal_delayus(CC2520_VREG_MAX_STARTUP_TIME);
 
     // Release reset
     CC2520_RESET_OPIN(1);
@@ -1017,7 +999,7 @@ HAL_RF_STATUS halRfWaitXoscStable(void)
     i= 100;
     CC2520_CSN_OPIN(0);
     while (i>1 && !CC2520_MISO_IPIN) {
-        halMcuWaitUs(10);
+        hal_delayus(10);
         --i;
     }
     CC2520_CSN_OPIN(1);
@@ -1251,7 +1233,7 @@ uint8 halRfTransmitCCA(void)
         halRfStrobe(CC2520_INS_STXONCCA);
         HAL_INT_ON();
         if (CC2520_SAMPLED_CCA_PIN) break;
-        halMcuWaitUs(20);
+        hal_delayus(20);
     }
     if (timeout == 0) {
         status = FAILED;

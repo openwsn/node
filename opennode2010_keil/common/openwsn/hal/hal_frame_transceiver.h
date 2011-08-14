@@ -22,7 +22,7 @@
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
-#include "../../rtl/rtl_iobuf.h"
+#include "../rtl/rtl_iobuf.h"
 
 /* FTRX is the abbreviation of "frame transceiver" */
 

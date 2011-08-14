@@ -24,10 +24,10 @@
 #ifndef _HAL_CC2520VX_H_4839_
 #define _HAL_CC2520VX_H_4839_
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_assert.h"
-#include "hal_targetboard.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_assert.h"
+#include "../hal_targetboard.h"
 
 /**
  * The whole cc2520 adapter/driver adopts layer design:
@@ -54,7 +54,7 @@
  * in this module.
  */
 
-#include "hal_digio.h"
+#include "../hal_digitio.h"
 
 // todo should be modified
 #define MCU_IO_GET(n1,n2) 0

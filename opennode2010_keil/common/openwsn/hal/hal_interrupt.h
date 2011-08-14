@@ -128,7 +128,7 @@
 #define INTNUM_TIMER3           13  // not recommend to use
 #define INTNUM_TIMER4           14  // not recommend to use
 #define INTNUM_USART            15
-#define INTNUM_RTCALARM         16
+//#define INTNUM_RTCALARM         16
 
 
 #define INTNUM_FIFOP            INTNUM_EXTI0    // not recommend to use

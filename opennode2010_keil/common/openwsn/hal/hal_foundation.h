@@ -65,7 +65,7 @@
 
 #include "hal_configall.h"
 #include <stdint.h>
-#include "../../rtl/rtl_foundation.h"
+#include "../rtl/rtl_foundation.h"
 
 /* System wide event identifier */
 

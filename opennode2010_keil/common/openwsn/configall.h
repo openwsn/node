@@ -328,6 +328,16 @@ typedef unsigned int        uintx;
     #define __ASM            __asm          /*!< asm keyword for TASKING Compiler      */
     #define __INLINE         inline         /*!< inline keyword for TASKING Compiler   */
   #endif	
+  
+  // The OpenNode 2010 platform (STM32F103x + cc2520) supports the following three
+  // macros: 
+  // - CONFIG_CPU_FREQUENCY_8MHZ 
+  // - CONFIG_CPU_FREQUENCY_48MHZ 
+  // - CONFIG_CPU_FREQUENCY_72MHZ 
+  // You should define one and only one above macro.
+  
+  #define CONFIG_CPU_FREQUENCY_8MHZ 1
+  //#warning "The target board running at 8MHz defined by CONFIG_CPU_FREQUENCY_8MHZ in configall.h"
 #endif 
 
 #ifndef CONFIG_WINDOWS

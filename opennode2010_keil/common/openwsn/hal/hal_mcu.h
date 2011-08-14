@@ -12,30 +12,30 @@ extern "C" {
 
 //#include <stdio.h>
 //#include <stm32f10x_lib.h>
-#include "./stm32f10x/std/inc/stm32f10x_foundation.h"
-#include "./cm3/device/stm32f10x/stm32f10x.h"
-#include "./stm32f10x/std/inc/misc.h"
-#include "./stm32f10x/std/inc/stm32f10x_adc.h"
-#include "./stm32f10x/std/inc/stm32f10x_bkp.h"
-#include "./stm32f10x/std/inc/stm32f10x_can.h"
-#include "./stm32f10x/std/inc/stm32f10x_cec.h"
-#include "./stm32f10x/std/inc/stm32f10x_dac.h"
-#include "./stm32f10x/std/inc/stm32f10x_dbgmcu.h"
-#include "./stm32f10x/std/inc/stm32f10x_dma.h"
-#include "./stm32f10x/std/inc/stm32f10x_exti.h"
-#include "./stm32f10x/std/inc/stm32f10x_flash.h"
-#include "./stm32f10x/std/inc/stm32f10x_fsmc.h"
-#include "./stm32f10x/std/inc/stm32f10x_gpio.h"
-#include "./stm32f10x/std/inc/stm32f10x_i2c.h"
-#include "./stm32f10x/std/inc/stm32f10x_iwdg.h"
-#include "./stm32f10x/std/inc/stm32f10x_pwr.h"
-#include "./stm32f10x/std/inc/stm32f10x_rcc.h"
-#include "./stm32f10x/std/inc/stm32f10x_rtc.h"
-#include "./stm32f10x/std/inc/stm32f10x_sdio.h"
-#include "./stm32f10x/std/inc/stm32f10x_spi.h"
-#include "./stm32f10x/std/inc/stm32f10x_tim.h"
-#include "./stm32f10x/std/inc/stm32f10x_usart.h"
-#include "./stm32f10x/std/inc/stm32f10x_wwdg.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_foundation.h"
+#include "./opennode2010/cm3/device/stm32f10x/stm32f10x.h"
+#include "./opennode2010/stm32f10x/std/inc/misc.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_adc.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_bkp.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_can.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_cec.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_dac.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_dbgmcu.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_dma.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_exti.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_flash.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_fsmc.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_gpio.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_i2c.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_iwdg.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_pwr.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_rcc.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_rtc.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_sdio.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_spi.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_tim.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_usart.h"
+#include "./opennode2010/stm32f10x/std/inc/stm32f10x_wwdg.h"
 //#include "./stm32f10x/std/inc/stm32f10x_nvic.h"
 
 extern GPIO_InitTypeDef GPIO_InitStructure;
@@ -47,35 +47,12 @@ extern TIM_OCInitTypeDef  TIM_OCInitStructure;
 extern SPI_InitTypeDef SPI_InitStructure;
 //extern USART_InitTypeDef USART_InitStructure;
 
-
-
 /*******************************************************************************
-* Function Name  : BSP_Init
 * Description    : Configures RCC,GPIO,NVIC
 *******************************************************************************/
 void mcu_init(void);
 
-/*******************************************************************************
-* Function Name  : delay_nus
-* Description    : delay n us
-*******************************************************************************/
-/*
-#define hal_delayus(n) delay_nus(n)
-// 延时n us: n>=6,最小延时单位6us
-// 外部晶振：8M；PLL：9；8M*9=72MHz
-void delay_nus(unsigned long n);
-*/
-/*******************************************************************************
-* Function Name  : delay_nms
-* Description    : delay n ms
-*******************************************************************************/
-// 延时n ms
-// 外部晶振：8M；PLL：9；8M*9=72MHz
-/*
-#define hal_delay(n) delay_nms(n)
-#define hal_delayms(n) delay_nms(n)
-void delay_nms(unsigned long n);
-*/
+
 #endif /* CONFIG_TARGETBOARD_OPENNODE2010 */
 
 

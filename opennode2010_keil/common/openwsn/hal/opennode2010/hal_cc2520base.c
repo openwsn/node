@@ -41,12 +41,12 @@
 /***********************************************************************************
 * INCLUDES
 */
-#include "hal_configall.h"
-#include "hal_foundation.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
 #include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
-#include "hal_assert.h"
-#include "hal_cpu.h"
+#include "../hal_assert.h"
+#include "../hal_cpu.h"
 
 /***********************************************************************************
 * CONSTANTS AND DEFINES
@@ -98,7 +98,7 @@ static uint8 waitException(uint8 exc, uint16 timeOut)
     while (--timeOut>0) {
         if (GotException(exc))
             break;
-        halMcuWaitUs(10);
+        hal_delayus(10);
     }
     return timeOut>0;
 }
@@ -651,11 +651,11 @@ uint8 CC2520_MEMWR8(uint16 addr, uint8 value)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
-	hal_delay(10);
+	hal_delayms(10);
     s = CC2520_SPI_TXRX(CC2520_INS_MEMWR | HIBYTE(addr));
     CC2520_SPI_TXRX(LOBYTE(addr));
     CC2520_SPI_TXRX(value);
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -722,10 +722,10 @@ uint8 CC2520_RXBUF(uint8 count, uint8  *pData)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
-	hal_delay( 10);
+	hal_delayms( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_RXBUF);
     CC2520_INS_RD_ARRAY(count, pData);
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -744,10 +744,10 @@ uint8 CC2520_RXBUF8(void)
 {
     uint8 value;
     CC2520_SPI_BEGIN();
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_TXRX(CC2520_INS_RXBUF);
     value = CC2520_SPI_TXRX(0x00);
-	hal_delay(10);
+	hal_delayms(10);
     CC2520_SPI_END();
     return value;
 }
@@ -1517,10 +1517,10 @@ uint8 CC2520_REGRD(uint8 addr, uint8 count, uint8  *pValues)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
-	hal_delay( 10);
+	hal_delayms( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_REGRD | addr);
     CC2520_INS_RD_ARRAY(count, pValues);
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -1612,10 +1612,10 @@ uint8 CC2520_REGWR(uint8 addr, uint8 count, uint8  *pValues)
 {
     uint8 s;
     CC2520_SPI_BEGIN();
-	hal_delay( 10);
+	hal_delayms( 10);
     s = CC2520_SPI_TXRX(CC2520_INS_REGWR | addr);
     CC2520_INS_WR_ARRAY(count, pValues);
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_END();
     return s;
 }
@@ -1637,7 +1637,7 @@ void CC2520_REGWR8(uint8 addr, uint8 value)
 	hal_delayms(10);
     CC2520_SPI_TXRX(CC2520_INS_REGWR | addr);
     CC2520_SPI_TXRX(value);
-	hal_delay( 10);
+	hal_delayms( 10);
     CC2520_SPI_END();
     return;
 }

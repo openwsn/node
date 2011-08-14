@@ -57,8 +57,8 @@
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
-#include "../../rtl/rtl_foundation.h"
-#include "../../rtl/rtl_debugio.h"
+#include "../rtl/rtl_foundation.h"
+#include "../rtl/rtl_debugio.h"
 #include "hal_uart.h"
 #include "hal_led.h"
 #include "hal_assert.h"

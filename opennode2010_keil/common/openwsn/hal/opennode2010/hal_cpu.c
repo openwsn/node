@@ -24,7 +24,9 @@
  *
  ******************************************************************************/
 
-#include "hal_cpu.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_cpu.h"
 
 /**
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
@@ -32,15 +34,12 @@
  * 
  * @attention Not tested yet.
  */
-void cpu_delay250ns()
+void cpu_delay250ns(void)
 {
-#ifdef CONFIG_CPU_FREQUENCY_8MHZ    
+#if defined(CONFIG_CPU_FREQUENCY_8MHZ)
     cpu_nop();
     cpu_nop();
-#elif CONFIG_CPU_FREQUENCY_48MHZ    
-    cpu_nop();
-    cpu_nop();
-    cpu_nop();
+#elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
     cpu_nop();
     cpu_nop();
     cpu_nop();
@@ -50,7 +49,10 @@ void cpu_delay250ns()
     cpu_nop();
     cpu_nop();
     cpu_nop();
-#elif CONFIG_CPU_FREQUENCY_72MHZ    
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+#elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
     int counter = 9; // = 18/2
     while (count > 0)
     {
@@ -70,19 +72,20 @@ void cpu_delay250ns()
  */
 inline void cpu_delay1us()
 {
-#ifdef CONFIG_CPU_FREQUENCY_8MHZ    
+#if defined(CONFIG_CPU_FREQUENCY_8MHZ)
     int counter = 6; // 8-2
-#elif CONFIG_CPU_FREQUENCY_48MHZ    
+#elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
     int counter = 46 // 48-2
-#elif CONFIG_CPU_FREQUENCY_72MHZ    
+#elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
     int counter = 70 // 72-2
 #else
   #error "You must choose your CPU frequency and implement this function again."
 #endif  
-    while (count > 0)
+
+    while (counter > 0)
     {
         cpu_nop();
-        count --;
+        counter --;
     }
 }
 

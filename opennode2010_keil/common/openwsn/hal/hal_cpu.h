@@ -97,9 +97,18 @@
 #define CONFIG_CPU_FREQUENCY_48MHZ
 //#define CONFIG_CPU_FREQUENCY_72MHZ
 
-void cpu_delay250ns()£»
-void cpu_delayus(uint16 usec)£»
-void cpu_delayms(uint16 msec) £»
+/* @attention
+ * @modified by zhangwei on 2011.08.14
+ * - OpenWSN eliminate the function hal_delay(). You should use hal_delayms() instead.
+ */
+ 
+#define hal_delay250ns() cpu_delay250ns()
+#define hal_delayus(usec) cpu_delayus((usec))
+#define hal_delayms(msec) cpu_delayms((msec))
+
+void cpu_delay250ns(void);
+void cpu_delayus(uint16 usec);
+void cpu_delayms(uint16 msec);
  
 
 /*******************************************************************************
@@ -112,7 +121,12 @@ void cpu_delayms(uint16 msec) £»
  
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 
-#include "./cm3/core/core_cm3.h"
+/* @modified by Jiang Ridong in 2011.07
+ * @attention You should place "stm32f10x.h" before "core_cm3" or else the compiler
+ * will complain some symbols cannot found and may report strange errors.
+ */
+#include "./opennode2010/cm3/device/stm32f10x/stm32f10x.h"
+#include "./opennode2010/cm3/core/core_cm3.h"
 
 #define CPU_REGISTER_WIDTH 32
 #define CPU_DATAPATH_WIDTH 32

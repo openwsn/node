@@ -758,7 +758,7 @@
 ////		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG2));
 ////		USART_Send( CC2520_REGRD8( CC2520_RXFIFOCNT));//输出结果是0说明rxfifo中根本没有数据,但是为什么CC2520_EXCFLAG1不是0呢？
 ////		USART_Send( 0xff);
-////        hal_delay( 10);
+////        hal_delayms( 10);
 ////		//CC2520_SFLUSHRX();
 //		//CC2520_SFLUSHRX();
 //		if (CC2520_REGRD8( CC2520_EXCFLAG1)&0x11)
@@ -788,7 +788,7 @@
 //		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG1));
 //		USART_Send( CC2520_REGRD8( CC2520_EXCFLAG2));
 //		USART_Send( CC2520_REGRD8( CC2520_RXFIFOCNT));
-//		hal_delay( 1000);
+//		hal_delayms( 1000);
 //	}
 //	
 //}
@@ -797,17 +797,17 @@
 //
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_debugio.h"
 
 #define CONFIG_LISTENER    
 #undef  CONFIG_LISTENER    
@@ -863,7 +863,7 @@ void recvnode1(void)
     char *pc;
 	led_open();
 	led_on( LED_RED );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 	halUartInit(9600,0);
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
