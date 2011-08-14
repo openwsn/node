@@ -35,8 +35,8 @@
  *    and we include correct "hpl_cpu.h" in "hal_cpu.h" according to macro configurations.
  */
 
-#ifndef CONFIG_TARGET_GAINZ
-#error "this file should be compile with GAINZ target platform only. you should enable CONFIG_TARGET_GAINZ in configall.h to activate this platform."
+#ifndef CONFIG_TARGETBOARD_GAINZ
+#error "this file should be compile with GAINZ target platform only. you should enable CONFIG_TARGETBOARD_GAINZ in configall.h to activate this platform."
 #endif
 
 #define CONFIG_CPU_CLOCK_MSEC_RATIO1 255
@@ -85,6 +85,7 @@ inline cpu_atomic_t _cpu_atomic_begin(void)
 	return result;
 }
 
+
 // todo
 inline void _cpu_atomic_end(cpu_atomic_t state)
 {
@@ -120,7 +121,7 @@ inline void hal_atomic_end( void )
 	}
 }
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
 // #define hal_atomic_begin() cpu_push(_cpu_atomic_begin())
 // #define hal_atomic_end() _cpu_atomic_end(cpu_pop())
 #endif

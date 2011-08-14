@@ -48,7 +48,7 @@
  ******************************************************************************/
 
 /*
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
   #define tm_value_t uintx
 #else
   #define tm_value_t uintx

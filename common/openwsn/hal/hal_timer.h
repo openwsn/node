@@ -77,7 +77,7 @@
  * @attention
  *	though atmega128 is a 8 bit MCU, we still use uint16 as tm_value_t. 
  */
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
   #define tm_value_t uint16
   #define TIMER_CLOCKS_PER_MILLISECOND  (GAINZ_CLOCK_FREQUENCY / 1000)
   #define timer_msecof(clocks) (clocks/TIMER_CLOCKS_PER_MILLISECOND)

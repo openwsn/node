@@ -27,6 +27,45 @@
 #include "../hal_vic.h"
 
 
+
+
+void hal_disable_interrupt( uintx num );
+void hal_enable_interrupt( uintx num );
+
+
+// no use to be deleted
+void hal_disable_interrupt( uintx num )
+{
+	// todo
+/*
+    if (num < 8)
+    {
+        EIMSK |= (1 << num);
+    }
+*/
+}
+
+void hal_enable_interrupt( uintx num )
+{
+    /* for atmega128, there're 8 external interrupts. which can be controlled by 
+     * the following: EICRA, EICRB, EIMSK, EIFR. 
+     * for other interrupt source such as timer, the interrupt is controlled by
+     * its own registers.
+     * 
+     * ref to atmega128 datasheet
+     */
+
+	// todo
+	/*
+    if (num < 8)
+    {
+        EIMSK &= (~(1 << num));
+    }
+	*/
+}
+
+
+
 void hal_vic_init( uint8 opt )
 {
 }

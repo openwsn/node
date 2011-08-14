@@ -83,11 +83,11 @@
 #include "hal_cpu.h"
 #include "hal_vic.h"
 
-#ifdef CONFIG_TARGET_OPENNODE
-#include "arch_target.h"
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+//#include "arch_target.h"
 #endif
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
 #include <avr/interrupt.h>
 #endif
 

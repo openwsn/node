@@ -230,6 +230,7 @@ void mcu_init()
 * Function Name  : delay_nus
 * Description    : delay n us
 *******************************************************************************/
+/*
 void delay_nus(unsigned long n)  //延时n us: n>=6,最小延时单位6us
 { 
 // todo: should adjust hardware settings to guarntee the time duration is correct
@@ -251,18 +252,19 @@ void delay_nus(unsigned long n)  //延时n us: n>=6,最小延时单位6us
   }
 #endif  
 }
-
+*/
 /*******************************************************************************
 * Function Name  : delay_nms
 * Description    : delay n ms
 *******************************************************************************/
+/*
 void delay_nms(unsigned long n)  //延时n ms
 {
   while(n--)		   // 外部晶振：8M；PLL：9；8M*9=72MHz
     delay_nus(1100);   // 1ms延时补偿
 }
 
-
+*/
 
 
 
@@ -284,9 +286,10 @@ void delay_nms(unsigned long n)  //延时n ms
 *             
 * @return      none
 */
+/*
 void halMcuInit(void)
 {
-/* todo
+ todo
     uint16 i;
     
     // Stop watchdog
@@ -307,8 +310,8 @@ void halMcuInit(void)
     
     // Wait for DCO to synchronize with ACLK (at least 28*32 ACLK cycles)
     for (i = 0x1C00; i > 0; i--) asm("NOP");
-*/
 }
+*/
 
 
 /***********************************************************************************
@@ -327,11 +330,13 @@ void halMcuInit(void)
 */
 // todo	 important
 //#pragma optimize=none
+/*
 void halMcuWaitUs(uint16 usec) // 5 cycles for calling
 {
 	int j;
 
 #ifdef CONFIG_TOOLCHAIN_MDK
+*/
 /*
 	// The least we can wait is 3 usec:
     // ~1 one cycle for call, 1 for first compare and 1 for return 
@@ -348,6 +353,7 @@ void halMcuWaitUs(uint16 usec) // 5 cycles for calling
         usec -= 2;        // 1 cycles for optimized decrement
     }
 */
+/*
 	while(usec > 1)       
 	{            
 		for ( j=0;j<70;j++)
@@ -359,7 +365,7 @@ void halMcuWaitUs(uint16 usec) // 5 cycles for calling
 #endif
 
 }                         // 4 cycles for returning
-
+*/
 
 /***********************************************************************************
 * @fn          halMcuWaitMs
@@ -376,6 +382,7 @@ void halMcuWaitUs(uint16 usec) // 5 cycles for calling
 */
 // todo
 // #pragma optimize=none
+/*
 void halMcuWaitMs(uint16 msec)
 {
     while(msec-- > 0)
@@ -383,7 +390,7 @@ void halMcuWaitMs(uint16 msec)
         halMcuWaitUs(1000);
     }
 }
-
+*/
 
 /***********************************************************************************
 * @fn          halMcuSetLowPowerMode
@@ -398,9 +405,9 @@ void halMcuWaitMs(uint16 msec)
 *             
 * @return      none
 */
-void halMcuSetLowPowerMode(uint8 mode)
+/*void halMcuSetLowPowerMode(uint8 mode)
 {
-/* todo
+ todo
     switch (mode)
     {
     case HAL_MCU_LPM_0:
@@ -419,6 +426,6 @@ void halMcuSetLowPowerMode(uint8 mode)
         __low_power_mode_4();
         break;
     }
-*/
 }
+*/
 

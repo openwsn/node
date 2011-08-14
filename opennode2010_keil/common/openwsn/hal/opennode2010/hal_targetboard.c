@@ -57,6 +57,9 @@
 */
 //static void halLcdSpiInit(void);
 
+//#include "./cm3/device/stm32f10x/stm32f10x.h"
+
+
 
 /***********************************************************************************
 * GLOBAL VARIABLES

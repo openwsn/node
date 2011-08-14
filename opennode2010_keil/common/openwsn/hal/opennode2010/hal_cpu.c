@@ -25,15 +25,92 @@
  ******************************************************************************/
 
 #include "hal_cpu.h"
-/*
-inline cpu_atomic_t _cpu_atomic_start(void )
+
+/**
+ * A very short delay for only 250ns. This one is used to adjust hardware timing 
+ * in some special cases. 
+ * 
+ * @attention Not tested yet.
+ */
+void cpu_delay250ns()
 {
-	cpu_atomic_t result = * (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x3F + 0x20);
-	__asm volatile ("cli");
-	return result;
+#ifdef CONFIG_CPU_FREQUENCY_8MHZ    
+    cpu_nop();
+    cpu_nop();
+#elif CONFIG_CPU_FREQUENCY_48MHZ    
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+#elif CONFIG_CPU_FREQUENCY_72MHZ    
+    int counter = 9; // = 18/2
+    while (count > 0)
+    {
+        cpu_nop();
+        count --;
+    }
+#else
+  #error "You must choose your CPU frequency and implement this function again."
+#endif  
 }
-*/
 
+/**
+ * A very short delay for only 1us. This one is used to adjust hardware timing 
+ * in some special cases. 
+ * 
+ * @attention Not tested yet.
+ */
+inline void cpu_delay1us()
+{
+#ifdef CONFIG_CPU_FREQUENCY_8MHZ    
+    int counter = 6; // 8-2
+#elif CONFIG_CPU_FREQUENCY_48MHZ    
+    int counter = 46 // 48-2
+#elif CONFIG_CPU_FREQUENCY_72MHZ    
+    int counter = 70 // 72-2
+#else
+  #error "You must choose your CPU frequency and implement this function again."
+#endif  
+    while (count > 0)
+    {
+        cpu_nop();
+        count --;
+    }
+}
 
+/* hardware dependent function.
+ * on GAINZ platform, the main clock frequency is 8MHz. so 8 nop instruction
+ * occupies approximately 1 u-second (usec)
+ * 
+ * @attention
+ * - the input parameter value should not large than the maximum value of uint16 type
+ */
+void cpu_delayus(uint16 usec)
+{
+	while (usec > 0) 
+	{
+        cpu_delay1us();
+        usec --;
+    }
+}
 
-   
+/* attention: 
+ * the input msec value should not exceed the maximum value of uint16 type 
+ */
+void cpu_delayms(uint16 msec) 
+{
+    while (msec > 0)
+    {
+        cpu_delayus( 1000 );
+        msec --;
+    }
+}
+

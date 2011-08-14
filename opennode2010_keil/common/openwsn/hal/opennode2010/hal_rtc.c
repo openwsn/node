@@ -479,6 +479,14 @@ void rtc_backward( TiRtcAdapter * rtc, uint16 ms )
     hal_enable_interrupts();
 }
 
+bool rtc_getclockinterface( TiClockInterface * clock )
+{
+    memset( clock, 0x00, sizeof(TiClockInterface) );
+    clock->start = rtc_start;
+    // @todo
+}
+
+
 
 /**
  * This function is actually the interrupt handler. it will be called everytime the
@@ -519,3 +527,5 @@ void _rtc_interrupt_handler( void * object, TiEvent * e )
 //		TIFR |= _BV(OCF0);
 //    }
 } 
+
+
