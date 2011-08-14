@@ -7,9 +7,9 @@
  */
 
 typedef struct{
-    uint8   prefix;
-    uint32  value;
-    uint8   suffix;
+    uint8   scale; 
+    int32   value;
+    uint8   mantissa; 
 }TiTime; 
 
 //#define TiSystemTime TiTime
