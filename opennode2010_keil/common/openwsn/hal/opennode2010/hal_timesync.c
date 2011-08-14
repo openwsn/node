@@ -2,14 +2,13 @@
 #include "hal_foundation.h"
 #include "hal_rtc.h"
 #include "../../rtl/rtl_frame.h"
+#include "../../rtl/rtl_time.h"
 #include "hal_mcu.h"
 #include "hal_uart.h"
 #include "hal_led.h"
 #include "hal_timesynchro.h"
 
 #define TSYNC_MAKE_DWORD(highest,high,lowe,lowest) (((uint32)highest<<24) | ((uint32)high<<16)|((uint16)lowe<<8)|((uint8)lowest))
-
-TiTimeSyncAdapter m_syn;
 
 TiTimeSyncAdapter * hal_tsync_open( TiTimeSyncAdapter * tsync, TiRtcAdapter *rtc)
 {
