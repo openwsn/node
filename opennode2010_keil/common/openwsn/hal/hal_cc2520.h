@@ -49,28 +49,31 @@
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
-//#include "../rtl/rtl_iobuf.h"
-//#include "../rtl/rtl_ieee802frame154.h"
 #include "opennode2010/hal_cc2520vx.h"
 #include "opennode2010/hal_cc2520base.h"
 #include "hal_frame_transceiver.h"
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
+/* The following constants represent the size of cc2520 RXBUF and TXBUF size. You 
+ * should NOT change their value. 
+ * 
+ * @attention The first byte in the buffer is the length byte. The value of the length
+ * byte doesn't include itself.
+ */
 #define CC2520_RXBUF_SIZE 128
+#define CC2520_TXBUF_SIZE 128
 
-#define GPIO_SPI GPIOB
-#define SPI_pin_MISO  GPIO_Pin_14
-#define SPI_pin_MOSI  GPIO_Pin_15
-#define SPI_pin_SCK   GPIO_Pin_13
-#define SPI_pin_SS    GPIO_Pin_12
-
+/** 
+ * The following macros are for testing only. You should change it to adapt to your 
+ * own settings.
+ */
 #define CC2520_DEF_PANID                0x0001
 #define CC2520_DEF_LOCAL_ADDRESS        0x0001   
 #define CC2520_DEF_REMOTE_ADDRESS       0x0002
 #define CC2520_DEF_CHANNEL              11
+
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 /* TiCc2520Adapter
  * is a lightweight wrapper of TI/Chipcon's cc2420 2.4G transceiver. 
@@ -91,9 +94,9 @@ typedef struct{
 	volatile uint8 rxlen;
 	volatile uint8 rxbuf[CC2520_RXBUF_SIZE];
 	//char ackbuf[CC2520_ACKBUFFER_SIZE];
-	uint8 rssi;
-	uint8 lqi;
-	volatile uint8 spistatus;
+	// uint8 rssi;
+	// uint8 lqi;
+	// volatile uint8 spistatus;
 	uint16 param[14];
 }TiCc2520Adapter;
 

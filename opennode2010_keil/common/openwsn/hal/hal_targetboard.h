@@ -1,5 +1,3 @@
-#ifndef _HAL_TARGETBOARD_H_7C83_
-#define _HAL_TARGETBOARD_H_7C83_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -25,10 +23,25 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
+#ifndef _HAL_TARGETBOARD_H_7C83_
+#define _HAL_TARGETBOARD_H_7C83_
+
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
 
+/*
+#if   defined ASSY_CCMSP2618_CC2520
+#include "assy_ccmsp2618_cc2520em.h"
+#elif defined ASSY_CCMSP2618_CC2500
+#include "assy_ccmsp2618_cc2500em.h"
+#elif defined ASSY_BB
+#include "assy_ccmsp2618_cc2520em.h"
+#warning "ASSY_BB not implemented; using ASSY_CCMSP2618_CC2520"
+#else
+//#error "No assembly chosen"
+#endif
+*/
 
 /* Hardware Platform Layer
  * including CPU/MCU specific source codes
@@ -60,23 +73,6 @@
 extern "C" {
 #endif
 
-/******************************************************************************
- * INCLUDES
- */
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_mcu.h"
-
-#if   defined ASSY_CCMSP2618_CC2520
-#include "assy_ccmsp2618_cc2520em.h"
-#elif defined ASSY_CCMSP2618_CC2500
-#include "assy_ccmsp2618_cc2500em.h"
-#elif defined ASSY_BB
-#include "assy_ccmsp2618_cc2520em.h"
-#warning "ASSY_BB not implemented; using ASSY_CCMSP2618_CC2520"
-#else
-//#error "No assembly chosen"
-#endif
 
 /******************************************************************************
  * CONSTANTS
@@ -189,23 +185,11 @@ extern "C" {
 #define CC2511_SPI_WAIT_RXRDY()         st( while (!(IFG2 & UCB0RXIFG)); )
 #define CC2511_SPI_END()                st( asm("NOP"); P3OUT |= 0x01; )
 
-/******************************************************************************
- * GLOBAL VARIABLES
- */
-
-/******************************************************************************
- * GLOBAL FUNCTIONS
- */
-
-void halBoardInit(void);
-
+void target_init( void );
+void target_reset( void );
 
 #ifdef __cplusplus
 }
 #endif
-
-
-void target_init( void );
-void target_reset( void );
 
 #endif /* _HAL_TARGETBOARD_H_7C83_ */

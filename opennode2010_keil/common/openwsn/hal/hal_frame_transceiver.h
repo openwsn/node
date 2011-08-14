@@ -37,8 +37,8 @@ struct _TiFrameTxRxInterface;
 
 //typedef uint8  (* TiFunFtrxSend)( void * trx, TiIoBuf * iobuf, uint8 option );
 //typedef uint8  (* TiFunFtrxRecv)( void * trx, TiIoBuf * iobuf, uint8 option );
-typedef uint8  (* TiFunFtrxSend)( void * trx, char * buf, uint8 len, uint8 option );
-typedef uint8  (* TiFunFtrxRecv)( void * trx, char * buf, uint8 capacity, uint8 option );
+typedef intx  (* TiFunFtrxSend)( void * trx, char * buf, uintx len, uint8 option );
+typedef intx  (* TiFunFtrxRecv)( void * trx, char * buf, uintx capacity, uint8 option );
 typedef void   (* TiFunFtrxEvolve)( void * trx, TiEvent * e );
 typedef void   (* TiFunFtrxSwitchToMode)( void * trx, uint8 mode );
 typedef uint8  (* TiFunFtrxIsChannelClear)( void * trx );

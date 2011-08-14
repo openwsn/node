@@ -86,6 +86,10 @@
 #define hal_atomic_begin() cpu_atomic_begin() 
 #define hal_atomic_end(state) cpu_atomic_end((state))
 
+#define TiCpuState cpu_atomic_t 
+#define hal_enter_critical() cpu_atomic_begin() 
+#define hal_leave_critical(state) cpu_atomic_end((state))
+
 /**
  * @attention: 
  * - You must define one and only one of the following macros to tell this module

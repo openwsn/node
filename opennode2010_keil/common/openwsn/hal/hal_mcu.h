@@ -10,7 +10,6 @@ extern "C" {
 
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 
-//#include <stdio.h>
 //#include <stm32f10x_lib.h>
 #include "./opennode2010/stm32f10x/std/inc/stm32f10x_foundation.h"
 #include "./opennode2010/cm3/device/stm32f10x/stm32f10x.h"
@@ -47,20 +46,22 @@ extern TIM_OCInitTypeDef  TIM_OCInitStructure;
 extern SPI_InitTypeDef SPI_InitStructure;
 //extern USART_InitTypeDef USART_InitStructure;
 
-/*******************************************************************************
-* Description    : Configures RCC,GPIO,NVIC
-*******************************************************************************/
+/**
+ * Initialize the microcontroller. After initialization, the MCU should be able to 
+ * run some little programs. For external device initialization other than the MCU,
+ * target_init() should be called. 
+ * 
+ * Generally you needn't call mcu_init() because the target_init() will call it.
+ *
+ * @section For OpenNode 2010 hardware platform only:
+ * For OpenNode 2010 hardware platform, STM32F10x MCU is used. The mcu_init() function
+ * will configure the RCC, GPIO and NVIC which related to the MCU only.
+ */
 void mcu_init(void);
 
 
 #endif /* CONFIG_TARGETBOARD_OPENNODE2010 */
 
-
-
-/***********************************************************************************
-* INCLUDES
-*/
-//#include "hal_types.h"
 
 
 /***********************************************************************************
@@ -100,5 +101,4 @@ uint8 halMcuGetResetCause(void);
 }
 #endif
 
-/**********************************************************************************/
 #endif /* _HAL_MCU_H_7489_ */

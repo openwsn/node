@@ -17,10 +17,29 @@ static void _RCC_Configuration(void);
 static void _GPIO_Configuration(void);
 static void _NVIC_Configuration(void);
 
-/*******************************************************************************
-* Function Name  : RCC_Configuration
-* Description    : Configures System Clocks
-*******************************************************************************/
+/**
+ * Initialize the microcontroller. After initialization, the MCU should be able to 
+ * run some little programs. For external device initialization other than the MCU,
+ * target_init() should be called. 
+ * 
+ * Generally you needn't call mcu_init() because the target_init() will call it.
+ *
+ * @section For OpenNode 2010 hardware platform only:
+ * For OpenNode 2010 hardware platform, STM32F10x MCU is used. The mcu_init() function
+ * will configure the RCC, GPIO and NVIC which related to the MCU only.
+ */
+void mcu_init(void);
+{
+  /* Configure the system clocks */
+  _RCC_Configuration();
+    
+  /* GPIO Configuration */
+  _GPIO_Configuration();
+
+  /* NVIC Configuration */
+  _NVIC_Configuration();
+}
+
 void _RCC_Configuration(void)
 {/*todo for testing
   RCC_DeInit();
@@ -172,179 +191,7 @@ void _NVIC_Configuration(void)
 * Description    : Configures the USART1.
 *******************************************************************************/
 
-/*******************************************************************************
-* Function Name  : BSP_Init
-* Description    : Configures RCC,GPIO,NVIC
-*******************************************************************************/
-void mcu_init()
-{
-  /* Configure the system clocks */
-  _RCC_Configuration();
-    
-  /* GPIO Configuration */
-  _GPIO_Configuration();
 
-  /* NVIC Configuration */
-  _NVIC_Configuration();
-}
-
-/*******************************************************************************
-* Function Name  : delay_nus
-* Description    : delay n us
-*******************************************************************************/
-/*
-void delay_nus(unsigned long n)  //延时n us: n>=6,最小延时单位6us
-{ 
-// todo: should adjust hardware settings to guarntee the time duration is correct
-#ifdef CONFIG_TARGETBOARD_OPENNODE2010
-	unsigned long j;
-	while (n--)
-	{
-		j=0;
-		while (j--) cpu_nop();
-	}
-#endif
-
-#ifndef CONFIG_TARGETBOARD_OPENNODE2010
-  unsigned long j;
-  while(n--)              // 外部晶振：8M；PLL：9；8M*9=72MHz
-  {
-    j=8;				  // 微调参数，保证延时的精度
-	while(j--);
-  }
-#endif  
-}
-*/
-/*******************************************************************************
-* Function Name  : delay_nms
-* Description    : delay n ms
-*******************************************************************************/
-/*
-void delay_nms(unsigned long n)  //延时n ms
-{
-  while(n--)		   // 外部晶振：8M；PLL：9；8M*9=72MHz
-    delay_nus(1100);   // 1ms延时补偿
-}
-
-*/
-
-
-
-/***********************************************************************************
-* @fn          halMcuInit
-*
-* @brief       Turn off watchdog and set up system clock. Set system clock to 
-*              8 MHz 
-*
-* @param       none
-*             
-* @return      none
-*/
-/*
-void halMcuInit(void)
-{
- todo
-    uint16 i;
-    
-    // Stop watchdog
-    WDTCTL = WDTPW + WDTHOLD;
-    
-    // Wait for xtal to stabilize
-    while (IFG1 & OFIFG)
-    {
-        // Clear oscillator fault flag
-        IFG1 &= ~OFIFG;
-        for (i = 0x4800; i > 0; i--) asm("NOP");
-    }
-    
-    // Set clock source to DCO @ 8 MHz 
-    DCOCTL = CALDCO_8MHZ;
-    BCSCTL1 = CALBC1_8MHZ;
-    BCSCTL1 |= XT2OFF;
-    
-    // Wait for DCO to synchronize with ACLK (at least 28*32 ACLK cycles)
-    for (i = 0x1C00; i > 0; i--) asm("NOP");
-}
-*/
-
-
-/***********************************************************************************
-* @fn          halMcuWaitUs
-*
-* @brief       Busy wait function. Waits the specified number of microseconds. Use
-*              assumptions about number of clock cycles needed for the various 
-*              instructions. The duration of one cycle depends on MCLK. In this HAL
-*              , it is set to 8 MHz, thus 8 cycles per usec.
-*
-*              NB! This function is highly dependent on architecture and compiler!
-*
-* @param       uint16 usec - number of microseconds delay
-*             
-* @return      none
-*/
-// todo	 important
-//#pragma optimize=none
-/*
-void halMcuWaitUs(uint16 usec) // 5 cycles for calling
-{
-	int j;
-
-#ifdef CONFIG_TOOLCHAIN_MDK
-*/
-/*
-	// The least we can wait is 3 usec:
-    // ~1 one cycle for call, 1 for first compare and 1 for return 
-    while(usec > 3)       // 2 cycles for compare
-    {                     // 2 cycles for jump
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        __asm("NOP");       // 1 cycles for nop
-        usec -= 2;        // 1 cycles for optimized decrement
-    }
-*/
-/*
-	while(usec > 1)       
-	{            
-		for ( j=0;j<70;j++)
-			 __nop();
-		usec --;            // 1 cycles for optimized decrement
-	}
-#else
-	#error "unsupported compiler"
-#endif
-
-}                         // 4 cycles for returning
-*/
-
-/***********************************************************************************
-* @fn          halMcuWaitMs
-*
-* @brief       Busy wait function. Waits the specified number of milliseconds. Use
-*              assumptions about number of clock cycles needed for the various 
-*              instructions.
-*
-*              NB! This function is highly dependent on architecture and compiler!
-*
-* @param       uint16 millisec - number of milliseconds delay
-*             
-* @return      none
-*/
-// todo
-// #pragma optimize=none
-/*
-void halMcuWaitMs(uint16 msec)
-{
-    while(msec-- > 0)
-    {
-        halMcuWaitUs(1000);
-    }
-}
-*/
 
 /***********************************************************************************
 * @fn          halMcuSetLowPowerMode

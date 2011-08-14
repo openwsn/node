@@ -1,12 +1,5 @@
 
 
-/* @attention
- * If you want to disable all the assertions in this macro, you should undef CONFIG_DEBUG.
- * You should do this in release version */
-
-#undef  CONFIG_DEBUG
-#define CONFIG_DEBUG
-
 #include "../hal_configall.h"
 #include <string.h>
 #include <stdio.h>
@@ -20,6 +13,8 @@
 #include "../hal_debugio.h"
 #include "../hal_mcu.h"
 #include "../hal_digitio.h"
+//#include "../rtl/rtl_iobuf.h"
+//#include "../rtl/rtl_ieee802frame154.h"
 
 /* In "hal_cc2520base.h", we implement the most fundamental cc2420 operating functions.
  * If you want to port hal_cc2520 to other platforms, you can simply revise the 
@@ -30,11 +25,20 @@
 #include "../hal_cc2520.h"
 
 
+#define GPIO_SPI GPIOB
+#define SPI_pin_MISO  GPIO_Pin_14
+#define SPI_pin_MOSI  GPIO_Pin_15
+#define SPI_pin_SCK   GPIO_Pin_13
+#define SPI_pin_SS    GPIO_Pin_12
+
 NVIC_InitTypeDef NVIC_InitStructure;
 
 TiCc2520Adapter m_cc;
 
-static int _cc2520_read_rxbuf( TiCc2520Adapter *cc, char *buf, uint8 capacity );
+
+static void _cc2520_fifop_handler(void * object, TiEvent * e);
+static intx _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len );
+static intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity );
 
 TiCc2520Adapter * cc2520_construct( void * mem, uint16 size )
 {
@@ -57,53 +61,67 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
     cc->listener = listener;
     cc->lisowner = lisowner;
     cc->option = option;
-	cc->rssi = 0;
-	cc->lqi = 0;
-	cc->spistatus = 0;
+	//cc->rssi = 0;
+	//cc->lqi = 0;
+	//cc->spistatus = 0;
 	cc->rxlen = 0;
 
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
-
+    // activate the SPI module which is used for communication between MCU and cc2520.
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,  ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-	
+    // Port B Pin 14 is used for SPI's MISO (IPD means Input Pull Down). 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_Init( GPIOB,&GPIO_InitStructure);
 
-
+    // Port B Pin 1 is used for cc2520 RST   
+    // Port B Pin 5 is used for VREG_EN
+    // Port B Pin 12 is used for NSS  
+    // GPIO_Mode_Out_PP here means Push Pull(推挽输出)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init( GPIOB,&GPIO_InitStructure);
 
-	
-	GPIO_ResetBits( GPIOB,GPIO_Pin_1);//reset the cc2520 nRST
-	GPIO_SetBits( GPIOB,GPIO_Pin_5);//set the VREG_EN
-	for ( i=0;i<13500;i++);//wait for the regulator to be stabe.
-
-	GPIO_SetBits( GPIOB,GPIO_Pin_1);////set the cc2520 nRST
-	GPIO_ResetBits( GPIOB,GPIO_Pin_12);//reset the cc2520 CSn
+    // reset the cc2520 nRST
+	GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+    // set VREG_EN which will enable the cc2520's internal voltage regulator
+	GPIO_SetBits( GPIOB,GPIO_Pin_5);
+    // wait for the regulator to be stabe.
+    // @todo
+	for ( i=0;i<13500;i++);
+    // hal_delayus(?)
+    
+    // set the cc2520 nRST
+	GPIO_SetBits( GPIOB,GPIO_Pin_1);
+    //reset the cc2520 CSn
+	GPIO_ResetBits( GPIOB,GPIO_Pin_12);
+    // @todo: shall we need to wait a little while after CS and then RST for stable?
+    // @todo repalce with hal_delayus(?)
 	for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
-	hal_assert( GPIO_ReadInputDataBit( GPIOB,GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
-	GPIO_SetBits( GPIOB,GPIO_Pin_12);//set the cc2520 CSn
+	hal_assert( GPIO_ReadInputDataBit( GPIOB, GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+    // set the cc2520 CSn
+	GPIO_SetBits( GPIOB, GPIO_Pin_12);
 	hal_delayus( 2 );
 
-    //SPI_GPIO_Configuration
+    // Port B Pin 13 is used for SCK 
+    // Port B Pin 15 is used for SPI's MOSI 
 	GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+	GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
 
+    // Port B Pin 14 is used for MISO
 	GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+	GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
 
+    // Port B Pin 12 is used for NSS
 	GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -121,58 +139,96 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
 
 	CC2520_SRFOFF();
 	CC2520_SRXON();
-	//hal_attachhandler( INTNUM_CC2520_FIFOP, _cc2420_fifop_handler, cc );
+    
+    // Map the cc2520 FIFOP interrupt to cc2520 FIFOP handler. This is done inside
+    // hal_interrupt module and hal_foundation module.
+	hal_attachhandler( INTNUM_CC2520_FIFOP, _cc2520_fifop_handler, cc );
+    
+    // Enable the FIFOP interrupt so that the FIFOP request can activate the handler
+    // function _cc2520_fifop_handler().
 	cc2520_enable_fifop( cc );
 
     return cc;
 }
 
-uint8 cc2520_send( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option )
+/**
+ * Send the data in the buffer. The data should already be organized as an complete
+ * frame required by cc2520 transceiver. The first byte should be the length byte
+ * according to 802.15.4 frame format. So buf[0] should equal to (len-1).
+ * 
+ * @param buf The data frame.
+ * @param len The data length in the buffer. 
+ * @param option
+ *      1: require ACK. (default)
+ *      0: No ACK require.
+ *
+ * @return 
+ *      > 0     the counts of bytes really sent
+ *      = 0     nothing is sent
+ *      < 0     I/O error.
+ */
+intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
 	uint16 count;
 	uint8 status;
-
+    TiCpuState cpu_state;
 
 	hal_assert( len > 0 );
 
-	if ( option)
+	if (option)
 	{
 		buf[1] = buf[1]|0x20;
 	}
-    buf[0] = len;//todo for testing
+    
+    // set the frame length according to 802.15.4 frame format. Attention we'd better
+    // set buf[0] here, which is the frame length. This is because this byte may
+    // not be set by the above layer.
+    buf[0] = len-1;
 	
-	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+    // @todo
+    // Wait for the last sending finished. Delay isn't recommend here.
 	CC2520_SFLUSHTX();
-	//CC2520_SFLUSHTX();
 	hal_delayus( 50); // todo
 				
 	// todo: check whether the last sending is complete
 	
-	__disable_irq ();
-    CC2520_TXBUF( len,buf);
-    __enable_irq();
-  	hal_delayms( 1);
+    // @attention You should use critical area management here because the sending
+    // process doesn't hope other interrupt to disturbe it.
+	cpu_state = hal_enter_critical();
+    CC2520_TXBUF( len, buf);
+	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+	hal_leave_critical(cpu_state);
+  	
+    hal_delayms(1);
 	CC2520_STXON();
 	hal_delayms(1);
-	count = len;
-	return count;
+	
+	return len;
 }
-uint8 cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option )
+
+intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
 	uint16 count;
 	uint8 status;
+    TiCpuState cpu_state;
 
 	hal_assert( len > 0 );
 
-	buf[1] = buf[1]&0xdf;
-    buf[0] = len;
+    // Set the frame control for broadcast. Bit 5 in frame control byte 0 is cleared.
+    // 1 in this bit means ACK required.
 
-	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+	buf[1] = buf[1] & 0xdf;
+    buf[0] = len-1;
+
+    // @todo
+    // Wait for the last sending finished. Delay isn't recommend here.
 	CC2520_SFLUSHTX();
-	//CC2520_SFLUSHTX();
 	hal_delayus( 50);
 
+	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
+	cpu_state = hal_enter_critical();
 	CC2520_TXBUF( len,buf);
+	hal_leave_critical(cpu_state);
 	CC2520_STXON();
 	hal_delayms(1);
 
@@ -180,14 +236,21 @@ uint8 cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 optio
 	return count;
 }
 
-uint8 cc2520_recv( TiCc2520Adapter * cc, char * buf, uint8 size, uint8 option )//rxfifo overflow 的情况还没有考虑
+intx _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len )
 {
-	  uint8 ret = 0;
-		
-	  // enter_critical
-	 __disable_irq();
+    return 0;
+}
 
-	 // cc->rxlen should equal to cc->rxbuf[0] + 1 for correct frames
+intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
+{
+	intx ret = 0;
+    TiCpuState cpu_state=0;
+		
+    // Read data out from the cc->rxbuf. Usually the FIFOP interrupt service routine
+    // place accepted frame into the rxbuf for this reading.
+    
+	cpu_state = hal_enter_critical();
+	// cc->rxlen should equal to cc->rxbuf[0] + 1 for correct frames
 	if (cc->rxlen > 0)
 	{	
         // cc->rxlen includes the frame length byte in the cc->rxbuf[0], so it should 
@@ -198,71 +261,69 @@ uint8 cc2520_recv( TiCc2520Adapter * cc, char * buf, uint8 size, uint8 option )/
 			ret = cc->rxlen;
 			cc->rxlen = 0;
 		}
-		else
-		{
+		else{
 			ret = 0;
 			cc->rxlen = 0;
 		}
+    }
+    hal_leave_critical(cpu_state);
 
-   }
-
-   __enable_irq();
-   // leave critical;
-
-   __disable_irq();
-   if (ret == 0)
-   {
-	   
-		ret = _cc2520_read_rxbuf( cc,buf,size );
-
-   }
-   __enable_irq();
+    // If the rxbuf is empty, then we should check for the transceiver to see whether
+    // there's frame pending for reading.
+    
+	cpu_state = hal_enter_critical();
+    if (ret == 0)
+    {
+		ret = _cc2520_read_rxbuf( cc, buf, size );
+    }
+    hal_leave_critical(cpu_state);
 
 	return ret;
 }
 
-int _cc2520_read_rxbuf( TiCc2520Adapter *cc, char *buf, uint8 capacity )
+intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 {
 	int ret;
 	uint8 state;
 
 	ret = 0;
 
-	if (CC2520_REGRD8( CC2520_EXCFLAG0) & 0x40)//if rxfifo overflow.
+    //if rxfifo overflow.
+	if (CC2520_REGRD8(CC2520_EXCFLAG0) & 0x40)
 	{
 		buf[0] = CC2520_REGRD8( CC2520_RXFIFOCNT );
-		if ( buf[0] > 0)
+		if (buf[0] > 0)
 		{
-			CC2520_RXBUF( buf[0],buf+1);
+			CC2520_RXBUF(buf[0], buf+1);
 			ret = buf[0]+1;
 		}
 
 		CC2520_SFLUSHRX();
 		CC2520_SFLUSHRX();
 
-		CC2520_REGWR8(CC2520_EXCFLAG0,0x00);
+        // clear the exception flag manually
+		CC2520_REGWR8(CC2520_EXCFLAG0, 0x00);
     }
     else{
-		state = CC2520_REGRD8( CC2520_EXCFLAG1);
-		if( state & 0x01)//if (( state && 0x01) && ( state && 0x10)) 
+        // judge whether the frame arrived
+		state = CC2520_REGRD8(CC2520_EXCFLAG1);
+		if (state & 0x01) //if (( state && 0x01) && ( state && 0x10)) 
 		{
+            // buf[0] is the frame length.
 			buf[0] = CC2520_RXBUF8();
-
-			if ( buf[0]>0)
+			if (buf[0] > 0)
 			{
-				CC2520_RXBUF( buf[0],buf+1);
+				CC2520_RXBUF(buf[0], buf+1);
 				ret = buf[0]+1;
-
 			}
-			else
-			{
+			else{
 				CC2520_SFLUSHRX();
 				CC2520_SFLUSHRX();
 			}
 
-			CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
+            // clear the exception manually
+			CC2520_REGWR8(CC2520_EXCFLAG1, 0x00);
 		}
-		
 	}
 
 	return ret;
@@ -1413,5 +1474,19 @@ HAL_RF_STATUS halRfReceiveOff(void)
     return halRfStrobe(CC2520_INS_SRFOFF);
 }
 
+void _cc2520_fifop_handler(void * object, TiEvent * e)
+{
+    TiCc2520Adapter * cc = (TiCc2520Adapter *)object;
+    TiCpuState cpu_state;
 
+    // todo  1ms is too long
+	hal_delayms(1);
+    
+    cpu_state = hal_enter_critical();
+	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
+    hal_leave_critical(cpu_state);
+
+    // need clear the interrupt flag manually.
+    EXTI_ClearITPendingBit(EXTI_Line0);    
+}
 
