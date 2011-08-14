@@ -1,7 +1,64 @@
 
 #include "rtl_configall.h"
 #include "rtl_foundation.h"
-#define   TiSystemTime uint64
+
+/**
+ * C language support 32 bit time_t and 64 bit time_t. 
+ */
+
+typedef struct{
+    uint8   prefix;
+    uint32  value;
+    uint8   suffix;
+}TiTime; 
+
+//#define TiSystemTime TiTime
+
+
+/*
+typedef TiTime :  64 bit structure
+multiple = prefix = prefix = scale 1B 
+uint32 value time_t
+fraction = suffix = postfix = 1B = 尾数mantissa
+
+或者采取类似浮点数可浮动的表示方法
+
+
+convert to/from 32bit
+convert to/from 64bit
+convert to YMDHMS calendar format
+set epoch
+read
+write
+
+epoch起点从何？
+
+map_epoch( TiTime tm, TiCalendar * cal )
+*/
+
+
+time_from32
+time_from64
+time_to32
+time_to64
+time_forward
+time_backward
+time_setepoch
+// time_read( char * buf, uint8 size )
+// time_write( char * buf, uint8 size )
+
+time_read16( char * buf )
+time_write16( char * buf )
+time_read32( char * buf )
+time_write32( char * buf )
+time_read64( char * buf )
+time_write64( char * buf )
+time_read80( char * buf )
+time_write80( char * buf )
+
+
+
+//#define   TiSystemTime uint64
 #define   TiTime8      uint8 
 #define   TiTime16     uint16    
 #define   TiTime32     uint32 

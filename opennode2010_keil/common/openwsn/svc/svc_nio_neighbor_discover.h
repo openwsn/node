@@ -116,11 +116,11 @@ nio_ndp_open()
 }
 */
 
-uint8 nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame * output, uint8 option );
 
 
-uint8 nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
-
+intx nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
+intx nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option );
+void ndp_evolve( void * svcptr, TiEvent * e );
 
 void nio_ndp_request_evolve( void * object, TiEvent * e);
 

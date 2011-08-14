@@ -130,7 +130,7 @@ void nac_close( TiNioAcceptor * nac )
 	frame_close( nac->rxframe );
 }
 
-void nac_set_timesync( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
+void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
 {
     nac->timesync = tsync;
 }
