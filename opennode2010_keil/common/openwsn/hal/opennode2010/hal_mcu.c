@@ -28,7 +28,7 @@ static void _NVIC_Configuration(void);
  * For OpenNode 2010 hardware platform, STM32F10x MCU is used. The mcu_init() function
  * will configure the RCC, GPIO and NVIC which related to the MCU only.
  */
-void mcu_init(void);
+void mcu_init(void)
 {
   /* Configure the system clocks */
   _RCC_Configuration();

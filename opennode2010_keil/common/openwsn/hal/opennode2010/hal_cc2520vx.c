@@ -2,7 +2,17 @@
 #include "../hal_foundation.h"
 #include "../hal_cpu.h"
 #include "../hal_mcu.h"
+#include "../hal_assert.h"
+#include "../hal_led.h"
+#include "hal_cc2520base.h"
 #include "hal_cc2520vx.h"
+
+
+#define GPIO_SPI GPIOB
+#define SPI_pin_MISO  GPIO_Pin_14
+#define SPI_pin_MOSI  GPIO_Pin_15
+#define SPI_pin_SCK   GPIO_Pin_13
+#define SPI_pin_SS    GPIO_Pin_12
 
 // todo
 #define BIT3 3
@@ -75,6 +85,120 @@ void cc2520_dependent_init(void)
     halDigioConfig(&pinRadio_GPIO0);
 }
 //
+void CC2520_ACTIVATE(void)
+{
+    int i;
+    // activate the SPI module which is used for communication between MCU and cc2520.
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,  ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    // Port B Pin 14 is used for SPI's MISO (IPD means Input Pull Down). 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+    GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+    // Port B Pin 1 is used for cc2520 RST   
+    // Port B Pin 5 is used for VREG_EN
+    // Port B Pin 12 is used for NSS  
+    // GPIO_Mode_Out_PP here means Push Pull(推挽输出)
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init( GPIOB,&GPIO_InitStructure);
+
+    // reset the cc2520 nRST
+    GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+    // set VREG_EN which will enable the cc2520's internal voltage regulator
+    GPIO_SetBits( GPIOB,GPIO_Pin_5);
+    // wait for the regulator to be stabe.
+    // @todo
+    for ( i=0;i<13500;i++);
+    // hal_delayus(?)
+
+    // set the cc2520 nRST
+    GPIO_SetBits( GPIOB,GPIO_Pin_1);
+    //reset the cc2520 CSn
+    GPIO_ResetBits( GPIOB,GPIO_Pin_12);
+    // @todo: shall we need to wait a little while after CS and then RST for stable?
+    // @todo repalce with hal_delayus(?)
+    for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
+    hal_assert( GPIO_ReadInputDataBit( GPIOB, GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+    // set the cc2520 CSn
+    GPIO_SetBits( GPIOB, GPIO_Pin_12);
+    hal_delayus( 2 );
+
+    // Port B Pin 13 is used for SCK 
+    // Port B Pin 15 is used for SPI's MOSI 
+    GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
+
+    // Port B Pin 14 is used for MISO
+    GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
+
+    // Port B Pin 12 is used for NSS
+    GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+}
+
+void CC2520_ENABLE_FIFOP( void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    CC2520_REGWR8(CC2520_GPIOCTRL0, CC2520_GPIO_FIFOP);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    EXTI_ClearITPendingBit(EXTI_Line0);
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
+    EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+
+}
+void CC2520_DISABLE_FIFOP( void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    EXTI_ClearITPendingBit(EXTI_Line0);
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
+    EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+    EXTI_Init(&EXTI_InitStructure);
+}
 //与2520相连的是spi2
 void CC2520_SPI_OPEN( void)//initialize sip2.
 {

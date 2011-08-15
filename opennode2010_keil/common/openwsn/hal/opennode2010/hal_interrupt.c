@@ -33,12 +33,12 @@
  *    variable is declared in hal_foundation.c
  */
 
-#include "hal_configall.h" 
-#include "hal_foundation.h" 
-#include "hal_interrupt.h"
-#include "hal_cpu.h"
-#include "hal_led.h"
-#include "hal_assert.h"
+#include "../hal_configall.h" 
+#include "../hal_foundation.h" 
+#include "../hal_interrupt.h"
+#include "../hal_cpu.h"
+#include "../hal_led.h"
+#include "../hal_assert.h"
 
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 // #include "./cm3/device/stm32f10x/stm32f10x.h"

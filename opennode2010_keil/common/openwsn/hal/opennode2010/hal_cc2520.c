@@ -13,6 +13,7 @@
 #include "../hal_debugio.h"
 #include "../hal_mcu.h"
 #include "../hal_digitio.h"
+#include "../hal_interrupt.h"
 //#include "../rtl/rtl_iobuf.h"
 //#include "../rtl/rtl_ieee802frame154.h"
 
@@ -25,15 +26,8 @@
 #include "../hal_cc2520.h"
 
 
-#define GPIO_SPI GPIOB
-#define SPI_pin_MISO  GPIO_Pin_14
-#define SPI_pin_MOSI  GPIO_Pin_15
-#define SPI_pin_SCK   GPIO_Pin_13
-#define SPI_pin_SS    GPIO_Pin_12
 
-NVIC_InitTypeDef NVIC_InitStructure;
-
-TiCc2520Adapter m_cc;
+//TiCc2520Adapter m_cc;
 
 
 static void _cc2520_fifop_handler(void * object, TiEvent * e);
@@ -55,7 +49,6 @@ void cc2520_destroy( TiCc2520Adapter * cc )
 TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, 
 	void * lisowner, uint8 option )
 {
-	int i;
     cc->id = 0;
     cc->state = 0; //CC2420_STATE_RECVING;
     cc->listener = listener;
@@ -66,66 +59,7 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
 	//cc->spistatus = 0;
 	cc->rxlen = 0;
 
-    // activate the SPI module which is used for communication between MCU and cc2520.
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,  ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-    // Port B Pin 14 is used for SPI's MISO (IPD means Input Pull Down). 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_Init( GPIOB,&GPIO_InitStructure);
-
-    // Port B Pin 1 is used for cc2520 RST   
-    // Port B Pin 5 is used for VREG_EN
-    // Port B Pin 12 is used for NSS  
-    // GPIO_Mode_Out_PP here means Push Pull(ÍÆÍìÊä³ö)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init( GPIOB,&GPIO_InitStructure);
-
-    // reset the cc2520 nRST
-	GPIO_ResetBits( GPIOB, GPIO_Pin_1);
-    // set VREG_EN which will enable the cc2520's internal voltage regulator
-	GPIO_SetBits( GPIOB,GPIO_Pin_5);
-    // wait for the regulator to be stabe.
-    // @todo
-	for ( i=0;i<13500;i++);
-    // hal_delayus(?)
-    
-    // set the cc2520 nRST
-	GPIO_SetBits( GPIOB,GPIO_Pin_1);
-    //reset the cc2520 CSn
-	GPIO_ResetBits( GPIOB,GPIO_Pin_12);
-    // @todo: shall we need to wait a little while after CS and then RST for stable?
-    // @todo repalce with hal_delayus(?)
-	for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
-	hal_assert( GPIO_ReadInputDataBit( GPIOB, GPIO_Pin_14));//todo¸ÃÓï¾ä±¨´í£¬¿ÉÄÜÊÇÒòÎªSOÒý½ÅµÄ Êä³öÄ£Ê½¸Ä±äµÄÔ­
-    // set the cc2520 CSn
-	GPIO_SetBits( GPIOB, GPIO_Pin_12);
-	hal_delayus( 2 );
-
-    // Port B Pin 13 is used for SCK 
-    // Port B Pin 15 is used for SPI's MOSI 
-	GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
-
-    // Port B Pin 14 is used for MISO
-	GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
-
-    // Port B Pin 12 is used for NSS
-	GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+    CC2520_ACTIVATE();
 
 	CC2520_SPI_OPEN();
 
@@ -142,11 +76,11 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
     
     // Map the cc2520 FIFOP interrupt to cc2520 FIFOP handler. This is done inside
     // hal_interrupt module and hal_foundation module.
-	hal_attachhandler( INTNUM_CC2520_FIFOP, _cc2520_fifop_handler, cc );
+	hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
     
     // Enable the FIFOP interrupt so that the FIFOP request can activate the handler
     // function _cc2520_fifop_handler().
-	cc2520_enable_fifop( cc );
+	CC2520_ENABLE_FIFOP();
 
     return cc;
 }
@@ -169,7 +103,7 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
  */
 intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
-	uint16 count;
+	intx count;
 	uint8 status;
     TiCpuState cpu_state;
 
@@ -208,7 +142,7 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 
 intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
-	uint16 count;
+	intx count;
 	uint8 status;
     TiCpuState cpu_state;
 
@@ -252,7 +186,7 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 	cpu_state = hal_enter_critical();
 	// cc->rxlen should equal to cc->rxbuf[0] + 1 for correct frames
 	if (cc->rxlen > 0)
-	{	
+	{
         // cc->rxlen includes the frame length byte in the cc->rxbuf[0], so it should 
         // equal to rxbuf[0]+1 for correct frames. but the frame data maybe incorrect.
 		if (cc->rxlen <= size)
@@ -283,7 +217,7 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 
 intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 {
-	int ret;
+	intx ret;
 	uint8 state;
 
 	ret = 0;
@@ -325,7 +259,6 @@ intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			CC2520_REGWR8(CC2520_EXCFLAG1, 0x00);
 		}
 	}
-
 	return ret;
 }
 
@@ -354,6 +287,7 @@ TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterf
 	return intf;
 }
 
+/*
 void cc2520_enable_fifop( TiCc2520Adapter * cc )//PB0->fifop
 {
 
@@ -402,7 +336,9 @@ void cc2520_disable_fifop( TiCc2520Adapter * cc )
     EXTI_Init(&EXTI_InitStructure);
 }
 
+*/
 
+/*
 void EXTI0_IRQHandler(void)//fifopÖÐ¶Ïº¯Êý  fifphandlerÖ¸Ïò¸ÃÖÐ¶Ï,²»ÖªµÀhandler£¨£©º¯Êý»¹ÄÜ²»ÄÜÓÃ£¿
 {
 
@@ -410,6 +346,7 @@ void EXTI0_IRQHandler(void)//fifopÖÐ¶Ïº¯Êý  fifphandlerÖ¸Ïò¸ÃÖÐ¶Ï,²»ÖªµÀhandler£
 
 	hal_delayms(1);
 	__disable_irq();
+    */
 
 	/*
 
@@ -443,14 +380,14 @@ void EXTI0_IRQHandler(void)//fifopÖÐ¶Ïº¯Êý  fifphandlerÖ¸Ïò¸ÃÖÐ¶Ï,²»ÖªµÀhandler£
 		
         CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
 	}*/
-
+    /*
 	cc->rxlen = _cc2520_read_rxbuf( cc, cc->rxbuf, 128 );
 
 	__enable_irq();
 	
     EXTI_ClearITPendingBit(EXTI_Line0);
 }
-
+*/
 
 void cc2520_evolve( TiCc2520Adapter * cc )
 {
@@ -1478,14 +1415,13 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
 {
     TiCc2520Adapter * cc = (TiCc2520Adapter *)object;
     TiCpuState cpu_state;
-
     // todo  1ms is too long
-	hal_delayms(1);
+	//hal_delayms(1);
     
     cpu_state = hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
     hal_leave_critical(cpu_state);
-
+    USART_Send( cc->rxlen);//todo ÕâÒ»¾äÊä³ö·ÇÁã£¬µ«ÊÇrecvµ÷ÓÃÊ±cc->rxlen×ÜÊÇ0.
     // need clear the interrupt flag manually.
     EXTI_ClearITPendingBit(EXTI_Line0);    
 }

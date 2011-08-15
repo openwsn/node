@@ -100,7 +100,7 @@ typedef struct{
 	uint16 param[14];
 }TiCc2520Adapter;
 
-extern TiCc2520Adapter m_cc;//临时定义的一个全局变量
+//extern TiCc2520Adapter m_cc;//临时定义的一个全局变量
 
 
 /*******************************************************************************
@@ -148,9 +148,9 @@ uint8 cc2520_powerup( TiCc2520Adapter * cc );
 #define cc2520_write(cc,buf,len,option) cc2520_send(cc,buf,len,option)
 #define cc2520_read(cc,buf,len,option) cc2520_recv(cc,buf,len,option)
 
-uint8 cc2520_send( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option );
-uint8 cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uint8 len, uint8 option );
-uint8 cc2520_recv( TiCc2520Adapter * cc, char * buf, uint8 size, uint8 option );
+intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option );
+intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option );
+intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option );
 
 
 void cc2520_enable_fifop( TiCc2520Adapter * cc );

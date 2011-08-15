@@ -1,16 +1,18 @@
 
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
+#include "openwsn/hal/hal_interrupt.h"
 
 #ifdef CONFIG_DEBUG
 #define GDEBUG
@@ -28,7 +30,7 @@
 
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiIEEE802Frame154Descriptor m_desc;
-
+TiCc2520Adapter             m_cc;
 void sendnode1(void);
 //void sendnode2(void);
 
@@ -51,7 +53,7 @@ void sendnode1(void)
     led_open();
 
     led_on( LED_ALL);
-    hal_delay( 500 );
+    hal_delayms( 500 );
     led_off( LED_ALL );
     
     halUartInit( 9600,0);
@@ -96,7 +98,7 @@ void sendnode1(void)
             led_toggle( LED_RED);
             seqid++;
         }
-        hal_delay( 1000);
+        hal_delayms( 250);
 
 
     }
