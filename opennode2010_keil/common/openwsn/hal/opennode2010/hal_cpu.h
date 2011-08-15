@@ -72,7 +72,7 @@
 #include "./cm3/core/core_cm3.h"
 
 #define cpu_nop() __NOP()
-#define cpu_wfi() __WIF()
+#define cpu_wfi() __WFI()
 #define cpu_wfe() __WFE()
 #define cpu_disable_interrupts() __disable_irq()
 #define cpu_enable_interrupts() __enable_irq()
