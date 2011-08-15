@@ -725,6 +725,7 @@ uint16 CC2520_RXBUF16(void)
     CC2520_SPI_END();
     return value.w;
 */
+	return 0;
 }
 
 

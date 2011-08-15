@@ -1,4 +1,5 @@
 #include "../hal_configall.h"
+#include <string.h>
 #include "../hal_foundation.h"
 #include "../hal_rtc.h"
 #include "../../rtl/rtl_frame.h"
@@ -29,11 +30,19 @@ intx hal_tsync_rxhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
     //TiTime sendtime, recvtime;
     uint32 sendtime;
     uint32 recvtime;
-    uint8 legth;
     
     ptr = frame_startptr( input );
-    
-    //前面12个字节是MAC头，不能用movehigher()使指针指向里层，也许是从2520直接收到的缘故。
+
+	// @attention
+	// Since the frame is just received from the wireless transceiver adapter, there's
+	// only one layer in the frame. So you cannot use frame_movehigher() to switch 
+	// to the higher layer. The higher layer is actually not existed yet! So the only 
+	// method is to parse the frame format and find the start of the frame payload
+	// absolutely. That's why we add 12 here. 12 is just the header size. 
+	//
+	// 12 B = 1B Length + 2B Frame Control + 1B Sequence Number + 2B Destination PAN
+	//		+ 2B Destination Address + 2B Source PAN + 2B Source Address
+	//
     if (ptr[12] == TSYNC_PROTOCAL_ID)
     {
         // recommend rtc_curtime(tsync->rtc)

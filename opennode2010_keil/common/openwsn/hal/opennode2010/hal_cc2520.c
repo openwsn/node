@@ -41,6 +41,12 @@ void cc2520_destroy( TiCc2520Adapter * cc )
 	cc2520_close( cc );
 }
 
+/**
+ * @attention Suggest disable global interrupt before calling this function.
+ * 
+ * @param id Require always 0 now. (Because currently we have only one cc2520 in 
+ *           the board)
+ */
 TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, 
 	void * lisowner, uint8 option )
 {
@@ -117,7 +123,7 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
     // @todo
     // Wait for the last sending finished. Delay isn't recommend here.
 	CC2520_SFLUSHTX();
-	hal_delayus( 50); // todo
+	hal_delayus(50); // todo
 				
 	// todo: check whether the last sending is complete
 	
@@ -138,8 +144,8 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
 	intx count;
-	uint8 status;
-    TiCpuState cpu_state;
+	
+	TiCpuState cpu_state;
 
 	hal_assert( len > 0 );
 
@@ -223,7 +229,7 @@ intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 		buf[0] = CC2520_REGRD8( CC2520_RXFIFOCNT );
 		if (buf[0] > 0)
 		{
-			CC2520_RXBUF(buf[0], buf+1);
+			CC2520_RXBUF(buf[0], (uint8*)(buf+1));
 			ret = buf[0]+1;
 		}
 
@@ -242,7 +248,7 @@ intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			buf[0] = CC2520_RXBUF8();
 			if (buf[0] > 0)
 			{
-				CC2520_RXBUF(buf[0], buf+1);
+				CC2520_RXBUF(buf[0], (uint8 *)(buf+1));
 				ret = buf[0]+1;
 			}
 			else{
@@ -278,60 +284,10 @@ TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterf
 	intf->getshortaddress = (TiFunFtrxGetShortAddress)cc2520_getshortaddress;
 	intf->settxpower = (TiFunFtrxSetTxPower)cc2520_settxpower;
 	intf->getrssi = (TiFunFtrxGetRssi)cc2520_rssi;
-    intf->setlistener = ( TiFunFtrxSetlistener)cc2520_setlistner;//todo for testing
+    intf->setlistener = ( TiFunFtrxSetlistener)cc2520_setlistener;//todo for testing
 	return intf;
 }
 
-/*
-void cc2520_enable_fifop( TiCc2520Adapter * cc )//PB0->fifop
-{
-
-	CC2520_REGWR8(CC2520_GPIOCTRL0, CC2520_GPIO_FIFOP);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-	EXTI_ClearITPendingBit(EXTI_Line0);
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
-	EXTI_InitStructure.EXTI_Line = EXTI_Line0;
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-	EXTI_Init(&EXTI_InitStructure);
-	
-}
-
-void cc2520_disable_fifop( TiCc2520Adapter * cc )
-{
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);    
-    NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
-    NVIC_Init(&NVIC_InitStructure);
-
-    EXTI_ClearITPendingBit(EXTI_Line0);
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource0);
-    EXTI_InitStructure.EXTI_Line = EXTI_Line0;
-    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
-    EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-    EXTI_Init(&EXTI_InitStructure);
-}
-
-*/
 
 /*
 void EXTI0_IRQHandler(void)//fifop中断函数  fifphandler指向该中断,不知道handler（）函数还能不能用？
@@ -416,7 +372,7 @@ void  cc2520_switchtomode( TiCc2520Adapter * cc, uint8 mode )
 
 }
 
-void cc2520_setlistner(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner )//todo 不知道对不对？
+void cc2520_setlistener(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner )
 {
     cc->listener = listener;
     cc->lisowner = lisowner;
@@ -564,11 +520,13 @@ uint8 cc2520_rfoff( TiCc2520Adapter * cc )
 uint8 cc2520_flushrx( TiCc2520Adapter * cc )
 {
     CC2520_SFLUSHRX();
+	return 0;
 }
 
 uint8 cc2520_flushtx( TiCc2520Adapter * cc )
 {
     CC2520_SFLUSHRX();
+	return 0;
 }
 
 uint8 cc2520_writeregister( TiCc2520Adapter * cc, uint8 addr, uint8 data)
@@ -1415,6 +1373,10 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
     
     cpu_state = hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
+    if (cc->listener != NULL)
+    {
+        cc->listener( cc->lisowner, NULL);
+    }
     hal_leave_critical(cpu_state);
     // need clear the interrupt flag manually.
     EXTI_ClearITPendingBit(EXTI_Line0);    

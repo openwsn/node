@@ -58,9 +58,9 @@
 /***************************************************************************** 
  * Basic functions of generating random nums
  *****************************************************************************/
-void rand_open( uint16 n );
-uint16 rand_read();
-void rand_close();
+void rand_open(uint16 n);
+uint16 rand_read(void);
+void rand_close(void);
 
 /* Generate 8-bit,16-bit,32-bit random nums
  */
@@ -70,8 +70,8 @@ uint32 rand_uint32( uint32 n );
 
 /* Generate a random float/double random num in [0,1) 
  */
-float rand_float();
-double rand_double();
+float rand_float(void);
+double rand_double(void);
 
 #endif
 

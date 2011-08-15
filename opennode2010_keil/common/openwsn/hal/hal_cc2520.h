@@ -221,7 +221,7 @@ uint8 cc2520_settxpower( TiCc2520Adapter * cc, uint8 power );
 
 uint8 cc2520_rssi( TiCc2520Adapter * cc );
 
-void cc2520_setlistner(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner );
+void cc2520_setlistener(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner );
 
 
 

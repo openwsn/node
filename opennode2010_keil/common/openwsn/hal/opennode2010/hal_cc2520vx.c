@@ -82,6 +82,9 @@ void CC2520_ACTIVATE(void)
     GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
 }
 
+/**
+ * PB0 => FIFOP
+ */
 void CC2520_ENABLE_FIFOP( void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
