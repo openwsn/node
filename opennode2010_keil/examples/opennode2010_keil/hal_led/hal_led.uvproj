@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\stm32f10x\std\inc;D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\cm3\core</IncludePath>
+              <IncludePath>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\stm32f10x\std\inc;D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\cm3\core;..\..\..\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -571,14 +571,19 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_debugio.c</FilePath>
             </File>
             <File>
-              <FileName>hal_digio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digio.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_foundation.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_foundation.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_digitio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digitio.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cpu.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -6,3 +6,5 @@
 
 注意：在采用stop模式测试alarm中断时，设定中断间隔与进入stop模式的两个函数之间要
 保留一点延时，现在程序里是延时1ms。
+
+tested successfully by jiangridong 2011/08.

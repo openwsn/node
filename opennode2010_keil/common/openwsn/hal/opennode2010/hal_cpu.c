@@ -73,7 +73,7 @@ void cpu_delay250ns(void)
 inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
-    int counter = 6; // 8-2
+    int counter = 2;//6; // 8-2
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
     int counter = 46 // 48-2
 #elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
@@ -81,7 +81,7 @@ inline void cpu_delay1us()
 #else
   #error "You must choose your CPU frequency and implement this function again."
 #endif  
-
+   
     while (counter > 0)
     {
         cpu_nop();
@@ -112,7 +112,7 @@ void cpu_delayms(uint16 msec)
 {
     while (msec > 0)
     {
-        cpu_delayus( 1000 );
+        cpu_delayus( 500 );
         msec --;
     }
 }

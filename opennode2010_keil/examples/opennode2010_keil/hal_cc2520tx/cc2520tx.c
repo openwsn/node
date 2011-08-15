@@ -98,7 +98,7 @@ void sendnode1(void)
             led_toggle( LED_RED);
             seqid++;
         }
-        hal_delayms( 250);
+        hal_delayms( 1000);
 
 
     }

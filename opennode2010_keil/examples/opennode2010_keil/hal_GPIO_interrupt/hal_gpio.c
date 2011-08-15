@@ -1,6 +1,7 @@
  #include "apl_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
+#include "openwsn/hal/hal_cpu.h"
 //#include "../../common/openwsn/hal/opennode2010/hal_led.h"
 
 //USART_InitTypeDef USART_InitStructure;
@@ -180,13 +181,13 @@ void main (void)
 	USART_Init( USART2,&USART_InitStructure);
 	USART_Cmd( USART2,ENABLE);
     halRfInit();//todo 设置相应的寄存器
-	hal_delay( 2);
+	hal_delayms( 2);
 	//CC2520_REGWR8(CC2520_GPIOCTRL3, CC2520_GPIO_FIFOP);//设置CC2520_GPIO3为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL4, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL5, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	CC2520_REGWR8(CC2520_GPIOCTRL3, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
 	//CC2520_REGWR8(CC2520_GPIOCTRL2, CC2520_GPIO_FIFOP);//设置CC2520_GPIO4为fifop引脚功能
-	hal_delay( 2);
+	hal_delayms( 2);
 
 	halRfSetPower( TXPOWER_4_DBM);
 	halRfSetChannel( channel);
@@ -290,20 +291,20 @@ void GPIO_Interrupt_Ini( void)
 
 void EXTI9_5_IRQHandler(void)
 {
-	led_toggle( LED_RED);
-	CC2520_SFLUSHRX();
-	CC2520_SFLUSHRX();
-	EXTI_ClearITPendingBit(EXTI_Line8); 
-//	uint8 len;
-//	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
-//	{
-//		led_toggle( LED_RED);
-//		USART_Send( 0xab);
-//		len = CC2520_RXBUF8();
-//		CC2520_SFLUSHRX();
-//		CC2520_SFLUSHRX();
-//		EXTI_ClearITPendingBit(EXTI_Line8); 
-//	} 
+//	led_toggle( LED_RED);
+//	CC2520_SFLUSHRX();
+//	CC2520_SFLUSHRX();
+//	EXTI_ClearITPendingBit(EXTI_Line8); 
+	uint8 len;
+	if(EXTI_GetITStatus(EXTI_Line8) != RESET)
+	{
+		led_toggle( LED_RED);
+		USART_Send( 0xab);
+		len = CC2520_RXBUF8();
+		CC2520_SFLUSHRX();
+		CC2520_SFLUSHRX();
+		EXTI_ClearITPendingBit(EXTI_Line8); 
+	} 
 }
 
 /****************************************************************************

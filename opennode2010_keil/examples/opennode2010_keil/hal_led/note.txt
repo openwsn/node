@@ -1,0 +1,6 @@
+the hal_led project is to test the function of led.
+
+the led toggles every one second.
+
+
+tested successfully by jiangridong 2011/08.

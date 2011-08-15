@@ -1,0 +1,3 @@
+this project is to test the extern interrupt of GPIO
+
+tested successfully by jiangridong 2011/08.

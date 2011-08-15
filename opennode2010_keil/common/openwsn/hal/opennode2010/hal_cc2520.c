@@ -71,11 +71,11 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
     
     // Map the cc2520 FIFOP interrupt to cc2520 FIFOP handler. This is done inside
     // hal_interrupt module and hal_foundation module.
-	//hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
+	hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
     
     // Enable the FIFOP interrupt so that the FIFOP request can activate the handler
     // function _cc2520_fifop_handler().
-	//CC2520_ENABLE_FIFOP();
+	CC2520_ENABLE_FIFOP();
 
     return cc;
 }
@@ -1416,7 +1416,6 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
     cpu_state = hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
     hal_leave_critical(cpu_state);
-    USART_Send( cc->rxlen);//todo 这一句输出非零，但是recv调用时cc->rxlen总是0.
     // need clear the interrupt flag manually.
     EXTI_ClearITPendingBit(EXTI_Line0);    
 }

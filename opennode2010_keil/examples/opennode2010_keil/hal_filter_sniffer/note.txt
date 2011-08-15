@@ -1,0 +1,4 @@
+This project is the basic sniffer which disable the filter of cc2520 and can accept all the frame.
+
+
+tested successfully by jiangridong 2011/8.

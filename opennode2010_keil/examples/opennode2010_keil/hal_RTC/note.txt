@@ -1,0 +1,8 @@
+this project test the second interrupt of RTC
+
+and it is the old version.
+
+the new version is hal_rtc_test_new.
+
+
+the project is tested successfully by jiangridong 2011/8.

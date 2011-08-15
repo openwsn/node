@@ -1,6 +1,6 @@
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_rtc.h"
+#include "openwsn/hal/hal_rtc.h"
 
 void RTC_IRQHandler(void);
 void RTCAlarm_IRQHandler( void );
@@ -22,7 +22,7 @@ void RTC_sec_test(void)
     led_open();
     halUartInit(9600,0);
     led_on( LED_RED);
-    hal_delay( 500);
+    hal_delayms( 500);
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
@@ -40,7 +40,7 @@ void RTC_alarm_test(void)
     led_open();
     halUartInit(9600,0);
     led_on( LED_RED);
-    hal_delay( 500);
+    hal_delayms( 500);
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
@@ -69,7 +69,7 @@ void RTC_alarm_test(void)
         //RTC_SetAlarm(RTC_GetCounter()+ 0);
 
        
-        hal_delay( 1);//如果这一句延时不加上去，usart输出会出错。实际上是将rtc_setalrm_count(rtc,0);与 PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);保留间隔
+        hal_delayms( 1);//如果这一句延时不加上去，usart输出会出错。实际上是将rtc_setalrm_count(rtc,0);与 PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);保留间隔
         led_toggle( LED_RED);
        
         PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);

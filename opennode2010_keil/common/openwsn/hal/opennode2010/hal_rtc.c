@@ -29,16 +29,16 @@
  * - revision
  */ 
 
-#include "hal_configall.h"
-#include "hal_mcu.h"
+#include "../hal_configall.h"
+#include "../hal_mcu.h"
 #include <string.h>
-#include "hal_foundation.h"
-#include "hal_cpu.h"
-#include "hal_debugio.h"
-#include "hal_uart.h"
-#include "hal_led.h"
-#include "hal_assert.h"
-#include "hal_rtc.h"
+#include "../hal_foundation.h"
+#include "../hal_cpu.h"
+#include "../hal_debugio.h"
+#include "../hal_uart.h"
+#include "../hal_led.h"
+#include "../hal_assert.h"
+#include "../hal_rtc.h"
 
 //@todo
 #define CONFIG_INTERRUPT_MODE_LISTENER_ENABLE 0x87
