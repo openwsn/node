@@ -1,1 +1,2 @@
-hal_timesynchro 时间同步协议测试程序，已测试通过 .2011/8/13
+hal_timesynchro 时间同步协议测试程序.
+tested successfully by jiangridong in 2011/08.

@@ -1,0 +1,4 @@
+This project is to test the alarm interrupt to awake the standby mode.
+
+
+tested successfully by jiangridong 2011/08.

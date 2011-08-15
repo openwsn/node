@@ -169,7 +169,7 @@ int main( void)
 	USART_Init( USART2,&USART_InitStructure);
 	USART_Cmd( USART2,ENABLE);
     led_on( LED_RED);
-	hal_delay( 1000);
+	hal_delayms( 1000);
 	led_off( LED_RED);
 	/*
 	while ( 1)//实现简单的发送功能

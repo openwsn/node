@@ -295,7 +295,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		__disable_irq();//hal_enter_critical();
 		#endif
         
-        
+       /* 
         if (fmque_applyback(nac->rxque, &idx))
         {
             USART_Send( 0xf0);//todo for testing
@@ -330,10 +330,10 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
                 //fmque_popback(nac->rxque);
                 fmque_poprear(nac->rxque);
         }
-        
+        */
         
 		// @pre nac->rxframe must be initialized correctly.
-        /*
+        
 		f = nac->rxframe;
 		hal_assert( f != NULL );
 	    frame_reset( f, 0, 0, 0 );    		
@@ -365,7 +365,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
             frame_setcapacity( f, count );
 			fmque_pushback( nac->rxque, f );
 		}
-		*/
+		
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 		__enable_irq();//hal_leave_critical();
 		#endif

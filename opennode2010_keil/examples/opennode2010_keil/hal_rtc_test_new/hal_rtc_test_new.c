@@ -11,8 +11,8 @@ TiRtcAdapter m_rtc;
 
 void main(void)
 {
-    RTC_sec_test();
-    //RTC_alarm_test();
+    //RTC_sec_test();
+    RTC_alarm_test();
 
 }
 

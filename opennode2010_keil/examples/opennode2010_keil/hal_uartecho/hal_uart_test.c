@@ -1,11 +1,10 @@
-#include "../../../common/openwsn/configall.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_foundation.h"
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_uart.h"
 
 TiUartAdapter               m_uart;
 

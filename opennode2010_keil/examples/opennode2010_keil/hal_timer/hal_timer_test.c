@@ -4,11 +4,14 @@
 
 #include "apl_foundation.h"
 
-#include "../../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
+#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "openwsn/hal/hal_timer.h"
+#include "openwsn/hal/hal_interrupt.h"
                                    
 static TiTimerAdapter g_timer3;
 static TiTimerAdapter g_timer2;
+static void _timer2_handler(void * object, TiEvent * e);
+static void _timer3_handler(void * object, TiEvent * e);
 
 int main( void)
 {
@@ -28,6 +31,8 @@ int main( void)
     
     timer_setprior( timer_3,0,0);
     timer_setprior( timer_2,0,0);
+    hal_attachhandler( INTNUM_TIMER2, _timer2_handler, timer_2);
+    hal_attachhandler( INTNUM_TIMER3,  _timer3_handler, timer_3 );
 
     timer_start( timer_3);
     timer_start( timer_2);
@@ -44,7 +49,7 @@ int main( void)
 
 }
 
-
+/*
 void TIM3_IRQHandler(void)
 {
 
@@ -69,4 +74,19 @@ void TIM2_IRQHandler( void)
     }
     
 }
+*/
 
+static void _timer2_handler(void * object, TiEvent * e)
+{
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        USART_Send( 0xff);
+    }
+}
+static void _timer3_handler(void * object, TiEvent * e)
+{
+    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
+        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+        led_toggle( LED_RED);
+    }
+}

@@ -58,27 +58,28 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 #define MAX_IEEE802FRAME154_SIZE                128
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+#include "openwsn/hal/hal_mcu.h"
+#include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
-#include "../../../common/openwsn/rtl/rtl_random.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/rtl/rtl_dumpframe.h"
-#include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timesync.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_rtc.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_debugio.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
+#include "openwsn/rtl/rtl_random.h"
+#include "openwsn/hal/hal_mcu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/rtl/rtl_dumpframe.h"
+#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/hal/hal_timesync.h"
+#include "openwsn/hal/hal_rtc.h"
+#include "openwsn/hal/hal_interrupt.h"
 
 
 #define CONFIG_DEBUG
@@ -105,10 +106,12 @@ TiRtcAdapter                                    m_rtc;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiTimeSyncAdapter                               m_syn;
-
+TiCc2520Adapter                                 m_cc;
 
 void aloha_sendnode(void);
-void RTC_IRQHandler(void);
+//void RTC_IRQHandler(void);
+static void _rtc_handler(void * object, TiEvent * e);
+
 
 int main(void)
 {
@@ -132,7 +135,7 @@ void aloha_sendnode(void)
 
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 	
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
@@ -168,7 +171,8 @@ void aloha_sendnode(void)
     rtc = rtc_open(rtc,NULL,NULL,1,1);
     rtc_setprscaler( rtc,327);//rtc_setprscaler( rtc,32767);
     syn =  hal_tsync_open( &m_syn,rtc);
-    nac_set_timesync( nac, syn);
+    nac_set_timesync_adapter( nac, syn);
+    hal_attachhandler(  INTNUM_RTC, _rtc_handler,rtc );
     rtc_start( rtc);
 	
 	while(1) 
@@ -203,7 +207,7 @@ void aloha_sendnode(void)
         aloha_evolve( mac, NULL );
        
 		
-		hal_delay(1000);
+		hal_delayms(1000);
 
 		//break;
 	}
@@ -212,8 +216,22 @@ void aloha_sendnode(void)
     aloha_close( mac );
     cc2520_close( cc );
 }
-
+/*
 void RTC_IRQHandler(void)
+{
+    if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
+    {
+        /* Clear the RTC Second interrupt */
+/*
+        RTC_ClearITPendingBit(RTC_IT_SEC);
+        m_rtc.currenttime++;
+        led_toggle( LED_RED);
+        USART_Send( 0xf1);
+    }
+}
+*/
+
+static void _rtc_handler(void * object, TiEvent * e)
 {
     if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
     {
