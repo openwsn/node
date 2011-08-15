@@ -226,7 +226,7 @@ void main (void)
 		//hal_delay(500);
 		USART_Send( 0x01);
 		USART_Send( 0x02);
-		hal_delay( 1);//如果这一句延时不加上去，usart输出会出错。
+		hal_delayms( 1);//如果这一句延时不加上去，usart输出会出错。
 		//USART_Send( 0x02);
         led_toggle( LED_RED);
 		//USART_Send( 0xaf);

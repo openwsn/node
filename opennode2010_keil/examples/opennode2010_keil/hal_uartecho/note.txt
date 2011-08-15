@@ -1,10 +1,4 @@
-this folder contains several small programs for USART testing. 
+这个工程用来对封装好的usart模块进行测试，采用echo机制，当从发送去向芯片输入数字时，接收区能收到来自芯片回送上来的数据，同时每发送一个字符灯的状态就改变一次。
 
-uart_simpleoutput
-will periodically send some characters to the computer
 
-uartecho_simple
-an uart echo program based on uart_putchar/uart_getchar
-
-uartecho_readwrite
-an uart echo program based on uart_read/uart_write
+该模块已于2011/08通过测试。

@@ -1,0 +1,3 @@
+Test the aloha component by echo.
+
+The project is tested successfuly by jiangridong in 2011/08.

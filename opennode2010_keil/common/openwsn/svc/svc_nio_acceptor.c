@@ -370,10 +370,10 @@ void _nac_try_recv( TiNioAcceptor * nac )
                 fmque_poprear(nac->rxque);
             }
         }
-        
+        */
         
 		// @pre nac->rxframe must be initialized correctly.
-        /*
+        
 		f = nac->rxframe;
 		hal_assert( f != NULL );
 	    frame_reset( f, 0, 0, 0 );    		
@@ -405,7 +405,7 @@ void _nac_try_recv( TiNioAcceptor * nac )
             frame_setcapacity( f, count );
 			fmque_pushback( nac->rxque, f );
 		}
-		*/
+		
     }
 }
 
