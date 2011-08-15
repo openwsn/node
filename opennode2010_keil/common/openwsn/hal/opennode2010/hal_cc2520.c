@@ -76,11 +76,11 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
     
     // Map the cc2520 FIFOP interrupt to cc2520 FIFOP handler. This is done inside
     // hal_interrupt module and hal_foundation module.
-	hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
+	//hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
     
     // Enable the FIFOP interrupt so that the FIFOP request can activate the handler
     // function _cc2520_fifop_handler().
-	CC2520_ENABLE_FIFOP();
+	//CC2520_ENABLE_FIFOP();
 
     return cc;
 }

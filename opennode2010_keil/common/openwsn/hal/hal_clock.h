@@ -1,4 +1,6 @@
-
+#include "hal_configall.h"
+#include "hal_foundation.h"
+#include "../rtl/rtl_time.h"
 /**
  * TiClockInterface
  * This interface is used by osx Time Axis Scheduling algorithm and TimeSync service.
@@ -8,12 +10,12 @@
 /**
  * Start the clock counting process.
  */
-typedef (void *)(TiFunClockStart)( void * object );
+typedef void (*TiFunClockStart)( void * object );
 
 /**
  * Stop the clock counting process.
  */
-typedef (void *)(TiFunClockStop)( void * object );
+typedef void (*TiFunClockStop)( void * object );
  
 /** 
  * Set the current clock time to the new value.
@@ -21,32 +23,32 @@ typedef (void *)(TiFunClockStop)( void * object );
  * function doesn't return anything to indicate failure or success.
  * @return None. 
  */
-typedef (void)(* TiFunClockSetValue)(void * object, TiTime * value);
+typedef void (* TiFunClockSetValue)(void * object, TiTime * value);
 
 /**
  * Get current clock time and place it into an TiTime structure.
  */
-typedef (void)(* TiFunClockGetValue)(void * object, TiTime * value);
+typedef void (* TiFunClockGetValue)(void * object, TiTime * value);
 
 /**
  * Forward the clock. The time interval is specified by an TiTime structure variable.
  * Attention it should always success. However, there maybe internal counting overflow.
  * @return None. 
  */ 
-typedef (void)(* TiFunClockForward)(void * object, TiTime * value);
+typedef void (* TiFunClockForward)(void * object, TiTime * value);
 
 /**
  * Backward the clock. The time interval is specified by an TiTime structure variable.
  * Attention it should always success. However, there maybe internal counting underflow.
  * @return None. 
  */ 
-typedef (void)(* TiFunClockBackward)(void * object, TiTime * value);
+typedef void (* TiFunClockBackward)(void * object, TiTime * value);
 
 /**
  * If the callback listener is set, then the clock component will call this listener
  * when expired. "The lisowner" variable will be passed to the callback listener.
  */
-typedef (void)(* TiFunSetListener)(void * object, TiFunEventListener, void * lisowner );
+typedef void (* TiFunSetListener)(void * object, TiFunEventHandler listener, void * lisowner );
  
 /**
  * Set the timing interval. The clock will set expired flag when the timing interval
@@ -68,7 +70,7 @@ typedef (void)(* TiFunSetListener)(void * object, TiFunEventListener, void * lis
  * Be careful about overflow and underflow phenomenon. The component itself should
  * solve these two problems.
  */
-typedef (void *)(TiFunClockSetInterval)( void * object, TiTime * interval, uint8 repeat );
+typedef void (*TiFunClockSetInterval)( void * object, TiTime * interval, uint8 repeat );
 
 /**
  * Returns how many time slice (decided by the TiTime definition) since last expired.
@@ -76,7 +78,7 @@ typedef (void *)(TiFunClockSetInterval)( void * object, TiTime * interval, uint8
  * 
  * This function can be used for query-driven programs.
  */
-typedef (bool)(* TiFunClockElapsed)( void * object, TiTime * tm );
+typedef bool (* TiFunClockElapsed)( void * object, TiTime * tm );
 
 /**
  * Returns whether this interval setting expired. This function will only return 
@@ -85,7 +87,7 @@ typedef (bool)(* TiFunClockElapsed)( void * object, TiTime * tm );
  * 
  * This function can be used for query-driven programs.
  */
-typedef (bool)(* TiFunClockExpired)( void * object, TiTime * tm );
+typedef bool (* TiFunClockExpired)( void * object, TiTime * tm );
 
 typedef struct{
     void * object;

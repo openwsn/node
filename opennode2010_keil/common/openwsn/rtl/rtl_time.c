@@ -2,6 +2,7 @@
 #include "rtl_foundation.h"
 #include "rtl_time.h"
 
+/*
 
 void tm8_reset( uint8 * var, uint8 value ) {*var=value;}
 inline void tm8_clear( TiTime8 * var ) {*var=0;}
@@ -70,6 +71,7 @@ inline bool tm64_backward( TiTime64 * var, uint64 interval )
 	else
 		return true;
 }
+*/
 
 /*
 should move to rtl_time

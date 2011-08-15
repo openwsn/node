@@ -34,7 +34,7 @@
 #include "rtl_debugio.h"
 #include "rtl_ieee802frame154.h"
 #include "rtl_dumpframe.h"
-#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/hal_debugio.h"
 
 static TiIEEE802Frame154Descriptor m_desc;
 

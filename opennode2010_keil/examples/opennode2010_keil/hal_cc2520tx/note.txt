@@ -1,4 +1,4 @@
-cc2420tx
+cc2520tx
 ========================================================================
 1) Project Description: 
 this is a very simple frame sending test program. it will periodically sending frames.
@@ -7,12 +7,8 @@ mainly used for demonstration and testing.
 2) Experiments and Notice 实验步骤和实验中的注意事项
 -- 发送模式有两种，无ACK发送，有ACK发送。
 
--- 无ACK发送与sniffer配合测试，发送时红灯闪烁，sniffer通过串口显示cc2420 发送数据。
--- 有ACK发送与cc2420rx配合测试，发送后，如收到cc2420返回的ACK则红灯闪烁表明发送成功，cc2420rx通过串口显示cc2420 发送
-数据。
+-- 无ACK发送与sniffer配合测试，发送时红灯闪烁，sniffer通过串口显示cc2520 发送数据。
+-- 有ACK发送与cc2520rx配合测试，发送后，如收到cc2520返回的ACK则红灯闪烁表明发送成功，cc2520rx通过串口显示cc2520 发送数据。
 
 
-3) History 修改历史，哪些工作还没有完成需要特别注意的
-
-2009-12-23
--- test ok by Yan Shixing
+3) tested successfully by jiangridong 2011.08

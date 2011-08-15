@@ -40,6 +40,7 @@
  
 #include "hal_configall.h"
 #include "hal_foundation.h"
+#include "hal_clock.h"
 
 
 /* TiRtcAdapterTime

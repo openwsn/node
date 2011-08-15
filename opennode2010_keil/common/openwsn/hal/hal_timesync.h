@@ -4,7 +4,7 @@
 #include "hal_configall.h"
 #include "hal_foundation.h"
 #include "hal_rtc.h"
-#include "../../rtl/rtl_frame.h"
+#include "../rtl/rtl_frame.h"
 
 #define TSYNC_PROTOCAL_ID 0x04 
 
