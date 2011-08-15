@@ -54,22 +54,22 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_mcu.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/svc/svc_nio_acceptor.h"
-#include "../../../common/openwsn/svc/svc_nio_flood.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_timer.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/svc/svc_nio_flood.h"
 
 //#define CONFIG_TEST_LISTENER  
 #define CONFIG_TEST_ADDRESSRECOGNITION
@@ -97,6 +97,7 @@ static TiTimerAdapter               m_timer2;
 static char                         m_rxbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                         m_macbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiFloodNetwork			    m_net;
+TiCc2520Adapter                     m_cc;
 
 #ifdef CONFIG_TEST_LISTENER
 static void _aloha_listener( void * ccptr, TiEvent * e );
@@ -138,7 +139,7 @@ void floodnode(void)
 	led_open();
 	
 	led_on(LED_ALL);
-	hal_delay( 1000 );
+	hal_delayms( 1000 );
 	led_off( LED_ALL );
 
 	halUartInit(9600,0);
@@ -234,7 +235,7 @@ void _flood_listener( void * owner, TiEvent * e )
 	led_toggle( LED_RED );
 	while (1)
 	{
-		frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );		
+		f = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );		
 		if (flood_recv(net, f, 0x00) > 0)
 		{
 			pc = frame_startptr( frame);

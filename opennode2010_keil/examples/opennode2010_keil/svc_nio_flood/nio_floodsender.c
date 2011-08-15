@@ -48,24 +48,24 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
+#include "openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_mcu.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/rtl/rtl_configall.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/svc/svc_nio_acceptor.h"
-#include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/svc/svc_nio_flood.h"
+#include "openwsn/rtl/rtl_configall.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_timer.h"
+#include "openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/svc/svc_nio_flood.h"
 
 #define PANID				0x0001
 #define BROADCAST_PAN       0xffff
@@ -85,6 +85,7 @@ static TiFloodNetwork       m_net;
 static TiTimerAdapter       m_timer;
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+TiCc2520Adapter             m_cc;
 
 static void ledflood( uint16 ontime, uint16 offtime );
 
@@ -116,7 +117,7 @@ void ledflood( uint16 ontime, uint16 offtime )
 	 
 	led_open();
 	led_on(LED_ALL);
-	hal_delay( 1000 );
+	hal_delayms( 1000 );
 	led_off( LED_ALL );
 
 	halUartInit(9600,0);
@@ -182,7 +183,7 @@ void ledflood( uint16 ontime, uint16 offtime )
 			
 			// delay some time before retry in order to avoid occupy the wireless 
 			// channel all the time.
-            hal_delay(1000);                       
+            hal_delayms(1000);                       
         }
 		
 
@@ -191,8 +192,8 @@ void ledflood( uint16 ontime, uint16 offtime )
 
 		// delay the LED long enough so we can observe its flash
 		if( pc[0])
-			hal_delay( 500 );
+			hal_delayms( 500 );
 		else
-			hal_delay( 1000 );
+			hal_delayms( 1000 );
 	}	
 }
