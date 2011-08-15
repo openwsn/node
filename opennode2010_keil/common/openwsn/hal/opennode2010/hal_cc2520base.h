@@ -6,7 +6,6 @@
 #include "../hal_foundation.h"
 #include "hal_cc2520vx.h"
 
-
 #define WAIT_TRANSCEIVER_READY()  st( WAIT_SFD_LOW();)
 #define WAIT_RSSI_VALID()         st( while (!CC2520_RSSI_VALID_PIN);)
 #define WAIT_SFD_HIGH()           st( while (!CC2520_SFD_PIN);)
@@ -437,9 +436,7 @@ typedef union {
 } EDWORD;    
 #endif /* CONFIG_TARGETBOATD_OPENNODE2010 */
 
-/***********************************************************************************
-* GLOBAL FUNCTIONS
-*/
+
 // Instruction prototypes
 uint8 CC2520_SNOP(void);
 uint8 CC2520_SIBUFEX(void);

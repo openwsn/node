@@ -29,6 +29,7 @@
 #include "../hal_assert.h"
 #include "../hal_targetboard.h"
 #include "../hal_digitio.h"
+
 #include "hal_cc2520base.h"
 
 /**
@@ -55,7 +56,34 @@
  * on any cc2520 register definitions. So DON'T put any cc2520-depend source code 
  * in this module.
  */
+ 
+void CC2520_ACTIVATE(void);
+void CC2520_ENABLE_FIFOP( void);
+void CC2520_DISABLE_FIFOP( void);
 
+
+void CC2520_SPI_OPEN( void);
+void CC2520_SPI_CLOSE(void);
+void CC2520_SPI_BEGIN( void);
+void CC2520_SPI_TX( uint16 ch);
+uint16 CC2520_SPI_RX( void);
+void CC2520_SPI_WAIT_RXRDY( void);
+void CC2520_SPI_END( void); 
+
+inline uint8 CC2520_SPI_TXRX(uint8 x) 
+{
+    CC2520_SPI_TX(x);
+    //CC2520_SPI_WAIT_RXRDY();  // @todo
+    return CC2520_SPI_RX();
+}
+
+
+
+
+
+
+//------------------------------------------------------------------------------
+// the following should be re-organized
 
 // todo should be modified
 #define MCU_IO_GET(n1,n2) 0
@@ -170,24 +198,9 @@
 #define CC2520_SPI_WAIT_RXRDY()            st( while (!CC2520_SPI_RX_IS_READY()); )
 #define CC2520_SPI_END()                   st( CC2520_CSN_OPIN(1); )
 */
-void CC2520_ACTIVATE(void);
-void CC2520_SPI_OPEN( void);
-void CC2520_ENABLE_FIFOP( void);
-void CC2520_DISABLE_FIFOP( void);
-void CC2520_SPI_BEGIN( void);
-void CC2520_SPI_TX( uint16 ch);
-uint16 CC2520_SPI_RX( void);
-void CC2520_SPI_WAIT_RXRDY( void);
-void CC2520_SPI_END( void); 
 
 
-inline uint8 CC2520_SPI_TXRX(uint8 x) {
 
-   CC2520_SPI_TX(x);
-    //CC2520_SPI_WAIT_RXRDY();
-    return CC2520_SPI_RX();
-
-}
 
 // Platform specific definitions
 // IRQ on GPIO0

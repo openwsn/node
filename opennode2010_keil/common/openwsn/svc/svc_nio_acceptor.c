@@ -23,24 +23,28 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
+ 
 #include "svc_configall.h"
+#include <string.h>
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
 #include "../rtl/rtl_lightqueue.h"
 #include "../rtl/rtl_debugio.h"
-#include "../hal/hal_cc2520.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_cc2520.h" // @todo
 #include "../hal/hal_led.h"
 #include "../hal/hal_debugio.h"
 #include "../hal/hal_assert.h"
 #include "../hal/hal_timesync.h"
 #include "../hal/hal_uart.h"
-//#include "../hal/gainz/hpl_cpu.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 
 #ifdef CONFIG_DEBUG
 #include "../rtl/rtl_dumpframe.h"
 #endif
+
+static void _nac_try_recv( TiNioAcceptor * nac );
 
 #ifdef CONFIG_DYNA_MEMORY
 TiNioAcceptor * nac_create( void * mem, TiFrameTxRxInterface * rxtx, uint8 rxque_capacity, 
@@ -85,8 +89,7 @@ void nac_detroy( TiNioAcceptor * nac )
 }
 
 /**
- * @pre You have already initialized the rxque and txque before open the network 
- * 		acceptor object.
+ * @pre You have already call nac_construct() on specified memory block.
  * 
  * @warning: You must guarantee the memory block size is large enough to hold rxque
  *      and txque! Or else the application will access inviolate memory space and 
@@ -97,27 +100,25 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 {
 	char * buf;
 	
-// #ifdef CONFIG_DEBUG
-	svc_assert( nac->memsize >= NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity) );
-// #endif	
+#ifdef CONFIG_DEBUG
+	svc_assert(nac->memsize > NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity));
+    svc_assert((rxque_capacity > 0) && (txque_capacity >= 0));
+#endif	
 
 	nac->state = 0;
-	memmove( &(nac->rxtx), rxtx, sizeof(TiFrameTxRxInterface) );
+    nac->rxtx = rxtx;
 	
 	buf = (char*)nac + sizeof(TiNioAcceptor);
 	nac->rxque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(rxque_capacity) );
 	buf += FRAMEQUEUE_HOPESIZE(rxque_capacity);
 	nac->txque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(txque_capacity) );
 	buf += FRAMEQUEUE_HOPESIZE(txque_capacity);
-    nac->rxframe = frame_open( buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0 ); 
-
-	// If you encounter problems here, please check whether you have input enough
-	// memory block to hold the full frame.
-	hal_assert((nac->rxframe != NULL) && (nac->txque != NULL) && (nac->rxque != NULL));
+    
+    //nac->rxframe = frame_open( buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0 ); 
 
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    //nac->rxtx->setlistener( rxtx, nac_on_frame_arrived_listener );
-    cc2520_setlistner( rxtx->provider,nac_on_frame_arrived_listener, nac )
+    //nac->rxtx->setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
+    cc2520_setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
 #endif
 
 	return nac;
@@ -125,9 +126,12 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 
 void nac_close( TiNioAcceptor * nac )
 {
+    //nac->rxtx->setlistener( rxtx, NULL );
+    cc2520_setlistener( nac->rxtx->provider, NULL, NULL );
+    
 	fmque_destroy( nac->rxque );
 	fmque_destroy( nac->txque );
-	frame_close( nac->rxframe );
+	// frame_close( nac->rxframe );
 }
 
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
@@ -137,37 +141,51 @@ void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
 
 TiFrameTxRxInterface * nac_rxtx_interface( TiNioAcceptor * nac )
 {
-	return &(nac->rxtx);
+	return nac->rxtx;
 }
 
-/** Return the sending queue(txque) inside acceptor */
+/** 
+ * Return the sending queue(txque) inside acceptor. You can manipulate this queue
+ * directly in some program. 
+ * 
+ * Recommend to use nac_send() instead.
+ */
 TiFrameQueue * nac_txque( TiNioAcceptor * nac )
 {
 	return nac->txque;
 }
 
-/** Return the receiving queue(rxque) inside acceptor */
+/** 
+ * Return the receiving queue(rxque) inside acceptor.
+ * Recommend to use nac_recv() instead.
+ */
 TiFrameQueue * nac_rxque( TiNioAcceptor * nac )
 {
 	return nac->rxque;
 }
 
-/**
+/** 
  * Push the frame object into the sending queue(txque) and wait for the acceptor
  * to send it out. If the txque is full, then this function will return false.
+ * Generally, the acceptor will send the frame immediately without delay.
+ * 
+ * @attention Any frame placed into txque will be sent immediatly without delay. 
+ * So in the new version of TiNioAcceptor, the "txque" is eliminated. nac_send()
+ * will call the transceiver's send() method or broadcast() method directly.
  * 
  * @param nac TiNioAcceptor object
  * @param item TiFrame object to be sent
- * @return true if success and false is failed.
+ *
+ * @return Data length successfully sent.
  */
 intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
 {
-    TiFrameRxTxInterface * rxtx;
-    uint8 first;
     char *pc;
-    uint8 length;
-    uint8 proto_id;
+	TiFrameTxRxInterface * rxtx = nac->rxtx;
     
+    // Check whether this is an time synchronization REQUEST frame. If it is, then
+    // the hal_timesync module will place the current local time into this frame.
+    // 
     if (nac->timesync != NULL)
     {
         frame_movehigher(item);
@@ -176,16 +194,16 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
         {
             hal_tsync_txhandler(nac->timesync, item, item, 0x00);
         }
-        frame_movelower( item);
+        frame_movelower(item);
     }
 
-    //the code above is added for hal_timesynchro on 2011/8/13
+    // @modified by zhangwei in 2011.05
+    // - The txque is unused to avoid ambiguous understanding. Consider everything
+    //   in the txque should be sent immediately without any delay, we simply call
+    //   the transceiver's send() method to send the frame out.
     //
-
-	 rxtx = &(nac->rxtx);
-	 first = frame_firstlayer(item);
-	//return rxtx->send( rxtx->provider, frame_layerstartptr(item,first), frame_layercapacity(item,first), item->option );
-	return rxtx->send( rxtx->provider, frame_startptr( item), frame_length( item), item->option );
+	frame_movelowest(item);
+	return rxtx->send( rxtx->provider, frame_startptr(item), frame_length(item), item->option );
 
 	// old version
 	// The old version maintains an txque. But the txque seems meaningless in this layer.
@@ -202,33 +220,37 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
 	*/
 }
 
-/**
- * Pop the front frame from the receiving queue (rxque) and place it into the
- * item.
+/** 
+ * Retrieve an frame received inside rxque into frame object. 
+ * @return Frame length.
  */
 intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 {
 	TiFrame * front;
     intx ret = 0;
+#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+    TiCpuState cpu_state=0;
+#endif
 
-	nac_evolve( nac,NULL );
+	nac_evolve(nac, NULL);
 
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    __disable_irq();//hal_enter_critical();
+    cpu_state = hal_enter_critical();
 #endif
 
     front = fmque_front( nac->rxque );
 	if (front != NULL)
 	{
-        //frame_totalcopyfrom( item, front );
-		frame_copyfrom(item,front);//todo for testing
+        frame_totalcopyto(front, item);
+		// frame_copyto(front, item);
 		fmque_popfront( nac->rxque );
-        ret = frame_length(front);
+        ret = frame_length(item);
 	}
 	else
 		ret = 0;
+        
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    __enable_irq();//hal_leave_critical();
+    hal_leave_critical(cpu_state);
 #endif
 
     return ret;
@@ -241,24 +263,18 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
  */
 void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 {   
-	TiFrameRxTxInterface * rxtx = &(nac->rxtx);
-	uint8 count, first;
+	TiFrameRxTxInterface * rxtx = nac->rxtx;
+    TiCpuState cpu_state;  
 	TiFrame * f;
-    char *pc;
-    uint8 idx;
-    char *tmpframe;
 
-    if (!fmque_empty(nac->txque))
+    if ((nac->txque != NULL) && (!fmque_empty(nac->txque)))
 	{   
-
 		f =  fmque_front( nac->txque );
-		/*
-		#ifdef CONFIG_DEBUG
-		ieee802frame154_dump(f);
-		#endif
-		*/
+
+		// #ifdef CONFIG_DEBUG
+		// ieee802frame154_dump(f);
+		// #endif
 		
-        /*
 		// @attention: The developer often forget to call frame_setlength(f) after
 		// copy the data into the frame. It's the developer's responsibility to set
 		// correct length value of the frame, or else frame_length(f) may probably 
@@ -267,46 +283,70 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		// the following line is only for testing by replacing frame_length(f)
 		// with frame_capacity(f). 
 		//
-		// @todo: 2011.03
-		*/
-		first = frame_firstlayer(f);
-		
 		// @attention
 		//	- Bug fixed. You needn't judge whether the rxtx->send() is successfully
-		// or not. We assume all the frames in the txque should be sent immediately.
-		rxtx->send( rxtx->provider, frame_layerstartptr(f,first), frame_layercapacity(f,first), f->option );
+		// or not. Since the sending process is in evolve() function, we had to assume 
+        // the frame be sent successfully, because we have no better idea to pass
+        // information to the upper layer yet.
+        //
+        // @todo Maybe an listener can help us to solve the above problem.
+        
+		frame_movelowest(f);
+		rxtx->send( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
 		fmque_popfront( nac->txque );
 		
-		/* 
-		//todo
-		//发送函数中的frame_layerstartptr(f,first)是有问题的，其中，first = f->firstlayer,
-		count = rxtx->send( rxtx->provider, frame_layerstartptr(f,first), frame_layercapacity(f,first), f->option );
-		if (count > 0)
-		{   
-			fmque_popfront( nac->txque );
-		}
-		*/
+		// @obsolete Old version source code is as the following
+        // The problem is that if the frame failed to sending (count < 0), then it
+        // will not be removed from the txque, so the failed frame will block the
+        // whole sending process from now on.
+        //
+        // Actually, you should always do popfront no matter the frame is sent 
+        // successfully or not. If it's failed, then the above layer should do with 
+        // it. The acceptor needn't do more. But it do need some mechanism to pass
+        // this result to upper layers.
+        // 
+		// count = rxtx->send( rxtx->provider, frame_layerstartptr(f,first), frame_layercapacity(f,first), f->option );
+		// if (count > 0)
+		// {   
+		//	fmque_popfront( nac->txque );
+		// }
 	}
 		
-	if (!fmque_full(nac->rxque ))
+	if (!fmque_full(nac->rxque))
 	{   
-		
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		__disable_irq();//hal_enter_critical();
+		cpu_state = hal_enter_critical();
 		#endif
         
-       /* 
+        _nac_try_recv(nac);
+        
+		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+		hal_leave_critical(cpu_state);
+		#endif
+	}
+}
+
+void _nac_try_recv( TiNioAcceptor * nac )
+{
+	TiFrameRxTxInterface * rxtx = nac->rxtx;
+    char * buf;
+	TiFrame * f;
+	uint8 idx = 0;
+	intx count;
+    
+	if (!fmque_full(nac->rxque))
+	{   
         if (fmque_applyback(nac->rxque, &idx))
         {
-            USART_Send( 0xf0);//todo for testing
-            tmpframe = fmque_getbuf(nac->rxque, idx);
-            f = frame_open(tmpframe, fmque_datasize(nac->rxque), 0, 0, 0);
-            USART_Send( 0xf1);//todo for testing
+            buf = fmque_getbuf(nac->rxque, idx);
+            svc_assert(buf != NULL);
+            svc_assert(fmque_datasize(nac->rxque) == FRAMEQUEUE_ITEMSIZE);
+            // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
+            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);
             count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
             if (count > 0)
             {
-                frame_setlength( f, count );
-                frame_setcapacity( f, count );
+                frame_setlength(f, count);
                 
                 if (nac->timesync != NULL)
                 {
@@ -318,17 +358,17 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
                     // @warning: The 802.15.4 header not always occupy 12 bytes! So you 
                     // must adapte the following code to your own system.
                     //
-                    pc = frame_startptr(f) + 12;
+                    buf = frame_startptr(f) + 12;
                     
-                    if (pc[0] == TSYNC_PROTOCAL_ID)
+                    if (buf[0] == TSYNC_PROTOCAL_ID)
                     {
                         hal_tsync_rxhandler(nac->timesync, f, f, 0x00);
                     }
                 }
             }
-            else
-                //fmque_popback(nac->rxque);
+            else{
                 fmque_poprear(nac->rxque);
+            }
         }
         */
         
@@ -366,21 +406,8 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 			fmque_pushback( nac->rxque, f );
 		}
 		
-		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		__enable_irq();//hal_leave_critical();
-		#endif
-	}
+    }
 }
-
-/*
-TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session )
-{
-	session->rxque = nac->rxque;
-	session->txque = nac->txque;
-	session->option = 0x00;
-	return session;
-}
-*/
 
 /*
  * This listener can be called by the transceiver component when a new frame arrives.
@@ -394,6 +421,8 @@ TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session )
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e )
 {
+    _nac_try_recv(nac);
+/*
 	uint8 count;
 	TiFrameRxTxInterface * rxtx = nac->rxtx;
 	TiFrame * f = nac->rxframe;
@@ -407,6 +436,20 @@ void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e )
 		fmque_pushback( nac->rxque, f );
 	}
 	__enable_irq();//hal_atomic_end();
+*/    
 }
 #endif
+
+//------------------------------------------------------------------------------
+// @todo to be reorganized
+
+/*
+TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session )
+{
+	session->rxque = nac->rxque;
+	session->txque = nac->txque;
+	session->option = 0x00;
+	return session;
+}
+*/
 

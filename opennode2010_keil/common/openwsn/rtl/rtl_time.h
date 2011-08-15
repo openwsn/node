@@ -252,3 +252,4 @@ inline bool tm64_backward( TiTime64 * var, uint64 interval )
 */
 
 #endif /*_RTL_TIME_H_4829_*/
+

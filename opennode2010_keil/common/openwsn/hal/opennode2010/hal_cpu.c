@@ -32,8 +32,10 @@
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
  * in some special cases. 
  * 
- * @attention Not tested yet.
+ * @attention At least Keil compiler can recognize #pragma O0
+ * @attention 
  */
+#pragma O0 
 void cpu_delay250ns(void)
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
@@ -70,6 +72,7 @@ void cpu_delay250ns(void)
  * 
  * @attention Not tested yet.
  */
+#pragma O0 
 inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
@@ -96,6 +99,7 @@ inline void cpu_delay1us()
  * @attention
  * - the input parameter value should not large than the maximum value of uint16 type
  */
+#pragma O0 
 void cpu_delayus(uint16 usec)
 {
 	while (usec > 0) 
@@ -108,6 +112,7 @@ void cpu_delayus(uint16 usec)
 /* attention: 
  * the input msec value should not exceed the maximum value of uint16 type 
  */
+#pragma O0 
 void cpu_delayms(uint16 msec) 
 {
     while (msec > 0)

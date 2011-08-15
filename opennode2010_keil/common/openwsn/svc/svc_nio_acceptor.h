@@ -55,6 +55,9 @@
  *    on the ACK mechanism.
  * @modified by zhangwei on 2011.04.11
  *	- Revised.
+ * @modified by zhangwei on 2011.04.11
+ *	- The member variable rxtx is changed from "TiFrameTxRxInterface" to 
+ *    "TiFrameTxRxInterface *".
  ******************************************************************************/ 
 
 #ifndef CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 
@@ -69,14 +72,32 @@
 #include "../hal/hal_frame_transceiver.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
-#include "svc_foundation.h"
 #include "../hal/hal_timesync.h"
+#include "svc_foundation.h"
 // #include "svc_nio_session.h"
 
-#undef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+#define CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 
+/** 
+ * NIOACCEPTOR_HOPESIZE(...)
+ * To estimate the memory block size the TiNioAcceptor object needed. The macro 
+ * FRAMEQUEUE_ITEMSIZE is defined FRAME_HOPESIZE(128) currently. 
+ * @see rtl_framequeue.h, rtl_frame.h, rtl_ieee802frame154.h
+ */
 #define NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity) \
 	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE(rxque_capacity)+FRAMEQUEUE_HOPESIZE(txque_capacity)+FRAMEQUEUE_ITEMSIZE)
+    
+    
+#define nac_rxque_front(nac) fmque_front(nac_rxque(nac))
+#define nac_rxque_rear(nac) fmque_rear(nac_rxque(nac))
+#define nac_txque_front(nac) fmque_front(nac_txque(nac))
+#define nac_txque_rear(nac) fmque_rear(nac_txque(nac))
+
+#define nac_rxque_empty(nac) fmque_empty(nac_rxque(nac))
+#define nac_rxque_full(nac) fmque_full(nac_rxque(nac))
+#define nac_txque_empty(nac) fmque_empty(nac_txque(nac))
+#define nac_txque_full(nac) fmque_full(nac_txque(nac))
+    
 
 #ifdef __cplusplus
 extern "C"{
@@ -101,20 +122,30 @@ extern "C"{
  *  IoService := [IoAcceptor + IoProcessor] | [IoConnector]
  * 
  * We simplified MINA's architecture by eliminating the processor part.
+ * 
+ * @modified by zhangwei on 2011.08.15
+ * - The TiNioAcceptor object has three main functions now:
+ *   1) Convert the {char*buf, size/len} I/O interface of transceiver object 
+ *      to an TiFrame based I/O interface, which helps upper layer developing.
+ *   2) Provides an queue to buffer the incomming frames to avoid lossing.
+ *   3) Support time synchronization in the HAL layer.
  */
 typedef struct{
 	uint16 memsize;
 	uint8 state;
-	TiFrameTxRxInterface rxtx;
+	TiFrameTxRxInterface * rxtx;
 	TiFrameQueue * rxque;
 	TiFrameQueue * txque;
-	TiFrame * rxframe;
+	//TiFrame * rxframe;
     TiTimeSyncAdapter * timesync;
 }TiNioAcceptor;
 
 #ifdef CONFIG_DYNA_MEMORY
 TiNioAcceptor * nac_create( void * mem, TiFrameTxRxInterface * rxtx, uint8 rxque_capacity, 
 	uint8 txque_capacity );
+#endif
+
+#ifdef CONFIG_DYNA_MEMORY
 void nac_free( TiNioAcceptor * nac);  
 #endif
 
@@ -128,45 +159,47 @@ void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync );
 
 TiFrameTxRxInterface * nac_rxtx_interface( TiNioAcceptor * nac );
 
-/** Return the sending queue(txque) inside acceptor */
+/** 
+ * Return the sending queue(txque) inside acceptor. You can manipulate this queue
+ * directly in some program. 
+ * 
+ * Recommend to use nac_send() instead.
+ */
 TiFrameQueue * nac_txque( TiNioAcceptor * nac );
 
-/** Return the receiving queue(rxque) inside acceptor */
+/** 
+ * Return the receiving queue(rxque) inside acceptor.
+ * Recommend to use nac_recv() instead.
+ */
 TiFrameQueue * nac_rxque( TiNioAcceptor * nac );
 
-/** Place the frame to be sent into txque  */
+/** 
+ * Push the frame object into the sending queue(txque) and wait for the acceptor
+ * to send it out. If the txque is full, then this function will return false.
+ * Generally, the acceptor will send the frame immediately without delay.
+ * 
+ * @attention Any frame placed into txque will be sent immediatly without delay. 
+ * So in the new version of TiNioAcceptor, the "txque" is eliminated. nac_send()
+ * will call the transceiver's send() method or broadcast() method directly.
+ * 
+ * @param nac TiNioAcceptor object
+ * @param item TiFrame object to be sent
+ *
+ * @return Data length successfully sent.
+ */
 intx nac_send( TiNioAcceptor * nac, TiFrame * frame, uint8 option );
 
-/** Move the frame received inside rxque into frame object */
+/** 
+ * Retrieve an frame received inside rxque into frame object. 
+ * @return Frame length.
+ */
 intx nac_recv( TiNioAcceptor * nac, TiFrame * frame ,uint8 option);
 
+/**
+ * Drive the state machine in the TiNioAcceptor object to run.
+ */
 void nac_evolve ( TiNioAcceptor * nac, TiEvent * event );
 
-#define nac_rxque_front(nac) fmque_front(nac_rxque(nac))
-#define nac_rxque_rear(nac) fmque_rear(nac_rxque(nac))
-#define nac_txque_front(nac) fmque_front(nac_txque(nac))
-#define nac_txque_rear(nac) fmque_rear(nac_txque(nac))
-
-#define nac_rxque_empty(nac) fmque_empty(nac_rxque(nac))
-#define nac_rxque_full(nac) fmque_full(nac_rxque(nac))
-#define nac_txque_empty(nac) fmque_empty(nac_txque(nac))
-#define nac_txque_full(nac) fmque_full(nac_txque(nac))
-
-/**
- * @brief Get the current active session from the acceptor. 
- * 
- * The session management is quite different in OpenWSN system and other resource-rich 
- * systems. Considering the highly restricted memory, the OpenWSN decides to allow
- * only one active session in the system. The application can only deal with the 
- * next session after finished the previous one.
- *
- * And one session contains an REQUEST and an RESPONSE. The REQUEST and RESPONSE
- * can be empty. 
- * 
- * Different to the embedded linux, the session here is only used to pass REQUEST/RESPONSE
- * pair between objects. The life time is pretty short.
- */
-//TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session );
 
 /**
  * This function is registered into the transceiver component. If there's a new frame
@@ -184,6 +217,24 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event );
 void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e );
 #endif
 
+//------------------------------------------------------------------------------
+// @todo to be reorganized
+
+/**
+ * @brief Get the current active session from the acceptor. 
+ * 
+ * The session management is quite different in OpenWSN system and other resource-rich 
+ * systems. Considering the highly restricted memory, the OpenWSN decides to allow
+ * only one active session in the system. The application can only deal with the 
+ * next session after finished the previous one.
+ *
+ * And one session contains an REQUEST and an RESPONSE. The REQUEST and RESPONSE
+ * can be empty. 
+ * 
+ * Different to the embedded linux, the session here is only used to pass REQUEST/RESPONSE
+ * pair between objects. The life time is pretty short.
+ */
+//TiNioSession * nac_getcursession( TiNioAcceptor * nac, TiNioSession * session );
 
 #ifdef __cplusplus
 }
