@@ -1,22 +1,12 @@
 
-/***********************************************************************************
-  Filename:     hal_cc2520.h
-  Description:  This file defines the interface to the CC2520 radio.
-
-***********************************************************************************/
 #ifndef _HAL_CC2520BASE_H_4842_
 #define _HAL_CC2520BASE_H_4842_
 
-/***********************************************************************************
-* INCLUDES
-*/
 #include "../hal_configall.h"
 #include "../hal_foundation.h"
 #include "hal_cc2520vx.h"
 
-/***********************************************************************************
-* MACROS
-*/
+
 #define WAIT_TRANSCEIVER_READY()  st( WAIT_SFD_LOW();)
 #define WAIT_RSSI_VALID()         st( while (!CC2520_RSSI_VALID_PIN);)
 #define WAIT_SFD_HIGH()           st( while (!CC2520_SFD_PIN);)
