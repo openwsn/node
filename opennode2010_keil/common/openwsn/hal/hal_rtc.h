@@ -46,7 +46,7 @@
  * represent the int type used by the RTC hardware. it varies from 16bit to 32 bit 
  * on different hardware platform. 
  */
-#ifdef CONFIG_TARGET_GAINZ 
+#ifdef CONFIG_TARGETBOARD_GAINZ 
   #define TiRtcAdapterTime uint16
 #elif defined( CONFIG_TARGETBOARD_OPENNODE2010)
   #define TiRtcAdapterTime uint32
@@ -192,6 +192,8 @@ bool rtc_expired( TiRtcAdapter * rtc );
 
 void rtc_forward( TiRtcAdapter * rtc, uint16 sec );
 void rtc_backward( TiRtcAdapter * rtc, uint16 sec );
+
+bool rtc_getclockinterface( TiClockInterface * clock );
 
 #ifdef __cplusplus
 }

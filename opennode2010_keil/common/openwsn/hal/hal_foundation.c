@@ -45,9 +45,9 @@
  *  
  ******************************************************************************/ 
  
-#include "../hal_configall.h"
+#include "hal_configall.h"
 #include <string.h>
-#include "../hal_foundation.h"
+#include "hal_foundation.h"
 
 /* @attention: You cannot include "hal_assert" module here for testing purpose, 
  * because this module is included by "hal_assert". This is a bottom layer module 

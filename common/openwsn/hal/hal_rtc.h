@@ -46,7 +46,7 @@
  * represent the int type used by the RTC hardware. it varies from 16bit to 32 bit 
  * on different hardware platform. 
  */
-#ifdef CONFIG_TARGET_GAINZ 
+#ifdef CONFIG_TARGETBOARD_GAINZ 
   #define TiRtcAdapterTime uint16
 #else
   #pragma error "you should choose correct TiRtcAdapterTime type on your hardware architecture!"

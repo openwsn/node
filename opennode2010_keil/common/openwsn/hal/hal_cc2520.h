@@ -1,47 +1,79 @@
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
+ ******************************************************************************/
+
 #ifndef _HAL_CC2520_H_4842_
 #define _HAL_CC2520_H_4842_
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_cc2520base.h"
-#include "../../rtl/rtl_iobuf.h"
-#include "../../rtl/rtl_ieee802frame154.h"
-#include "hal_frame_transceiver.h"
-
-
 /*******************************************************************************
- * cc2520 adapter
- * Simple wraper of cc2520 low power wireless transceiver. it helps to implement 
- * the MAC network layer. 
- * 
- * @state
- *	developing
+ * @file    stm32f10x_dac.h
+ * @author  MCD Application Team
+ * @version V3.5.0
+ * @date    11-March-2011
+ * @brief   This file contains an transceiver adapter. It's an simple wraper of the 
+ *          Simple wraper of cc2520 low power wireless transceiver. it helps to implement 
+ *
+ * @state released
  * 
  * @history
  * @author zhangwei on 2010.04
  * @modified by zhangwei on 2011.06.04
  *	- Revision. Compiled successfully.
- *
+ * @modified by Jiang Ridong  in 2011.07
+ *  - Finished and tested Ok.
+ * @modified by Zhang Wei on 2011.08.14
+ *  - Revision
  ******************************************************************************/
 
+#include "hal_configall.h"
+#include "hal_foundation.h"
+#include "opennode2010/hal_cc2520vx.h"
+#include "opennode2010/hal_cc2520base.h"
+#include "hal_frame_transceiver.h"
 
-
-#ifdef __cplusplus
-extern "C"{
-#endif
-
+/* The following constants represent the size of cc2520 RXBUF and TXBUF size. You 
+ * should NOT change their value. 
+ * 
+ * @attention The first byte in the buffer is the length byte. The value of the length
+ * byte doesn't include itself.
+ */
 #define CC2520_RXBUF_SIZE 128
+#define CC2520_TXBUF_SIZE 128
 
-#define GPIO_SPI GPIOB
-#define SPI_pin_MISO  GPIO_Pin_14
-#define SPI_pin_MOSI  GPIO_Pin_15
-#define SPI_pin_SCK   GPIO_Pin_13
-#define SPI_pin_SS    GPIO_Pin_12
-
+/** 
+ * The following macros are for testing only. You should change it to adapt to your 
+ * own settings.
+ */
 #define CC2520_DEF_PANID                0x0001
 #define CC2520_DEF_LOCAL_ADDRESS        0x0001   
 #define CC2520_DEF_REMOTE_ADDRESS       0x0002
 #define CC2520_DEF_CHANNEL              11
+
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 /* TiCc2520Adapter
  * is a lightweight wrapper of TI/Chipcon's cc2420 2.4G transceiver. 
@@ -62,9 +94,9 @@ typedef struct{
 	volatile uint8 rxlen;
 	volatile uint8 rxbuf[CC2520_RXBUF_SIZE];
 	//char ackbuf[CC2520_ACKBUFFER_SIZE];
-	uint8 rssi;
-	uint8 lqi;
-	volatile uint8 spistatus;
+	// uint8 rssi;
+	// uint8 lqi;
+	// volatile uint8 spistatus;
 	uint16 param[14];
 }TiCc2520Adapter;
 

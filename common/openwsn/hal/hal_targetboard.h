@@ -54,7 +54,7 @@
  * kernel in your application, you can simply call target_init() in main() function.
  */
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
 //#include "hal_configall.h"
 //#include "./gainz/hpl_atmega128.h" 
 #include "./gainz/hpl_gainz.h"

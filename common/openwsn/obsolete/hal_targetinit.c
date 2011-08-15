@@ -39,7 +39,7 @@
 #include "../hal_foundation.h"
 #include "../hal_targetinit.h"
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
 #include "./gainz/hpl_atmega128.h" 
 #include "./gainz/hpl_gainz.h"
 #endif

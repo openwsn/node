@@ -65,7 +65,7 @@
 
 #include "hal_configall.h"
 #include <stdint.h>
-#include "../../rtl/rtl_foundation.h"
+#include "../rtl/rtl_foundation.h"
 
 /* System wide event identifier */
 
@@ -102,7 +102,7 @@ typedef void (* TiFunInterruptHandler)(void);
 
 #define hal_atomic_t cpu_atomic_t
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
   typedef uint8 cpu_atomic_t;
 #endif
 
@@ -110,7 +110,7 @@ typedef void (* TiFunInterruptHandler)(void);
   typedef uint32 cpu_atomic_t;
 #endif
 
-#if !defined(CONFIG_TARGET_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010)
+#if !defined(CONFIG_TARGETBOARD_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010)
   #error "You should define cpu_atomic_t type according to your CPU core's state register width."
 #endif
 

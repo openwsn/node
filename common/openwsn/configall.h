@@ -60,6 +60,9 @@
  *
  * @modified by zhangwei on 2011.07.19
  * - add support to automatic compiler detection of ARMCC (from arm.com)
+ * 
+ * @modified by zhangwei on 2011.08.14
+ * - Replace CONFIG_TARGET_GAINZ with CONFIG_TARGETBOARD_GAINZ
  *
  *****************************************************************************/
 
@@ -126,29 +129,29 @@
  * @attention: there're only one above macro allowed in the system!
  * currently, openwsn only support OPENNODE_10, 20, 30
  */
-#define CONFIG_TARGET_OPENNODE_10
-#undef  CONFIG_TARGET_OPENNODE_10
+#define CONFIG_TARGETBOARD_OPENNODE_10
+#undef  CONFIG_TARGETBOARD_OPENNODE_10
 
-#define CONFIG_TARGET_OPENNODE_20
-#undef  CONFIG_TARGET_OPENNODE_20
+#define CONFIG_TARGETBOARD_OPENNODE_20
+#undef  CONFIG_TARGETBOARD_OPENNODE_20
 
-#define CONFIG_TARGET_OPENNODE_30
-#undef  CONFIG_TARGET_OPENNODE_30
+#define CONFIG_TARGETBOARD_OPENNODE_30
+#undef  CONFIG_TARGETBOARD_OPENNODE_30
 
 #define CONFIG_TARGETBOARD_OPENNODE2010
 #undef  CONFIG_TARGETBOARD_OPENNODE2010
 
-#define CONFIG_TARGET_WLSMODEM_11
-#undef  CONFIG_TARGET_WLSMODEM_11
+#define CONFIG_TARGETBOARD_WLSMODEM_11
+#undef  CONFIG_TARGETBOARD_WLSMODEM_11
 
-#undef  CONFIG_TARGET_GAINZ
-#define CONFIG_TARGET_GAINZ
+#undef  CONFIG_TARGETBOARD_GAINZ
+#define CONFIG_TARGETBOARD_GAINZ
 
-#define CONFIG_TARGET_CC2520DK
-#undef  CONFIG_TARGET_CC2520DK
+#define CONFIG_TARGETBOARD_CC2520DK
+#undef  CONFIG_TARGETBOARD_CC2520DK
 
-#define CONFIG_TARGET_CC2430DK
-#undef  CONFIG_TARGET_CC2430DK
+#define CONFIG_TARGETBOARD_CC2430DK
+#undef  CONFIG_TARGETBOARD_CC2430DK
 
 
 /* Compiler used to Compile the Source code
@@ -262,7 +265,7 @@
 /* for atmega128 MCU and avr-gcc (WinAVR or AVR Studio)
  * ref: <stdint.h> in WinAVR
  */
-#ifdef CONFIG_TARGET_GAINZ 
+#ifdef CONFIG_TARGETBOARD_GAINZ 
 typedef signed char         int8;
 typedef unsigned char       uint8;
 typedef signed short int    int16;
@@ -279,7 +282,7 @@ typedef signed char         intx;
 #define intx int16
 #endif
 
-#ifndef CONFIG_TARGET_GAINZ 
+#ifndef CONFIG_TARGETBOARD_GAINZ 
 typedef signed char         int8;
 typedef unsigned char 	    uint8;
 typedef signed short        int16; // todo?

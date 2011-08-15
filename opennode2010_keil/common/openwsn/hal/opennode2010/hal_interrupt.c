@@ -31,37 +31,6 @@
  *          undefined reference to 'm_int2handler'
  *    this is due to you haven't add hal_foundation.c into your project. the above
  *    variable is declared in hal_foundation.c
- *
- * @reference
- * - AVR GCC Interrupt in WinAVR (found in your winavr)
- *   file:///D:/portable/WinAVR-20080610/doc/avr-libc/avr-libc-user-manual/group__avr__interrupts.html
- *   this is the most important document for interrupt programming.
- * 
- *   attention: please use new macro ISR() instead of the old SIGNAL() macro.
- *   in the past: 
- *
- * INTERRUPT
- * 用法：INTERRUPT（signame）
- * 说明：定义中断源signame对应的中断例程。在执行时，全局屏蔽位将清零，其他中断被使能。
- * ADC结束中断例程的例子如下所示：
- * 
- * SIGNAL
- * 用法：SIGNAL（signame）
- * 说明：定义中断源signame对应的中断例程。在执行时，全局屏蔽位保持置位，其他中断被禁止。
- * 
- *   now
- *   ISR(BADISR_vect)
- *	 ISR(XXX_vect, ISR_NOBLOCK) for nested interrupts
- *   ISR(PCINT1_vect, ISR_ALIASOF(PCINT0_vect)) for shared ISR  
- *		ISR_ALIAS(vector, target_vector)
- *   EMPTY_INTERRUPT(ADC_vect);
- *   ISR(TIMER1_OVF_vect, ISR_NAKED)
- * 
- * - Better GCC Interrupt Macro, 2006  (obsolete, but it's still meaningful to understand)
- *   http://www.avrfreaks.net/index.php?name=PNphpBB2&file=viewtopic&t=37830
- * 
- * - AVR-GCC里定义的API, 2009, 
- *   http://hi.baidu.com/tao_%CC%CE/blog/item/7441e9eee32c0bf3b3fb9545.html
  */
 
 #include "hal_configall.h" 
@@ -71,42 +40,17 @@
 #include "hal_led.h"
 #include "hal_assert.h"
 
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+// #include "./cm3/device/stm32f10x/stm32f10x.h"
+#endif
+
+#ifdef CONFIG_TARGETBOARD_GAINZ
+#include <avr/interrupt.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-void hal_disable_interrupt( uintx num )
-{
-	// todo
-/*
-    if (num < 8)
-    {
-        EIMSK |= (1 << num);
-    }
-*/
-}
-
-void hal_enable_interrupt( uintx num )
-{
-    /* for atmega128, there're 8 external interrupts. which can be controlled by 
-     * the following: EICRA, EICRB, EIMSK, EIFR. 
-     * for other interrupt source such as timer, the interrupt is controlled by
-     * its own registers.
-     * 
-     * ref to atmega128 datasheet
-     */
-
-	// todo
-	/*
-    if (num < 8)
-    {
-        EIMSK &= (~(1 << num));
-    }
-	*/
-}
-
-
 
 /******************************************************************************
  * interrupt number - object's handler mapping table  (abbr. as iht)
@@ -172,8 +116,6 @@ inline void hal_invokehandler( uint8 num, TiEvent * e )
 	}
 }
 
-
-
 /******************************************************************************
  * default interrupt handlers
  * this section provides an default implementation of interrupt service routines. 
@@ -181,251 +123,210 @@ inline void hal_invokehandler( uint8 num, TiEvent * e )
  * handler table (iht) 
  *****************************************************************************/
 
-
-/* Q: how to connect interrupt service handler in WinAVR
- * part of the interrupt symbols supported by avr-gcc and atmega128
- * ref: file:///D:/portable/WinAVR-20080610/doc/avr-libc/avr-libc-user-manual/group__avr__interrupts.html
- * 
+/**
  * Q: where can I find the interrupt macros and number defined in WinAVR?
- * R: for atmega 128, ref to: D:\portable\WinAVR-20080610\avr\include\avr\iom128.h
- *
- * ISR(ADC_vect)
- * ADC Conversion Complete 
+ * R: For STM32F10x firmware library and CM3, please search:
+ *      %cm3%\device\stm32f10x\stm32f10x.h
+ *      %cm3%\device\stm32f10x\startup_stm32f10x_hd.s
+ * In earlier version firmware library, there's a stm32f10x_it.c. 
  * 
- * ISR(ANALOG_COMP_vect)
- * Analog Comparator 
- * 
- * ISR(ANA_COMP_vect)
- * Analog Comparator 
- *
- * ISR(INT0_vect)
- * External Interrupt 0
- *
- * ISR(PCINT0_vect)
- * PIN change interrupt request 0, there's also PININT1_vect, PININT2_vect, PININT3_vect 
- *
- * ISR(SPI_STC_vect)
- * SPI Serial Transfer Complete
- *
- * ISR(TIMER0_COMPA_vect)
- * TimerCounter0 Compare Match A, formerly as SIG_OUTPUT_COMPARE0A 
- *
- * ISR(TIMER0_COMPB_vect)
- * Timer Counter 0 Compare Match B, formerly as SIG_OUTPUT_COMPARE0B, SIG_OUTPUT_COMPARE0_B 
- *
- * ISR(TIMER0_COMP_vect)
- * Timer/Counter0 Compare Match, formerly SIG_OUTPUT_COMPARE0 
- *
- * ISR(TIMER0_OVF_vect)
- * Timer/Counter0 Overflow. formerly SIG_OVERFLOW0
- *
- * ISR(TIMER1_CAPT_vect)
- * Timer/Counter Capture Event, formerly SIG_INPUT_CAPTURE1
- *
- * ISR(TIMER1_COMPA_vect)
- * Timer/Counter1 Compare Match A, formerly SIG_OUTPUT_COMPARE1A
- *
- * ISR(TIMER1_COMPB_vect)
- * Timer/Counter1 Compare MatchB, formerly SIG_OUTPUT_COMPARE1B
- *
- * TIMER1_COMPC_vect
- * Timer/Counter1 Compare Match C. formerly SIG_OUTPUT_COMPARE1C.
- * 
- * TIMER1_OVF_vect
- * Timer/Counter1 Overflow, formerly SIG_OVERFLOW1
- *
- * TIMER2_COMPA_vect
- * Timer/Counter2 Compare Match A, formerly SIG_OUTPUT_COMPARE2A
- *
- * TIMER2_COMPB_vect
- * Timer/Counter2 Compare Match, formerly SIG_OUTPUT_COMPARE2
- * 
- * TIMER2_OVF_vect
- * Timer/Counter2 Overflow, formerly SIG_OVERFLOW2
- * 
- * TIMER3_....
- *
- * TWI_vect
- * 2-wire Serial Interface. formerly SIG_2WIRE_SERIAL
- * 
- * USART...
- *
- * WDT_vect
- * Watchdog Timeout Interrupt. formerly SIG_WDT, SIG_WATCHDOG_TIMEOUT
+ * The current versioin startup file recognize the following interrupt service routines
+ * (You can find them in startup_stm32f10x_hd.s):
  */
 
-/* Interrupt vectors  defined in <iom128.h> in WinAVR
- *
- * #define INT0_vect			_VECTOR(1)
- * #define INT1_vect			_VECTOR(2)
- * #define INT2_vect			_VECTOR(3)
- * #define INT3_vect			_VECTOR(4)
- * #define INT4_vect			_VECTOR(5)
- * #define INT5_vect			_VECTOR(6)
- * #define INT6_vect			_VECTOR(7)
- * #define INT7_vect			_VECTOR(8)
- * #define SIG_INTERRUPT7		_VECTOR(8)
- * #define INT7_vect			_VECTOR(8)
- *
- * Timer/Counter2 Compare Match 
- * #define TIMER2_COMP_vect		_VECTOR(9)
- *
- * Timer/Counter2 Overflow 
- * #define TIMER2_OVF_vect		_VECTOR(10)
- *
- * Timer/Counter1 Capture Event 
- * #define TIMER1_CAPT_vect		_VECTOR(11)
- * 
- * Timer/Counter1 Compare Match A 
- * #define TIMER1_COMPA_vect	_VECTOR(12)
- * #define SIG_OUTPUT_COMPARE1A	_VECTOR(12)
- *
- * Timer/Counter Compare Match B 
- * #define TIMER1_COMPB_vect	_VECTOR(13)
- * #define SIG_OUTPUT_COMPARE1B	_VECTOR(13)
- * 
- * Timer/Counter1 Overflow 
- * #define TIMER1_OVF_vect		_VECTOR(14)
- * #define SIG_OVERFLOW1		_VECTOR(14)
- *
- * Timer/Counter0 Compare Match 
- * #define TIMER0_COMP_vect		_VECTOR(15)
- * #define SIG_OUTPUT_COMPARE0	_VECTOR(15)
- *
- * Timer/Counter0 Overflow 
- * #define TIMER0_OVF_vect		_VECTOR(16)
- * #define SIG_OVERFLOW0		_VECTOR(16)
- * ......
- *
- * Timer/Counter3 Compare Match A 
- * #define TIMER3_COMPA_vect	_VECTOR(26)
- * #define SIG_OUTPUT_COMPARE3A	_VECTOR(26)
- * ......
- */
-
-/* 
-ISR(INT0_vect)
-{
-	// hal_assert(false);
-}
-*/
-
-/* used to response the cc2420 FIFOP interrupt (external interrupt request 7, _VECTOR(7)) */
 /*
-ISR(INT6_vect)
-{
-    hal_invokehandler( INTNUM_CC2420_FIFOP, NULL );
-}
+WWDG_IRQHandler
+PVD_IRQHandler
+TAMPER_IRQHandler
+RTC_IRQHandler
+FLASH_IRQHandler
+RCC_IRQHandler
+EXTI0_IRQHandler
+EXTI1_IRQHandler
+EXTI2_IRQHandler
+EXTI3_IRQHandler
+EXTI4_IRQHandler
+DMA1_Channel1_IRQHandler
+DMA1_Channel2_IRQHandler
+DMA1_Channel3_IRQHandler
+DMA1_Channel4_IRQHandler
+DMA1_Channel5_IRQHandler
+DMA1_Channel6_IRQHandler
+DMA1_Channel7_IRQHandler
+ADC1_2_IRQHandler
+USB_HP_CAN1_TX_IRQHandler
+USB_LP_CAN1_RX0_IRQHandler
+CAN1_RX1_IRQHandler
+CAN1_SCE_IRQHandler
+EXTI9_5_IRQHandler
+TIM1_BRK_IRQHandler
+TIM1_UP_IRQHandler
+TIM1_TRG_COM_IRQHandler
+TIM1_CC_IRQHandler
+TIM2_IRQHandler
+TIM3_IRQHandler
+TIM4_IRQHandler
+I2C1_EV_IRQHandler
+I2C1_ER_IRQHandler
+I2C2_EV_IRQHandler
+I2C2_ER_IRQHandler
+SPI1_IRQHandler
+SPI2_IRQHandler
+USART1_IRQHandler
+USART2_IRQHandler
+USART3_IRQHandler
+EXTI15_10_IRQHandler
+RTCAlarm_IRQHandler
+USBWakeUp_IRQHandler
+TIM8_BRK_IRQHandler
+TIM8_UP_IRQHandler
+TIM8_TRG_COM_IRQHandler
+TIM8_CC_IRQHandler
+ADC3_IRQHandler
+FSMC_IRQHandler
+SDIO_IRQHandler
+TIM5_IRQHandler
+SPI3_IRQHandler
+UART4_IRQHandler
+UART5_IRQHandler
+TIM6_IRQHandler
+TIM7_IRQHandler
+DMA2_Channel1_IRQHandler
+DMA2_Channel2_IRQHandler
+DMA2_Channel3_IRQHandler
+DMA2_Channel4_5_IRQHandler
 */
-
-/* _VECTOR(14)
- * used with the interrupt driven test application in <timer> directory. */
+  
 /*
-ISR(TIMER0_OVF_vect)
-{   
-   	hal_invokehandler( INTNUM_TIMER0_OVF, NULL );
+void WWDG_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_WATCHDOG, NULL );
+}
+
+void PVD_IRQHandler(void)
+{
+}
+
+void TAMPER_IRQHandler(void)
+{
 }
 */
-
-/* _VECTOR(15) */
+void RTC_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_RTC, NULL );
+}
 /*
-ISR(TIMER0_COMP_vect)
+void FLASH_IRQHandler(void)
 {
-   	hal_invokehandler( INTNUM_TIMER0_COMP, NULL );
-}
-
-ISR(TIMER1_OVF_vect)
-{
-   	hal_invokehandler( INTNUM_TIMER1_OVF, NULL );
-}
-
-ISR(TIMER1_COMPA_vect)
-{
-   	hal_invokehandler( INTNUM_TIMER1_COMPA, NULL );
-}
-
-ISR(TIMER2_OVF_vect)
-{
-   	hal_invokehandler( INTNUM_TIMER2_OVF, NULL );
-}
-
-ISR(TIMER2_COMP_vect)
-{
-   	hal_invokehandler( INTNUM_TIMER2_COMP, NULL );
-}
-
-ISR(TIMER3_OVF_vect)
-{
-   	hal_invokehandler( INTNUM_TIMER3_OVF, NULL );
-}
-
-
-ISR(TIMER3_COMPA_vect)
-{
-	hal_invokehandler( INTNUM_TIMER3_COMPA, NULL );
 }
 */
-
-/* used to response the TIMER3 comparison interrupt */
-//void __attribute((interrupt))   __vector_26(void)
-//ISR(__vector_26)
+// RCC_IRQHandler
+void EXTI0_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_FRAME_ACCEPTED, NULL );
+}
 /*
-ISR(TIMER3_COMPA_vect)
+void EXTI1_IRQHandler(void)
 {
-	hal_invokehandler( INTNUM_CC2420_SFD, NULL );
 }
-*/
-//
-//ISR(ADC_vect)
-//{
-//    hal_invokehandler( INTNUM_ADC_COMPLETE, NULL );
-//}
 
-///* USART0, Rx Complete, formerly SIG_UART0_RECV	*/
-//ISR(USART0_RX_vect)
-//{
-//	hal_invokehandler( INTNUM_USART0_RX, NULL );
-//}
-//
-///* USART0 Data Register Empty, SIG_UART0_DATA */
-//ISR(USART0_UDRE_vect)
-//{
-//	hal_invokehandler( INTNUM_USART0_UDRE, NULL );
-//}
-//
-//ISR(USART1_RX_vect)
-//{
-//	//hal_invokehandler( INTNUM_USART1_RX, NULL );
-//}
-//
-//ISR(USART1_UDRE_vect)
-//{
-//	//hal_invokehandler( INTNUM_USART1_UDRE, NULL );
-//}
-//
-///* Catch-all interrupt vector
-// * If an unexpected interrupt occurs (interrupt is enabled and no handler is installed, 
-// * which usually indicates a bug), then the default action is to reset the device 
-// * by jumping to the reset vector. You can override this by supplying a function 
-// * named BADISR_vect which should be defined with ISR() as such. (The name BADISR_vect 
-// * is actually an alias for __vector_default. The latter must be used inside assembly 
-// * code in case <avr/interrupt.h> is not included.)
-// */
-//
-//ISR(BADISR_vect)
-//{
-//	/* attention: in real applications, you'd better reset the whole device here */
-//	hal_assert(false);
-//}
-//
-///* interrupt service routine sharing */
-//ISR(INT1_vect, ISR_ALIASOF(INT0_vect));
-//ISR(INT3_vect, ISR_ALIASOF(INT0_vect));
-//ISR(INT4_vect, ISR_ALIASOF(INT0_vect));
-//ISR(INT5_vect, ISR_ALIASOF(INT0_vect));
-//
-///* empty interrupt */
-//EMPTY_INTERRUPT(INT2_vect);
+void EXTI2_IRQHandler(void)
+{
+}
+
+void EXTI3_IRQHandler(void)
+{
+}
+
+void EXTI4_IRQHandler(void)
+{
+}
+
+// DMA1_Channel1_IRQHandler
+// DMA1_Channel2_IRQHandler
+// DMA1_Channel3_IRQHandler
+// DMA1_Channel4_IRQHandler
+// DMA1_Channel5_IRQHandler
+// DMA1_Channel6_IRQHandler
+// DMA1_Channel7_IRQHandler
+// ADC1_2_IRQHandler
+
+void USB_HP_CAN1_TX_IRQHandler(void)
+{
+}
+
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+}
+
+void CAN1_RX1_IRQHandler(void)
+{
+}
+
+void CAN1_SCE_IRQHandler(void)
+{
+}
+
+// EXTI9_5_IRQHandler
+// TIM1_BRK_IRQHandler
+// TIM1_UP_IRQHandler
+// TIM1_TRG_COM_IRQHandler
+// TIM1_CC_IRQHandler
+*/
+void TIM2_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_TIMER2, NULL );
+}
+
+void TIM3_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_TIMER3, NULL );
+}
+
+void TIM4_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_TIMER4, NULL );
+}
+
+// I2C1_EV_IRQHandler
+// I2C1_ER_IRQHandler
+// I2C2_EV_IRQHandler
+// I2C2_ER_IRQHandler
+// SPI1_IRQHandler
+// SPI2_IRQHandler
+// USART1_IRQHandler
+
+void USART2_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_USART, NULL );
+}
+
+// USART3_IRQHandler
+// EXTI15_10_IRQHandler
+
+void RTCAlarm_IRQHandler(void)
+{
+	hal_invokehandler( INTNUM_RTCALARM, NULL );
+}
+
+// USBWakeUp_IRQHandler
+// TIM8_BRK_IRQHandler
+// TIM8_UP_IRQHandler
+// TIM8_TRG_COM_IRQHandler
+// TIM8_CC_IRQHandler
+// ADC3_IRQHandler
+// FSMC_IRQHandler
+// SDIO_IRQHandler
+// void TIM5_IRQHandler(void)
+// SPI3_IRQHandler
+// UART4_IRQHandler
+// UART5_IRQHandler
+// TIM6_IRQHandler
+// TIM7_IRQHandler
+// DMA2_Channel1_IRQHandler
+// DMA2_Channel2_IRQHandler
+// DMA2_Channel3_IRQHandler
+// DMA2_Channel4_5_IRQHandler
 
 #ifdef __cplusplus
 }

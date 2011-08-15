@@ -32,37 +32,6 @@
  * Interrupt Hardware Abstraction. This module is used to control the global 
  * interrupt flag in the CPU only.
  *
- * you SHOULD always perfer to use hal_enter_atomic() instead of hal_enable_interrupts()
- * and hal_leave_atomic() instead of hal_disable_interrupts(). the reason is that 
- * hal_leave_atomic() can leave the global interrupt flag unchanged, while the 
- * disable()/enable() pair will leave the flag enabled!!! this is sometimes unwanted!
- *
- * Q: what's the difference between hal_enter_atomic()/hal_leave_atomic() and 
- * hal_enable_interrupts(), hal_disable_interrupts()?
- * R: 
- * hal_enable_interrupts()
- * hal_disable_interrupts()
- * direct control of the global interrupt flag inside CPU. this interrupt flag 
- * is usually a bit in CPU status register. If is was disabled, then CPU cann't
- * response to any external interrupts. These two functions are always effective 
- * no matter there's an RTOS or not.
- * 
- * hal_enter_atomic()
- * hal_leave_atomic()
- * atomic is an source code block that must be executed as a whole without any 
- * interruption. It's quite similar to the "critical section" supported by OS. 
- * however, the implementation of critical section is much more complex than a 
- * simple atomic block, because the critical section is usually related to the 
- * scheduling mechanism of OS. It may need to switch the context of the thread/process
- * while hal_enter_atomic()/hal_leave_atomic() doesn't do so. These two functions
- * are also supported no matter there's a RTOS or not.
- *
- * @attention
- * - when the system started, it should enable_interrupts() before using the following 
- * two atomic functions.
- * - this module should be OS independent. namely, these functions are existed 
- * no matter there's an RTOS or not.
- * 
  * @status 
  * 	- released. tested ok on ATmega128 micro-controller.
  *
@@ -76,23 +45,25 @@
  *  add two functions hal_enter_atomic()/hal_leave_atomic()
  * @modified by zhangwei on 200905xx
  *	- revision
+ * @modified by zhangwei on 2011.08.14
+ *  - Move hal_disable_interrupts() and hal_enable_interrupts() to module hal_cpu.
+ *  - Add support to OpenNode 2010 platform (based on STM32F103 and TI cc2520)
  ******************************************************************************/ 
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
 #include "hal_cpu.h"
-//#include "hal_vic.h"
 
-#ifdef CONFIG_TARGET_OPENNODE
-#include "arch_target.h"
-#endif
+/**
+ * CONFIG_INT2HANDLER_CAPACITY
+ * Configure the interrupt number to handler mapping table capacity. You can define 
+ * this macro before including this file to make it effective.
+ */
 
-#ifdef CONFIG_TARGET_GAINZ
-#include <avr/interrupt.h>
-#endif
+#ifdef CONFIG_TARGETBOARD_GAINZ
 
-#ifdef CONFIG_OS_UCOSII
-#include "../ucos-ii/os_cpu.h"
+#ifndef CONFIG_INT2HANDLER_CAPACITY
+#define CONFIG_INT2HANDLER_CAPACITY 32
 #endif
 
 /* Q: how to connect interrupt service handler in WinAVR
@@ -131,20 +102,47 @@
 #define INTNUM_USART1_UDRE		31
 #define INTNUM_ADC_COMPLETE     21
 
-/* or else change to INTNUM_INT6 */
 #define INTNUM_CC2420_FIFOP     INTNUM_INT6
 #define INTNUM_CC2420_SFD       INTNUM_TIMER3_COMPA
+
+#endif /* CONFIG_TARGETBOARD_GAINZ */
+
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+
+#ifndef CONFIG_INT2HANDLER_CAPACITY
+#define CONFIG_INT2HANDLER_CAPACITY 16
+#endif
+
+#define INTNUM_EXTI0            1
+#define INTNUM_EXTI1            2
+#define INTNUM_EXTI2            3  // not used now
+#define INTNUM_EXTI3            4  // not used now
+#define INTNUM_WATCHDOG         5
+#define INTNUM_ADC_COMPLETE     6
+#define INTNUM_RTC              9
+#define INTNUM_USBTX            10
+#define INTNUM_USBRX            11
+#define INTNUM_CANTX            INTNUM_USBTX
+#define INTNUM_CANRX            INTNUM_USBRX
+#define INTNUM_TIMER2           12  // not recommend to use
+#define INTNUM_TIMER3           13  // not recommend to use
+#define INTNUM_TIMER4           14  // not recommend to use
+#define INTNUM_USART            15
+//#define INTNUM_RTCALARM         16
+
+
+#define INTNUM_FIFOP            INTNUM_EXTI0    // not recommend to use
+#define INTNUM_SFD              INTNUM_EXTI1    // not recommend to use
+#define INTNUM_FRAME_ACCEPTED   INTNUM_EXTI0    // recommend
+#define INTNUM_FRAME_ARRIVAL    INTNUM_EXTI1    // recommend
+#define INTNUM_RTCALARM         INTNUM_RTC
+
+#endif /* CONFIG_TARGETBOARD_OPENNODE2010 */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*******************************************************************************
- * Common Interface Functions
- ******************************************************************************/ 
-
-void hal_disable_interrupt( uintx num );
-void hal_enable_interrupt( uintx num );
 
 /*******************************************************************************
  * interrupt number - object's handler mapping table  (abbr. as iht)

@@ -24,12 +24,12 @@
  *
  ******************************************************************************/
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_targetboard.h"
-#include "hal_cpu.h"
-#include "hal_led.h"
-#include "hal_mcu.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_targetboard.h"
+#include "../hal_cpu.h"
+#include "../hal_led.h"
+#include "../hal_mcu.h"
 
 static uint8 m_ledstate = 0x00;
 

@@ -124,7 +124,7 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	uint8 rxque_capacity, uint8 txque_capacity );
 void nac_close( TiNioAcceptor * nac );
 
-void nac_set_timesync( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync );
+void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync );
 
 TiFrameTxRxInterface * nac_rxtx_interface( TiNioAcceptor * nac );
 

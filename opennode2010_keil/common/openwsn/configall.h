@@ -60,6 +60,9 @@
  *
  * @modified by zhangwei on 2011.07.19
  * - add support to automatic compiler detection of ARMCC (from arm.com)
+ * 
+ * @modified by zhangwei on 2011.08.14
+ * - Modify CONFIG_TARGET_GAINZ as CONFIG_TARGETBOARD_GAINZ
  *
  *****************************************************************************/
 
@@ -117,38 +120,38 @@
 
 /* Hardware Platform Choosing Configuration
  * now we have four hardware platforms:
- * - CONFIG_TARGET_OPENNODE_10  for OpenNODE version 1.0
- * - CONFIG_TARGET_OPENNODE_20  for OpenNODE version 2.0
- * - CONFIG_TARGET_OPENNODE_30  for OpenNODE version 3.0
- * - CONFIG_TARGET_WLSMODEM_11 for WlsModem version 1.1
- * - CONFIG_TARGET_GAINZ for ICT's GAINZ hardware
+ * - CONFIG_TARGETBOARD_OPENNODE_10  for OpenNODE version 1.0
+ * - CONFIG_TARGETBOARD_OPENNODE_20  for OpenNODE version 2.0
+ * - CONFIG_TARGETBOARD_OPENNODE_30  for OpenNODE version 3.0
+ * - CONFIG_TARGETBOARD_WLSMODEM_11 for WlsModem version 1.1
+ * - CONFIG_TARGETBOARD_GAINZ for ICT's GAINZ hardware
  *
  * @attention: there're only one above macro allowed in the system!
  * currently, openwsn only support OPENNODE_10, 20, 30
  */
-#define CONFIG_TARGET_OPENNODE_10
-#undef  CONFIG_TARGET_OPENNODE_10
+#define CONFIG_TARGETBOARD_OPENNODE_10
+#undef  CONFIG_TARGETBOARD_OPENNODE_10
 
-#define CONFIG_TARGET_OPENNODE_20
-#undef  CONFIG_TARGET_OPENNODE_20
+#define CONFIG_TARGETBOARD_OPENNODE_20
+#undef  CONFIG_TARGETBOARD_OPENNODE_20
 
-#define CONFIG_TARGET_OPENNODE_30
-#undef  CONFIG_TARGET_OPENNODE_30
+#define CONFIG_TARGETBOARD_OPENNODE_30
+#undef  CONFIG_TARGETBOARD_OPENNODE_30
 
 #undef  CONFIG_TARGETBOARD_OPENNODE2010
 #define CONFIG_TARGETBOARD_OPENNODE2010
 
-#define CONFIG_TARGET_WLSMODEM_11
-#undef  CONFIG_TARGET_WLSMODEM_11
+#define CONFIG_TARGETBOARD_WLSMODEM_11
+#undef  CONFIG_TARGETBOARD_WLSMODEM_11
 
-#define CONFIG_TARGET_GAINZ
-#undef  CONFIG_TARGET_GAINZ
+#define CONFIG_TARGETBOARD_GAINZ
+#undef  CONFIG_TARGETBOARD_GAINZ
 
-#define CONFIG_TARGET_CC2520DK
-#undef  CONFIG_TARGET_CC2520DK
+#define CONFIG_TARGETBOARD_CC2520DK
+#undef  CONFIG_TARGETBOARD_CC2520DK
 
-#define CONFIG_TARGET_CC2430DK
-#undef  CONFIG_TARGET_CC2430DK
+#define CONFIG_TARGETBOARD_CC2430DK
+#undef  CONFIG_TARGETBOARD_CC2430DK
 
 //
 // #define CONFIG_HARDWARE_CPU
@@ -325,6 +328,16 @@ typedef unsigned int        uintx;
     #define __ASM            __asm          /*!< asm keyword for TASKING Compiler      */
     #define __INLINE         inline         /*!< inline keyword for TASKING Compiler   */
   #endif	
+  
+  // The OpenNode 2010 platform (STM32F103x + cc2520) supports the following three
+  // macros: 
+  // - CONFIG_CPU_FREQUENCY_8MHZ 
+  // - CONFIG_CPU_FREQUENCY_48MHZ 
+  // - CONFIG_CPU_FREQUENCY_72MHZ 
+  // You should define one and only one above macro.
+  
+  #define CONFIG_CPU_FREQUENCY_8MHZ 1
+  //#warning "The target board running at 8MHz defined by CONFIG_CPU_FREQUENCY_8MHZ in configall.h"
 #endif 
 
 #ifndef CONFIG_WINDOWS

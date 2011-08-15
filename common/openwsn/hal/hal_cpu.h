@@ -35,6 +35,8 @@
  *    kit or cc2430 developing kit.
  *  - you should #undef or #define the above macros inside devx_configall.h or hal_configall
  *    to activate/deactivate the above configuration macros.
+ * @modified by zhangwei on 2010.05.15
+ *  - change CONFIG_TARGET_GAINZ to CONFIG_TARGETBOARD_GAINZ and so on.
  */
 
 /*******************************************************************************
@@ -42,7 +44,7 @@
  * gainz is provided by ICT in China.
  ******************************************************************************/
 
-#ifdef CONFIG_TARGET_GAINZ
+#ifdef CONFIG_TARGETBOARD_GAINZ
 #include "./gainz/hpl_cpu.h"
 #endif 
 

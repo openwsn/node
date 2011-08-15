@@ -345,7 +345,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\stm32f10x\std\inc;D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\cm3\core</IncludePath>
+              <IncludePath>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\stm32f10x\std\inc;D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\opennode2010\cm3\core;..\..\..\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -431,19 +431,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_cec.c</FileName>
@@ -474,11 +464,6 @@
               <FileName>stm32f10x_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_fsmc.c</FileName>
@@ -514,11 +499,6 @@
               <FileName>stm32f10x_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_spi.c</FileName>
@@ -581,11 +561,6 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_debugio.c</FilePath>
             </File>
             <File>
-              <FileName>hal_digio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digio.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_foundation.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_foundation.c</FilePath>
@@ -609,6 +584,11 @@
               <FileName>hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_digitio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digitio.c</FilePath>
             </File>
           </Files>
         </Group>

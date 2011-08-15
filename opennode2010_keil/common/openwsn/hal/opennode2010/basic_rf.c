@@ -41,15 +41,20 @@
 /***********************************************************************************
 * INCLUDES
 */
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "hal_cc2520base.h"
+#include "../hal_cpu.h"
+#include "../hal_mcu.h"
+#include "../hal_targetboard.h"
+#include "../hal_digitio.h"
 #include "basic_rf.h"
 #include "basic_rf_security.h"
-#include "hal_cc2520base.h"
-#include "hal_cpu.h"
-#include "hal_mcu.h"
-#include "hal_targetboard.h"
-#include "hal_digio.h"
 #include "util.h"
 #include <string.h>
+
+#define halIntOff() hal_disable_interrupts()
+#define halIntOn() hal_enable_interrupts()
 
 #define FAILED 1
 //digioConfig pinRadio_GPIO0;
@@ -477,7 +482,7 @@ basicRFStatus_t basicRfSendPacket(uint16 destAddr, uint8* pPayload, uint8 length
 
         // We'll enter RX automatically, so just wait until we can be sure that the ack reception should have finished
         // The timeout consists of a 12-symbol turnaround time, the ack packet duration, and a small margin
-        halMcuWaitUs((12 * BASIC_RF_SYMBOL_DURATION) + (BASIC_RF_ACK_DURATION) + (2 * BASIC_RF_SYMBOL_DURATION) + 10);
+        hal_delayus((12 * BASIC_RF_SYMBOL_DURATION) + (BASIC_RF_ACK_DURATION) + (2 * BASIC_RF_SYMBOL_DURATION) + 10);
 
         // If an acknowledgment has been received (by RxFrmDoneIsr), the ackReceived flag should be set
         status = txState.ackReceived ? SUCCESS : FAILED;

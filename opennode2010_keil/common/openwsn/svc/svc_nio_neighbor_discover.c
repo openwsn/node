@@ -77,7 +77,7 @@ void ndp_evolve( void * svcptr, TiEvent * e )
 
 }
 
-uint8 ndp_response( TiNioNeighborDiscover *svc,uint16 addr,TiFrame * frame,uint8 option)
+uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
 {
     uint8 count=0;
     char * response;
@@ -88,6 +88,7 @@ uint8 ndp_response( TiNioNeighborDiscover *svc,uint16 addr,TiFrame * frame,uint8
     uint8 i;
     uint8 seqid;
     char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+    TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
 
     response = frame_startptr(frame);
     legth = frame_length( frame);

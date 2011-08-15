@@ -24,79 +24,60 @@
  *
  ******************************************************************************/
 
-#include "../hal_vic.h"
+#ifndef _HAL_VIC_H_4788_
+#define _HAL_VIC_H_4788_
 
+/* hal_vic
+ * Vector Interrupt Controller(VIC) Management. VIC is usually a IO device inside 
+ * CPU. It's different from the global interrupt flag inside the CPU's controller unit. 
+ *
+ * attention in a lot of MCU, there're no Vector Interrupt Controller support 
+ * inside them. This module is currently used with ARM CPU only.
+ *
+ * @attention
+ * there's also an interrupt abstraction and management module in OS layer. that 
+ * module provides a common multi-interrupt interface for all the MCU/CPUs. while
+ * the VIC module here is only an hardware's interface.
+ *
+ * @author zhangwei on 2007-12-19
+ *	- first version.
+ * @modified by zhangwei on 20090715
+ *	- revision
+ */
 
+#include "hal_configall.h"
+#include "hal_foundation.h"
+#include "hal_targetboard.h"
 
+// #include "..\src\target.h"
 
-void hal_disable_interrupt( uintx num );
-void hal_enable_interrupt( uintx num );
+#ifdef CONFIG_OS_UCOSII
+// #include "..\arm\os_cpu.h"
+#endif
 
-
-// no use to be deleted
-void hal_disable_interrupt( uintx num )
-{
-	// todo
-/*
-    if (num < 8)
-    {
-        EIMSK |= (1 << num);
-    }
-*/
-}
-
-void hal_enable_interrupt( uintx num )
-{
-    /* for atmega128, there're 8 external interrupts. which can be controlled by 
-     * the following: EICRA, EICRB, EIMSK, EIFR. 
-     * for other interrupt source such as timer, the interrupt is controlled by
-     * its own registers.
-     * 
-     * ref to atmega128 datasheet
-     */
-
-	// todo
-	/*
-    if (num < 8)
-    {
-        EIMSK &= (~(1 << num));
-    }
-	*/
-}
-
-
-
-void hal_vic_init( uint8 opt )
-{
-}
-
-void hal_vic_attach( uint8 num, TInterruptHandler isr, uint8 prior, uint8 opt )
-{
-}
-
-void hal_vic_detach uint8 num )
-{
-}
-
-void hal_vic_trigger( uint8 num )
-{
-}
-
-void hal_vic_enable( uint8 num )
-{
-}
-
-void hal_vic_disable( uint8 num )
-{
-}
+#ifdef __cplusplus
+extern "C"{
+#endif
+/* for ARM CPU only:
+ * opt
+ * opt = 0x00 default
+ *   [b7,..,b0]
+ *   b0 = 0 general interrupt, 1 FIQ interrupt (ARM only)
+ *   b1 = 0 voltage trigger, 1 pulse trigger
+ */
+void hal_vic_init( uint8 opt );
+void hal_vic_attach( uint8 num, TiFunInterruptHandler isr, uint8 prior, uint8 opt );
+void hal_vic_detach( uint8 num );
+void hal_vic_trigger( uint8 num );
+void hal_vic_enable( uint8 num );
+void hal_vic_disable( uint8 num );
 
 /* by inquire the state register, the developer can know whether there's an
  * interrupt request pending, or in servicing or masked.  */
-uint8 hal_vic_state( uint8 num )
-{
-}
+uint8 hal_vic_state( uint8 num );  
+void hal_vic_clearrequest( uint8 num );
 
-void hal_vic_clearrequest( uint8 num )
-{
+#ifdef __cplusplus
 }
-
+#endif
+#endif

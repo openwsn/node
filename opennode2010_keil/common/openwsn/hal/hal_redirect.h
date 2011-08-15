@@ -66,4 +66,11 @@ void stdc_redirect( TiUartAdapter * uart );
 int fputc(int ch, FILE *f);
 #endif /* CONFIG_TARGETBOARD_OPENNODE2010 */
 
+
+/*******************************************************************************
+* Function Name  : fputc
+* Description    : Retargets the C library printf function to the USART.
+*******************************************************************************/
+//int fputc(int ch, FILE *f);
+
 #endif

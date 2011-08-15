@@ -188,6 +188,7 @@ TiIEEE802Frame154Descriptor * _ieee802frame154_cast_as( TiIEEE802Frame154Descrip
 	uint8 count;
 
     rtl_assert( buf != NULL );
+	option = option;
 
 	if (empty)
 	{
