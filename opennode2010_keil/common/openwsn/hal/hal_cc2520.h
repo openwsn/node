@@ -100,8 +100,6 @@ typedef struct{
 	uint16 param[14];
 }TiCc2520Adapter;
 
-//extern TiCc2520Adapter m_cc;//临时定义的一个全局变量
-
 
 /*******************************************************************************
  * cc2520_construct
@@ -226,15 +224,10 @@ uint8 cc2520_rssi( TiCc2520Adapter * cc );
 void cc2520_setlistner(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner );
 
 
-/***********************************************************************************
-* INCLUDES
-*/
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_cc2520.h"
-
 
 TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterface * intf );
+
+
 /***********************************************************************************
 * TYPEDEFS
 */

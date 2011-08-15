@@ -166,16 +166,28 @@ void cpu_delayms(uint16 msec);
   #define cpu_sleep() __WFI()
   #define cpu_enable_interrupts() __enable_irq()
   #define cpu_disable_interrupts() __disable_irq()
-  #define cpu_atomic_begin() __get_PRIMASK()
-  #define cpu_atomic_end(state) __set_PRIMASK(state)
+  //#define cpu_atomic_begin() __get_PRIMASK()
+  //#define cpu_atomic_end(state) __set_PRIMASK(state)
 #elif defined(__GNUC__)
   #define cpu_nop() __NOP()
   #define cpu_sleep() __WFI()
   #define cpu_enable_interrupts() __enable_irq()
   #define cpu_disable_interrupts() __disable_irq()
-  #define cpu_atomic_begin() __get_PRIMASK()
-  #define cpu_atomic_end(state) __set_PRIMASK(state)
+  //#define cpu_atomic_begin() __get_PRIMASK()
+  //#define cpu_atomic_end(state) __set_PRIMASK(state)
 #endif
+
+inline TiCpuState cpu_atomic_begin()
+{
+    TiCpuState state = __get_PRIMASK();
+    __disable_irq();    
+    return state;
+}
+
+inline void cpu_atomic_end(TiCpuState state)
+{
+    __set_PRIMASK(state);
+}
 
 /**
  * @brief  Initiate a system reset request.

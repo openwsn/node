@@ -25,11 +25,6 @@
 #include "hal_cc2520base.h"
 #include "../hal_cc2520.h"
 
-
-
-//TiCc2520Adapter m_cc;
-
-
 static void _cc2520_fifop_handler(void * object, TiEvent * e);
 static intx _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len );
 static intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity );

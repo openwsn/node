@@ -28,6 +28,7 @@
 #include "../hal_foundation.h"
 #include "../hal_assert.h"
 #include "../hal_targetboard.h"
+#include "../hal_digitio.h"
 #include "hal_cc2520base.h"
 
 /**
@@ -55,7 +56,6 @@
  * in this module.
  */
 
-#include "../hal_digitio.h"
 
 // todo should be modified
 #define MCU_IO_GET(n1,n2) 0
