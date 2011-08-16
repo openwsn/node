@@ -137,11 +137,10 @@ void recvnode(void)
 
     //__disable_irq();
     led_open();
+    halUartInit( 9600,0);
     led_on( LED_ALL );
     hal_delayms( 500 );
     led_off( LED_ALL );
-
-    halUartInit( 9600,0);
 
     cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
     nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
@@ -158,7 +157,7 @@ void recvnode(void)
 
     timer_setinterval( timer2,1000,7999);
 
-
+    USART_Send( 0xff);
     nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 
     mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
