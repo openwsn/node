@@ -133,7 +133,6 @@ void aloha_sendnode(void)
 	
    // halUartInit( 9600,0);
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );

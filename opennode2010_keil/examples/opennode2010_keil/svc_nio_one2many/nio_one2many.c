@@ -167,7 +167,7 @@ int main(void)
 		len = one2many_broadcast( o2m, txbuf, 0x00 );
 		if (len <= 0)                   // retry when sending request failed
 		{
-			hal_delay( 250 );
+			hal_delayms( 250 );
 			continue;
 		}
 		else//todo for testing

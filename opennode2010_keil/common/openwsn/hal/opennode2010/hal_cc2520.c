@@ -1370,7 +1370,6 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
     TiCpuState cpu_state;
     // todo  1ms is too long
 	//hal_delayms(1);
-    
     cpu_state = hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
     if (cc->listener != NULL)

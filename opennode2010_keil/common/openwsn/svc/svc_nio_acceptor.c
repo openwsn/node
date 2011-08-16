@@ -334,7 +334,6 @@ void _nac_try_recv( TiNioAcceptor * nac )
 	uint8 idx = 0;
 	intx count;
     char *pc;
-    
 	if (!fmque_full(nac->rxque))
 	{   
         if (fmque_applyback(nac->rxque, &idx))
@@ -372,7 +371,7 @@ void _nac_try_recv( TiNioAcceptor * nac )
             }
         }
         
-        
+    }
 		// @pre nac->rxframe must be initialized correctly.
         /*
 		f = nac->rxframe;
@@ -381,6 +380,7 @@ void _nac_try_recv( TiNioAcceptor * nac )
 		count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
 		if (count > 0)
 		{
+            USART_Send( 0xf0);//todo for testing
             if (nac->timesync != NULL)
             {
                 // Since currently there's only one layer in the TiFrame object, we 
@@ -407,8 +407,8 @@ void _nac_try_recv( TiNioAcceptor * nac )
 			fmque_pushback( nac->rxque, f );
 		} */
 		
-    }
 }
+
 
 /*
  * This listener can be called by the transceiver component when a new frame arrives.
