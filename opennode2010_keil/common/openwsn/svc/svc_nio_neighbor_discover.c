@@ -23,18 +23,18 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/hal_mcu.h"
 #include "svc_configall.h"  
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_iobuf.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/opennode2010/hal_foundation.h"
-#include "../hal/opennode2010/hal_cpu.h"
-#include "../hal/opennode2010/hal_timer.h"
-#include "../hal/opennode2010/hal_debugio.h"
-#include "../hal/opennode2010/hal_uart.h"
-#include "../hal/opennode2010/hal_led.h"
-#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/hal_foundation.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_timer.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_uart.h"
+#include "../hal/hal_led.h"
+#include "../hal/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
@@ -253,7 +253,7 @@ uint8 ndp_recv( TiNioNeighborDiscover * svc,TiFrame * buf, uint8 option )
 }
 
 
-uint8 nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame * output, uint8 option )
+intx nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame * output, uint8 option )
 {
     char * payload;
     TiNodeDescriptor node;
@@ -287,7 +287,7 @@ uint8 nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame *
   
 }
 
-uint8 nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
+intx nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
 {
     //do nothing
 }

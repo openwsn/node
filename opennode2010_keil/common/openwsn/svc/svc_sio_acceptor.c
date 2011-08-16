@@ -153,7 +153,7 @@ TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option 
 	#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = slip_filter_txhandler( sac->slipfilter, buf, sac->txbuf );
+		count = slip_filter_txhandler( &sac->slipfilter, buf, sac->txbuf );
 	}
 	#endif
 
@@ -203,7 +203,7 @@ TiIoResult sac_rawsend( TiSioAcceptor * sac, TiFrame * buf, uintx len, TiIoOptio
 	{
 		tmpbuf = iobuf_open( &tmpbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
 		iobuf_write(tmpbuf, frame_startptr(buf), frame_length(buf));
-		count = slip_filter_txhandler( sac->slipfilter, tmpbuf, sac->txbuf );
+		count = slip_filter_txhandler( &sac->slipfilter, tmpbuf, sac->txbuf );
 		iobuf_close(tmpbuf);
 	}
 	#endif
@@ -235,7 +235,7 @@ TiIoResult sac_framerecv( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option 
 		hal_assert(iobuf_length(sac->rxbuf) > 0);
 		if (iobuf_length(sac->rxbuf) > 0)
 		{
-			count = frame_read(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));
+			count = frame_write(buf, iobuf_ptr(sac->rxbuf), iobuf_length(sac->rxbuf));//todo 原先这一句用frame_read是错的，应该是frame_write（）
 			iobuf_clear(sac->rxbuf);
 		}
 		sac->rx_accepted = 0;

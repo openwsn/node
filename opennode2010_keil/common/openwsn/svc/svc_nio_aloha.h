@@ -124,6 +124,7 @@
 #define ALOHA_STATE_BACKOFF                 2
 #define ALOHA_STATE_SLEEPING                3
 
+#pragma pack(1) 
 typedef struct{
 	uint8 state;
     TiFrameTxRxInterface * rxtx;

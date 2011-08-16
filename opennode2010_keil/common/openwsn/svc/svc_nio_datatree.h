@@ -249,6 +249,7 @@
 /* lifetime = 0 means this is an empty item in the cache. The bigger the lifetime, 
  * the newer the lifetime.
  */
+#pragma pack(1) 
 typedef struct{
 	uint16				lifetime;
 	uint16				panto;
@@ -304,6 +305,7 @@ typedef struct{
  *                      counter variable to simulate it. when txtrytime == 0, then the
  *                      frame inside txbuf will be cleared even though it's failed sending.
  */
+#pragma pack(1) 
 typedef struct{
 	uint8               state;
 	uint8               count;//todo for tesitng

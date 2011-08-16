@@ -75,12 +75,12 @@
 #include "osx_configall.h"
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_lightqueue.h"
-#include "../hal/opennode2010/hal_foundation.h"
-#include "../hal/opennode2010/hal_interrupt.h"
-#include "../hal/opennode2010/hal_cpu.h"
-#include "../hal/opennode2010/hal_assert.h"
-#include "../hal/opennode2010/hal_timer.h"
-#include "../hal/opennode2010/hal_rtc.h"
+#include "../hal/hal_foundation.h"
+#include "../hal/hal_interrupt.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_assert.h"
+#include "../hal/hal_timer.h"
+#include "../hal/hal_rtc.h"
 
 #define osx_assert(x) hal_assert(x)
 

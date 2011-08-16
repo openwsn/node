@@ -65,12 +65,14 @@ extern "C" {
  *	handler		handler, an function pointer with TiFunEventHandler type
  *	object      handler owner. = event.objectto
  */
+#pragma pack(1) 
 typedef struct{
 	uint8       id;
 	TiFunEventHandler handler;
 	void *      object;
 }_TiDispatcherItem;
 
+#pragma pack(1) 
 typedef struct{
 	uint16       size;
 	uint8       capacity;

@@ -27,7 +27,7 @@
  * 		y = x * a + b
  */ 
 
-
+#pragma pack(1) 
 typedef struct{
   // TiDTP * net;
   TiOsxTimer * systimer;

@@ -134,6 +134,13 @@ void aloha_sendnode(void)
 	led_off( LED_ALL );
 	
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
+    /*
+    while (1)//todo for testing
+    {
+        dbc_putchar( sizeof(TiCc2520Adapter));//todo for testing
+        hal_delayms( 1000);//todo for testing
+    }
+    */
 	nac = nac_construct( &m_nac[0], NAC_SIZE );//todo
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
     timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
@@ -150,7 +157,6 @@ void aloha_sendnode(void)
         timer , NULL, NULL, 0x00 );
     
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
-    
     hal_enable_interrupts();
 	while(1) 
 	{
@@ -161,8 +167,8 @@ void aloha_sendnode(void)
 
         #ifdef TEST1
         pc = frame_startptr( txbuf );
-        len = min(20, frame_capacity(txbuf));
-        for (i=0; i<20; i++)
+        len = min(10, frame_capacity(txbuf));
+        for (i=0; i<10; i++)
         {
             pc[i] = i;
         }

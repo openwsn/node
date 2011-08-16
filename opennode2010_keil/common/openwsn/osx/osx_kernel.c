@@ -49,8 +49,8 @@
 #endif
 
 #include "osx_foundation.h"
-#include "../hal/opennode2010/hal_assert.h"
-#include "../hal/opennode2010/hal_debugio.h"
+#include "../hal/hal_assert.h"
+#include "../hal/hal_debugio.h"
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
 

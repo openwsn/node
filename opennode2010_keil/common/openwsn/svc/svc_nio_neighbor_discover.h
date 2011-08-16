@@ -38,17 +38,17 @@
  * 模块的代码读取数据，然后发送回G。
  * 所以状态有两个：WIO_RECEIVING、DATA_COLLECT_AND_SEND
  */
-#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/hal_mcu.h"
 #include "svc_configall.h"  
 #include "../rtl/rtl_iobuf.h"
 #include "../rtl/rtl_frame.h"
-#include "../hal/opennode2010/hal_debugio.h"
-#include "../hal/opennode2010/hal_uart.h"
-#include "../hal/opennode2010/hal_led.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_uart.h"
+#include "../hal/hal_led.h"
 
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
-#include "../hal/opennode2010/hal_timer.h"
+#include "../hal/hal_timer.h"
 
 #include "svc_nodebase.h"
 #include "svc_nio_dispatcher.h"

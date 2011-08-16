@@ -111,6 +111,7 @@
  * txbuf                    temporarily holding the frame received 
  * rxbuf                    holding the frame to be sent
  */
+#pragma pack(1) 
 typedef struct{
 	uint8 state;
 	//todo TiUartAdapter * uart;

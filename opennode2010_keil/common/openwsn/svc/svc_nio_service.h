@@ -54,7 +54,7 @@
  * - Manages the dispatchers.
  * - Manages the topology data structure and channel data.
  */
-
+#pragma pack(1) 
 typedef struct{
   uint8 proto_id;
   void * component;
@@ -65,7 +65,7 @@ typedef struct{
 
 #define NIO_MAX_LAYER_COUNT 5
 #define NIO_MAX_COMPONENT_COUNT 10
-
+#pragma pack(1) 
 typedef struct{
   uint8 layerindex[NIO_MAX_LAYER_COUNT];
   _TiNioComponentDescriptor desc[NIO_MAX_COMPONENT_COUNT]; 

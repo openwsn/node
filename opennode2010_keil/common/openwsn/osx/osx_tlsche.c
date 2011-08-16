@@ -26,7 +26,7 @@
 #include "osx_configall.h"
 #include <string.h>
 #include "osx_foundation.h"
-#include "../hal/opennode2010/hal_led.h"
+#include "../hal/hal_led.h"
 #include "osx_tlsche.h"
 #include "osx_taskheap.h"
 #include "osx_taskpool.h"

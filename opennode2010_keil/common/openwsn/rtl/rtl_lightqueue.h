@@ -63,6 +63,7 @@
 extern "C" {
 #endif
 
+#pragma pack(1) 
 typedef struct{
 	uint8 front;
 	uint8 rear;

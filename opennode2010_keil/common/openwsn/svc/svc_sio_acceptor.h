@@ -46,7 +46,7 @@
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_slipfilter.h"
 //#include "../hal/hal_uart.h"
-#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/hal_uart.h"
 
 //#define CONFIG_DYNA_MEMORY 1
 //#undef  CONFIG_DYNA_MEMORY 
@@ -89,6 +89,7 @@ extern "C" {
  * function of TiSioAcceptor, you will read/write an complete packet/frame.
  * The framing mechanism currently is based on the rules in SLIP protocol. 
  */
+#pragma pack(1) 
 typedef struct{
 	uint8 state;
 	TiUartAdapter * device;
@@ -119,7 +120,7 @@ void sac_free( TiSioAcceptr * sac );
 
 TiSioAcceptor * sac_construct( char * buf, uint16 size );
 
-TiSioAcceptor * sac_open( TiSioAcceptor * sac, TiSlipFilter *slip, TiUartAdapter * uart );//TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
+TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );
 TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 
 TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiIoBuf * buf, TiIoOption option );//TiIoResult sac_iobufsend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option ); 

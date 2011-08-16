@@ -30,6 +30,7 @@
 #include "rtl_foundation.h"
 #include "rtl_iobuf.h"
 
+#pragma pack(1) 
 typedef struct{
   // int received;
   // uint8 tx_state; // not used now

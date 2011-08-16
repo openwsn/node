@@ -18,6 +18,7 @@
 extern "C" {
 #endif
 
+    #pragma pack(1) 
     typedef struct{
         uint8 id;
         uint16 baudrate;

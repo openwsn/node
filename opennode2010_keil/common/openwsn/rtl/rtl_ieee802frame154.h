@@ -273,6 +273,7 @@
  *  total_length: real data length inside the buffer.
  *  datalen: value of the length byte in the frame. 
  */
+#pragma pack(1) 
 typedef struct{
   char *    buf;
   uint8     capacity;

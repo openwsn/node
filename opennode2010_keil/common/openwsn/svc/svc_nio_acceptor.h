@@ -130,6 +130,7 @@ extern "C"{
  *   2) Provides an queue to buffer the incomming frames to avoid lossing.
  *   3) Support time synchronization in the HAL layer.
  */
+#pragma pack(1) 
 typedef struct{
 	uint16 memsize;
 	uint8 state;

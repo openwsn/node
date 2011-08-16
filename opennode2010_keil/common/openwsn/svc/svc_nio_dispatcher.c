@@ -39,10 +39,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../rtl/rtl_foundation.h"
-#include "../hal/opennode2010/hal_debugio.h"
-#include "../hal/opennode2010/hal_configall.h"
-#include "../hal/opennode2010/hal_foundation.h"
-#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_configall.h"
+#include "../hal/hal_foundation.h"
+#include "../hal/hal_mcu.h"
 #include "svc_nio_aloha.h"
 #include "svc_nio_dispatcher.h"
 

@@ -195,7 +195,9 @@ uintx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opt
 	
 	TiIEEE802Frame154Descriptor * desc;
     uintx ret=0;
+
 	bool failed = true;
+   
     switch (mac->state)
     {
     case ALOHA_STATE_IDLE:
@@ -229,7 +231,6 @@ uintx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opt
 		// You should define macro CONFIG_ALOHA_STANDARD before this module to choose
 		// this branch.
         frame_setlength(mac->txbuf, (ret + MAC_HEADER_LENGTH + MAC_TAIL_LENGTH));
-
         #ifdef CONFIG_ALOHA_STANDARD
 		failed = true;
         if (mac->rxtx->ischnclear(mac))
@@ -418,7 +419,7 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 	uintx count=0;
 	char * buf;
 	bool ack_success;
-	uint16 fcf;   
+	uint16 fcf; 
 
 	// @todo: frame_length is better, but the frame length property should be 
 	// assigned correct value first
@@ -581,7 +582,7 @@ uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 			}
 			else{
                 frame_setlength( frame, count );
-                frame_setcapacity( frame, count );
+                //frame_setcapacity( frame, count );   todo for testing
 			}
         }
     }
@@ -596,12 +597,11 @@ uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
     // frame_moveinner( frame );
 
     if (count > 0)
-	{   
+	{
 		uintx cur;
         cur = frame->curlayer;
-
 		if(frame->layercapacity[cur] >= (HEADER_SIZE + TAIL_SIZE))
-		{  
+		{
 			//todo frame_skipinne执行完后会使应用层帧的seqid清零，不知道为什么？
 			if(!frame_skipinner( frame,  HEADER_SIZE, TAIL_SIZE ))
 			{

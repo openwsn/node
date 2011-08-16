@@ -86,6 +86,7 @@ extern "C"{
  * You can regard it as a ultra simple medium access control (MAC) component. But
  * it's more simpler than TiSimplaAloha and TiAloha.
  */
+#pragma pack(1) 
 typedef struct{
 	uint8 state;
     TiFrameTxRxInterface * rxtx;

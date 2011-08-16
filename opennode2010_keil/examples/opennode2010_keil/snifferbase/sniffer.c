@@ -60,27 +60,27 @@
 //#define CONFIG_UART_INTERRUPT_DRIVEN
 //#undef CONFIG_UART_INTERRUPT_DRIVEN
 
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "openwsn/hal/hal_configall.h"
 #include "apl_foundation.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_interrupt.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/rtl/rtl_ascii.h"
-#include "../../../common/openwsn/rtl/rtl_assert.h"
-#include "../../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/rtl/rtl_framequeue.h"
-#include "../../../common/openwsn/rtl/rtl_iobuf.h"
-#include "../../../common/openwsn/rtl/rtl_slipfilter.h"
-#include "../../../common/openwsn/svc/svc_sio_acceptor.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_interrupt.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_ascii.h"
+#include "openwsn/rtl/rtl_assert.h"
+#include "openwsn/rtl/rtl_debugio.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_framequeue.h"
+#include "openwsn/rtl/rtl_iobuf.h"
+#include "openwsn/rtl/rtl_slipfilter.h"
+#include "openwsn/svc/svc_sio_acceptor.h"
 
 /**
  * This macro controls the apl_ieee802frame154_dump module to output
@@ -124,7 +124,7 @@ typedef struct{
   uint32 dropped;
 }TiSnifferStatistics;
 
-//TiCc2520Adapter m_cc;  //todo已在cc2520.c中定义了
+TiCc2520Adapter m_cc; 
 TiUartAdapter m_uart;
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
@@ -191,7 +191,7 @@ void nss_execute(void)
 	//target_init();
 	led_open();
 	led_on( LED_RED );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
 	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
@@ -210,31 +210,31 @@ void nss_execute(void)
 	cc2520_disable_addrdecode( cc );				// disable address decoding
 	cc2520_disable_autoack( cc );
 
-    sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
-    sio_buf_rx = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
+    //sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
+    //sio_buf_rx = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
 #ifdef SIO_ACCEPTOR_SLIP_ENABLE
-    sio_buf_tmpx = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
-    sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+    //sio_buf_tmpx = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
+    //sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
 #endif
 
 
     //slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));//
-    slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
+    //slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
 
-    sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
+   // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
     uart = uart_open( uart, 2, 9600, 8, 1, 0 );
     hal_assert( uart != NULL );
 
-    sio = sac_open( sio,slip,uart);
+    sio = sac_open(&m_sac,sizeof( m_sac),uart);
 
-    sio->txbuf = sio_buf_tx;
-    sio->rxbuf = sio_buf_rx;
+    //sio->txbuf = sio_buf_tx;
+    //sio->rxbuf = sio_buf_rx;
 
 #ifdef SIO_ACCEPTOR_SLIP_ENABLE
-    sio->rmpbuf = sio_buf_rmpx;
-    sio->tmpbuf = sio_buf_tmpx;
+   // sio->rmpbuf = sio_buf_rmpx;
+    //sio->tmpbuf = sio_buf_tmpx;
 #endif
 	
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );

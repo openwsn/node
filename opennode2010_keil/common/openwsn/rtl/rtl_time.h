@@ -7,7 +7,7 @@
 /**
  * C language support 32 bit time_t and 64 bit time_t. 
  */
-
+#pragma pack(1) 
 typedef struct{
     uint8   scale; 
     int32   value;

@@ -48,7 +48,7 @@
  * - Apache MINA IoFilter, http://mina.apache.org/chapter-5-filters.html
  *      
  */
- 
+#pragma pack(1) 
 typedef struct{
   TiFrameQueue * rxque;
   TiFrameQueue * txque;

@@ -100,7 +100,7 @@ extern "C" {
  * msec: 0-999, 10b  (or using the highest 6b to represent usec. each unit represent 2^4=16us)
  * us: 0-999, 10b
  */
-
+#pragma pack(1) 
 typedef struct{
   uint16 year;
   uint8  month;
@@ -114,6 +114,7 @@ typedef struct{
 /* TiRtcAdapter
  * RTC hardware adapter component.
  */
+#pragma pack(1) 
 typedef struct{
   TiCalTime curtime;
   TiCalTime deadline;

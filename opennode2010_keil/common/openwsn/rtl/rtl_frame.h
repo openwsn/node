@@ -99,6 +99,7 @@ extern "C" {
  *  - layerlength[]: each layers length.
  *  - layercapacity[]: each layers capacity.
  */
+#pragma pack(1) 
 typedef struct{
     uintx memsize;
 	uintx option;

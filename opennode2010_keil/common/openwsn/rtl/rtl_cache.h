@@ -54,6 +54,7 @@
  * lifetime = 0 means this is an empty item in the cache. The bigger the lifetime, 
  * the newer the lifetime.
  */
+#pragma pack(1) 
 typedef struct{
 	uint16 itemsize;
 	uintx  capacity;

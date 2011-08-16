@@ -134,6 +134,7 @@ typedef struct{
  *	distance		The distance between current node and the tree root node. It's
  *                  measured by the minimal hopcount. For root node, the value is 0.
  */
+#pragma pack(1) 
 typedef struct{
 	uint8               state;
 	TiAloha *			mac;

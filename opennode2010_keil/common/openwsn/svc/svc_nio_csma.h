@@ -168,7 +168,7 @@
 /* event definition */
 #define CSMA_EVENT_FRAME_ARRIVAL           7
 
-    
+#pragma pack(1)    
 typedef struct{
     uint8 state;
 	TiFrameTxRxInterface * rxtx;

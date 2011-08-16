@@ -92,6 +92,7 @@
 extern "C" {
 #endif
 
+#pragma pack(1) 
 typedef struct{
 	uintx memsize;
 	uintx size;

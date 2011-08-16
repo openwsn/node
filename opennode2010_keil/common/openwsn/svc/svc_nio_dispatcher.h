@@ -71,7 +71,7 @@ typedef uint8(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * outpu
 //typedef (uintx *)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
 typedef uint8(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
 
-
+#pragma pack(1) 
 typedef struct{
     uint8 state;
     void * object;
@@ -82,7 +82,7 @@ typedef struct{
 }_TiNioNetLayerDispatcherItem;
 
 #define CONFIG_NIO_NETLAYER_DISP_CAPACITY 4
-
+#pragma pack(1) 
 typedef struct{
     TiFrame * rxbuf;
     TiFrame * txbuf;

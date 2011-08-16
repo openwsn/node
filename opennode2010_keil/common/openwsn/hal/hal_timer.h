@@ -11,6 +11,7 @@
 #define TIMER_STATE_INTERRUPT 	0x04
 #define TIMER_STATE_CAPTURE 	0x08
 
+#pragma pack(1) 
 typedef struct{
   uint8 id;
   uint8 subpriority;

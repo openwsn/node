@@ -347,7 +347,6 @@ void _nac_try_recv( TiNioAcceptor * nac )
             if (count > 0)
             {
                 frame_setlength(f, count);
-                
                 if (nac->timesync != NULL)
                 {
                     // Since currently there's only one layer in the TiFrame object, we 

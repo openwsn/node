@@ -22,7 +22,7 @@
 #define NBASE_MARK_ACTIVE(state) ((state) |= 0x01);
 
 #include "svc_configall.h"
- 
+#pragma pack(1)  
 typedef struct{
     uint8   state;
     uint16  pan;
@@ -34,6 +34,7 @@ typedef struct{
     //uint8   reliable;
 }TiNodeDescriptor;
 
+#pragma pack(1) 
 typedef struct{
     uint8   state;
     uint8   addrfrom;
@@ -51,6 +52,7 @@ typedef struct{
  * sio_datarate: For serial USART such as RS232/RS485, this value equals bandrate.
  * sleep period = sleep duation + sleep interval
  */
+#pragma pack(1) 
 typedef struct{
     uint8 state;
     uint8 version;
