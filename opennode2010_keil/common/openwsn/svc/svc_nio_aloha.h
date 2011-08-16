@@ -1,9 +1,7 @@
-#ifndef _SVC_NIO_ALOHA_H_4829_
-#define _SVC_NIO_ALOHA_H_4829_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -26,46 +24,8 @@
  *
  ******************************************************************************/
 
-/**
- * CONFIG_ALOHA_MAX_BACKOFF
- * Maximum backoff delay time. the really backoff time is a random number between 
- * 0 and CONFIG_ALOHA_MAX_BACKOFF. Currently, it's set to 100 milliseconds. You should 
- * optimize it according to your own network parameters.
- * 
- * CONFIG_ALOHA_MIN_ACK_TIME
- * CONFIG_ALOHA_MAX_ACK_TIME
- * These two macros defines the range for ACK waiting. You should tune it according
- * to the transceiver parameters.
- */
-
-#define CONFIG_ALOHA_DEFAULT_PANID				0x0001
-#define CONFIG_ALOHA_DEFAULT_CHANNEL            11
-#define CONFIG_ALOHA_BROADCAST_ADDRESS          0xFFFF
-
-#define CONFIG_ALOHA_MAX_RETRY                  3
-#define CONFIG_ALOHA_ACK_RESPONSE_TIME          10
-
-#define CONFIG_ALOHA_MAX_FRAME_SIZE             128
-
-
-#define CONFIG_ALOHA_MIN_ACK_TIME               2
-#define CONFIG_ALOHA_MAX_ACK_TIME               200
-
-#define CONFIG_ALOHA_MAX_BACKOFF                100
-#define CONFIG_ALOHA_MIN_BACKOFF                2//该宏必须大于0，否则tiemr会出现异常
-
-#define CONFIG_ALOHA_STANDARD
-#include "../hal/opennode2010/cm3/core/core_cm3.h"
-#include "../hal/hal_mcu.h"
-#include "svc_configall.h"
-#include "svc_foundation.h"
-#include "../rtl/rtl_frame.h"
-#include "../rtl/rtl_ieee802frame154.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_debugio.h"
-#include "../hal/hal_frame_transceiver.h"
-#include "../hal/hal_timer.h"
-#include "svc_nio_acceptor.h"
+#ifndef _SVC_NIO_ALOHA_H_4829_
+#define _SVC_NIO_ALOHA_H_4829_
 
 /******************************************************************************* 
  * svc_aloha.c
@@ -100,6 +60,52 @@
  * @reference
  * - ALOHAnet, http://en.wikipedia.org/wiki/Aloha_protocol#The_ALOHA_protocol;
  */
+ 
+#include "svc_configall.h"
+#include "../rtl/rtl_frame.h"
+#include "../rtl/rtl_ieee802frame154.h"
+//#include "../hal/opennode2010/cm3/core/core_cm3.h"
+#include "../hal/hal_mcu.h"
+#include "../hal/hal_foundation.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_frame_transceiver.h"
+#include "../hal/hal_timer.h"
+#include "svc_foundation.h"
+#include "svc_nio_acceptor.h"
+ 
+/**
+ * CONFIG_ALOHA_MAX_BACKOFF
+ * Maximum backoff delay time. the really backoff time is a random number between 
+ * 0 and CONFIG_ALOHA_MAX_BACKOFF. Currently, it's set to 100 milliseconds. You should 
+ * optimize it according to your own network parameters.
+ * 
+ * CONFIG_ALOHA_MIN_ACK_TIME
+ * CONFIG_ALOHA_MAX_ACK_TIME
+ * These two macros defines the range for ACK waiting. You should tune it according
+ * to the transceiver parameters.
+ */
+
+#ifndef CONFIG_ALOHA_DEFAULT_PANID
+#define CONFIG_ALOHA_DEFAULT_PANID				0x0001
+#endif
+
+#define CONFIG_ALOHA_DEFAULT_CHANNEL            11
+#define CONFIG_ALOHA_BROADCAST_ADDRESS          0xFFFF
+
+#define CONFIG_ALOHA_MAX_RETRY                  3
+#define CONFIG_ALOHA_ACK_RESPONSE_TIME          10
+
+#define CONFIG_ALOHA_MAX_FRAME_SIZE             128
+
+
+#define CONFIG_ALOHA_MIN_ACK_TIME               2
+#define CONFIG_ALOHA_MAX_ACK_TIME               200
+
+#define CONFIG_ALOHA_MAX_BACKOFF                100
+#define CONFIG_ALOHA_MIN_BACKOFF                2    //该宏必须大于0，否则timer会出现异常
+
+#define CONFIG_ALOHA_STANDARD
+
 
 #define ALOHA_OPTION_ACK                    0x00
 #define ALOHA_DEF_OPTION                    0x00
@@ -109,6 +115,7 @@
  *         then i give up design a special state for receiving. 
  *         receiving process can be occur in any state.
  * - WAITFOR_SENDING: wait for sending 
+ * - BACKOFF:
  * - SLEEP: sleep mode.
  */
 
