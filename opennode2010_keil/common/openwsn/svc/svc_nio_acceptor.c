@@ -101,7 +101,7 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	char * buf;
 	
 #ifdef CONFIG_DEBUG
-	svc_assert(nac->memsize > NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity));
+	svc_assert(nac->memsize >= NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity));
     svc_assert((rxque_capacity > 0) && (txque_capacity >= 0));
 #endif	
 
