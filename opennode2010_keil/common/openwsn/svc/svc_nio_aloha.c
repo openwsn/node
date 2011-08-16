@@ -69,8 +69,10 @@
  *	- add random backoff time support to delay if confliction encountered.
  * @modified by Jiang Ridong and Zhang Wei in 2011.04
  *	- Revised and tested.
- *
+ * @modified by Jiang Ridong and Zhang Wei in 2011.08
+ *  - Revised and tested
  ******************************************************************************/
+ 
 #include "svc_configall.h"
 #include <string.h>
 #include "svc_foundation.h"
@@ -107,13 +109,20 @@ void aloha_destroy( TiAloha * mac )
 	return;
 }
 
+/**
+ * @pre the rxtx adapter has already been opened
+ * @pre mac->timer is already opened but not start yet
+ * @pre network acceptor is opened successfully
+ */
 TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac, uint8 chn, uint16 panid, 
 	uint16 address, TiTimerAdapter * timer, TiFunEventHandler listener, void * lisowner, uint8 option )
 {
     void * provider;
+    
     // assert( the rxtx driver has already been opened );
     // assert( mac->timer is already opened but not start yet );
 	// assert( network acceptor is opened successfully );
+    
 	rtl_assert((rxtx != NULL) && (nac != NULL) && (timer != NULL));
 
 	mac->state = ALOHA_STATE_IDLE;
@@ -219,7 +228,7 @@ uintx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opt
         // standard aloha protocol behavior
 		// You should define macro CONFIG_ALOHA_STANDARD before this module to choose
 		// this branch.
-        frame_setlength( mac->txbuf,(ret + MAC_HEADER_LENGTH + MAC_TAIL_LENGTH));
+        frame_setlength(mac->txbuf, (ret + MAC_HEADER_LENGTH + MAC_TAIL_LENGTH));
 
         #ifdef CONFIG_ALOHA_STANDARD
 		failed = true;
@@ -764,8 +773,6 @@ void aloha_evolve( void * macptr, TiEvent * e )
 
 	return;
 }
-
-
 
 void aloha_statistics( TiAloha * mac, uint16 * sendcount, uint16 * sendfailed )
 {
