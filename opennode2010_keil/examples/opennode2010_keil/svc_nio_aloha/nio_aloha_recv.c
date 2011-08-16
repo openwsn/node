@@ -24,8 +24,6 @@
  *
  ******************************************************************************/
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
-#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 /*******************************************************************************
  * aloha_recv
@@ -53,7 +51,7 @@
 
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
-#define MAX_IEEE802FRAME154_SIZE                128
+
 #include "apl_foundation.h"
 #include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
 #include "openwsn/hal/hal_mcu.h"
@@ -75,9 +73,9 @@
 #include "openwsn/svc/svc_nio_aloha.h"
 #include "openwsn/hal/hal_interrupt.h"
 
+#define MAX_IEEE802FRAME154_SIZE    128
 
 #define CONFIG_DEBUG
-
 
 #define CONFIG_TEST_LISTENER  
 #undef  CONFIG_TEST_LISTENER  
@@ -95,18 +93,15 @@
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
-#define VTM_RESOLUTION                          5
+// #define VTM_RESOLUTION              5
 
 
-#define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
-//static TiCc2520Adapter		                    m_cc;//todo 用2520.c中的全局变量
 static TiFrameRxTxInterface                     m_rxtx;
-static char                                     m_nacmem[NAC_SIZE];
+static char                                     m_nac[NAC_SIZE];
 static TiAloha                                  m_aloha;
 static TiTimerAdapter                           m_timer2;
 static char                                     m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-TiCc2520Adapter                                 m_cc;
+static TiCc2520Adapter                          m_cc;
 
 
 #ifdef CONFIG_TEST_LISTENER
@@ -124,50 +119,45 @@ void recvnode(void)
 {
     TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
-    TiNioAcceptor        * nac;
+    TiNioAcceptor * nac;
     TiAloha * mac;
     TiTimerAdapter   *timer2;
     TiFrame * rxbuf;
-    TiFrame * mactxbuf;
-    char * pc;
+    char * pc, * ptr;
     uint8 len;
 
-    char * msg = "welcome to aloha sendnode...";
+    char * msg = "welcome to aloha recvnode...";
     uint8 i, seqid=0, option;
 
-    //__disable_irq();
+    target_init();
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+
     led_open();
-    halUartInit( 9600,0);
+    //halUartInit( 9600,0);
     led_on( LED_ALL );
     hal_delayms( 500 );
     led_off( LED_ALL );
 
-    cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
-    nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
-    mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
-    timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
-
+    cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));
+    nac = nac_construct(&m_nac[0], NAC_SIZE);
+    mac = aloha_construct((char *)(&m_aloha), sizeof(TiAloha));
+    timer2= timer_construct((char *)(&m_timer2), sizeof(TiTimerAdapter));
 
     cc2520_open(cc, 0, NULL, NULL, 0x00 );
-    rxtx = cc2520_interface( cc, &m_rxtx );
-
-    hal_assert( rxtx != NULL );
 
     timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
+    timer_setinterval( timer2, 1000, 7999 );
 
-    timer_setinterval( timer2,1000,7999);
+    dbc_putchar(0xff);
 
-    USART_Send( 0xff);
+    rxtx = cc2520_interface( cc, &m_rxtx );
+    hal_assert( rxtx != NULL );
     nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-
     aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
         CONFIG_ALOHA_LOCAL_ADDRESS, timer2 , NULL, NULL, 0x00 );
-    mac->txbuf = mactxbuf;
  
 	cc2520_setchannel( cc, CONFIG_ALOHA_CHANNEL );
-	cc2520_rxon( cc );							            // enable RX mode
+	cc2520_rxon( cc );							                // enable RX mode
 	cc2520_setpanid( cc, CONFIG_ALOHA_PANID );					// network identifier, seems no use in sniffer mode
 	cc2520_setshortaddress( cc, CONFIG_ALOHA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2520_enable_autoack( cc );
@@ -181,7 +171,6 @@ void recvnode(void)
     //fcf = OPF_DEF_FRAMECONTROL_DATA_NOACK; 
 	#endif
 
-
     hal_enable_interrupts();
 
 	/* Wait for listener action. The listener function will be called by the TiCc2420Adapter
@@ -194,25 +183,27 @@ void recvnode(void)
 	#ifndef CONFIG_TEST_LISTENER
 	while(1) 
 	{	
-		char * ptr;//todo for testing
-        frame_reset( rxbuf, 3, 20, 0 );
-		len = aloha_recv( mac, rxbuf, 0x00 );        
+        frame_reset(rxbuf, 3, 20, 0);
+		len = aloha_recv(mac, rxbuf, 0x00);        
 		if (len > 0)
 		{   
-            frame_moveouter( rxbuf );
-            pc = frame_startptr( rxbuf);
-            for ( i=0;i< frame_length( rxbuf);i++)
+            frame_movelower( rxbuf );
+            pc = frame_startptr(rxbuf);
+            for (i=0; i<frame_length(rxbuf); i++)
             {
-                USART_Send( pc[i]);
+                dbc_putchar(pc[i]);
             }
-           frame_moveinner( rxbuf );
+            frame_movehigher( rxbuf );
+            
 			/*
-			dbc_write( frame_startptr( rxbuf),frame_length( rxbuf));//todo for testing
-            ptr = frame_startptr( rxbuf);//todo for testing
-			dbc_putchar( 0xff);//todo for testing
-			dbc_uint8( ptr[ (frame_length( rxbuf)-2)]);//todo for testing
-			dbc_putchar( 0xff);//todo for testing
-            frame_moveinner( rxbuf );//todo for testing*/
+			dbc_write(frame_startptr(rxbuf), frame_length(rxbuf));//todo for testing
+            ptr = frame_startptr(rxbuf);//todo for testing
+			dbc_putchar(0xff);//todo for testing
+			dbc_uint8( ptr[(frame_length(rxbuf)-2)]);//todo for testing
+			dbc_putchar(0xff);//todo for testing
+            frame_moveinner(rxbuf);//todo for testing
+            */
+            
 			//led_off( LED_RED );
 
 			/* warning: You shouldn't wait too long in the while loop, or else 

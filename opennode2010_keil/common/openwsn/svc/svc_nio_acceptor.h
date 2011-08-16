@@ -85,7 +85,7 @@
  * @see rtl_framequeue.h, rtl_frame.h, rtl_ieee802frame154.h
  */
 #define NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity) \
-	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE(rxque_capacity)+FRAMEQUEUE_HOPESIZE(txque_capacity)+FRAMEQUEUE_ITEMSIZE)
+	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+FRAMEQUEUE_HOPESIZE((txque_capacity))+(FRAMEQUEUE_ITEMSIZE))
     
     
 #define nac_rxque_front(nac) fmque_front(nac_rxque(nac))

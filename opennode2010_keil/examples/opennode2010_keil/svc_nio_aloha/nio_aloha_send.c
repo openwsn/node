@@ -57,8 +57,9 @@
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 #define MAX_IEEE802FRAME154_SIZE                128
+
 #include "apl_foundation.h"
-#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
+//#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
 #include "openwsn/hal/hal_mcu.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
@@ -95,15 +96,15 @@
 
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
-//static TiCc2520Adapter		                    m_cc;//todo 用2520.c中的全局变量
+
 static TiFrameRxTxInterface                     m_rxtx;
-static char                                     m_nacmem[NAC_SIZE];
+static char                                     m_nac[NAC_SIZE];
 static TiAloha                                  m_aloha;
-static TiTimerAdapter                           m_timer2;
+static TiTimerAdapter                           m_timer;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-TiCc2520Adapter                                 m_cc;
-void aloha_sendnode(void);
+static TiCc2520Adapter                          m_cc;
+
+static void aloha_sendnode(void);
 
 int main(void)
 {
@@ -115,91 +116,63 @@ void aloha_sendnode(void)
 {   
     TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
-	TiNioAcceptor        * nac;
+	TiNioAcceptor * nac;
     TiAloha * mac;
-	TiTimerAdapter   *timer2;
+	TiTimerAdapter * timer;
 	TiFrame * txbuf;
-    TiFrame * mactxbuf;
 	char * pc;
 
 	char * msg = "welcome to aloha sendnode...";
-	uint8 i, seqid=0, option;
+	uint8 i, seqid=0, option, len;
 
-    //__disable_irq();
+    target_init();
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+
 	led_open();
 	led_on( LED_ALL );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 	
-   // halUartInit( 9600,0);
-    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
-	nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
+	nac = nac_construct( &m_nac[0], NAC_SIZE );//todo
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
-    timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
+    timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
     
-	
 	cc2520_open(cc, 0, NULL, NULL, 0x00 );
+    
+    timer = timer_open(timer, 2, NULL, NULL, 0x00); 
+    timer_setinterval(timer, 1000, 7999);
+
     rxtx = cc2520_interface( cc, &m_rxtx );
-
     hal_assert( rxtx != NULL );
-    
-    timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
-    
-    timer_setinterval( timer2,1000,7999);
-
-    
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-
-	aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
-	CONFIG_ALOHA_LOCAL_ADDRESS, timer2 , NULL, NULL, 0x00 );
-    mac->txbuf = mactxbuf;
-   txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
-	//__enable_irq();
-   /*
-    timer_start( timer2);//todo for testing
-    while (1)//todo for testing
-    {
-        if ( timer_expired( timer2))
-        {
-            timer_CLR_IT( timer2);
-            led_toggle(LED_RED);
-        }
-    }*/
+	aloha_open(mac, rxtx, nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, CONFIG_ALOHA_LOCAL_ADDRESS, 
+        timer , NULL, NULL, 0x00 );
+    
+    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
+    
+    hal_enable_interrupts();
 	while(1) 
 	{
 		aloha_setremoteaddress( mac, CONFIG_ALOHA_REMOTE_ADDRESS );
         frame_reset(txbuf, 3, 20, 25);
-
-        
+      
 	    #define TEST1
 
         #ifdef TEST1
         pc = frame_startptr( txbuf );
-        for (i=0; i<frame_capacity(txbuf); i++)
+        len = min(20, frame_capacity(txbuf));
+        for (i=0; i<20; i++)
         {
             pc[i] = i;
         }
-        // @attention
-        // generally, we need call frame_setlength() after assigning data into this 
-        // frame. however, considering the pre-allocated feature of TiFrame, the 
-        // maximum length of current layer, namely the capacity has already been 
-        // initialized. if the later program process this frame by calling frame_capacity()
-        // then we can omit the frame_setlength() operation here. but if the later
-        // processing use frame_length(), then we had to call frame_setlength() here
-        // because the the frame object doesn't know how many bytes really put into
-        // its interal buffer until the developer call frame_setlength() manually.
-        //
-		//frame_setlength(txbuf, i-1);
+		frame_setlength(txbuf, len);
         #endif
 
         #ifdef TEST2
         frame_pushback( txbuf, "01234567890123456789", 20 ); 
         #endif
 
-        frame_setlength( txbuf,frame_capacity( txbuf));//todo
         // if option is 0x00, then aloha send will not require ACK from the receiver. 
         // if you want to debugging this program alone without receiver node, then
         // suggest you use option 0x00.
@@ -209,39 +182,38 @@ void aloha_sendnode(void)
 		//option = 0x01;//ack  todo
         txbuf->option = option;//todo
 
-		//dbc_putchar(*(pc+1));
-
         while (1)
         {  
-
-		    
-            if (aloha_send(mac,CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
+            if (aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
             {	
                 led_toggle( LED_RED );
                 break;
             }
-			else{
-                //USART_Send( 0xb0);
-				nac_evolve( mac->nac, NULL);//todo
-			}
-            //hal_delay(2000);
+
+            // @attention Needn't delay here, because the aloha protocol should 
+            // solve the backoff delay problem.
+            // hal_delay(2000);
         }
 		
 		// for simple aloha, you needn't to call aloha_evolve(). it's necessary for 
         // standard aloha.
    
         aloha_evolve( mac, NULL );
+        nac_evolve( mac->nac, NULL);
        
 		// controls the sending rate. if you want to test the RXFIFO overflow processing
         // you can decrease this value. 
-        // attention: this long delay will occupy the CPU and it may lead to frame lossing.
+        // attention: this long delay will occupy the CPU and it may lead to great 
+        // frame conflictions and frame lossing.
         
 		hal_delayms(1000);
 
-		//break;
+		// break;
 	}
 
+    timer_close( timer );
     frame_close( txbuf );
+    nac_close( nac );
     aloha_close( mac );
     cc2520_close( cc );
 }

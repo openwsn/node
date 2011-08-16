@@ -31,13 +31,13 @@ static void _NVIC_Configuration(void);
 void mcu_init(void)
 {
   /* Configure the system clocks */
-  _RCC_Configuration();
+  //_RCC_Configuration();
     
   /* GPIO Configuration */
-  _GPIO_Configuration();
+  //_GPIO_Configuration();
 
   /* NVIC Configuration */
-  _NVIC_Configuration();
+  //_NVIC_Configuration();
 }
 
 void _RCC_Configuration(void)

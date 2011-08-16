@@ -141,7 +141,7 @@ TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor 
     mac->sendoption = 0x00;
     mac->sendfailed = 0;
 	mac->option = option;
-    //mac->txbuf = frame_open( (char *)(&mac->txbuf_memory), FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE), 0, 0, 0 );
+    mac->txbuf = frame_open( (char *)(&mac->txbuf_memory[0]), sizeof(mac->txbuf_memory), 0, 0, 0 );
 	mac->success = 0;//todo added by Jiang Ridong on 2011.04
 	
     // @modified by zhangwei on 2010.08.21

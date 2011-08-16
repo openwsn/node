@@ -85,6 +85,7 @@ extern "C"{
  *  lqi                      link quality indicaator
  *	//spistatus              spistatus in the last operation. for debugging only.
  */
+#pragma pack(1) 
 typedef struct{
     uint8 id;
 	uint8 state;

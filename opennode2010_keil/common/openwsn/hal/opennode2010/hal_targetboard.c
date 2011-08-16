@@ -1,14 +1,11 @@
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_digio.h"
-#include "hal_cpu.h"
-#include "hal_mcu.h"
-#include "hal_targetboard.h"
-//#include "hal_lcd.h"
-#include "hal_uart.h"
-//#include "hal_joystick.h"
-
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_digitio.h"
+#include "../hal_cpu.h"
+#include "../hal_mcu.h"
+#include "../hal_targetboard.h"
+#include "../hal_uart.h"
 
 /**
  * @fn halBoardInit
