@@ -48,6 +48,8 @@ typedef struct{
     uint16  rssi;
     uint8   weight;
     // uint8 option;
+    uint16 scale_factor; // for time synchronization
+    uint16 shift_factor; // for time synchronization
 }TiRelationDescriptor;
 
 /**
@@ -106,11 +108,11 @@ inline uint8 nbase_get_channel(TiNodeBase * nbase) {return nbase->nio_channel;};
  */
 TiNodeDescriptor * nbase_getnodetable( TiNodeBase * nbase );
 
-TiNodeDescriptor * nbase_getnodetptr( TiNodeBase * nbase, uint8 idx );
+TiNodeDescriptor * nbase_getnodetptr(TiNodeBase * nbase, uint16 address);
 
 TiRelationDescriptor * nbase_getrelationtable( TiNodeBase * nbase );
 
-TiRelationDescriptor * nbase_getrelationptr( TiNodeBase * nbase, uint8 idx ); //  addrfrom, uint16 addrto );
+TiRelationDescriptor * nbase_getrelationptr(TiNodeBase * nbase, uint16 addrfrom, uint16 addrto);
 
 TiNodeDescriptor * nbase_getnodebyaddress( TiNodeBase * nbase, uint16 address );
 
