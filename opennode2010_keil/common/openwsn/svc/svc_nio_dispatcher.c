@@ -356,7 +356,7 @@ void net_disp_evolve(void* object, TiEvent * e )
             proto_id = payload[0]&0x02;//if the second bit is set, then the protocal is the ndp.
             for ( i=0;i< CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
             {
-                if ( item->items[i].proto_id==proto_id)
+                if ( (item->items[i].proto_id&0x02)!=proto_id)
                 {
                     break;
                 }
