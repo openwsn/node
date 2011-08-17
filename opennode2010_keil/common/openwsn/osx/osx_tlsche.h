@@ -35,7 +35,7 @@
 
 #define CONFIG_OSX_TIMER_INTERVAL 500
 
-
+#pragma pack(1)
 typedef struct{
     TiOsxTaskHeap taskheap;
     TiOsxTaskPool taskpool;

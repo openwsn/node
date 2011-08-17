@@ -145,10 +145,8 @@ void ledflood( uint16 ontime, uint16 offtime )
 	// delay results.
 	
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 
 		NULL, NULL, 0x00);
-    mac->txbuf = mactxbuf;
 	flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	hal_assert( (timer2 != NULL) && (mac != NULL) );
 

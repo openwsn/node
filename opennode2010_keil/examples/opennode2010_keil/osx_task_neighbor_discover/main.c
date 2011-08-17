@@ -75,7 +75,6 @@ int16                               tasktimeline=0;
 
 static TiNioNeighborDiscover        m_ndp;
 static char                         m_nacmem[NAC_SIZE];
-static char                         m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiRtc m_rtc;
 
 
@@ -137,14 +136,16 @@ void osx_task_second_interrupt_rtc( void)
     TiFrame * mactxbuf;
 
 
+    //target_init();
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
     led_open();
-    halUartInit(9600,0);
     led_on( LED_RED);
     hal_delayms( 500);
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,1,1);
+    
     //rtc_setprscaler( rtc,32767);
     //rtc_start( rtc);
     scheduler = osx_tlsche_open( &m_scheduler,rtc);
@@ -155,18 +156,12 @@ void osx_task_second_interrupt_rtc( void)
     nac = nac_construct( &m_nacmem[0], NAC_SIZE );
     mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
 
-
-
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-
     cc   = cc2520_open(cc, 0, NULL, NULL, 0x00 );
     rxtx = cc2520_interface( cc, &m_rxtx );
     nac  = nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
     timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
     mac =  aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
-
-    mac->txbuf = mactxbuf;
-
+    
     nodebase = nbase_construct( (void *)&m_nodebase,sizeof(m_nodebase));
     nodebase = nbase_open( nodebase,0x01,CONFIG_NODE_PANID,CONFIG_NODE_ADDRESS,CONFIG_NODE_CHANNEL,3);
 
@@ -175,21 +170,24 @@ void osx_task_second_interrupt_rtc( void)
 
     ndp = ndp_construct( ( void *)&m_ndp,sizeof(m_ndp));
     ndp = ndp_open( ndp,dispatcher,nodebase,scheduler,NULL);
-
+    
     net_disp_register( ndp->dispatcher,0x02,ndp,nio_ndp_rxhandler,nio_ndp_txhandler,nio_ndp_response_evolve);
-
+    
     cc2520_setchannel( cc, CONFIG_NODE_CHANNEL );
     cc2520_rxon(cc);							            
     cc2520_setpanid( cc, CONFIG_NODE_PANID  );					
     cc2520_setshortaddress( cc, CONFIG_NODE_ADDRESS );
-
+    dbc_putchar( 0xf4);//todo for testing
+    
     osx_tlsche_taskspawn( scheduler, nio_ndp_request_evolve,NULL,0,0,0);
-
+    dbc_putchar( 0xf5);//todo for testing
+    
     rtc_setprscaler( rtc,32767);
     hal_attachhandler( INTNUM_RTC,  _rtc_handler, rtc );
-
+    dbc_putchar( 0xf6);//todo for testing
     rtc_start( rtc);
-
+    //hal_enable_interrupts();
+    dbc_putchar( 0xf2);//todo for testing
     while(1)
     {
         //heap_task_evovle(heap,rtc);

@@ -47,6 +47,7 @@
  * - itemnext: the index of the next item in the allocated list or freed list
  */
 struct _TiOsxTaskPoolItem;
+#pragma pack(1) 
 struct _TiOsxTaskPoolItem{
     uint8       state;
     int8        taskid;
@@ -71,6 +72,7 @@ typedef struct _TiOsxTaskPoolItem  TiOsxTaskPoolItem;
  * - allocated: this is the head item of the allocated item list
  * - freed: this is the head item of the freed item list.
  */
+#pragma pack(1) 
 typedef struct{
     //int8 capacity;
     int8 count;

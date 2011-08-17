@@ -44,6 +44,7 @@
 
 #define TiOsxTaskHeapItem TiOsxTaskPoolItem
 
+#pragma pack(1) 
 typedef struct{
     uint8 count;
     TiOsxTaskHeapItem * items[CONFIG_OSX_TASKHEAP_CAPACITY];
