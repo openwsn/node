@@ -66,15 +66,14 @@
 
 #include "svc_configall.h"
 #include <string.h>
-#include "../hal/opennode2010/hal_mcu.h"
+#include "../hal/hal_mcu.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_ieee802frame154.h"
-#include "../hal/opennode2010/hal_cpu.h"
-#include "../hal/opennode2010/hal_debugio.h"
-#include "../hal/opennode2010/hal_cc2520.h"
-#include "../hal/opennode2010/hal_uart.h"
-#include "../hal/opennode2010/hal_debugio.h"
-#include "../hal/opennode2010/hal_assert.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_cc2520.h"
+#include "../hal/hal_uart.h"
+#include "../hal/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
@@ -86,7 +85,7 @@ static void _dtp_evolve_node_recv_or_forward( TiDataTreeNetwork * net );
 static void _dtp_evolve_sink_recv( TiDataTreeNetwork * net );
 
 inline static uint8 _net_get_frame_feature( TiFrame * frame, char * feature, uint8 size );
-inline static void  _switch_ptr( TiFrame **ptr1, TiFrame ** ptr2 );
+inline static void  _switch_ptr( TiFrame *__packed *ptr1, TiFrame *__packed * ptr2 );
 
 
 /******************************************************************************* 
@@ -159,9 +158,9 @@ TiDataTreeNetwork * dtp_open( TiDataTreeNetwork * net, TiAloha * mac, uint16 loc
 	net->lisowner = lisowner;
 	net->txtrytime = DTP_MAX_TX_TRYTIME;
     net->rssi = 0;
-	net->txque = frame_open( (char * )( &net->txque_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20, 0);
-	net->rxque = frame_open( (char *)( &net->rxque_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20, 0);
-	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20, 0);
+	net->txque = frame_open( (char * )( &net->txque_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20, 102);
+	net->rxque = frame_open( (char *)( &net->rxque_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20, 102);
+	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE), 3, 20,102);
 
 	net->cache = dtp_cache_open( (char *)( &net->cache_mem), DTP_CACHE_HOPESIZE );
 	hal_assert( net->cache != NULL );
@@ -269,7 +268,7 @@ uint8 dtp_maintain( TiDataTreeNetwork * net, TiFrame * f,uint8 max_hopcount )
 		{  
 			net->request_id ++;
 			
-			hal_delay( 100 );
+			hal_delayms( 100 );
 			break;
 		}
 
@@ -283,7 +282,7 @@ uint8 dtp_maintain( TiDataTreeNetwork * net, TiFrame * f,uint8 max_hopcount )
 		 * If the MAC layer is very strong, then we can also eliminate this delay
 		 * and depends on MAC layer to solve the conflication. 
 		 */
-		hal_delay( 100 );
+		hal_delayms( 100 );
 		count ++;
 	}
 
@@ -872,7 +871,7 @@ void dtp_evolve_node( void * netptr, TiEvent * e )
 						net->txtrytime = DTP_MAX_TX_TRYTIME;
 					}
 					else{
-						hal_delay( 10);//todo for testing
+						hal_delayms( 10);//todo for testing
 						aloha_evolve( net->mac,NULL);//todo for testing
 						net->txtrytime --;
 						if (net->txtrytime == 0)
@@ -995,7 +994,7 @@ void dtp_evolve_node( void * netptr, TiEvent * e )
 						net->txtrytime = DTP_MAX_TX_TRYTIME;
 					}
 					else{
-						hal_delay( 10);//todo for testing
+						hal_delayms( 10);//todo for testing
 						aloha_evolve( net->mac,NULL);//todo for testing
 						net->txtrytime --;
 						if (net->txtrytime == 0)
@@ -1233,20 +1232,24 @@ bool _dtp_evolve_recv_check( TiDataTreeNetwork * net )
     TiIEEE802Frame154Descriptor * desc;
 
 	ret = true;
-	frame_reset( net->rxbuf,3,20,0);
+	frame_reset( net->rxbuf,3,20,102);
 	count = aloha_recv( net->mac, net->rxbuf, 0x00 );
 	if (count <= 0)
 	{	
 		ret = false;
 	}
 	else{
-
+       
 		frame_moveouter( net->rxbuf );
-		desc = ieee802frame154_format( &(net->mac->desc), frame_startptr( net->rxbuf), frame_capacity( net->rxbuf), 
+        /*
+        desc = ieee802frame154_format( &(net->mac->desc), frame_startptr( net->rxbuf), frame_capacity( net->rxbuf), 
+            FRAME154_DEF_FRAMECONTROL_DATA );
+            */
+		desc = ieee802frame154_format( &(net->mac->desc), frame_startptr( net->rxbuf), frame_length( net->rxbuf), 
 			FRAME154_DEF_FRAMECONTROL_DATA );
 		
-		//todo if (ieee802frame154_parse(desc, frame_startptr(frame), frame_length(frame)))
-        if (!ieee802frame154_parse(desc, frame_startptr( net->rxbuf), frame_capacity( net->rxbuf)))
+		if (!ieee802frame154_parse(desc, frame_startptr(net->rxbuf), frame_length(net->rxbuf)))
+        //if (!ieee802frame154_parse(desc, frame_startptr( net->rxbuf), frame_capacity( net->rxbuf)))
 		{
 			frame_totalclear( net->rxbuf );
 			ret = false;
@@ -1265,7 +1268,7 @@ bool _dtp_evolve_recv_check( TiDataTreeNetwork * net )
 	if (ret)
 	{
 		if (ieee802frame154_type(desc) != FCF_FRAMETYPE_DATA)//if (ieee802frame154_type(net->rxbuf) != FCF_FRAMETYPE_DATA)
-		{   
+		{ 
 			frame_totalclear( net->rxbuf );
 			ret = false;
      	}
@@ -1924,7 +1927,7 @@ uint8 _net_get_frame_feature( TiFrame * frame, char * feature, uint8 size )
 	return size;
 }
 
-void _switch_ptr( TiFrame **ptr1, TiFrame ** ptr2 )
+inline void _switch_ptr( TiFrame * __packed *ptr1, TiFrame *__packed * ptr2 )
 {
 	TiFrame * tmp;
 	tmp = *ptr1;

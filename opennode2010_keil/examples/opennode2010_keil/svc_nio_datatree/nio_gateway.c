@@ -37,26 +37,26 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"  
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "openwsn/hal/hal_mcu.h"
+#include "openwsn/hal/hal_configall.h"  
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_timer.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_led.h"
 //#include "../../common/openwsn/hal/hal_luminance.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "openwsn/hal/hal_assert.h"
 //#include "../../common/openwsn/hal/hal_adc.h"
 //#include "../../common/openwsn/hal/hal_luminance.h"
-#include "../../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_iobuf.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/svc/svc_configall.h"  
-#include "../../../common/openwsn/svc/svc_foundation.h"
-#include "../../../common/openwsn/svc/svc_nio_acceptor.h"
-#include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/svc/svc_nio_datatree.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/rtl/rtl_iobuf.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/svc/svc_configall.h"  
+#include "openwsn/svc/svc_foundation.h"
+#include "openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/svc/svc_nio_datatree.h"
 
 
 #define CONFIG_NODE_CHANNEL             11
@@ -92,7 +92,7 @@ static char                 m_nacmem[NAC_SIZE];
 static TiDataTreeNetwork    m_dtp;
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static TiCc2520Adapter      m_cc;
 
 int main(void)
 {
@@ -115,22 +115,18 @@ int main(void)
     TiFrame * mactxbuf;
     char * pc;
 
-
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
-
-	halUartInit(9600,0);
-
 	timer2        = timer_construct( (void *)(&m_timer2), sizeof(m_timer2) );
     timer3        = timer_construct( (void *)(&m_timer3), sizeof(m_timer3) );
-
 	cc              = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac             = nac_construct( &m_nacmem[0], NAC_SIZE );
 	mac             = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
-	txbuf           = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-	rxbuf           = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+	txbuf           = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20,102 );
+	rxbuf           = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20,102 );
 	//adc             = adc_construct( (void *)&m_adc, sizeof(TiAdcAdapter) );
 	//lum             = lum_construct( (void *)&m_lum, sizeof(TiLumSensor) );
 
@@ -146,10 +142,8 @@ int main(void)
 	// the "vti" timer will automatically stopped when it's expired.
 	timer2	   	= timer_open( timer2, 2, NULL, NULL, 0x00 );
     timer3	   	= timer_open( timer3, 3, NULL, NULL, 0x00 ); 
-	mac             = aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
+	mac         = aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
 
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-    mac->txbuf = mactxbuf;
 
 
 	dtp             = dtp_construct( (void *)(&m_dtp), sizeof(m_dtp) );
@@ -186,11 +180,11 @@ int main(void)
 		 */
 		if (count % 4 == 0)
 		{   
-			txbuf    = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );//todo reset txbuf
+			txbuf    = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );//todo reset txbuf
 
 			dtp_maintain( dtp, txbuf,GATW_MAX_HOPCOUNT );
             
-			hal_delay( 200 );
+			hal_delayms( 200 );
 		}
 
 		// sending DTP_DATA_REQUEST packet and try to receive the DTP_DATA_RESPONSE.
@@ -202,7 +196,7 @@ int main(void)
 		//todo opf_cast( txbuf, GATW_TOTAL_SIZE, OPF_DEF_FRAMECONTROL_DATA_NOACK );
 
 		// move the luminance sensor value into payload field of the request
-       txbuf    = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );//todo reset txbuf
+       txbuf    = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
 
         request = frame_startptr( txbuf );
 		
@@ -221,7 +215,7 @@ int main(void)
         {
 		    if ( dtp_send_request(dtp, txbuf, GATW_MAX_HOPCOUNT) > 0)
                 break;
-            hal_delay( 200 );
+            hal_delayms( 200 );
         }
 
 		// todo: you should check whether the packet is data response type.
@@ -236,7 +230,7 @@ int main(void)
 			if( frame_empty( rxbuf))//todo
 			{   
 
-				frame_reset( rxbuf,3,20,0);//todo
+				frame_reset( rxbuf,3,20,102);//todo
 			    len = dtp_recv( dtp, rxbuf, 0x00 );
 			    if (len > 0)
 			    {	
@@ -269,7 +263,7 @@ int main(void)
 		 * cause the main program haven't chances to call dop_recv(). So the incoming
 		 * packets may lost. 
 		 */
-		hal_delay(100); 
+		hal_delayms(100); 
 
 		count ++;
 	} /* while (1) */

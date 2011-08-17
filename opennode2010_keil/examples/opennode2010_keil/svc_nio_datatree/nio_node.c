@@ -42,27 +42,27 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
-#include "../../../common/openwsn/svc/svc_configall.h"  
-#include "../../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../../common/openwsn/rtl/rtl_iobuf.h"
-#include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/svc/svc_foundation.h"
-#include "../../../common/openwsn/svc/svc_nio_acceptor.h"
-#include "../../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../../common/openwsn/svc/svc_nio_datatree.h"
+#include "openwsn/hal//hal_mcu.h"
+#include "openwsn/hal//hal_configall.h"
+#include "openwsn/svc/svc_configall.h"  
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/rtl/rtl_iobuf.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/hal//hal_foundation.h"
+#include "openwsn/hal//hal_cpu.h"
+#include "openwsn/hal//hal_timer.h"
+#include "openwsn/hal//hal_debugio.h"
+#include "openwsn/hal//hal_uart.h"
+#include "openwsn/hal//hal_led.h"
+#include "openwsn/hal//hal_assert.h"
+#include "openwsn/svc/svc_foundation.h"
+#include "openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/svc/svc_nio_datatree.h"
 
 #define CONFIG_NODE_PANID                0x01
-//#define CONFIG_NODE_ADDRESS              0x03
-#define CONFIG_NODE_ADDRESS              0x04//todo 另一个节点使用
+#define CONFIG_NODE_ADDRESS              0x03
+//#define CONFIG_NODE_ADDRESS              0x04//todo 另一个节点使用
 
 //#define CONFIG_NODE_ADDRESS                0x05//todo 第三个节点使用
 
@@ -97,7 +97,7 @@ static TiDataTreeNetwork                 m_dtp;
 static char                              m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                              m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                              m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-
+static TiCc2520Adapter                   m_cc;
 
 int main(void)
 {
@@ -121,7 +121,7 @@ int main(void)
 
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
     halUartInit(9600,0);
@@ -134,8 +134,8 @@ int main(void)
 	dtp            = dtp_construct( (char *)(&m_dtp), sizeof(TiDataTreeNetwork) );
 	//adc            = adc_construct( (void *)&m_adc, sizeof(TiAdcAdapter) );
 	//lum            = lum_construct( (void *)&m_lum, sizeof(TiLumSensor) );
-	txbuf          = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-	rxbuf          = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+	txbuf          = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
+	rxbuf          = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
 	// timeradapter is used by the vtm(virtual timer manager). vtm require to enable the 
 	// period interrupt modal of vtm
 
@@ -150,8 +150,6 @@ int main(void)
     
 
 	mac             = aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-    mac->txbuf = mactxbuf;
 
 	//adc            = adc_open( adc, 0, NULL, NULL, 0 );
 	//lum            = lum_open( lum, 0, adc );
@@ -261,11 +259,11 @@ int main(void)
                 //payload[0] = 0x17;//todo 第三个节点数据
 				//payload[1] = 0x18;//todo 第三个节点数据
 
-			    //payload[1] = 0x13;
-				//payload[2] = 0x14;
+			    payload[1] = 0x13;
+				payload[2] = 0x14;
 
-				    payload[1] = 0x15;//todo 另一个节点
-			        payload[2] = 0x16;//todo 另一个节点
+				    //payload[1] = 0x15;//todo 另一个节点
+			        //payload[2] = 0x16;//todo 另一个节点
 
 				/* call dtp_send_response() to send the data in txbuf out.
 				 * 
@@ -305,7 +303,7 @@ int main(void)
         nac_evolve( nac,NULL);//todo for tesitng
 		aloha_evolve( mac,NULL);//todo for testing
 		dtp_evolve( dtp, NULL );
-		hal_delay( 50 );
+		hal_delayms( 50 );
 	}
 }
 
