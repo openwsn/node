@@ -99,8 +99,8 @@ int16 tasktimeline;
 void on_timer_expired( void * object, TiEvent * e );
 void _osx_priority_queue_popfront_test( TiOsxTaskHeap * heap );
 void heap_task_evovle(TiOsxTaskHeap *heap,TiRtc *rtc);
-void RTC_IRQHandler(void);
-void RTCAlarm_IRQHandler( void );
+//void RTC_IRQHandler(void);
+//void RTCAlarm_IRQHandler( void );
 void osx_task_second_interrupt_rtc( void);
 void osx_task_stop_mode( void);
 static void _rtc_handler(void * object, TiEvent * e);
@@ -179,7 +179,7 @@ void osx_task_second_interrupt_rtc( void)
     cc2520_setshortaddress( cc, CONFIG_NODE_ADDRESS );
     dbc_putchar( 0xf4);//todo for testing
     
-    osx_tlsche_taskspawn( scheduler, nio_ndp_request_evolve,NULL,0,0,0);
+    osx_tlsche_taskspawn( scheduler, nio_ndp_request_evolve,ndp ,0,0,0);
     dbc_putchar( 0xf5);//todo for testing
     
     rtc_setprscaler( rtc,32767);
@@ -194,37 +194,6 @@ void osx_task_second_interrupt_rtc( void)
         osx_tlsche_evolve( scheduler, NULL );
     }
 }
-
-/*
-void RTC_IRQHandler(void)
-{
-    if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
-    {*/
-        /* Clear the RTC Second interrupt */
-/*
-        RTC_ClearITPendingBit(RTC_IT_SEC);
-
-        osx_tlsche_stepforward( &m_scheduler, 1 );
-        led_toggle( LED_RED);
-        USART_Send( 0xf1);
-    }
-}
-*/
-
-/*
-void RTCAlarm_IRQHandler(void)
-{
-    EXTI_ClearITPendingBit(EXTI_Line17);
-    if (RTC_GetITStatus(RTC_IT_ALR) != RESET)
-    {*/
-        /* Clear the RTC Second interrupt */
-/*
-        RTC_ClearITPendingBit(RTC_IT_ALR);
-        g_count ++;
-        led_toggle( LED_RED);
-    }
-}
-*/
 
 static void _rtc_handler(void * object, TiEvent * e)
 {

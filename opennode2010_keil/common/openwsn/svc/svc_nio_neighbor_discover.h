@@ -98,7 +98,7 @@
 #define NHB_SET_SHORTADDRFROM(pkt,addr) {(pkt)[6]=((uint8)(addr&0xFF)); (pkt)[7]=((uint8)(addr>>8));}
 #define NHB_SET_PANFROME(pkt,pan) {(pkt)[8]=((uint8)(pan&0xFF)); (pkt)[9]=((uint8)(pan>>8));}
 
-
+#pragma pack(1) 
 typedef struct{
     uint8 state;
     TiNodeBase * nbase;

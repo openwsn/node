@@ -297,9 +297,9 @@ TiNioNetLayerDispatcher * net_disp_construct( void * mem, uint16 memsize )
 
 TiNioNetLayerDispatcher * net_disp_open( TiNioNetLayerDispatcher * dispatcher,TiAloha *mac)
 {
-    dispatcher->rxbuf = frame_open( (char*)(&dispatcher->rxbuf_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
-    dispatcher->txbuf = frame_open( (char*)(&dispatcher->txbak_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
-    dispatcher->rxbake = frame_open( (char*)(&dispatcher->rxbake_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
+    dispatcher->rxbuf = frame_open( (char*)(&dispatcher->rxbuf_memory[0]), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );//128-20-6
+    dispatcher->txbuf = frame_open( (char*)(&dispatcher->txbak_memory[0]), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
+    dispatcher->rxbake = frame_open( (char*)(&dispatcher->rxbake_memory[0]), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
     dispatcher->mac = mac;
 }
 
@@ -326,7 +326,7 @@ uint8 net_disp_recv(  TiNioNetLayerDispatcher * dispacher,TiFrame * f )
 {
    uint8 count;
    count =0;
-   frame_reset( f,3,20,0);
+   frame_reset( f,3,20,102);
    if ( !frame_empty( dispacher->rxbuf))
    {
        count = frame_totalcopyfrom( f,dispacher->rxbuf);
@@ -348,7 +348,7 @@ void net_disp_evolve(void* object, TiEvent * e )
     
     if ( frame_empty( item->rxbuf))
     {
-        frame_reset( item->rxbuf,3,20,0);
+        frame_reset( item->rxbuf,3,20,102);
         count = aloha_recv(item->mac,item->rxbuf,0x00);
         if (count > 0)
         {
