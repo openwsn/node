@@ -7,6 +7,9 @@
  * and network topologies found.
  */
  
+#include "svc_configall.h"
+#include "svc_foundation.h"
+
 #ifndef CONFIG_NBASE_NODE_CAPACITY 
 #define CONFIG_NBASE_NODE_CAPACITY 3
 #endif
@@ -21,7 +24,9 @@
 #define NBASE_MARK_DELETED(state) ((state) &= 0xFE)
 #define NBASE_MARK_ACTIVE(state) ((state) |= 0x01);
 
-#include "svc_configall.h"
+#define NBASE_STATE_FREE    0
+#define NBASE_STATE_ACTIVE  1
+
 #pragma pack(1)  
 typedef struct{
     uint8   state;
@@ -32,6 +37,7 @@ typedef struct{
     uint8   lifetime;
     uint8   rssi;
     //uint8   reliable;
+    //uint8   trustable;
 }TiNodeDescriptor;
 
 #pragma pack(1) 
@@ -76,30 +82,35 @@ typedef struct{
     TiRelationDescriptor relations[CONFIG_NBASE_RELATION_CAPACITY];
 }TiNodeBase;
 
+/**
+ * Construct an TiNodeBase object on specified memory block.
+ */
+TiNodeBase * nbase_construct(void * mem, uint16 memsize);
+void nbase_construct(TiNodeBase * nbase);
 
-TiNodeBase * nbase_construct( void * mem, uint16 memsize );
-
-TiNodeBase * nbase_open( TiNodeBase * nbase,uint8 state,uint16 pan, uint16 shortaddress,uint8 nio_channel,uint8 capability );
-
+TiNodeBase * nbase_open(TiNodeBase * nbase );
 void nbase_close( TiNodeBase * nbase );
 
 void nbase_clear( TiNodeBase * nbase );
 
 bool nbase_save( TiNodeBase * nbase );
-
 bool nbase_load( TiNodeBase * nbase );
 
+inline uint16 nbase_get_pan(TiNodeBase * nbase) {return nbase->pan;};
+inline uint16 nbase_get_shortaddress(TiNodeBase * nbase) {return nbase->shortaddress;};
+inline uint8 nbase_get_channel(TiNodeBase * nbase) {return nbase->nio_channel;};
+    
 /**
  * Returns the memory pointer to the first TiNodeDescriptor item in the database
  * node table. It's the same as _nbase_getnodeptr(nbase,0).
  */
 TiNodeDescriptor * nbase_getnodetable( TiNodeBase * nbase );
 
-TiNodeDescriptor * nbase_getnodetptr( TiNodeBase * nbase, uint16 address );
+TiNodeDescriptor * nbase_getnodetptr( TiNodeBase * nbase, uint8 idx );
 
 TiRelationDescriptor * nbase_getrelationtable( TiNodeBase * nbase );
 
-TiRelationDescriptor * nbase_getrelationptr( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
+TiRelationDescriptor * nbase_getrelationptr( TiNodeBase * nbase, uint8 idx ); //  addrfrom, uint16 addrto );
 
 TiNodeDescriptor * nbase_getnodebyaddress( TiNodeBase * nbase, uint16 address );
 
