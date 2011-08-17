@@ -10,31 +10,36 @@ static TiRelationDescriptor * _nbase_findemptyrelationptr( TiNodeBase * nbase, u
 
 TiNodeBase * nbase_construct( void * mem, uint16 memsize )
 {
-    memset( mem, 0x00, memsize );
     return (TiNodeBase*)mem;
 }
 
-TiNodeBase * nbase_open( TiNodeBase * nbase,uint8 state,uint16 pan, uint16 shortaddress,uint8 nio_channel,uint8 capability )
+void nbase_construct( TiNodeBase * nbase )
+{
+    return;
+}
+
+TiNodeBase * nbase_open( TiNodeBase * nbase );
 {
     int i;
 
-    for ( i=0;i<CONFIG_NBASE_NODE_CAPACITY;i++)
+    memset( em, 0x00, memsize);
+
+    nbase->state = NBASE_STATE_FREE; 
+    nbase->pan = 0x00; // todo
+    nbase->shortaddress = 0; // todo
+    nbase->nio_channel = 0; // todo;
+    nbase->capability = 0; //
+
+    for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
     {
         nbase->nodes[i].state =0;
     }
 
-    for ( i=0;i<CONFIG_NBASE_RELATION_CAPACITY;i++)
+    for (i=0; i<CONFIG_NBASE_RELATION_CAPACITY; i++)
     {
         nbase->relations[i].state=0;
     }
-
-    nbase->state = state;
-    nbase->pan = pan;
-    nbase->shortaddress = shortaddress;
-    nbase->nio_channel = nio_channel;
-    nbase->capability = capability;
-
- }
+}
 
 void nbase_close( TiNodeBase * nbase )
 {
@@ -47,96 +52,68 @@ void nbase_clear( TiNodeBase * nbase )
 
     for ( i=0;i<CONFIG_NBASE_NODE_CAPACITY;i++)
     {
-        nbase->nodes[i].state =0;
+        nbase->nodes[i].state = NBASE_STATE_FREE;
     }
 
     for ( i=0;i<CONFIG_NBASE_RELATION_CAPACITY;i++)
     {
-        nbase->relations[i].state=0;
+        nbase->relations[i].state = NBASE_STATE_FREE;
     }
 }
 
 bool nbase_save( TiNodeBase * nbase )
 {
-
+    return false;
 }
 
 bool nbase_load( TiNodeBase * nbase )
 {
-
+    return false;
 }
-
 
 TiNodeDescriptor * nbase_getnodetable( TiNodeBase * nbase )
 {
-    return &nbase->nodes[0];
+    return &(nbase->nodes[0]);
 }
 
-TiNodeDescriptor * nbase_getnodetptr( TiNodeBase * nbase, uint16 address )
+TiNodeDescriptor * nbase_getnodetptr(TiNodeBase * nbase, uint16 idx)
 {
-    int i;
-    for ( i=0;i<CONFIG_NBASE_NODE_CAPACITY;i++)
-    {
-        if ( nbase->nodes[i].address == address)
-        {
-            break;
-        }
-    }
-
-    if ( i<CONFIG_NBASE_NODE_CAPACITY)
-    {
-        return &nbase->nodes[i];
-    }
-    else
-    {
-        return NULL;
-    }
+    svc_assert(idx < CONFIG_NBASE_NODE_CAPACITY);
+    return &(nbase->nodes[idx]);
 }
 
 TiRelationDescriptor * nbase_getrelationtable( TiNodeBase * nbase )
 {
-    return &nbase->relations[0];
+    return &(nbase->relations[0]);
 }
 
-TiRelationDescriptor * nbase_getrelationptr( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto )
+TiRelationDescriptor * nbase_getrelationptr(TiNodeBase * nbase, uint8 idx)
+{
+    svc_assert(idx < CONFIG_NBASE_RELATION_CAPACITY);
+    return &(nbase->relations[idx]);
+}
+
+TiNodeDescriptor * nbase_getnodebyaddress(TiNodeBase * nbase, uint16 address, TiNodeDescriptor * node)
 {
     int i;
-    for ( i=0;i<CONFIG_NBASE_RELATION_CAPACITY;i++)
+    TiNodeDescriptor * cur = NULL;
+    bool found = false;
+    
+    for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
     {
-        if ( (nbase->relations[i].addrfrom ==addrfrom)&&(nbase->relations[i].addrto==addrto))
+        cur = &(nbase->node[i]);
+        if (cur->state != NBASE_STATE_FREE)
         {
-            break;
+            if (cur->address == address)
+            {
+                found = true;
+                *node = *cur;
+                break;
+            }
         }
     }
 
-    if ( i<CONFIG_NBASE_RELATION_CAPACITY)
-    {
-        return &nbase->relations[i];
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-TiNodeDescriptor * nbase_getnodebyaddress( TiNodeBase * nbase, uint16 address )
-{
-    int i;
-    for ( i=0;i<CONFIG_NBASE_NODE_CAPACITY;i++)
-    {
-        if ( nbase->nodes[i].address==address)
-        {
-            break;
-        }
-    }
-    if ( i<CONFIG_NBASE_NODE_CAPACITY)
-    {
-        return &nbase->nodes[i];
-    }
-    else
-    {
-        return NULL;
-    }
+    return (found ? node : NULL);
 }
 
 TiRelationDescriptor * nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 addrfrom,uint16 addrto )
@@ -160,33 +137,67 @@ TiRelationDescriptor * nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 ad
     }
 }
 
-/** Put one node descriptor into database */
+/** 
+ * Put one node descriptor into database.
+ * 
+ * @attention
+ * - If the database has already an record about the input node, then this function
+ *   will update that record, or else insert a new one. If there're no available 
+ *   space, then it will return NULL to indicate failure.
+ * 
+ * @param address Node address
+ * @param node The node descriptor to be put into the database.
+ * @return 
+ *      Not Null(equal to node) indicate success.
+ *      NULL means failed.
+ */
 TiNodeDescriptor * nbase_setnode( TiNodeBase * nbase, uint16 address, TiNodeDescriptor * node )
 {
     int i;
-    for ( i=0;i<CONFIG_NBASE_NODE_CAPACITY;i++)
+    TiNodeDescriptor * cur = NULL;
+    bool found = false;
+    
+
+    for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
     {
-        if ( nbase->nodes[i].state==0)
+        cur = &(nbase->nodes[i]);
+        if (cur->state != NBASE_STATE_FREE) && (cur->address == address)
         {
-            nbase->nodes[i].address = address;
-            nbase->nodes[i].lifetime = node->lifetime;
-            nbase->nodes[i].pan = node->pan;
-            nbase->nodes[i].tag = node->tag;
-            nbase->nodes[i].weight = node->weight;
-            nbase->nodes[i].rssi = node->rssi;
-            nbase->nodes[i].state = 1;
+            found = truel
             break;
         }
     }
-
-    if ( i<CONFIG_NBASE_NODE_CAPACITY)
+    
+    if (!found)
     {
-        return &nbase->nodes[i];
+        for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
+        {
+            cur = &(nbase->nodes[i]);
+            if (cur->state == NBASE_STATE_FREE)
+            {
+                found = truel
+                break;
+            }
+        }
+    }
+    
+    if (found)
+    {
+        // @attention: 
+        // - This function only copys part of the variable member values in node 
+        // structure into database. This can avoid overriding some important internal 
+        // managed status variable.
+            
+        cur->address = address;
+        cur->pan = node->pan;
+        cur->tag = node->tag;
+        cur->weight = node->weight;
+        cur->rssi = node->rssi;
+        cur->state = NBASE_STATE_ACTIVE;
+        return node;
     }
     else
-    {
         return NULL;
-    }
 }
 
 /** Put one relation descriptor into database */
