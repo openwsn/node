@@ -46,8 +46,8 @@
  *    implement the event->handler map itself. 
  ******************************************************************************/ 
 
-#include "../rtl/rtl_configall.h"
-#include "../rtl/rtl_foundation.h"
+#include "svc_configall.h"
+#include "svc_foundation.h"
 #include "svc_nio_aloha.h"
 
 /******************************************************************************* 
@@ -55,9 +55,11 @@
  * You should avoid to use id 0. Event id 0 is used by the dispatcher.
  ******************************************************************************/ 
 
-#ifndef MAX_IEEE802FRAME154_SIZE
-#define MAX_IEEE802FRAME154_SIZE 128
+#ifndef CONFIG_NIO_NETLAYER_DISP_CAPACITY 
+#define CONFIG_NIO_NETLAYER_DISP_CAPACITY 4
 #endif
+
+#define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
 
 #define NIO_DISPA_HOPESIZE(capacity) (sizeof(TiNioDispatcher) + sizeof(_TiNioDispatcherItem)*capacity)
 
@@ -65,11 +67,8 @@
 extern "C" {
 #endif
 
-//typedef (uintx *)(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
-typedef uint8(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
-
-//typedef (uintx *)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
-typedef uint8(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+typedef (uintx)(* TiFunRxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
+typedef (uintx)(* TiFunTxHandler)( void * object, TiFrame * input, TiFrame * output, uint8 option );
 
 #pragma pack(1) 
 typedef struct{
@@ -81,7 +80,6 @@ typedef struct{
     uint8 proto_id;
 }_TiNioNetLayerDispatcherItem;
 
-#define CONFIG_NIO_NETLAYER_DISP_CAPACITY 4
 #pragma pack(1) 
 typedef struct{
     TiFrame * rxbuf;
@@ -95,16 +93,17 @@ typedef struct{
 }TiNioNetLayerDispatcher;
 
 TiNioNetLayerDispatcher * net_disp_construct( void * mem, uint16 memsize );
+void net_disp_destroy( TiNioNetLayerDispatcher * dispatcher );
 
 TiNioNetLayerDispatcher * net_disp_open( TiNioNetLayerDispatcher * dispacher,TiAloha * mac);
 
-TiNioNetLayerDispatcher * net_disp_close( TiNioNetLayerDispatcher * dispacher,TiAloha *mac);
+void net_disp_close( TiNioNetLayerDispatcher * dispacher );
 
-uint8 net_disp_send( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint16 addr,uint8 option);
+uintx net_disp_send( TiNioNetLayerDispatcher * dispacher, TiFrame * f, uint16 addr, uint8 option);
 
-uint8 net_disp_broadcast( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint8 option);
+uintx net_disp_broadcast( TiNioNetLayerDispatcher * dispacher,TiFrame * f ,uint8 option);
 
-uint8 net_disp_recv(  TiNioNetLayerDispatcher * dispacher,TiFrame * f );
+uintx net_disp_recv(  TiNioNetLayerDispatcher * dispacher,TiFrame * f );
 
 void net_disp_evolve(void * object, TiEvent * e );
 

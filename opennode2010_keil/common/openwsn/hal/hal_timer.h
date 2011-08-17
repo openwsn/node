@@ -61,6 +61,10 @@ uint8 timer_expired( TiTimerAdapter *timer);//1 time interrupt occur,0 not occur
 
 void timer_CLR_IT( TiTimerAdapter *timer);//clear the interrupt bit
 
+TiBasicTimerInterface * timer_basicinterface( timer, TiBasicTimerInterface * intf );
+TiBasicLightInterface * timer_lightinterface( timer, TiLightTimerInterface * intf );
+TiBasicPowerInterface * timer_powerinterface( timer, TiPowerTimerInterface * intf );
+
 
 #ifdef __cplusplus
 }

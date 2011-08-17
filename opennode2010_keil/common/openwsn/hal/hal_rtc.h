@@ -41,6 +41,7 @@
 #include "hal_configall.h"
 #include "hal_foundation.h"
 #include "hal_clock.h"
+#include "hal_common.h"
 
 
 /* TiRtcAdapterTime
@@ -196,6 +197,10 @@ void rtc_forward( TiRtcAdapter * rtc, uint16 sec );
 void rtc_backward( TiRtcAdapter * rtc, uint16 sec );
 
 bool rtc_getclockinterface( TiClockInterface * clock );
+
+TiBasicTimerInterface * rtc_basicinterface( timer, TiBasicTimerInterface * intf );
+TiLightTimerInterface * rtc_lightinterface( timer, TiLightTimerInterface * intf );
+
 
 #ifdef __cplusplus
 }
