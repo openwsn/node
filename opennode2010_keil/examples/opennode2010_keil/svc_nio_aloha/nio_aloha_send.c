@@ -148,7 +148,8 @@ void aloha_sendnode(void)
 	cc2520_open(cc, 0, NULL, NULL, 0x00 );
     
     timer = timer_open(timer, 2, NULL, NULL, 0x00); 
-    timer_setinterval(timer, 1000, 7999);
+    timer_setinterval(timer, 1000, 0);
+    timer_setscale(timer,7999);
 
     rxtx = cc2520_interface( cc, &m_rxtx );
     hal_assert( rxtx != NULL );
@@ -184,7 +185,7 @@ void aloha_sendnode(void)
         // suggest you use option 0x00.
         // the default setting is 0x01, which means ACK is required.
         //
-		option = 0x00;//0x00->no ack,0x01->ack
+		option = 0x01;//0x00->no ack,0x01->ack
 		//option = 0x01;//ack  todo
         txbuf->option = option;//todo
 

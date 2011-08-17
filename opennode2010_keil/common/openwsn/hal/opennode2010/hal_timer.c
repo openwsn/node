@@ -8,6 +8,7 @@
 #include "../hal_timer.h"
 #include "../hal_led.h"
 #include "../hal_debugio.h"
+#include "../hal_common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,6 +38,9 @@ TiTimerAdapter * timer_open( TiTimerAdapter * timer, uint8 id, TiFunEventHandler
 	timer->listener = listener;
 	timer->listenowner = listenowner;
 	timer->option = option;
+    timer->prescale_factor = 7999;//default
+    timer->priority = 0;
+    timer->subpriority =0;
 	return timer;
 }
 
@@ -47,9 +51,14 @@ void timer_close( TiTimerAdapter * timer )
 
 
  
-void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint16 prescaler )
+void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint8 repeat )
 {
 	timer->interval = interval;
+    timer->repeat= repeat;//没什么意义，timer一直跑
+}
+
+void timer_setscale( TiTimerAdapter * timer, uint16 prescaler )
+{
     timer->prescale_factor = prescaler;
 }
 
@@ -210,9 +219,8 @@ void timer_stop( TiTimerAdapter * timer )//这里面还应该加上关终端的函数
 }
 
 
-void timer_restart( TiTimerAdapter * timer, uint16 interval, uint16 prescale )
+void timer_restart( TiTimerAdapter * timer )
 {
-	timer_setinterval( timer, interval, prescale );
 	timer_start( timer );
 }
 
@@ -299,6 +307,36 @@ void timer_setprior( TiTimerAdapter * timer, uint8 preprior,uint8 subprior )
 {
      timer->priority = preprior;
      timer->subpriority = subprior;
+}
+
+TiBasicTimerInterface * timer_basicinterface( TiTimerAdapter * timer, TiBasicTimerInterface * intf )
+{
+    intf->provider = timer;
+    intf->setinterval = timer_setinterval;
+    intf->setscale = timer_setscale;
+    intf->setlistener = timer_setlistener;
+    intf->expired = timer_expired;
+    intf->start = timer_start;
+    intf->stop = timer_stop;
+    return intf;
+}
+
+TiLightTimerInterface * timer_lightinterface( TiTimerAdapter * timer, TiLightTimerInterface * intf )
+{
+    intf->provider = timer;
+    intf->setinterval = timer_setinterval;
+    intf->setscale = timer_setscale;
+    intf->setlistener = timer_setlistener;
+    intf->expired = timer_expired;
+    intf->start = timer_start;
+    intf->stop = timer_stop;
+    intf->restart = timer_restart;
+    return intf;
+}
+
+TiPowerTimerInterface * timer_powerinterface( TiTimerAdapter * timer, TiPowerTimerInterface * intf )
+{
+    //todo 
 }
 
 

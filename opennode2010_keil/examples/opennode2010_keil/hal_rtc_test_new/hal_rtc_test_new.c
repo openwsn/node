@@ -46,7 +46,7 @@ void RTC_alarm_test(void)
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,3,1);
     rtc_setprscaler( rtc,3276);//此时基本单位是0.1秒//rtc_setprscaler( rtc,32767);//此时基本单位是1秒
-    rtc_setalrm_count(rtc,2);
+    rtc_setalrm_count(rtc,2,0);
     rtc_start( rtc);
     while (1)
     {

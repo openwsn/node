@@ -23,8 +23,11 @@ int main( void)
     timer_3 = timer_construct( (void *)&g_timer3,sizeof(g_timer3));
     timer_2 = timer_construct( (void *)&g_timer2,sizeof(g_timer2));
 
-    timer_setinterval( timer_3,1000,7999);
-    timer_setinterval( timer_2,1000,7999);
+    timer_setinterval( timer_3,1000,0);
+    timer_setinterval( timer_2,1000,0);
+
+    timer_setscale( timer_2,7999);
+    timer_setscale(timer_3,7999);
 
     timer_3 = timer_open( timer_3,3,NULL,NULL,0x01);
     timer_2 = timer_open( timer_2,2,NULL,NULL,0x01);

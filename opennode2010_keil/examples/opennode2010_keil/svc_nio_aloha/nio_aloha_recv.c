@@ -146,7 +146,8 @@ void recvnode(void)
     cc2520_open(cc, 0, NULL, NULL, 0x00 );
 
     timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
-    timer_setinterval( timer2, 1000, 7999 );
+    timer_setinterval( timer2, 1000, 0 );
+    timer_setscale( timer2,7999);
 
     dbc_putchar(0xff);
 
