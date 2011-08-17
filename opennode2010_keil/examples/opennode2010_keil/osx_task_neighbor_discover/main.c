@@ -38,6 +38,7 @@
 #include "openwsn/hal/hal_uart.h"
 #include "openwsn/hal/hal_led.h"
 #include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_interrupt.h"
 #include "openwsn/svc/svc_foundation.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
 #include "openwsn/svc/svc_nio_aloha.h"
@@ -89,7 +90,7 @@ static TiFrameRxTxInterface         m_rxtx;
 
 TiNodeBase                          m_nodebase;
 static TiNioNetLayerDispatcher      m_dispatcher;
-
+static TiCc2520Adapter              m_cc;
 
 
 int16 tasktimeline;
@@ -103,6 +104,7 @@ void RTC_IRQHandler(void);
 void RTCAlarm_IRQHandler( void );
 void osx_task_second_interrupt_rtc( void);
 void osx_task_stop_mode( void);
+static void _rtc_handler(void * object, TiEvent * e);
 
 /******************************************************************************* 
  * main()
@@ -138,7 +140,7 @@ void osx_task_second_interrupt_rtc( void)
     led_open();
     halUartInit(9600,0);
     led_on( LED_RED);
-    hal_delay( 500);
+    hal_delayms( 500);
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
@@ -184,6 +186,8 @@ void osx_task_second_interrupt_rtc( void)
     osx_tlsche_taskspawn( scheduler, nio_ndp_request_evolve,NULL,0,0,0);
 
     rtc_setprscaler( rtc,32767);
+    hal_attachhandler( INTNUM_RTC,  _rtc_handler, rtc );
+
     rtc_start( rtc);
 
     while(1)
@@ -193,11 +197,13 @@ void osx_task_second_interrupt_rtc( void)
     }
 }
 
+/*
 void RTC_IRQHandler(void)
 {
     if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
-    {
+    {*/
         /* Clear the RTC Second interrupt */
+/*
         RTC_ClearITPendingBit(RTC_IT_SEC);
 
         osx_tlsche_stepforward( &m_scheduler, 1 );
@@ -205,16 +211,34 @@ void RTC_IRQHandler(void)
         USART_Send( 0xf1);
     }
 }
+*/
 
+/*
 void RTCAlarm_IRQHandler(void)
 {
     EXTI_ClearITPendingBit(EXTI_Line17);
     if (RTC_GetITStatus(RTC_IT_ALR) != RESET)
-    {
+    {*/
         /* Clear the RTC Second interrupt */
+/*
         RTC_ClearITPendingBit(RTC_IT_ALR);
         g_count ++;
         led_toggle( LED_RED);
+    }
+}
+*/
+
+static void _rtc_handler(void * object, TiEvent * e)
+{
+    if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
+    {
+        /* Clear the RTC Second interrupt */
+
+        RTC_ClearITPendingBit(RTC_IT_SEC);
+
+        osx_tlsche_stepforward( &m_scheduler, 1 );
+        led_toggle( LED_RED);
+        USART_Send( 0xf1);
     }
 }
 

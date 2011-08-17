@@ -66,7 +66,7 @@ int8 osx_tlsche_taskspawn( TiOsxTimeLineScheduler * sche, TiOsxTask taskfunction
 
 void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
 {    
-    TiOsxTaskHeapItem * desc;.
+    TiOsxTaskHeapItem * desc;
 	
 
     do{

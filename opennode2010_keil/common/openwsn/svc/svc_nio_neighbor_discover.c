@@ -253,12 +253,13 @@ uint8 ndp_recv( TiNioNeighborDiscover * svc,TiFrame * buf, uint8 option )
 }
 
 
-intx nio_ndp_rxhandler( TiNioNeighborDiscover * svc, TiFrame * input, TiFrame * output, uint8 option )
+intx nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
 {
     char * payload;
     TiNodeDescriptor node;
     uint8 rssi;
     uint8 i;
+    TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
     payload = frame_startptr(input);
 
     if ( !frame_empty( input))
