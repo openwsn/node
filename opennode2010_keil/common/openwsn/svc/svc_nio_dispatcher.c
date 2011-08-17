@@ -297,9 +297,9 @@ TiNioNetLayerDispatcher * net_disp_construct( void * mem, uint16 memsize )
 
 TiNioNetLayerDispatcher * net_disp_open( TiNioNetLayerDispatcher * dispatcher,TiAloha *mac)
 {
-    dispatcher->rxbuf = frame_open( (char*)(&dispatcher->rxbuf_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-    dispatcher->txbuf = frame_open( (char*)(&dispatcher->txbak_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-    dispatcher->rxbake = frame_open( (char*)(&dispatcher->rxbake_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    dispatcher->rxbuf = frame_open( (char*)(&dispatcher->rxbuf_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
+    dispatcher->txbuf = frame_open( (char*)(&dispatcher->txbak_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
+    dispatcher->rxbake = frame_open( (char*)(&dispatcher->rxbake_memory), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 102 );
     dispatcher->mac = mac;
 }
 
