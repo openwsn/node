@@ -143,8 +143,8 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
             TIM_TimeBaseStructure.TIM_ClockDivision = 0;
             TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
             TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure);
-            TIM_ClearFlag(TIM5, TIM_FLAG_Update);/*清除更新标志位
-            TIM_ARRPreloadConfig(TIM5, DISABLE);/*预装载寄存器的内容被立即传送到影子寄存器 
+            TIM_ClearFlag(TIM5, TIM_FLAG_Update);*//*清除更新标志位 
+            TIM_ARRPreloadConfig(TIM5, DISABLE);*//*预装载寄存器的内容被立即传送到影子寄存器 
             TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);   
             TIM_Cmd(TIM5, ENABLE);
             break;*/

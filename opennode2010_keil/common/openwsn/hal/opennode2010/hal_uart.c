@@ -235,8 +235,8 @@ char uart_getchar_wait( TiUartAdapter * uart )
             }
             break;
         }
-
     #endif
+
 }
 
 intx uart_putchar( TiUartAdapter * uart, char ch )

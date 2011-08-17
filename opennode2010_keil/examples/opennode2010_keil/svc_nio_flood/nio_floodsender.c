@@ -84,7 +84,6 @@ static TiAloha              m_aloha;
 static TiFloodNetwork       m_net;
 static TiTimerAdapter       m_timer;
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiCc2520Adapter             m_cc;
 
 static void ledflood( uint16 ontime, uint16 offtime );
@@ -103,7 +102,6 @@ void ledflood( uint16 ontime, uint16 offtime )
     TiAloha * mac;
 	TiFloodNetwork * net;
 	TiFrame * txbuf;
-    TiFrame * mactxbuf;
     TiTimerAdapter * timer2;
 	char * msg = "welcome to floodsender";
 	uint8 seqid=0;

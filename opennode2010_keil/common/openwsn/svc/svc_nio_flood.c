@@ -55,15 +55,15 @@
 /* @attention: you can also replace module with "svc_adaptaloha.h" to enable the 
  * Adaptive ALOHA protocol 
  */
-#include "../hal/hal_mcu.h"
-#include "../hal/opennode2010/cm3/core/core_cm3.h"
 #include "svc_configall.h"
+#include "../hal/hal_mcu.h"
+//#include "../hal/opennode2010/cm3/core/core_cm3.h"
 #include <string.h>
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_frame.h"
 #include "../hal/hal_cpu.h"
 #include "../hal/hal_debugio.h"
-#include "../hal/hal_cc2520.h"
+//#include "../hal/hal_cc2520.h"
 #include "../hal/hal_uart.h"
 #include "../hal/hal_assert.h"
 #include "svc_foundation.h"
@@ -82,7 +82,8 @@
 #define PACKET_SET_CURSEQID(msdu,id) ((msdu)[2]=(id))
 
 /* switch the value of two pointer variables */
-inline static void _switch_ptr( TiFrame **ptr1, TiFrame ** ptr2 );
+
+static void _switch_ptr( TiFrame * __packed * ptr1, TiFrame * __packed * ptr2 );
 
 TiFloodNetwork * flood_construct( void * mem, uint16 size )
 {
@@ -374,7 +375,7 @@ void flood_evolve( void * netptr, TiEvent * e )
 	return;
 }
 
-void _switch_ptr( TiFrame **ptr1, TiFrame ** ptr2 )
+ void _switch_ptr(  TiFrame *__packed *ptr1, TiFrame * __packed * ptr2 )
 {
 	TiFrame * tmp;
 	tmp = *ptr1;
