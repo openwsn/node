@@ -695,6 +695,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\svc\svc_nodebase.c</FilePath>
             </File>
+            <File>
+              <FileName>svc_nio_dispatcher.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\svc\svc_nio_dispatcher.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
