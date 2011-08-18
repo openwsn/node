@@ -5,6 +5,7 @@
 #include "hal_mcu.h"
 #include "hal_configall.h"
 #include "hal_foundation.h"
+#include "hal_common.h"
  
 #define TIMER_STATE_ENABLED 	0x01
 #define TIMER_STATE_PERIOD	 	0x02
@@ -42,14 +43,15 @@ TiTimerAdapter* timer_open( TiTimerAdapter * timer, uint8 id, TiFunEventHandler 
 
 void timer_close( TiTimerAdapter * timer );
 
+//repeat:1->use interrupt 0->not use interrupt.
+void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint8 repeat );
 
-void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint16 prescaler );
-
+void timer_setscale( TiTimerAdapter * timer, uint16 prescaler );
 
 void timer_start( TiTimerAdapter * timer );
 
 
-void timer_restart( TiTimerAdapter * timer, uint16 interval, uint16 prescale);
+void timer_restart( TiTimerAdapter * timer);
 
 void timer_stop( TiTimerAdapter * timer );
 
@@ -61,9 +63,11 @@ uint8 timer_expired( TiTimerAdapter *timer);//1 time interrupt occur,0 not occur
 
 void timer_CLR_IT( TiTimerAdapter *timer);//clear the interrupt bit
 
-TiBasicTimerInterface * timer_basicinterface( timer, TiBasicTimerInterface * intf );
-TiBasicLightInterface * timer_lightinterface( timer, TiLightTimerInterface * intf );
-TiBasicPowerInterface * timer_powerinterface( timer, TiPowerTimerInterface * intf );
+TiBasicTimerInterface * timer_basicinterface( TiTimerAdapter * timer, TiBasicTimerInterface * intf );
+
+TiLightTimerInterface * timer_lightinterface( TiTimerAdapter * timer, TiLightTimerInterface * intf );
+
+TiPowerTimerInterface * timer_powerinterface( TiTimerAdapter * timer, TiPowerTimerInterface * intf );
 
 
 #ifdef __cplusplus

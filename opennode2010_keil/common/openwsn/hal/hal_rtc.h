@@ -145,10 +145,12 @@ void rtc_destroy( TiRtcAdapter * rtc );
  */
 TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * object,uint8 id, uint8 option );
 
-void rtc_setoverflow_count( TiRtcAdapter *rtc,uint32 count);
-void rtc_setalrm_count( TiRtcAdapter *rtc,uint32 count);
-void rtc_setprscaler( TiRtcAdapter *rtc,uint32 prescaler);
+void rtc_setoverflow_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
+void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
+void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler);
 uint32 rtc_get_counter( uint32 count);
+
+void rtc_setlistener( TiRtcAdapter *rtc, TiFunEventHandler listener, void * object );
 
 void rtc_close( TiRtcAdapter * rtc );
 void rtc_setinterval( TiRtcAdapter * rtc, uint16 interval, uint16 scale, uint8 repeat );
@@ -198,8 +200,8 @@ void rtc_backward( TiRtcAdapter * rtc, uint16 sec );
 
 bool rtc_getclockinterface( TiClockInterface * clock );
 
-TiBasicTimerInterface * rtc_basicinterface( timer, TiBasicTimerInterface * intf );
-TiLightTimerInterface * rtc_lightinterface( timer, TiLightTimerInterface * intf );
+TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInterface * intf );
+TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInterface * intf );
 
 
 #ifdef __cplusplus

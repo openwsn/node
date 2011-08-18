@@ -92,8 +92,8 @@ uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
 
     response = frame_startptr(frame);
     legth = frame_length( frame);
-    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 0 );
-    frame_reset( nei_frame,3,20,0);
+    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20,102 );
+    frame_reset( nei_frame,3,20,102);
     nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
 
     //response[0] stores the protocal information.
@@ -129,8 +129,8 @@ uint8 ndp_request( TiNioNeighborDiscover * svc,TiFrame * frame,uint8 option)
     char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
     response = frame_startptr(frame);
     legth = frame_length( frame);
-    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 0 );
-    frame_reset( nei_frame,3,20,0);
+    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 102 );
+    frame_reset( nei_frame,3,20,102);
     nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
     //response[0] stores the protocal information.
     //0x03 neighbornode discover response,0x02 neibournode discover request.
@@ -165,8 +165,8 @@ uint8 ndp_send( TiNioNeighborDiscover * svc,uint16 addr,TiFrame * frame, uint8 o
 
     response = frame_startptr(frame);
     legth = frame_length( frame);
-    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 0 );
-    frame_reset( nei_frame,3,20,0);
+    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 102 );
+    frame_reset( nei_frame,3,20,102);
     nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
 
     //response[0] stores the protocal information.
@@ -201,8 +201,8 @@ uint8 ndp_broadcast( TiNioNeighborDiscover * svc, TiFrame * frame, uint8 option 
     char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
     response = frame_startptr(frame);
     legth = frame_length( frame);
-    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 0 );
-    frame_reset( nei_frame,3,20,0);
+    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20,102 );
+    frame_reset( nei_frame,3,20,102);
     nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
     //response[0] stores the protocal information.
     //0x03 neighbornode discover response,0x02 neibournode discover request.
@@ -236,10 +236,10 @@ uint8 ndp_recv( TiNioNeighborDiscover * svc,TiFrame * buf, uint8 option )
     char * pkt;
     char *pc;
     uint8 i;
-    rxbuf = frame_open( (char*)(&rx_mem), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 0 );
+    rxbuf = frame_open( (char*)(&rx_mem), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20,102 );
     nei = frame_startptr( buf);
-    frame_reset( rxbuf,3,20,0);
-    frame_reset(buf,3,20,0);
+    frame_reset( rxbuf,3,20,102);
+    frame_reset(buf,3,20,102);
     len = net_disp_recv( svc->dispatcher,rxbuf);
     if (len > 0)
     {
@@ -296,7 +296,8 @@ intx nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 
 void nio_ndp_request_evolve( void * object, TiEvent * e)
 {
     TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
-
+    USART_Send( svc->nbase->shortaddress);//todo for testing
+    hal_assert( svc->dispatcher->txbuf!=NULL);//todo for testing
     _init_request( svc->dispatcher->txbuf, svc->nbase->shortaddress,0xffff );
     if (ndp_request( svc, svc->dispatcher->txbuf, 0x00) > 0)
     {  

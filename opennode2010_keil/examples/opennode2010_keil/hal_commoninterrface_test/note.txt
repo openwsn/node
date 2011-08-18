@@ -1,0 +1,1 @@
+测试了hal_common中的timer接口函数。

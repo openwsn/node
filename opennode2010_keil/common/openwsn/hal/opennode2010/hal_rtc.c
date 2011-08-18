@@ -39,6 +39,7 @@
 #include "../hal_led.h"
 #include "../hal_assert.h"
 #include "../hal_rtc.h"
+#include "../hal_common.h"
 
 //@todo
 #define CONFIG_INTERRUPT_MODE_LISTENER_ENABLE 0x87
@@ -186,6 +187,7 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
   	rtc->option = option;
     rtc->id = id;
     rtc->currenttime = 0;
+    rtc->prescaler = 32767;
 	return rtc;
 }
 
@@ -194,20 +196,20 @@ void rtc_close( TiRtcAdapter * rtc )
 	//hal_detachhandler( INTNUM_TIMER0_OVF );
 }
 
-void rtc_setprscaler( TiRtcAdapter *rtc,uint32 prescaler)
+void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler)
 {
    rtc->prescaler = prescaler;
 }
 
 
-void rtc_setalrm_count( TiRtcAdapter *rtc,uint32 count)//interval = count +1;
+void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)//interval = count +1;
 {
     rtc->alarm_counter = count;
     RTC_WaitForLastTask();
     RTC_SetAlarm( RTC_GetCounter()+count);
 }
 
-void rtc_setoverflow_count( TiRtcAdapter *rtc,uint32 count)
+void rtc_setoverflow_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)
 {
     rtc->overflow_counter = count;
     RTC_SetCounter( count);
@@ -217,6 +219,12 @@ uint32 rtc_get_counter( uint32 count)
 {
     count = RTC_GetCounter();
     return RTC_GetCounter();
+}
+
+void rtc_setlistener( TiRtcAdapter *rtc, TiFunEventHandler listener, void * object )
+{
+    rtc->lisowner = listener;
+    rtc->lisowner = object;
 }
 
 void rtc_setinterval( TiRtcAdapter * rtc, uint16 interval, uint16 scale, uint8 repeat )
@@ -414,53 +422,14 @@ void rtc_active( TiRtcAdapter * rtc )
 /* judge whether the rtc timer is expired
  */
 bool rtc_expired( TiRtcAdapter * rtc )
-{   
-
-	//@todo
-	bool ret = 1;//后加的不知道对不对？
-    // Clear the second bit in option settings. If this bit is 1, then indicate the last
-    // interval has been expired.
-    rtc->option &= 0xFD;
-
-    #ifndef CONFIG_INTERRUPT_MODE_LISTENER_ENABLE
-    if (rtc->listener != NULL)
-		//@todo
-        rtc->listener( rtc->lisowner,NULL );//rtc->listener( rtc->lisowner );
-    #endif
-
-    // restart the timer if the expired restart timer is configured
-    if ((rtc->option & 0x01) == 0)
+{ 
+    bool ret = false;
+    if ( RTC_GetITStatus(RTC_IT_ALR) != RESET)
     {
-        rtc_stop( rtc );
+        ret = true;
     }
 
     return ret;
-
-/*
-	if( rtc->interval_counter == 0 )
-	{
-		rtc->scale_counter --;
-		if (rtc->scale_counter == 0)
-		{
-			rtc->expired = true;
-			if (rtc->listener != NULL)
-			{
-				rtc->listener( rtc->lisowner, NULL );
-				rtc->expired = false;
-				if (rtc->repeat == 0x01)
-				{
-					rtc->scale_counter = rtc->scale;
-					rtc->interval_counter = rtc->interval;
-				}
-			}
-		}
-		else rtc->interval_counter = rtc->interval;
-	}
-	else
-	{
-		rtc->interval_counter --;
-	}
-*/
 }
 
 void rtc_forward( TiRtcAdapter * rtc, uint16 ms )
@@ -528,4 +497,27 @@ void _rtc_interrupt_handler( void * object, TiEvent * e )
 //    }
 } 
 
+
+TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInterface * intf )//提供的是alarm中断接口
+{
+    intf->provider = rtc;
+    intf->setinterval = rtc_setalrm_count;
+    intf->setscale = rtc_setprscaler;
+    intf->setlistener = rtc_setlistener;
+    intf->start = rtc_start;
+    intf->stop = rtc_stop;
+    intf->expired = rtc_expired;
+    return intf;
+}
+TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInterface * intf )//提供的是alarm中断接口
+{
+    intf->provider = rtc;
+    intf->setinterval = rtc_setalrm_count;
+    intf->setscale = rtc_setprscaler;
+    intf->setlistener = rtc_setlistener;
+    intf->start = rtc_start;
+    intf->stop = rtc_stop;
+    intf->expired = rtc_expired;
+    return intf;
+}
 
