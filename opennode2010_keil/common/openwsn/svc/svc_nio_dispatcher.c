@@ -55,6 +55,12 @@
 
 static uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispacher );
 static uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option );
+static intx _nio_dispa_invoke_txhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
+    TiFrame * frame, TiFrame * fwbuf, uint8 option);
+static intx _nio_dispa_invoke_rxhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
+    TiFrame * frame, TiFrame * fwbuf, uint8 option);
+static _TiNioNetLayerDispatcherItem * _nio_dispa_search(TiNioNetLayerDispatcher * dispacher, uint8 proto_id );
+      
 
 TiNioNetLayerDispatcher * nio_dispa_construct( void * mem, uint16 memsize )
 {
@@ -290,6 +296,36 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, Ti
     return ioresult;
 }
 
+intx _nio_dispa_invoke_txhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
+    TiFrame * frame, TiFrame * fwbuf, uint8 option)
+{
+    _TiNioNetLayerDispatcherItem * item;
+    intx ioresult = 0;
+    
+    item = nio_dispa_search(dispatcher, proto_id);
+    if (item != NULL)
+    {
+        ioresult = item->txhandler(item->object, f, dispatcher->fwbuf, option);
+        item->evolve(item->object, NULL);
+    }
+    return ioresult; 
+}
+
+intx _nio_dispa_invoke_rxhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
+    TiFrame * frame, TiFrame * fwbuf, uint8 option)
+{
+    _TiNioNetLayerDispatcherItem * item;
+    intx ioresult = 0;
+    
+    item = nio_dispa_search(dispatcher, proto_id);
+    if (item != NULL)
+    {
+        ioresult = item->rxhandler(item->object, f, dispatcher->fwbuf, option);
+        item->evolve(item->object, NULL);
+    }
+    return ioresult; 
+}
+
 void nio_dispa_evolve(void* object, TiEvent * e)
 {
     uint8 count;
@@ -407,23 +443,34 @@ bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, vo
 
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id)
 {
-    int i;
-    bool found = false;
+    _TiNioNetLayerDispatcherItem * item;
+    
+    item = _nio_dispa_search(dispatcher, proto_id);
+    if (item != NULL)
+    {
+        item->state = 0;
+        item->proto_id = 0;
+    }
+    
+    return (item != NULL);
+}
 
+_TiNioNetLayerDispatcherItem * _nio_dispa_search(TiNioNetLayerDispatcher * dispacher, uint8 proto_id )
+{
+    _TiNioNetLayerDispatcherItem * item = NULL;
+    uint8 i;
+    
     for (i=0; i<CONFIG_NIO_NETLAYER_DISP_CAPACITY; i++)
     {
-        if (dispatcher->items[i].state!=0) && (dispatcher->items[i].proto_id==proto_id)
+        item = &(dispatcher->items[i]);
+        if (dispatcher->items[i].state != 0) && (dispatcher->items[i].proto_id == proto_id)
         {
-            dispatcher->items[i].state = 0;
-            dispatcher->items[i].proto_id = 0;
-            found = true;
             break;
         }
     }
     
-    return found;
+    return item;
 }
-
 
 
 /*
