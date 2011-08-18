@@ -1,7 +1,32 @@
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
+ ******************************************************************************/
 
 /*
-*目前用的都是查询方式，中断方式还没有解决
-*/
+ * @todo目前用的都是查询方式，中断方式还没有解决
+ */
 
 #include "../hal_configall.h"
 #include <stdlib.h>
@@ -24,7 +49,6 @@ void _uart_rx1_interrupt_handler( void * uartptr, TiEvent * e );
 void _uart_tx1_interrupt_handler( void * uartptr, TiEvent * e );
 #endif
 
-
 TiUartAdapter * uart_construct( char * buf, uint16 size )
 {
     hal_assert( sizeof(TiUartAdapter) <= size );
@@ -34,13 +58,39 @@ TiUartAdapter * uart_construct( char * buf, uint16 size )
 
 void uart_destroy( TiUartAdapter * uart )
 {
-    uart_close( uart );
+	uart_close( uart );
 }
 
+/****************************************************************************** 
+ * initialze the UART hardware and object
+ * @param
+ * 	id		0	UART0
+ * 			1 or other values	UART1
+ * @return 
+ * 	0		success
+ *  -1		failed
+ * 
+ * @modified by zhangwei on 20061010
+ * @TODO
+ * zhangwei kept the old declaration of the function in order to keep other modules 
+ * running. you should call uart_configure() after uart_construct()
+ *****************************************************************************/
+/****************************************************************************** 
+ * @TODO 20061013
+ * if the uart adapter is driven by interrupt, then you should enable the interrupt 
+ * in configure function. however, whether the ISR really works or not still depends
+ * on the global interrupt flag. 
+ *
+ * @assume: the global interrupt should be disabled before calling this function.
+ *****************************************************************************/
 TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option )
 {
     USART_InitTypeDef USART_InitStructure;
-    //uint8 tmpn;
+
+	/* assume: 
+	 * - the global interrupt is disabled when calling this function 
+	 * - you have already call HAL_SET_PIN_DIRECTIONS. the pin should initialized correctly. or else it doesn't work.
+	 */
 
 	uart->id = id;
 	uart->baudrate = baudrate;
@@ -81,6 +131,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             USART_Init( USART1,&USART_InitStructure);
             USART_Cmd( USART1,ENABLE);
 		    break;
+
 	    case 2:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -104,6 +155,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             USART_Init( USART2,&USART_InitStructure);
             USART_Cmd( USART2,ENABLE);
             break;
+
         case 3:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -127,6 +179,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             USART_Init( USART3,&USART_InitStructure);
             USART_Cmd( USART3,ENABLE);
 		    break;
+
 	    default:
 		    uart = NULL;
 		    break;
@@ -137,14 +190,44 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
 
 void uart_close( TiUartAdapter * uart )
 {
+	// todo:
+	// you should disable interrutps here
+	// 
+
+	#ifdef CONFIG_UART_INTERRUPT_DRIVEN
+	uart->rxlen = 0;
+	uart->txlen = 0;
     
+    switch (uart->id)
+    {
+    case 0:
+		//hal_detachhandler( INTNUM_USART1_RX );
+		//hal_detachhandler( INTNUM_USART1_UDRE );
+        break;
+    case 1:
+		//hal_detachhandler( INTNUM_USART1_RX );
+		//hal_detachhandler( INTNUM_USART1_UDRE );
+    };
+	#endif
 }
 
-uint8 uart_getchar( TiUartAdapter * uart, char * pc )
+/****************************************************************************** 
+ * this function is hardware related
+ * you should change the register in this function
+ *
+ * attention: this function will return immediately. it will not wait for the 
+ * incoming data. if there's no arrival data pending in the USART's register,
+ * this function will simply return -1.
+ * 
+ * @return
+ * 	0		success, *ch is char just read from UART
+ *  -1		failed
+ *****************************************************************************/
+intx uart_getchar( TiUartAdapter * uart, char * pc )
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
     intx ret = -1;
-    hal_atomic_begin();
+    hal_enter_critical();
     if (uart->rxlen > 0)
     {
         *pc = uart->rxbuf[0];
@@ -152,7 +235,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
         memmove( (void *)&(uart->rxbuf[0]), (void *)&(uart->rxbuf[1]), uart->rxlen );
         ret = 0;
     }
-    hal_atomic_end();
+    hal_leave_critical();
     return ret;
 #endif
 
@@ -161,7 +244,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
 
     switch (uart->id)
     {
-        case 1:
+        case 0:
             if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
             {
                 *pc = (USART_ReceiveData(USART1) & 0xFF); 
@@ -174,7 +257,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
             break;
 
 
-        case 2:
+        case 1:
             if ( USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
             {
                 *pc = (USART_ReceiveData(USART2) & 0xFF); 
@@ -186,7 +269,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
             }
             break;
             
-        case 3:
+        case 2:
             if ( USART_GetFlagStatus(USART3, USART_FLAG_RXNE) != RESET)
             {
                 *pc = (USART_ReceiveData(USART3) & 0xFF); 
@@ -199,7 +282,7 @@ uint8 uart_getchar( TiUartAdapter * uart, char * pc )
             break;
 
     default:
-        ret = 0;
+        ret = -1;
     }
 
     return ret;
@@ -219,17 +302,17 @@ char uart_getchar_wait( TiUartAdapter * uart )
 
         switch (uart->id)
         {
-        case 1:
+        case 0:
             while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
             {
             }
             break;
-        case 2:
+        case 1:
             while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
             {
             }
             break;
-        case 3:
+        case 2:
             while(USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET)
             {
             }
@@ -239,14 +322,21 @@ char uart_getchar_wait( TiUartAdapter * uart )
 
 }
 
-intx uart_putchar( TiUartAdapter * uart, char ch )
+/* uart_putchar()
+ * this function sends one character only through the UART hardware. 
+ * 
+ * @return
+ *	0 or positive means success, and -1 means failed (ususally due to the buffer is full)
+ *  when this functions returns -1, you need retry.
+ */
+ intx uart_putchar( TiUartAdapter * uart, char ch )
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
     intx ret;
 
     // put the character to be send in the internal buffer "txbuf"
     //
-    hal_atomic_begin();
+    hal_enter_critical();
     ret = CONFIG_UART_TXBUFFER_SIZE - uart->txlen;
     if (ret > 0)
     {
@@ -271,7 +361,7 @@ intx uart_putchar( TiUartAdapter * uart, char ch )
             break;
         }
     }	
-    hal_atomic_end();
+    hal_leave_critical();
 
     return (ret > 0) ? 0 : -1;
 #endif
@@ -311,7 +401,7 @@ uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt )
     uint8 count =0;
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 
-    hal_atomic_begin();
+    hal_enter_critical();
     copied = min( uart->rxlen, size );
     if (copied > 0)
     {
@@ -320,7 +410,7 @@ uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt )
         if (uart->rxlen > 0)
             memmove( (void *)&(uart->rxbuf[0]), (void *)&(uart->rxbuf[copied]), uart->rxlen );
     }
-    hal_atomic_end();
+    hal_leave_critical();
 
     return copied;
 #endif
@@ -354,7 +444,7 @@ uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt )
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
     intx count = 0;
 
-    hal_atomic_begin();
+    hal_enter_critical();
     count = min(CONFIG_UART_TXBUFFER_SIZE - uart->txlen, len);
     if (count > 0)
     {
@@ -379,7 +469,7 @@ uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt )
             break;
         }
     }	
-    hal_atomic_end();
+    hal_leave_critical();
 
     // default option is synchronous call. this function will return until all 
     // data being sent successfully.
@@ -421,6 +511,8 @@ uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt )
 #endif
 }
 
+// @todo The following interrupt handler needs deep revised
+/*
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 void _uart_rx0_interrupt_handler( void * uartptr, TiEvent * e )
 { 
@@ -478,8 +570,7 @@ void _uart_tx1_interrupt_handler( void * uartptr, TiEvent * e )
     }
 } 
 #endif
-
-
+*/
 
 TiBlockDeviceInterface * uart_get_blockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf )
 {
@@ -493,6 +584,7 @@ TiBlockDeviceInterface * uart_get_blockinterface( TiUartAdapter * uart, TiBlockD
     return intf;
 }
 
+/*
 void halUartInit(uint16 baudrate, uint8 options)
 {
     USART_InitTypeDef USART_InitStructure;
@@ -529,7 +621,6 @@ uint8 USART_Send( uint8 ch)
     }
 }
 
-
 uint8 USART_Get( uint8 ch)
 {
     while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
@@ -539,76 +630,8 @@ uint8 USART_Get( uint8 ch)
 
     return ch;
 }
-
-
-
-
-/***********************************************************************************
-* @fn      halUartRxIntEnable
-*
-* @brief   Enable UART RX interrupt
-*
-* @param   none
-*
-* @return  none
-*
-static void halUartRxIntEnable(void)
 */
 
-/***********************************************************************************
-* @fn      halUartTxIntEnable
-*
-* @brief   Enable UART TX interrupt
-*
-* @param   none
-*
-* @return  none
-*
-#ifndef HAL_DIRECT_UART_TX
-static void halUartTxIntEnable(void)
-{
-    //IE2 |= UCA0TXIE;
-}
-#endif
-*/
-
-
-
-/***********************************************************************************
-* @fn      halUARTRxIntDisable
-*
-* @brief   Disable UART RX interrupt
-*
-* @param   none
-*
-* @return  none
-*
-static void halUartRxIntDisable(void)
-*/
-
-/***********************************************************************************
-* @fn      halUARTTxIntDisable
-*
-* @brief   Disable UART TX interrupt
-*
-* @param   none
-*
-* @return  none
-*
-static void halUartTxIntDisable(void)
-*/
-
-/***********************************************************************************
-* @fn      halUartRxGetByte
-*
-* @brief   Read byte from UART RX buffer
-*
-* @param   none
-*
-* @return  none
-*
-static uint8 halUartRxGetByte(void)
-*/
 
 
 /***********************************************************************************
@@ -753,52 +776,3 @@ void halUartEnableRxFlow(uint8 enable)
 }
 */
 
-/***********************************************************************************
-* @fn      usart1Rx_ISR
-*
-* @brief   ISR framework for the USCI A0/B0 Receive component
-*
-* @param   none
-*
-* @return  none
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void usciA0Rx_ISR(void)
-*
-// todo interrupt ISR
-void usciA0Rx_ISR(void)
-{
-*
-    uint8 ch = halUartRxGetByte();
-    bufPut(&rbRxBuf,&ch,1);
-    __low_power_mode_off_on_exit();
-*
-}
-*/
-
-/***********************************************************************************
-* @fn      usart1Tx_ISR
-*
-* @brief   ISR framework for the USCI A0/B0 transmit component
-*
-* @param   none
-*
-* @return  none
-*
-//#pragma vector=USCIAB0TX_VECTOR
-//__interrupt void usciB0Tx_ISR(void)
-void usciB0Tx_ISR(void)
-{
-*
-    uint8 c;
-
-    if (bufGet(&rbTxBuf,&c,1)==1) {
-        UCA0TXBUF = c;
-    }
-    // If buffer empty, disable uart TX interrupt
-    if( (bufNumBytes(&rbTxBuf)) == 0) {
-        halUartTxIntDisable();
-    }
-    __low_power_mode_off_on_exit();
-*	
-}
-*/

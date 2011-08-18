@@ -145,9 +145,25 @@ void rtc_destroy( TiRtcAdapter * rtc );
  */
 TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * object,uint8 id, uint8 option );
 
+/**
+ * Configure the interval of overflow interrupt.
+ * @see rtc_get_counter()
+ */
 void rtc_setoverflow_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
+
+/** 
+ * Configure how long the alarm interrupt occured. 
+ * @param count The most smallest time slice is decided by the pre-scale factor.
+ *      When count is 1, then there's one time slice. So the actual interval equals
+ *      to (count+1) * timeslice.
+ * @param repeat (Actually no use now. @todo)
+ */
 void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
 void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler);
+
+/**
+ * Retrieve the value of hardware counter in the RTC 
+ */
 uint32 rtc_get_counter( uint32 count);
 
 void rtc_setlistener( TiRtcAdapter *rtc, TiFunEventHandler listener, void * object );
