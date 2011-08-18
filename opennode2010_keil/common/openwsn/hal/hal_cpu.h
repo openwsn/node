@@ -77,6 +77,12 @@
  * no matter there's an RTOS or not.
  */ 
 
+#define CONFIG_CPU_FREQUENCY_8MHZ
+//#define CONFIG_CPU_FREQUENCY_48MHZ
+//#define CONFIG_CPU_FREQUENCY_72MHZ
+
+#define CONFIG_CRITICAL_METHOD 2
+
 /**
  * @attention Before you use hal_atomic_begin, you MUST disable the interrupts by 
  * calling hal_disable_interrupts() first!!!
@@ -84,11 +90,38 @@
 #define hal_enable_interrupts() cpu_enable_interrupts()
 #define hal_disable_interrupts() cpu_disable_interrupts() 
 #define hal_atomic_begin() cpu_atomic_begin() 
-#define hal_atomic_end(state) cpu_atomic_end((state))
-
-#define TiCpuState cpu_atomic_t 
+#define hal_atomic_end() cpu_atomic_end()
 #define hal_enter_critical() cpu_atomic_begin() 
-#define hal_leave_critical(state) cpu_atomic_end((state))
+#define hal_leave_critical() cpu_atomic_end()
+
+/**
+ * cpu_atomic_t
+ * The following type is used to implement atomic mechanism in hal_cpu module.
+ * You should change the definition when porting to a new architecture. 
+ */
+#define TiCpuState cpu_atomic_t 
+#define hal_atomic_t cpu_atomic_t
+
+#ifdef CONFIG_TARGETBOARD_GAINZ
+  typedef uint8 cpu_atomic_t;
+#endif
+
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+  typedef uint32 cpu_atomic_t;
+#endif
+
+#if !defined(CONFIG_TARGETBOARD_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010)
+  #error "You should define cpu_atomic_t type according to your CPU core's state register width."
+#endif
+
+/**
+ * global variable: g_atomic_level
+ * to keep the atmic nested level. defined in this module. 
+ */
+extern uint8 g_atomic_level;
+#ifdef (CONFIG_CRITICAL_METHOD == 3)
+extern uint8 g_atomic_flag;
+#endif
 
 /**
  * @attention: 
@@ -96,10 +129,6 @@
  * the CPU frequency. The delay functions will use this macro to configure itself.
  * - Currently, the OpenNode 2010 version can recognize 8MHZ, 48MHZ and 72MHZ macro.
  */
-
-//#define CONFIG_CPU_FREQUENCY_8MHZ
-#define CONFIG_CPU_FREQUENCY_48MHZ
-//#define CONFIG_CPU_FREQUENCY_72MHZ
 
 /* @attention
  * @modified by zhangwei on 2011.08.14
@@ -177,17 +206,75 @@ void cpu_delayms(uint16 msec);
   //#define cpu_atomic_end(state) __set_PRIMASK(state)
 #endif
 
+#ifdef (CONFIG_CRITICAL_METHOD == 1)
 inline TiCpuState cpu_atomic_begin()
 {
     TiCpuState state = __get_PRIMASK();
     __disable_irq();    
     return state;
 }
+#endif
 
+#ifdef (CONFIG_CRITICAL_METHOD == 1)
 inline void cpu_atomic_end(TiCpuState state)
 {
     __set_PRIMASK(state);
 }
+#endif
+
+#ifdef (CONFIG_CRITICAL_METHOD == 2)
+/** 
+ * Begin the critical section. 
+ * @attention Before you calling this function, you must guarantee the global interrupt control 
+ * is enabled!!! Or else the hal_atomic_end() will be failed to recover correct status.
+ */
+inline void hal_atomic_begin( void )
+{
+	if (g_atomic_level == 0)
+	{
+		cpu_disable_interrupts();
+	}
+	g_atomic_level ++;
+}
+#endif
+
+#ifdef (CONFIG_CRITICAL_METHOD == 2)
+inline void hal_atomic_end( void )
+{
+	g_atomic_level --;
+	if (g_atomic_level == 0)
+	{
+		cpu_enable_interrupts();
+	}
+}
+#endif
+
+/** 
+ * Begin the critical section. 
+ */
+#ifdef (CONFIG_CRITICAL_METHOD == 3)
+inline void hal_atomic_begin( void )
+{
+	if (g_atomic_level == 0)
+	{
+		g_atomic_flag = __get_PRIMASK();
+		cpu_disable_interrupts();
+	}
+	g_atomic_level ++;
+}
+#endif
+
+#ifdef (CONFIG_CRITICAL_METHOD == 3) 
+inline void hal_atomic_end( void )
+{
+	g_atomic_level --;
+	if (g_atomic_level == 0)
+	{
+        __set_PRIMASK(g_atomic_flags)
+	}
+}
+#endif
+
 
 /**
  * @brief  Initiate a system reset request.

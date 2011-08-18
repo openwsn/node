@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -101,6 +101,18 @@ void _uart_rx1_interrupt_handler( void * uartptr, TiEvent * e );
 void _uart_tx1_interrupt_handler( void * uartptr, TiEvent * e );
 #endif
 
+TiUartAdapter * uart_construct( char * buf, uint16 size )
+{
+	hal_assert( sizeof(TiUartAdapter) <= size );
+	memset( buf, 0x00, size );
+	return (TiUartAdapter *)buf;
+}
+
+void uart_destroy( TiUartAdapter * uart )
+{
+	uart_close( uart );
+}
+
 /****************************************************************************** 
  * initialze the UART hardware and object
  * @param
@@ -115,18 +127,6 @@ void _uart_tx1_interrupt_handler( void * uartptr, TiEvent * e );
  * zhangwei kept the old declaration of the function in order to keep other modules 
  * running. you should call uart_configure() after uart_construct()
  *****************************************************************************/
-TiUartAdapter * uart_construct( char * buf, uint16 size )
-{
-	hal_assert( sizeof(TiUartAdapter) <= size );
-	memset( buf, 0x00, size );
-	return (TiUartAdapter *)buf;
-}
-
-void uart_destroy( TiUartAdapter * uart )
-{
-	uart_close( uart );
-}
-
 /****************************************************************************** 
  * @TODO 20061013
  * if the uart adapter is driven by interrupt, then you should enable the interrupt 
@@ -292,14 +292,14 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
 		if (UCSR0A & (1<<RXC0))
 			*pc = UDR0;
 		else
-			ret = -1;
+			ret = -1;// @todo suggest 0
 		break;
 
 	case 1:
 		if (UCSR1A & (1<<RXC1))
 			*pc = UDR1;
 		else
-			ret = -1;
+			ret = -1; // @todo suggest 0
 		break;
 	default:
 		ret = -1;

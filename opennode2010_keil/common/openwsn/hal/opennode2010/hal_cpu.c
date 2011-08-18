@@ -28,6 +28,11 @@
 #include "../hal_foundation.h"
 #include "../hal_cpu.h"
 
+uint8 g_atomic_level = 0;
+#ifdef (CONFIG_CRITICAL_METHOD == 03) 
+uint8 g_atomic_flag = 0;
+#endif
+
 /**
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
  * in some special cases. 

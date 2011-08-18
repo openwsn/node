@@ -91,30 +91,6 @@ extern "C" {
  */
 typedef void (* TiFunInterruptHandler)(void);
 
-/**
- * cpu_atomic_t
- * The following type is used to implement atomic mechanism in hal_cpu module.
- * You should change the definition when porting to a new architecture. 
- */
-#define hal_atomic_t cpu_atomic_t
-
-#ifdef CONFIG_TARGETBOARD_GAINZ
-  typedef uint8 cpu_atomic_t;
-#endif
-
-#ifdef CONFIG_TARGETBOARD_OPENNODE2010
-  typedef uint32 cpu_atomic_t;
-#endif
-
-#if !defined(CONFIG_TARGETBOARD_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010)
-  #error "You should define cpu_atomic_t type according to your CPU core's state register width."
-#endif
-
-/**
- * global variable: g_atomic_level
- * to keep the atmic nested level. defined in this module. 
- */
-extern uint8 g_atomic_level;
 
 /**
  * interrupt number to object's handler mapping table.

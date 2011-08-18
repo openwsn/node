@@ -71,4 +71,16 @@
 void target_init( void );
 void target_reset( void );
 
+
+
+/* Q: what's the difference between boot() or init()?
+ * R: the startup process is as the following:
+ *      boot => init => osx kernel run
+ *
+ * hal_boot module deals with the booting process only. then it will call init().
+ * and init() will initialize the architecture related configuratioins and finally 
+ * pass the CPU control to osx kernel. attention the init() doesn't do all the configuration
+ * of the target board.
+ */
+
 #endif /* _HAL_TARGETBOARD_H_7C83_ */
