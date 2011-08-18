@@ -86,7 +86,7 @@ uint8 halDigioToggle(const digioConfig* p);
 uint8 halDigioSet(const digioConfig* p);
 uint8 halDigioGet(const digioConfig* p);
 
-uint8 halDigioIntConnect(const digioConfig *p, ISR_FUNC_PTR func);
+uint8 halDigioIntConnect(const digioConfig *p, TiFunInterruptHandler func);
 uint8 halDigioIntEnable(const digioConfig *p);
 uint8 halDigioIntDisable(const digioConfig *p);
 uint8 halDigioIntClear(const digioConfig *p);

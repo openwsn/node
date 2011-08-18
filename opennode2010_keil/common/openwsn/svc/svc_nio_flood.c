@@ -388,23 +388,85 @@ void flood_rxhandler(TiFloodNetwork * net,TiFrame * frame, TiFrame *fwbuf)
 {
     uint16 addrto;
     char * ptr;
+    char * pc;
     uint8 legth;
-    int i;//todo for testing
+    bool cont = false;
+    uint8 cur_hopcount;
+    uint8 max_hopcount;
     if ( !frame_empty( frame))
     {
+        cont = true;
         legth = frame_length( frame);
         ptr = frame_startptr( frame);
         addrto = FLOOD_SHORTADDRTO( ptr);
-        if ((addrto == net->localaddress)||(addrto == FLOOD_BROADCAST_ADDRESS))
+        if (addrto == net->localaddress)
         {
-            frame_skipinner( frame,10,0);
-            frame_setlength( frame,(legth-10));//10个头字节
+            if (cont)
+            {  
+
+                if (flood_cache_visit( net->cache, (char*)frame_startptr(frame) ))
+                {   
+                    frame_totalclear( net->rxbuf ); 
+                    cont = false;
+                }
+            }
+            if ( cont)
+            {
+                frame_skipinner( frame,10,0);
+                frame_setlength( frame,(legth-10));//10个头字节
+            }
+            
+        }
+
+        if ( addrto == FLOOD_BROADCAST_ADDRESS)
+        {
+            if (cont)
+            {  
+
+                if (flood_cache_visit( net->cache, (char*)frame_startptr(frame) ))
+                {   
+                    frame_totalclear( net->rxbuf ); 
+                    cont = false;
+                }
+            }
+
+            if ( cont)
+            {
+                if ( frame_empty( fwbuf))
+                {
+                    frame_totalcopyfrom( fwbuf,frame);
+                    pc = frame_startptr(fwbuf);
+                    cur_hopcount = FLOOD_CUR_HOPCOUNT( pc );
+                    max_hopcount = FLOOD_MAX_HOPCOUNT( pc);
+                    cur_hopcount ++;
+                    if (cur_hopcount > max_hopcount)
+                        frame_totalclear(fwbuf ); 
+                    else
+                        FLOOD_SET_HOPCOUNT( pc, cur_hopcount );
+
+                }
+            }
+
+            if ( cont)
+            {
+                frame_skipinner( frame,10,0);
+                frame_setlength( frame,(legth-10));//10个头字节
+            }
         }
         else
         {
             if ( frame_empty( fwbuf))
             {
                 frame_totalcopyfrom( fwbuf,frame);
+                pc = frame_startptr(fwbuf);
+                cur_hopcount = FLOOD_CUR_HOPCOUNT( pc );
+                max_hopcount = FLOOD_MAX_HOPCOUNT( pc);
+                cur_hopcount ++;
+                if (cur_hopcount > max_hopcount)
+                    frame_totalclear(fwbuf ); 
+                else
+                    FLOOD_SET_HOPCOUNT( pc, cur_hopcount );
+
             }
             frame_totalclear( frame);
         }
