@@ -382,21 +382,3 @@ void flood_evolve( void * netptr, TiEvent * e )
 	*ptr1 = *ptr2;
 	*ptr2 = tmp;
 }
-
-/*
-void flood_rxhandler(frame, fwbuf)
-{
-    if frame exists
-        get address from frame
-        if the destination is the current node itself
-            then create higher layer;
-        else
-            frame_totalcopyto the frame into fwbuf
-    endif    
-}
-
-void flood_txhandler(frame, fwbuf)
-{
-    process the frame, encapsulate it and create lower layer;
-}
-*/
