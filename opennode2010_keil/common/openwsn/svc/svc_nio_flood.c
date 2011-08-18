@@ -69,17 +69,9 @@
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
 #include "svc_nio_flood.h"
+#include "svc_nio_dispatcher.h"
 
-/* Network layer packet format used in this flooding module:
- *  [1B Hopcount] [1B Maximum Hopcount] [1B Sequence Id]
- */
-#define PACKET_CUR_HOPCOUNT(msdu) ((msdu)[0])
-#define PACKET_MAX_HOPCOUNT(msdu) ((msdu)[1])
-#define PACKET_SET_HOPCOUNT(msdu,hop) ((msdu)[0] = (hop))
-#define PACKET_SET_MAX_HOPCOUNT(msdu,hop) ((msdu)[1] = (hop))
 
-#define PACKET_CUR_SEQID(msdu) ((msdu)[2])
-#define PACKET_SET_CURSEQID(msdu,id) ((msdu)[2]=(id))
 
 /* switch the value of two pointer variables */
 
@@ -97,11 +89,11 @@ void flood_destroy( TiFloodNetwork * net )
 	return;
 }
 
-TiFloodNetwork * flood_open( TiFloodNetwork * net, TiAloha * mac, TiFunEventHandler listener, 
+TiFloodNetwork * flood_open( TiFloodNetwork * net, TiNioNetLayerDispatcher * disp, TiFunEventHandler listener, 
 	void * lisowner, uint16 pan, uint16 localaddress )
 {
 	net->state = FLOOD_STATE_IDLE;
-	net->mac = mac;
+	net->disp = disp;
 	net->panto = pan;
 	net->panfrom = pan;
 	net->localaddress = localaddress;
@@ -110,9 +102,9 @@ TiFloodNetwork * flood_open( TiFloodNetwork * net, TiAloha * mac, TiFunEventHand
 	net->listener = listener;
 	net->lisowner = lisowner;
 
-	net->txque = frame_open( (char * )( &net->txque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 20, 0);
-	net->rxque = frame_open( (char *)( &net->rxque_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
-	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
+	net->txque = frame_open( (char * )( &net->txque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 30, 92);
+	net->rxque = frame_open( (char *)( &net->rxque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 30, 92);
+	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 30, 92);
 
 	net->cache = flood_cache_open( (char *)( &net->cache_mem), FLOOD_CACHE_HOPESIZE );
 	hal_assert( net->cache != NULL );
@@ -133,10 +125,10 @@ void flood_close( TiFloodNetwork * net )
 /* Broadcast a frame in the network. In most cases, the frame should be able to 
  * reach every node in the network, but no guarantee about this.
  */
-uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
+uint8 flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 {
-	uintx count=0;
-	uintx i = 0;//todo 
+	uint8 count=0;
+	uint8 i = 0;//todo 
 	char * pc;
 	
 	/* This function will try to put the frame into TiFloodNetwork's internal TX buffer. 
@@ -150,17 +142,21 @@ uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 		count = frame_totalcopyfrom( net->txque, frame );
         
 
-		frame_skipouter( net->txque, 4, 0 );//todo 执行这一局后frame_length又变回0了！
+		frame_skipouter( net->txque, 10, 0 );//todo 执行这一局后frame_length又变回0了！
 
-		frame_setlength( net->txque,(i+4));//todo
+		frame_setlength( net->txque,(i+10));//todo
 
 		
 		// assert( frame_skipouter must be success );
 		pc = frame_startptr( net->txque );
 		
-		PACKET_SET_HOPCOUNT( pc,0 );
-		PACKET_SET_MAX_HOPCOUNT(pc , CONFIG_FLOOD_MAX_COUNT );
-		PACKET_SET_CURSEQID(pc, net->seqid );
+        FLOOD_SET_PROTOCAL_IDENTIFIER(pc,FLOOD_PROTOCAL_IDENTIFIER); 
+        FLOOD_SET_PACKETCONTROL(pc,FLOOD_CONTROL_IDENTIFIER ); 
+        FLOOD_SET_SEQUENCEID(pc,net->seqid); 
+        FLOOD_SET_HOPCOUNT(pc,0); 
+        FLOOD_SET_MAX_HOPCOUNT(pc,FLOOD_MAXHOPCOUNT); 
+        FLOOD_SET_SHORTADDRTO(pc,FLOOD_BROADCAST_ADDRESS); 
+        FLOOD_SET_SHORTADDRFROM(pc,net->localaddress); 
 	}
 
 	flood_evolve( net, NULL );
@@ -173,7 +169,7 @@ uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
  * version of flood doesn't support address mechanism, so this function cannot 
  * specify the destination node. It's essentially the same as flood_broadcast() now.
  */
-uintx flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uint8 option )
+uint8 flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uint8 option )
 {
 	return flood_broadcast( net, frame, option );
 }
@@ -182,10 +178,10 @@ uintx flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uin
  * through the parameter "frame" only when the frame's destination matches the current 
  * node. The other frames will be forwarded or discarded.
  */
-uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
+uint8 flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 {
-	uintx count;
-    uintx ret;
+	uint8 count;
+    uint8 ret;
     count = 0;
     ret = 0;
 	flood_evolve( net, NULL );
@@ -225,6 +221,7 @@ void flood_set_listener( TiFloodNetwork * net, TiFunEventHandler listener, void 
  */
 void flood_evolve( void * netptr, TiEvent * e )
 {
+    /*todo for testing
 	TiFloodNetwork * net = (TiFloodNetwork *)netptr;
 	uint8 len, count, cur_hopcount, max_hopcount;
 	bool done = true, cont= false;
@@ -280,7 +277,7 @@ void flood_evolve( void * netptr, TiEvent * e )
 			// Check if the RX queue is empty, then try to receive one from MAC layer
           	if ((frame_empty(net->rxbuf)) && frame_empty(net->rxque))
 			{ 
-                frame_reset(net->rxbuf,0,0,0);//todo 这一句是必须加上去的。
+                frame_reset(net->rxbuf,3,30,92);
 				cont = true;
 				count = aloha_recv( net->mac, net->rxbuf, 0x00 );
 				
@@ -309,7 +306,7 @@ void flood_evolve( void * netptr, TiEvent * e )
 
 				if (cont)
 				{ 
-                    frame_reset(net->rxque,0,0,0);//todo 这一句是必须加上去的。
+                    frame_reset(net->rxque,3,30,92);//todo 这一句是必须加上去的。
 					frame_totalcopyto( net->rxbuf, net->rxque );
                   
 					// Check whether this frame has reaches its maximum hopcount. 
@@ -317,14 +314,14 @@ void flood_evolve( void * netptr, TiEvent * e )
 					
 					pc = frame_startptr( net->rxbuf);
 
-					cur_hopcount = PACKET_CUR_HOPCOUNT( pc );
-					max_hopcount = PACKET_MAX_HOPCOUNT( pc);
+					cur_hopcount = FLOOD_CUR_HOPCOUNT( pc );
+					max_hopcount = FLOOD_MAX_HOPCOUNT( pc);
 					cur_hopcount ++;
 					if (cur_hopcount > max_hopcount)
 						//frame_bufferclear( net->rxbuf );
 						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
 					else
-						PACKET_SET_HOPCOUNT( pc, cur_hopcount );
+						FLOOD_SET_HOPCOUNT( pc, cur_hopcount );
 				}
 				
 				done = true;
@@ -343,8 +340,8 @@ void flood_evolve( void * netptr, TiEvent * e )
                 // and BROADCAST_ADDRESS configured in this flood component. However,
 				// here we assume the low level medium access protocol helps us to do so.
 
-				cur_hopcount = PACKET_CUR_HOPCOUNT( pc );
-				PACKET_SET_HOPCOUNT( pc, cur_hopcount++ );
+				cur_hopcount = FLOOD_CUR_HOPCOUNT( pc );
+				FLOOD_SET_HOPCOUNT( pc, cur_hopcount++ );
 				done = false;
 			}	
 			break;
@@ -355,6 +352,7 @@ void flood_evolve( void * netptr, TiEvent * e )
 		// end of the transmission, the MAC layer does possible to notify the NET layer 
 		// the transmission results of the sending request.
 		//
+        */
 		/*case FLOOD_STATE_WAITFOR_TXREPLY:
 			 ioresult = aloha_ioresult(net->mac);
 			 if ioresult == IDLE|TXDONE
@@ -366,11 +364,13 @@ void flood_evolve( void * netptr, TiEvent * e )
 			//	report to the master program by call net->listener
 			net->state = FLOOD_STATE_IDLE;
 			break;*/
+/*todo for testing
 
 		default:
 			net->state = FLOOD_STATE_IDLE;
 		}
 	}while (!done);
+    */
 
 	return;
 }
@@ -383,20 +383,64 @@ void flood_evolve( void * netptr, TiEvent * e )
 	*ptr2 = tmp;
 }
 
-/*
-void flood_rxhandler(frame, fwbuf)
+
+void flood_rxhandler(TiFloodNetwork * net,TiFrame * frame, TiFrame *fwbuf)
 {
-    if frame exists
-        get address from frame
-        if the destination is the current node itself
-            then create higher layer;
+    uint16 addrto;
+    char * ptr;
+    uint8 legth;
+    int i;//todo for testing
+    if ( !frame_empty( frame))
+    {
+        legth = frame_length( frame);
+        ptr = frame_startptr( frame);
+        addrto = FLOOD_SHORTADDRTO( ptr);
+        if ((addrto == net->localaddress)||(addrto == FLOOD_BROADCAST_ADDRESS))
+        {
+            frame_skipinner( frame,10,0);
+            frame_setlength( frame,(legth-10));//10个头字节
+        }
         else
-            frame_totalcopyto the frame into fwbuf
-    endif    
+        {
+            if ( frame_empty( fwbuf))
+            {
+                frame_totalcopyfrom( fwbuf,frame);
+            }
+            frame_totalclear( frame);
+        }
+
+    } 
+    
 }
 
-void flood_txhandler(frame, fwbuf)
+void flood_txhandler( TiFloodNetwork * net,TiFrame * frame, TiFrame * fwbuf)
 {
-    process the frame, encapsulate it and create lower layer;
+    uint8 count;
+	uint8 i;
+	char * pc;
+    if ( !frame_empty( frame))
+    {
+        count = 0;
+        i = 0;
+        i = frame_length( frame);
+    	
+    	if (frame_empty(fwbuf)) 
+    	{ 
+    		count = frame_totalcopyfrom( fwbuf, frame );
+            fwbuf->option = 0x00;//no ack
+     		frame_skipouter( fwbuf, 10, 0 );
+    		pc = frame_startptr(fwbuf );
+            FLOOD_SET_PROTOCAL_IDENTIFIER(pc,FLOOD_PROTOCAL_IDENTIFIER); 
+            FLOOD_SET_PACKETCONTROL(pc,FLOOD_CONTROL_IDENTIFIER ); 
+            FLOOD_SET_SEQUENCEID(pc,net->seqid); 
+            FLOOD_SET_HOPCOUNT(pc,0); 
+            FLOOD_SET_MAX_HOPCOUNT(pc,FLOOD_MAXHOPCOUNT); 
+            FLOOD_SET_SHORTADDRTO(pc,FLOOD_BROADCAST_ADDRESS); 
+            FLOOD_SET_SHORTADDRFROM(pc,net->localaddress); 
+            fwbuf->address = FLOOD_BROADCAST_ADDRESS;
+            frame_setlength( fwbuf,(i+10));
+            net->seqid++;
+    	}
+    }
+   frame_totalclear( frame);
 }
-*/

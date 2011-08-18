@@ -51,6 +51,7 @@
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_ieee802frame154.h"
 #include "svc_nio_aloha.h"
+#include "svc_nodebase.h"
 
 /******************************************************************************* 
  * attention
@@ -100,8 +101,8 @@ extern "C" {
  *      = 0: Successful, but nothing was changed. (This function does nothing)
  *      < 0: Failed. 
  */
-#define TiFunTxHandler(object,f1,f2,option) TiFunRxHandler((object),(f1),(f2),(option))
-typedef (uintx)(* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef uintx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef uintx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
 
 //#pragma pack(1) 
 typedef struct{

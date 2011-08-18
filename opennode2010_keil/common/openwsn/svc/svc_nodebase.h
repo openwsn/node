@@ -88,7 +88,7 @@ typedef struct{
  * Construct an TiNodeBase object on specified memory block.
  */
 TiNodeBase * nbase_construct(void * mem, uint16 memsize);
-void nbase_construct(TiNodeBase * nbase);
+//void nbase_construct(TiNodeBase * nbase);
 
 TiNodeBase * nbase_open(TiNodeBase * nbase );
 void nbase_close( TiNodeBase * nbase );
@@ -114,9 +114,9 @@ TiRelationDescriptor * nbase_getrelationtable( TiNodeBase * nbase );
 
 TiRelationDescriptor * nbase_getrelationptr(TiNodeBase * nbase, uint16 addrfrom, uint16 addrto);
 
-TiNodeDescriptor * nbase_getnodebyaddress( TiNodeBase * nbase, uint16 address );
+bool nbase_getnodebyaddress(TiNodeBase * nbase, uint16 address, TiNodeDescriptor * node);
 
-TiRelationDescriptor * nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
+bool nbase_getrelationbyaddress( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto, TiRelationDescriptor * rel );
 
 /** Put one node descriptor into database */
 TiNodeDescriptor * nbase_setnode( TiNodeBase * nbase, uint16 address, TiNodeDescriptor * node );
