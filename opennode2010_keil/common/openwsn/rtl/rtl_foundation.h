@@ -52,6 +52,7 @@
  ******************************************************************************/
 
 #include "rtl_configall.h"
+#include <stdint.h>
 
 /* min() and max() are defined in this header file */
 // #include <stdlib.h>

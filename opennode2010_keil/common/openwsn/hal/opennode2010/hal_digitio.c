@@ -50,8 +50,8 @@
 /***********************************************************************************
 * LOCAL VARIABLES
 */
-//static ISR_FUNC_PTR port1_isr_tbl[8] = {0};
-//static ISR_FUNC_PTR port2_isr_tbl[8] = {0};
+//static TiFunInterruptHandler port1_isr_tbl[8] = {0};
+//static TiFunInterruptHandler port2_isr_tbl[8] = {0};
 
 
 /***********************************************************************************
@@ -261,7 +261,7 @@ uint8 halDigioGet(const digioConfig* p)
 *
 * @return  uint8 - HAL_DIGIO_ERROR or HAL_DIGIO_OK
 */
-uint8 halDigioIntConnect(const digioConfig *p, ISR_FUNC_PTR func)
+uint8 halDigioIntConnect(const digioConfig *p, TiFunInterruptHandler func)
 {
 /* todo
     istate_t key;

@@ -1,9 +1,7 @@
-#ifndef _HAL_TIMERADAPTER_H_6828_
-#define _HAL_TIMERADAPTER_H_6828_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +23,9 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
+
+#ifndef _HAL_TIMERADAPTER_H_6828_
+#define _HAL_TIMERADAPTER_H_6828_
 
 /******************************************************************************
  * @author zhangwei on 2006-08-11
@@ -63,6 +64,8 @@
  *
  * @modified by XieJing in 2009.05
  *	- ported to atmega128 MCU and GAINZ platform.
+ * @modified by Jiang Ridong in 2011.07
+ *  - Ported to OpenNode 2010 platform (based on stm32f103)
  *
  *****************************************************************************/
  
@@ -156,6 +159,8 @@ void timer_destroy( TiTimerAdapter * timer );
  *      bit0 == 1, query driven (查询驱动模式)
  */
 TiTimerAdapter* timer_open( TiTimerAdapter * timer, uint8 id, TiFunEventHandler listener, void * object, uint8 option );
+
+
 void timer_close( TiTimerAdapter * timer );
 
 /**

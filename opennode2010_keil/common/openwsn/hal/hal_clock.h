@@ -1,6 +1,10 @@
 #include "hal_configall.h"
 #include "hal_foundation.h"
 #include "../rtl/rtl_time.h"
+
+// Currently , this interface is replaced by TiLightTimerInterface
+// it's used to power the time line scheduling
+
 /**
  * TiClockInterface
  * This interface is used by osx Time Axis Scheduling algorithm and TimeSync service.

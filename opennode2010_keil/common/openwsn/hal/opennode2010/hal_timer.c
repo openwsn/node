@@ -309,8 +309,13 @@ void timer_setprior( TiTimerAdapter * timer, uint8 preprior,uint8 subprior )
      timer->subpriority = subprior;
 }
 
+/**
+ * Get the basic timer interface
+ * @return An pointer to the basic timer interface.
+ */
 TiBasicTimerInterface * timer_basicinterface( TiTimerAdapter * timer, TiBasicTimerInterface * intf )
 {
+    memset(intf, 0x00, sizeof(TiBasicTimerInterface));
     intf->provider = timer;
     intf->setinterval = timer_setinterval;
     intf->setscale = timer_setscale;
@@ -323,6 +328,7 @@ TiBasicTimerInterface * timer_basicinterface( TiTimerAdapter * timer, TiBasicTim
 
 TiLightTimerInterface * timer_lightinterface( TiTimerAdapter * timer, TiLightTimerInterface * intf )
 {
+    memset(intf, 0x00, sizeof(TiLightTimerInterface));
     intf->provider = timer;
     intf->setinterval = timer_setinterval;
     intf->setscale = timer_setscale;
@@ -336,7 +342,8 @@ TiLightTimerInterface * timer_lightinterface( TiTimerAdapter * timer, TiLightTim
 
 TiPowerTimerInterface * timer_powerinterface( TiTimerAdapter * timer, TiPowerTimerInterface * intf )
 {
-    //todo 
+    memset(intf, 0x00, sizeof(TiPowerTimerInterface));
+    return NULL;
 }
 
 

@@ -50,10 +50,10 @@
  * 8~32. It depends on how many hardware interrupts you used in your system. 
  */
 #define CONFIG_INT2HANDLER_ENABLE
-#define CONFIG_INT2HANDLER_CAPACITY 32
 
-// this macro seems no use in hal layer and should move to osx layer. (2011)
-#define CONFIG_NANOS_ENABLE
+#ifndef CONFIG_INT2HANDLER_CAPACITY
+#define CONFIG_INT2HANDLER_CAPACITY 32
+#endif
 
 /* @attention
  * in WinAVR(avr-gcc), <stdint.h> contains the basic types used in WinAVR such as:
@@ -85,21 +85,17 @@
 extern "C" {
 #endif
 
-/* @modified by openwsn on 2010.08.04
- * - merge TiHalEvent and TiEvent together. They're actually already the same.
- * - merge TiHalEventHandler and TiEventHandler together. They're actually already the same.
+/**
+ * Function typedef for hardware interrupt handlers. Such function can be called
+ * by hardware directly if attached to some interrupt.
  */
-
-#define TiHalEvent TiEvent
-#define TiHalEventId uintx
-#define TiHalEventHandler TiFunEventHandler
-
 typedef void (* TiFunInterruptHandler)(void);
 
-/* the following type is used to implement atomic mechanism in hal_cpu module.
- * the current settings is adapt to atmega128 8 bit MCU only. you may need to change 
- * the definition when porting to a new architecture. */
-
+/**
+ * cpu_atomic_t
+ * The following type is used to implement atomic mechanism in hal_cpu module.
+ * You should change the definition when porting to a new architecture. 
+ */
 #define hal_atomic_t cpu_atomic_t
 
 #ifdef CONFIG_TARGETBOARD_GAINZ
@@ -114,22 +110,20 @@ typedef void (* TiFunInterruptHandler)(void);
   #error "You should define cpu_atomic_t type according to your CPU core's state register width."
 #endif
 
-/*******************************************************************************
- * global variable
- ******************************************************************************/
-
-/* g_atomic_level: to keep the atmic nested level. defined in this module. */
-// todo
+/**
+ * global variable: g_atomic_level
+ * to keep the atmic nested level. defined in this module. 
+ */
 extern uint8 g_atomic_level;
 
-/* interrupt number to object's handler mapping table.
+/**
+ * interrupt number to object's handler mapping table.
  * this table is used to save the relationship between interrupt number and object's
  * event handler. when the hardware interrupt occurs, the kernel can use this
  * table to map the hardware interrupt call to the object's handler call.
  *
  * 	{interrupt number, objects handler, object}
  */
-
 typedef struct{
   uint8 num;
   TiFunEventHandler handler;
@@ -142,11 +136,10 @@ typedef struct{
 extern _TiIntHandlerItem m_int2handler[CONFIG_INT2HANDLER_CAPACITY];
 #endif
 
-
-/*******************************************************************************
- * software initialization of the hal layer
- ******************************************************************************/
-
+/**
+ * hal layer initialization. It will initialize the global variables such as the 
+ * interrupt-object handler mapping table and possible listener functions. 
+ */
 void hal_init( TiFunEventHandler listener, void * object );
 
 /*******************************************************************************
@@ -167,6 +160,15 @@ void hal_init( TiFunEventHandler listener, void * object );
 void hal_setlistener( TiFunEventHandler listener, void * listener_owner );
 void hal_notifylistener( TiEvent * e );
 void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto );
+
+
+
+
+
+
+
+
+
 
 // @todo 
 // for MSP430 and STM32. will be eliminated soon
@@ -260,8 +262,8 @@ void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto );
 */
 #define st(x)      do { x } while (__LINE__ == -1)
 
-typedef void (*ISR_FUNC_PTR)(void);
-typedef void (*VFPTR)(void);
+// typedef void (*ISR_FUNC_PTR)(void);
+// typedef void (*VFPTR)(void);
 
 
 
@@ -294,33 +296,6 @@ typedef void (*VFPTR)(void);
 	//#error "Unsupported compiler"
 #endif
 
-/***********************************************************************************
-* Deprecated Types (included for backwards compatibility)
-*/
-/*
-#ifndef WIN32
-typedef unsigned char       BOOL;
-#endif
-
-// Data
-typedef unsigned char       BYTE;
-typedef unsigned short      WORD;
-typedef unsigned long       DWORD;
-
-// Unsigned numbers
-typedef unsigned char       UINT8;
-typedef unsigned short      UINT16;
-#ifndef WIN32
-typedef unsigned long       UINT32;
-#endif 
-
-// Signed numbers
-typedef signed char         INT8;
-typedef signed short        INT16;
-#ifndef WIN32
-typedef signed long         INT32;
-#endif
-*/
 
 #ifdef __cplusplus
 }
