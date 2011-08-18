@@ -12,16 +12,16 @@ TiNodeBase * nbase_construct( void * mem, uint16 memsize )
     return (TiNodeBase*)mem;
 }
 
-void nbase_construct( TiNodeBase * nbase )
-{
-    return;
-}
+//void nbase_construct( TiNodeBase * nbase )
+//{
+//    return;
+//}
 
-TiNodeBase * nbase_open( TiNodeBase * nbase );
+TiNodeBase * nbase_open( TiNodeBase * nbase )
 {
     int i;
 
-    memset( em, 0x00, memsize);
+    memset( (void* )nbase, 0x00,sizeof(TiNodeBase));
 
     nbase->state = NBASE_STATE_FREE; 
     nbase->pan = 0x00; // todo
@@ -83,7 +83,7 @@ TiNodeDescriptor * nbase_getnodetptr(TiNodeBase * nbase, uint16 address)
     
     for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
     {
-        cur = &(nbase->node[i]);
+        cur = &(nbase->nodes[i]);
         if (cur->state != NBASE_STATE_FREE)
         {
             if (cur->address == address)
@@ -114,7 +114,7 @@ TiRelationDescriptor * nbase_getrelationptr(TiNodeBase * nbase, uint16 addrfrom,
         if ((cur->addrfrom == addrfrom) && (cur->addrto == addrto))
         {
             found = true;
-            *rel = *cur;
+           // *rel = *cur;
             break;
         }
     }
@@ -130,7 +130,7 @@ bool nbase_getnodebyaddress(TiNodeBase * nbase, uint16 address, TiNodeDescriptor
     
     for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
     {
-        cur = &(nbase->node[i]);
+        cur = &(nbase->nodes[i]);
         if (cur->state != NBASE_STATE_FREE)
         {
             if (cur->address == address)
@@ -191,7 +191,7 @@ TiNodeDescriptor * nbase_setnode( TiNodeBase * nbase, uint16 address, TiNodeDesc
         cur = &(nbase->nodes[i]);
         if ((cur->state != NBASE_STATE_FREE) && (cur->address == address))
         {
-            found = truel
+            found = true;
             break;
         }
     }
@@ -203,7 +203,7 @@ TiNodeDescriptor * nbase_setnode( TiNodeBase * nbase, uint16 address, TiNodeDesc
             cur = &(nbase->nodes[i]);
             if (cur->state == NBASE_STATE_FREE)
             {
-                found = truel
+                found = true;
                 break;
             }
         }
@@ -252,7 +252,7 @@ TiRelationDescriptor * nbase_setrelation( TiNodeBase * nbase, uint16 addrfrom, u
             cur = &(nbase->relations[i]);
             if (cur->state == NBASE_STATE_FREE)
             {
-                found = truel
+                found = true;
                 break;
             }
         }
@@ -294,7 +294,7 @@ uint8 nbase_getnodeneighbors( TiNodeBase * nbase, uint16 address, TiNodeDescript
             if (count >= capacity)
                 break;
                 
-            nodeptr[count] = nbase_getnodeptr(nbase, nbase->relations[i].addrto);
+            nodeptr[count] = nbase_getnodetptr(nbase, nbase->relations[i].addrto);
             count ++;
         }
     }
@@ -353,6 +353,7 @@ bool nbase_deleterelation( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto )
 {
     int i;
     TiRelationDescriptor * cur;
+    bool found = false;
 
     for (i=0; i<CONFIG_NBASE_RELATION_CAPACITY; i++)
     {
@@ -360,7 +361,7 @@ bool nbase_deleterelation( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto )
         if (cur->state == NBASE_STATE_FREE)
             continue;
             
-        if (cur->addrfrom == addrfrom) && (cur->addrto == addrto))
+        if ((cur->addrfrom == addrfrom) && (cur->addrto == addrto))
         {
             found = true;
             cur->state = NBASE_STATE_FREE;
@@ -393,7 +394,7 @@ TiNodeDescriptor * _nbase_findemptynodeptr( TiNodeBase * nbase, uint8  pidx )
         if (nbase->nodes[i].state == NBASE_STATE_FREE)
         {
             found = true;
-            *pidx = i;
+            pidx = i;
             break;
         }
     }
@@ -411,7 +412,7 @@ static TiRelationDescriptor * _nbase_findemptyrelationptr( TiNodeBase * nbase, u
         if (nbase->relations[i].state == NBASE_STATE_FREE)
         {
             found = true;
-            *pidx = i;
+            pidx = i;
             break;
         }
     }

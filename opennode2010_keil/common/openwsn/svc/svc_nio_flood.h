@@ -65,11 +65,18 @@
 #include "../hal/hal_debugio.h"
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
+#include "svc_nio_dispatcher.h"
 
 #define FLOOD_FRAMEOBJECT_SIZE FRAMEQUEUE_ITEMSIZE
 
 #define FLOOD_STATE_IDLE 0
 #define FLOOD_STATE_WAITFOR_TXREPLY 1
+#define FLOOD_PROTOCAL_IDENTIFIER  0x10
+#define FLOOD_CONTROL_IDENTIFIER  0
+#define FLOOD_BROADCAST_ADDRESS  0xffff
+#define FLOOD_MAXHOPCOUNT  5
+
+
 
 #ifdef __cplusplus
 extern "C"{
@@ -81,7 +88,7 @@ extern "C"{
  * 
  * @todo
  * Suggested flooding protocol format is:
- * [Protocol Idenfier 1B] [Command 1B] [Sequence Id 1B] [Current Hop Count 1B] 
+ * [Protocol Idenfier 1B] [Command 2B] [Sequence Id 1B] [Current Hop Count 1B] 
  * [Maximum Hop Count 1B]{Destination Address 2B} {Source Address 2B} 
  */
  
@@ -116,6 +123,22 @@ typedef struct{
 	uint8				seqid;
 }_TiFloodCacheItem;
 */
+#define FLOOD_MAKEWORD(high,low) (((uint16)high<<8) | ((uint8)low))
+#define FLOOD_PACKETCONTROL(pkt) FLOOD_MAKEWORD((pkt)[2],(pkt)[1])
+#define FLOOD_SEQUENCEID(pkt) ((pkt)[3])
+#define FLOOD_CUR_HOPCOUNT(pkt) ((pkt)[4])
+#define FLOOD_MAX_HOPCOUNT(pkt) ((pkt)[5])
+#define FLOOD_SHORTADDRTO(pkt) FLOOD_MAKEWORD((pkt)[7],(pkt)[6])
+#define FLOOD_SHORTADDRFROM(pkt) FLOOD_MAKEWORD((pkt)[9],(pkt)[8])
+
+#define FLOOD_SET_PROTOCAL_IDENTIFIER(pkt,value) (pkt)[0]=(value)
+#define FLOOD_SET_PACKETCONTROL(pkt,value) {(pkt)[1]=((uint8)(value&0xFF)); (pkt)[2]=((uint8)(value>>8));}
+#define FLOOD_SET_SEQUENCEID(pkt,value) (pkt)[3]=(value)
+#define FLOOD_SET_HOPCOUNT(pkt,value) (pkt)[4]=(value)
+#define FLOOD_SET_MAX_HOPCOUNT(pkt,value) (pkt)[5]=(value)
+#define FLOOD_SET_SHORTADDRTO(pkt,addr) {(pkt)[6]=((uint8)(addr&0xFF)); (pkt)[7]=((uint8)(addr>>8));}
+#define FLOOD_SET_SHORTADDRFROM(pkt,addr) {(pkt)[8]=((uint8)(addr&0xFF)); (pkt)[9]=((uint8)(addr>>8));}
+
 
 /* The cache item searching key contains 4 bytes, which are the flooding protocol
  * header.
@@ -137,7 +160,7 @@ typedef struct{
 #pragma pack(1) 
 typedef struct{
 	uint8               state;
-	TiAloha *			mac;
+	TiNioNetLayerDispatcher * disp;
 	uint8				distance;
 	uint16              panto;
 	uint16              panfrom;
@@ -157,15 +180,17 @@ typedef struct{
 
 TiFloodNetwork * flood_construct( void * mem, uint16 size );
 void flood_destroy( TiFloodNetwork * net );
-TiFloodNetwork * flood_open( TiFloodNetwork * net, TiAloha * mac, TiFunEventHandler listener, 
+TiFloodNetwork * flood_open( TiFloodNetwork * net, TiNioNetLayerDispatcher * disp, TiFunEventHandler listener, 
 	void * lisowner, uint16 pan, uint16 localaddress );
 void flood_close( TiFloodNetwork * net );
 
-uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option );
-uintx flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uint8 option );
-uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option );
+uint8 flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option );
+uint8 flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uint8 option );
+uint8 flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option );
 void flood_set_listener( TiFloodNetwork * net, TiFunEventHandler listener, void * owner );
 void flood_evolve( void * netptr, TiEvent * e );
+void flood_rxhandler(TiFloodNetwork * net,TiFrame * frame, TiFrame *fwbuf);
+void flood_txhandler(TiFloodNetwork * net,TiFrame * frame, TiFrame *fwbuf);
 
 #ifdef __cplusplus
 }
