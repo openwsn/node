@@ -108,7 +108,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
 
 	switch (uart->id)
 	{
-	    case 1:
+	    case 0:
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
@@ -132,7 +132,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             USART_Cmd( USART1,ENABLE);
 		    break;
 
-	    case 2:
+	    case 1:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
@@ -156,7 +156,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             USART_Cmd( USART2,ENABLE);
             break;
 
-        case 3:
+        case 2:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
@@ -318,6 +318,7 @@ char uart_getchar_wait( TiUartAdapter * uart )
             }
             break;
         }
+
     #endif
 
 }
@@ -370,19 +371,19 @@ char uart_getchar_wait( TiUartAdapter * uart )
     /* wait for the transmit buffer empty */
     switch (uart->id)
     {
-        case 1:
+        case 0:
             USART_SendData( USART1,ch);
             while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
             {
             }
             break;
-        case 2:
+        case 1:
             USART_SendData( USART2,ch);
             while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
             {
             }
             break;
-        case 3:
+        case 2:
             USART_SendData( USART3,ch);
             while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
             {
@@ -397,7 +398,7 @@ uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt )
 {
     uint16 i;
     uintx ret;
-    //intx copied=0;
+    intx copied=0;
     uint8 count =0;
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 
