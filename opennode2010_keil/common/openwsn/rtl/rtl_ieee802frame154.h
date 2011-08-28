@@ -7,6 +7,9 @@
  * if you have already received an frame inside buffer, you can call parse. if you 
  * want to assemble a frame inside specified buffer, you can first call format then 
  * aseemble.
+ * 
+ * @modified by zhangwei on 2011.08.26
+ * - revision: ieee802frame154_check_crc()
  */
 
 #include "rtl_configall.h"
@@ -171,8 +174,8 @@
 #define FRAME154_FCF_DESTADDR_SHORT16_BITS       (0x000A << 10)
 #define FRAME154_FCF_DESTADDR_EXT64_BITS         (0x000B << 10)
 #define FRAME154_FCF_SOURCEADDR_NONE_BITS        (0x0000 << 14)
-#define FRAME154_FCF_SOURCEADDR_SHORT16_BITS     (0x000A << 14)
-#define FRAME154_FCF_SOURCEADDR_EXT64_BITS       (0x000B << 14)
+#define FRAME154_FCF_SOURCEADDR_SHORT16_BITS     (0x000A << 14)  // todo: is it right? why compile complains?
+#define FRAME154_FCF_SOURCEADDR_EXT64_BITS       (0x000B << 14)  // todo: is it right? why compile complains?
 
 //#define FRAME154_DEF_FRAMECONTROL_BEACON         (FRAME154_FCF_SOURCEADDR_SHORT16_BITS | FRAME154_FCF_DESTADDR_SHORT16_BITS)
 //#define FRAME154_DEF_FRAMECONTROL_DATA           (FRAME154_DEF_FRAMECONTROL_DATA_ACK_BITS)
@@ -499,12 +502,11 @@ inline uint8 ieee802frame154_lqi( TiIEEE802Frame154Descriptor * desc )
 /* Check the CRC result of the frame. 
  * For 802.15.4 Frame supported by cc2420 transceiver, the cc2420 hardware can compute
  * the CRC results. If (fcs[0] & 0x80) is 0x80, then it means CRC verification success. 
- * QQQ: ??? 0 or 1 means success?
  */
 inline bool ieee802frame154_check_crc( TiIEEE802Frame154Descriptor * desc )
 {
     if (desc->fcs)
-        return ((desc->fcs[1] && 0x80) == 1);
+        return ((desc->fcs[1] & 0x80) > 0);
     else
         return 0;
 }

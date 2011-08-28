@@ -185,10 +185,12 @@ TiIEEE802Frame154Descriptor * _ieee802frame154_cast_as( TiIEEE802Frame154Descrip
     bool empty, char * buf, uint8 len, uint16 ctrl, uint8 option )
 {
 	TiIEEE802Frame154Descriptor * ret = desc;
-	uint8 count;
+	uint8 count=0;
 
     rtl_assert( buf != NULL );
 	option = option;
+    
+    // todo: ieee802frame154_clear(desc);
 
 	if (empty)
 	{
@@ -245,8 +247,8 @@ TiIEEE802Frame154Descriptor * _ieee802frame154_cast_as( TiIEEE802Frame154Descrip
         //
         if ((len < FRAME154_MIN_FRAME_LENGTH) || (len >= FRAME154_MAX_FRAME_LENGTH))
 		{
-			buf[0] = 0;
-            desc->buf = buf;
+			buf[0] = 0; // @todo seems we should not affect the data inside buf
+            desc->buf = buf; // @todo seems we should set desc->buf to NULL
             desc->capacity = len;
             desc->count = 0;
 			ret = NULL;

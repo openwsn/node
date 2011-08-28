@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -24,7 +24,7 @@
  *
  ******************************************************************************/
 /*******************************************************************
- * @copyright(c)	2005-2010, XXX Tech. Co. Ltd
+ * @copyright(c)	2005-2020, XXX Tech. Co. Ltd
  * @author			zhangwei on 2005-07-30
  * @version			2005-07-30
  * @status			released
