@@ -224,7 +224,7 @@ void nss_execute(void)
    // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-    uart = uart_open( uart, 2, 9600, 8, 1, 0 );
+    uart = uart_open( uart,1, 9600, 8, 1, 0 );
     hal_assert( uart != NULL );
 
     sio = sac_open(&m_sac,sizeof( m_sac),uart);

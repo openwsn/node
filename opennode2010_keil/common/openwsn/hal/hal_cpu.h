@@ -77,7 +77,7 @@
  * no matter there's an RTOS or not.
  */ 
 
-#define CONFIG_CPU_FREQUENCY_8MHZ
+//#define CONFIG_CPU_FREQUENCY_8MHZ   //已在configll中定义
 //#define CONFIG_CPU_FREQUENCY_48MHZ
 //#define CONFIG_CPU_FREQUENCY_72MHZ
 
@@ -110,7 +110,7 @@
   typedef uint32 cpu_atomic_t;
 #endif
 
-#if !defined(CONFIG_TARGETBOARD_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010)
+#if (!defined(CONFIG_TARGETBOARD_GAINZ) && !defined(CONFIG_TARGETBOARD_OPENNODE2010))
   #error "You should define cpu_atomic_t type according to your CPU core's state register width."
 #endif
 
@@ -118,8 +118,8 @@
  * global variable: g_atomic_level
  * to keep the atmic nested level. defined in this module. 
  */
-extern uint8 g_atomic_level;
-#ifdef (CONFIG_CRITICAL_METHOD == 3)
+//extern uint8 g_atomic_level;//hal_foundation中已定义
+#if (CONFIG_CRITICAL_METHOD == 3)
 extern uint8 g_atomic_flag;
 #endif
 
@@ -136,12 +136,21 @@ extern uint8 g_atomic_flag;
  */
  
 #define hal_delay250ns() cpu_delay250ns()
-#define hal_delayus(usec) cpu_delayus((usec))
-#define hal_delayms(msec) cpu_delayms((msec))
+#define hal_delayus(usec) cpu_delayus(usec)
+#define hal_delayms(msec) cpu_delayms(msec)
 
 void cpu_delay250ns(void);
 void cpu_delayus(uint16 usec);
 void cpu_delayms(uint16 msec);
+
+#if (CONFIG_CRITICAL_METHOD == 1)
+__inline TiCpuState cpu_atomic_begin(void);
+__inline void cpu_atomic_end(TiCpuState state);
+#else
+__inline void cpu_atomic_begin(void);
+__inline void cpu_atomic_end(void);
+#endif
+
  
 
 /*******************************************************************************
@@ -206,8 +215,8 @@ void cpu_delayms(uint16 msec);
   //#define cpu_atomic_end(state) __set_PRIMASK(state)
 #endif
 
-#ifdef (CONFIG_CRITICAL_METHOD == 1)
-inline TiCpuState cpu_atomic_begin()
+#if (CONFIG_CRITICAL_METHOD == 1)
+__inline TiCpuState cpu_atomic_begin()
 {
     TiCpuState state = __get_PRIMASK();
     __disable_irq();    
@@ -215,20 +224,20 @@ inline TiCpuState cpu_atomic_begin()
 }
 #endif
 
-#ifdef (CONFIG_CRITICAL_METHOD == 1)
-inline void cpu_atomic_end(TiCpuState state)
+#if (CONFIG_CRITICAL_METHOD == 1)
+__inline void cpu_atomic_end(TiCpuState state)
 {
     __set_PRIMASK(state);
 }
 #endif
 
-#ifdef (CONFIG_CRITICAL_METHOD == 2)
+#if (CONFIG_CRITICAL_METHOD == 2)
 /** 
  * Begin the critical section. 
  * @attention Before you calling this function, you must guarantee the global interrupt control 
  * is enabled!!! Or else the hal_atomic_end() will be failed to recover correct status.
  */
-inline void hal_atomic_begin( void )
+__inline void cpu_atomic_begin( void )
 {
 	if (g_atomic_level == 0)
 	{
@@ -238,8 +247,8 @@ inline void hal_atomic_begin( void )
 }
 #endif
 
-#ifdef (CONFIG_CRITICAL_METHOD == 2)
-inline void hal_atomic_end( void )
+#if (CONFIG_CRITICAL_METHOD == 2)
+__inline void cpu_atomic_end( void )
 {
 	g_atomic_level --;
 	if (g_atomic_level == 0)
@@ -252,8 +261,8 @@ inline void hal_atomic_end( void )
 /** 
  * Begin the critical section. 
  */
-#ifdef (CONFIG_CRITICAL_METHOD == 3)
-inline void hal_atomic_begin( void )
+#if (CONFIG_CRITICAL_METHOD == 3)
+__inline void cpu_atomic_begin( void )
 {
 	if (g_atomic_level == 0)
 	{
@@ -264,13 +273,13 @@ inline void hal_atomic_begin( void )
 }
 #endif
 
-#ifdef (CONFIG_CRITICAL_METHOD == 3) 
-inline void hal_atomic_end( void )
+#if (CONFIG_CRITICAL_METHOD == 3) 
+__inline void cpu_atomic_end( void )
 {
 	g_atomic_level --;
 	if (g_atomic_level == 0)
 	{
-        __set_PRIMASK(g_atomic_flags)
+        __set_PRIMASK(g_atomic_flag);
 	}
 }
 #endif

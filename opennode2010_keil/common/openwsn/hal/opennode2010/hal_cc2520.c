@@ -129,10 +129,10 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 	
     // @attention You should use critical area management here because the sending
     // process doesn't hope other interrupt to disturbe it.
-	cpu_state = hal_enter_critical();
+	hal_enter_critical();
     CC2520_TXBUF( len, buf);
 	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
-	hal_leave_critical(cpu_state);
+	hal_leave_critical();
   	
     hal_delayms(1);
 	CC2520_STXON();
@@ -161,9 +161,9 @@ intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option
 	hal_delayus( 50);
 
 	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
-	cpu_state = hal_enter_critical();
+	hal_enter_critical();
 	CC2520_TXBUF( len,buf);
-	hal_leave_critical(cpu_state);
+	hal_leave_critical();
 	CC2520_STXON();
 	hal_delayms(1);
 
@@ -184,7 +184,7 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
     // Read data out from the cc->rxbuf. Usually the FIFOP interrupt service routine
     // place accepted frame into the rxbuf for this reading.
     
-	cpu_state = hal_enter_critical();
+	hal_enter_critical();
 	// cc->rxlen should equal to cc->rxbuf[0] + 1 for correct frames
 	if (cc->rxlen > 0)
 	{
@@ -201,17 +201,17 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 			cc->rxlen = 0;
 		}
     }
-    hal_leave_critical(cpu_state);
+    hal_leave_critical();
 
     // If the rxbuf is empty, then we should check for the transceiver to see whether
     // there's frame pending for reading.
     
-	cpu_state = hal_enter_critical();
+    hal_enter_critical();
     if (ret == 0)
     {
 		ret = _cc2520_read_rxbuf( cc, buf, size );
     }
-    hal_leave_critical(cpu_state);
+    hal_leave_critical();
 
 	return ret;
 }
@@ -1367,16 +1367,16 @@ HAL_RF_STATUS halRfReceiveOff(void)
 void _cc2520_fifop_handler(void * object, TiEvent * e)
 {
     TiCc2520Adapter * cc = (TiCc2520Adapter *)object;
-    TiCpuState cpu_state;
+
     // todo  1ms is too long
 	//hal_delayms(1);
-    cpu_state = hal_enter_critical();
+    hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
     if (cc->listener != NULL)
     {
         cc->listener( cc->lisowner, NULL);
     }
-    hal_leave_critical(cpu_state);
+    hal_leave_critical();
     // need clear the interrupt flag manually.
     EXTI_ClearITPendingBit(EXTI_Line0);    
 }

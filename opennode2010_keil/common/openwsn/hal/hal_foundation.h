@@ -49,6 +49,8 @@
  * Configure the interrupt-handler mapping table capacity. Suggested value is from 
  * 8~32. It depends on how many hardware interrupts you used in your system. 
  */
+
+
 #define CONFIG_INT2HANDLER_ENABLE
 
 #ifndef CONFIG_INT2HANDLER_CAPACITY
@@ -66,6 +68,8 @@
 #include "hal_configall.h"
 #include <stdint.h>
 #include "../rtl/rtl_foundation.h"
+
+extern uint8 g_atomic_level ;
 
 /* System wide event identifier */
 
