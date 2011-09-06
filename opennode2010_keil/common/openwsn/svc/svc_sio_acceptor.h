@@ -42,11 +42,10 @@
  */
 
 #include "svc_configall.h"
-#include "svc_foundation.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_slipfilter.h"
-//#include "../hal/hal_uart.h"
 #include "../hal/hal_uart.h"
+#include "svc_foundation.h"
 
 //#define CONFIG_DYNA_MEMORY 1
 //#undef  CONFIG_DYNA_MEMORY 
