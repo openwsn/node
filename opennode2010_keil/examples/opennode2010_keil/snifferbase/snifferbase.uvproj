@@ -610,6 +610,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_slipfilter.c</FilePath>
             </File>
+            <File>
+              <FileName>rtl_ieee802frame154.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_ieee802frame154.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
