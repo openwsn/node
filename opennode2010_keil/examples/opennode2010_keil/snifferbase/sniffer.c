@@ -113,18 +113,9 @@ static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
 
-//TiSlipFilter m_slip;
 
-//char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
-//char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
-#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-//char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
-//char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
-#endif
-
-
-static void nss_execute(void);
-static void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart );
+static void _nss_execute(void);
+static void _nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart );
 static void _active_send_test(void);
 static void _init_test_response( TiFrame * frame );
 
@@ -134,15 +125,17 @@ static void _init_test_response( TiFrame * frame );
 
 int main(void)
 {
-    // nss_execute();
+    // _nss_execute();
     _active_send_test();
 }
 
 /** 
- * reliable sniffer. 
+ * Sniffer base station. All frames found will be firstly push into an frame queue
+ * and then wait for the GUI program's REQUEST, and then send the frame as RESPONSE 
+ * to the GUI. 
  * @return None.
  */
-void nss_execute(void)
+void _nss_execute(void)
 {
 	char * msg = "welcome to sniffer ...";
     TiCc2520Adapter * cc;
@@ -153,13 +146,7 @@ void nss_execute(void)
 
     TiSioAcceptor * sio;
 
-    //TiIoBuf *sio_buf_tx;
-    //TiIoBuf *sio_buf_rx;
-    //TiIoBuf *sio_buf_tmpx;
-    //TiIoBuf *sio_buf_rmpx;
-
 	int len = 0;
-	//uint8 count;
 	TiSnifferStatistics stat;
 
 	#ifndef CONFIG_ACTIVE_SENDING_MODE
@@ -188,13 +175,6 @@ void nss_execute(void)
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2520_disable_addrdecode( cc );				// disable address decoding
 	cc2520_disable_autoack( cc );
-
-    //sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
-    //sio_buf_rx = iobuf_construct( (void *)(&rxbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY) );
-#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-    //sio_buf_tmpx = iobuf_construct( (void *)(&tmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
-    //sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
-#endif
 
    // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
@@ -239,7 +219,7 @@ void nss_execute(void)
 		// In active mode, the snifferbase will send the frame out through serial
 		// communication immediately without waiting for the request.
 		//
-		nss_send_response(sio, nio_rxque, &stat, uart);
+		_nss_send_response(sio, nio_rxque, &stat, uart);
 		#endif
 		
 		#ifndef CONFIG_ACTIVE_SENDING_MODE
@@ -253,7 +233,7 @@ void nss_execute(void)
 			switch (pc[0])
 			{
 			case CMD_DATA_REQUEST:
-				nss_send_response(sio,nio_rxque, &stat, uart);
+				_nss_send_response(sio,nio_rxque, &stat, uart);
 				break;
 
 			case CMD_DATA_RESET:
@@ -281,7 +261,7 @@ void nss_execute(void)
  * @param uart 
  * @return None.
  */
-void nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart )
+void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart )
 {
 	TiFrame * f;
     
