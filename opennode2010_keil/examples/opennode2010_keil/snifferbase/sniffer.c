@@ -57,30 +57,11 @@
  * the data can be really sent out. You should check the return value of uart_write()
  * in this case.
  */
+
 //#define CONFIG_UART_INTERRUPT_DRIVEN
 //#undef CONFIG_UART_INTERRUPT_DRIVEN
 
-#include "openwsn/hal/hal_configall.h"
 #include "apl_foundation.h"
-#include <stdlib.h>
-#include <string.h>
-#include "openwsn/hal/hal_foundation.h"
-#include "openwsn/hal/hal_cpu.h"
-#include "openwsn/hal/hal_interrupt.h"
-#include "openwsn/hal/hal_led.h"
-#include "openwsn/hal/hal_debugio.h"
-#include "openwsn/hal/hal_assert.h"
-#include "openwsn/hal/hal_cc2520.h"
-#include "openwsn/hal/hal_uart.h"
-#include "openwsn/rtl/rtl_frame.h"
-#include "openwsn/rtl/rtl_ascii.h"
-#include "openwsn/rtl/rtl_assert.h"
-#include "openwsn/rtl/rtl_debugio.h"
-#include "openwsn/rtl/rtl_frame.h"
-#include "openwsn/rtl/rtl_framequeue.h"
-#include "openwsn/rtl/rtl_iobuf.h"
-#include "openwsn/rtl/rtl_slipfilter.h"
-#include "openwsn/svc/svc_sio_acceptor.h"
 
 /**
  * This macro controls the apl_ieee802frame154_dump module to output
@@ -89,8 +70,8 @@
 #define CONFIG_ASCII_OUTPUT
 #undef CONFIG_ASCII_OUTPUT
 
+#define CONFIG_ACTIVE_SENDING_MODE
 //#undef CONFIG_ACTIVE_SENDING_MODE
-//#define CONFIG_ACTIVE_SENDING_MODE
 
 /**
  * CONFIG_LISTENER
@@ -127,10 +108,11 @@ typedef struct{
 TiCc2520Adapter m_cc; 
 TiUartAdapter m_uart;
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
 
-TiSioAcceptor               m_sac;
-TiSlipFilter                m_slip;
+TiSioAcceptor m_sac;
+TiSlipFilter m_slip;
 
 char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
 char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
@@ -139,12 +121,8 @@ char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
 char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
 #endif
 
-#ifndef CONFIG_ACTIVE_SENDING_MODE
-static char m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];// m_sio_rxbuf[128];
-#endif
 
 static void nss_execute(void);
-//static void nss_send_response( TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart );
 static void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart );
 
 /*******************************************************************************
@@ -165,26 +143,23 @@ void nss_execute(void)
 	char * msg = "welcome to sniffer ...";
     TiCc2520Adapter * cc;
     TiFrame * nio_rxbuf;
+    TiFrame * sio_rxbuf;
 	TiFrameQueue * nio_rxque;
 	TiUartAdapter * uart;
 
     TiSioAcceptor * sio;
-    TiSlipFilter  * slip;
 
-    TiIoBuf *sio_buf_tx;
-    TiIoBuf *sio_buf_rx;
-    TiIoBuf *sio_buf_tmpx;
-    TiIoBuf *sio_buf_rmpx;
-
+    //TiIoBuf *sio_buf_tx;
+    //TiIoBuf *sio_buf_rx;
+    //TiIoBuf *sio_buf_tmpx;
+    //TiIoBuf *sio_buf_rmpx;
 
 	int len = 0;
-	uint8 count;
+	//uint8 count;
 	TiSnifferStatistics stat;
 
 	#ifndef CONFIG_ACTIVE_SENDING_MODE
 	uint16 sio_addr;
-	//char * sio_rxbuf = &(m_sio_rxbuf[0]);
-    TiFrame * sio_rxbuf;
     char *pc;
 	#endif
 
@@ -199,12 +174,12 @@ void nss_execute(void)
     // dbc_mem( msg, strlen(msg) );
     #endif
 	
-	// Initialize the TiCc2420Adapter component for wireless network communication 
+	// Initialize the radio communication component for wireless communication.
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	cc = cc2520_open( cc, 0, NULL, NULL, 0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
-	cc2520_rxon( cc );							// enable RX mode
+	cc2520_rxon( cc );								// enable RX mode
 	cc2520_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2520_disable_addrdecode( cc );				// disable address decoding
@@ -217,10 +192,6 @@ void nss_execute(void)
     //sio_buf_rmpx = iobuf_construct( (void *)(&rmpbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY) );
 #endif
 
-
-    //slip = slip_filter_construct( (void *)(&m_slip),sizeof( m_slip));//
-    //slip = slip_filter_open( (void *)(&m_slip),sizeof( m_slip));
-
    // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
@@ -229,14 +200,6 @@ void nss_execute(void)
 
     sio = sac_open(&m_sac,sizeof( m_sac),uart);
 
-    //sio->txbuf = sio_buf_tx;
-    //sio->rxbuf = sio_buf_rx;
-
-#ifdef SIO_ACCEPTOR_SLIP_ENABLE
-   // sio->rmpbuf = sio_buf_rmpx;
-    //sio->tmpbuf = sio_buf_tmpx;
-#endif
-	
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
     sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
@@ -247,15 +210,13 @@ void nss_execute(void)
 
 	while(1) 
 	{
-		// Query arrived frames from the wireless network communication component
-		
-		len = 0;
-		count = 0;
+		// Query for arrived frames from the radio adapter component, and push it
+		// into the frame queue for sending later.
+
         frame_reset( nio_rxbuf, 0, 0, 0 );
         frame_reset( sio_rxbuf, 0, 0, 0 );
-        len = cc2520_read( cc, frame_startptr( nio_rxbuf), frame_capacity( nio_rxbuf), 0x00 );
-
-        if ( len > 0)
+        len = cc2520_read( cc, frame_startptr(nio_rxbuf), frame_capacity(nio_rxbuf), 0x00 );
+        if (len > 0)
         {
             frame_setlength( nio_rxbuf, len );
 			stat.received ++;
@@ -272,30 +233,28 @@ void nss_execute(void)
         }
 
 		#ifdef CONFIG_ACTIVE_SENDING_MODE
-		nss_send_response( nio_rxque, &stat, uart );
+		// In active mode, the snifferbase will send the frame out through serial
+		// communication immediately without waiting for the request.
+		//
+		nss_send_response(sio, nio_rxque, &stat, uart);
 		#endif
 		
 		#ifndef CONFIG_ACTIVE_SENDING_MODE
-		
-		// Query arrived commands from the serial network communication
-		// component. 
-		
-		count = 0;
-		len = 0;
-        len = sac_recv( sio,sio_rxbuf,0x00);
-		
-		
+		// In passive mode, the snifferbase will query for arrived request from the
+		// serial communication, and then parse and execute the command.
+		//
+        len = sac_framerecv(sio, sio_rxbuf, 0x00);
 		if (len > 0)
 		{
             pc = frame_startptr(sio_rxbuf);
-			switch (pc[0])//switch (sio_rxbuf[0])
+			switch (pc[0])
 			{
 			case CMD_DATA_REQUEST:
-				nss_send_response( sio,nio_rxque, &stat, uart );
+				nss_send_response(sio,nio_rxque, &stat, uart);
 				break;
 
 			case CMD_DATA_RESET:
-				memset( &stat, 0x00, sizeof(stat) );
+				memset(&stat, 0x00, sizeof(stat));
 				break;
 					
 			default:
@@ -310,16 +269,23 @@ void nss_execute(void)
 }
 
 /**
- * Send the response frame back to the upper computer.
+ * Pick an frame from the framequeue and encapsulate it as an response and send it 
+ * back to the monitoring computer.
+ * 
+ * @param sac Serial I/O acceptor.
+ * @param fmque The frame queue containing the 802.15.4 frame to be sent.
+ * @param stat Statistic data
+ * @param uart 
+ * @return None.
  */
-void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart )
+void nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart )
 {
 	TiFrame * f;
 	
 	// @attention If you want to output the statistics information, you can uncomment
 	// the following lines.
-	//dbc_uint16( stat->received );
-	//dbc_uint16( stat->dropped );
+	// dbc_uint16( stat->received );
+	// dbc_uint16( stat->dropped );
 	
 	memset( &stat, 0x00, sizeof(stat) );
 	 
@@ -333,10 +299,11 @@ void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatis
 		// I finally eliminate it from the released source code.
 		// hal_delay( 2 );
 
-        sac_send(sac,f,0);
-		
-		fmque_popfront( fmque );
-		f = fmque_front( fmque );
+        if (sac_framesend(sac, f, 0) > 0)
+		{
+			fmque_popfront( fmque );
+			f = fmque_front( fmque );
+		}
 	}
 }
 
