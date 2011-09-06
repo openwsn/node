@@ -107,23 +107,26 @@ typedef struct{
 
 TiCc2520Adapter m_cc; 
 TiUartAdapter m_uart;
+TiSioAcceptor m_sac;
+
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
 
-TiSioAcceptor m_sac;
-TiSlipFilter m_slip;
+//TiSlipFilter m_slip;
 
-char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
-char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
+//char txbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+//char rxbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_RXBUF_CAPACITY)];
 #ifdef SIO_ACCEPTOR_SLIP_ENABLE
-char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
-char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
+//char tmpbuf_block[IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY)];
+//char rmpbuf_block[ IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY)];
 #endif
 
 
 static void nss_execute(void);
 static void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart );
+static void _active_send_test(void);
+static void _init_test_response( TiFrame * frame );
 
 /*******************************************************************************
  * functions 
@@ -131,7 +134,8 @@ static void nss_send_response( TiSioAcceptor *sac,TiFrameQueue * fmque, TiSniffe
 
 int main(void)
 {
-    nss_execute();
+    // nss_execute();
+    _active_send_test();
 }
 
 /** 
@@ -203,7 +207,6 @@ void nss_execute(void)
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
     sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
-
 	
 	memset( &stat, 0x00, sizeof(stat) );
     uart_write( uart,msg,strlen( msg),0x00);
@@ -281,7 +284,7 @@ void nss_execute(void)
 void nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStatistics * stat, TiUartAdapter * uart )
 {
 	TiFrame * f;
-	
+    
 	// @attention If you want to output the statistics information, you can uncomment
 	// the following lines.
 	// dbc_uint16( stat->received );
@@ -307,3 +310,48 @@ void nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStati
 	}
 }
 
+void _active_send_test()
+{
+    TiFrame * txbuf;
+
+    txbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+	while(1) 
+	{
+        _init_test_response(txbuf);
+        hal_delayms(1000);
+    }
+}
+
+/**
+ * This function will fill an response frame. It's used for testing purpose only.
+ * @param frame Containing the frame. You can get the data through frame_startptr(f)
+ *      and frame_length(f).
+ * @return None. 
+ */
+void _init_test_response( TiFrame * frame )
+{
+    int i;
+	char * ptr;
+	TiIEEE802Frame154Descriptor * desc;
+	static seqid;
+    
+    frame_reset(frame, 3, 12, 0);
+    ptr = frame_startptr(frame);
+
+    for (i=0; i<6; i++)
+        ptr[i] = i;
+    frame_skipouter(frame, 12, 2);
+    desc = ieee802frame154_format(desc, frame_startptr(frame), frame_capacity(frame), 
+        FRAME154_DEF_FRAMECONTROL_DATA ); 
+    rtl_assert( desc != NULL );
+
+	seqid ++;
+    
+    ieee802frame154_set_sequence(desc, seqid); 
+    ieee802frame154_set_panto(desc, PANID);
+    ieee802frame154_set_shortaddrto(desc, REMOTE_ADDRESS);
+    ieee802frame154_set_panfrom(desc, PANID);
+    ieee802frame154_set_shortaddrfrom(desc, LOCAL_ADDRESS);
+    frame_setlength(frame, 30);
+	frame_movefirst(frame);
+}

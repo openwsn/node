@@ -19,6 +19,7 @@
 #include "openwsn/rtl/rtl_framequeue.h"
 #include "openwsn/rtl/rtl_iobuf.h"
 #include "openwsn/rtl/rtl_slipfilter.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/hal/hal_foundation.h"
 #include "openwsn/hal/hal_targetboard.h"
 #include "openwsn/hal/hal_cpu.h"
