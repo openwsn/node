@@ -40,7 +40,7 @@
  *  when assert() failed, all the LED should ON/OFF at the same time. 
 * however, if your program enable the interrupts, and you have ON/OFF operations in the 
 * interrupts, then you will see this phenomena.
-*   as a suggest: you'd better not switch the LED in interrupt service routine unless you 
+*   as an suggestion: you'd better not switch the LED in interrupt service routine unless you 
 * know your results.
 * @ I have been changed "while" in line 67 with "if " to keep the process going on --Shimiaojing  
  *****************************************************************************/ 

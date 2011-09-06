@@ -55,7 +55,6 @@ TiSioAcceptor * sac_create( TiUartAdapter * uart )
 
 #ifdef CONFIG_DYNA_MEMORY
 void sac_free( TiSioAcceptor * sac )
-void sac_free( TiSioAcceptr * sac )
 {
 	if (sac != NULL)
 	{
@@ -67,8 +66,9 @@ void sac_free( TiSioAcceptr * sac )
 
 TiSioAcceptor * sac_construct( char * buf, uint16 size )//todo for testing
 {
-
+	return NULL;
 }
+
 TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart )
 {
 	rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
