@@ -49,6 +49,18 @@
  * FRAME154_ACK_FRAME_SIZE
  * The size of the ACK frame, including the frame length byte. 
  */
+#define I802F154_PSDU_SIZE                   0x7F
+#define I802F154_MAX_FRAME_LENGTH            (FRAME154_PSDU_SIZE+1) 
+#define I802F154_MIN_FRAME_LENGTH            5
+#define I802F154_ACK_FRAME_SIZE              6
+
+#define I802F154_BROADCAST_PAN               0xFFFF
+#define I802F154_BROADCAST_ADDRESS           0xFFFF
+
+#define I802F154_MAKEWORD(highbyte,lowbyte)  ((((uint16)(highbyte))<<8) | ((uint16)(lowbyte)))
+ 
+// todo: The following macros will be removed. pls use the above instead
+
 #define FRAME154_PSDU_SIZE				     0x7F 
 #define FRAME154_MAX_FRAME_LENGTH            (FRAME154_PSDU_SIZE+1) 
 #define FRAME154_MIN_FRAME_LENGTH            5

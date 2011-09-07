@@ -1,4 +1,28 @@
-
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
+ ******************************************************************************/
 
 #include "apl_foundation.h"
 #include "openwsn/hal/hal_configall.h"
@@ -19,13 +43,13 @@
 #endif
 //#define TEST_ACK_REQUEST
 
-#define MAX_IEEE802FRAME154_SIZE                128
+// The following macro is acutally an constant 128. You cannot change its value.
+#define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
 
 
 #define PANID				0x0001
 #define LOCAL_ADDRESS		0x01  
 #define REMOTE_ADDRESS		0x02
-#define BUF_SIZE			128
 #define DEFAULT_CHANNEL     11
 
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
@@ -60,10 +84,10 @@ void sendnode1(void)
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
     cc2520_open( cc, 0, NULL, NULL, 0x00 );
     cc2520_setchannel( cc, DEFAULT_CHANNEL );
-    cc2520_rxon( cc );							//Enable RX
-    cc2520_enable_addrdecode( cc );					//使能地址译码
-    cc2520_setpanid( cc, PANID );					//网络标识
-    cc2520_setshortaddress( cc, LOCAL_ADDRESS );	//网内标识
+    cc2520_rxon( cc );							    // Enable RX
+    cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
+    cc2520_setpanid( cc, PANID );					// set network identifier 
+    cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
     cc2520_enable_autoack( cc );
 
     desc = ieee802frame154_open( &m_desc );
@@ -83,23 +107,21 @@ void sendnode1(void)
             FRAME154_DEF_FRAMECONTROL_DATA ); 
         rtl_assert( desc != NULL );
         ieee802frame154_set_sequence( desc, seqid); 
-        ieee802frame154_set_panto( desc,  PANID );
+        ieee802frame154_set_panto( desc, PANID );
         ieee802frame154_set_shortaddrto( desc, REMOTE_ADDRESS );
-        ieee802frame154_set_panfrom( desc,  PANID );
+        ieee802frame154_set_panfrom( desc, PANID );
         ieee802frame154_set_shortaddrfrom( desc, LOCAL_ADDRESS );
-        frame_setlength( txbuf,20);
-        first = frame_firstlayer( txbuf);
+        frame_setlength(txbuf, 20);
+        first = frame_firstlayer(txbuf);
 
         //len = cc2420_write(cc, frame_layerstartptr(txbuf,first), frame_layercapacity(txbuf,first), option);
         len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length( txbuf), option);
 
-        if( len)
+        if (len > 0)
         {
-            led_toggle( LED_RED);
+            led_toggle(LED_RED);
             seqid++;
         }
-        hal_delayms( 1000);
-
-
+        hal_delayms(1000);
     }
 }
