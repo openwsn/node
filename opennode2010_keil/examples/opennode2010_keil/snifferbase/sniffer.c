@@ -244,12 +244,12 @@ void _nss_execute(void)
 				break;
 			}
 		}
-		#endif /* CONFIG_ACTIVE_SENDING_MODE */
+		#endif // CONFIG_ACTIVE_SENDING_MODE 
 		
 		// Simulate the running the cc2420 internal task
 		cc2520_evolve( cc );
 	}
-}
+} 	
 
 /**
  * Pick an frame from the framequeue and encapsulate it as an response and send it 
@@ -292,13 +292,36 @@ void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStat
 
 void _active_send_test()
 {
-    TiFrame * txbuf;
+    char * msg = "welcome to sniffer ...";
+	TiFrame * txbuf;
+	TiUartAdapter * uart;
+    TiSioAcceptor * sio;
+
+	//target_init();
+	led_open();
+	led_on( LED_RED );
+	hal_delayms( 500 );
+	led_off( LED_ALL );
+
+	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
+	rtl_init( dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+    // dbc_mem( msg, strlen(msg) );
+    #endif
+
+    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,1, 9600, 8, 1, 0 );
+    hal_assert( uart != NULL );
+    uart_write( uart,msg,strlen( msg),0x00);
+
+    sio = sac_open(&m_sac,sizeof( m_sac),uart);
 
     txbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 	while(1) 
 	{
         _init_test_response(txbuf);
+        sac_evolve( sio, NULL );
         hal_delayms(1000);
+		led_toggle( LED_RED );
     }
 }
 
@@ -313,9 +336,10 @@ void _init_test_response( TiFrame * frame )
     int i;
 	char * ptr;
 	TiIEEE802Frame154Descriptor * desc;
-	static seqid;
-    
-    frame_reset(frame, 3, 12, 0);
+	uint8 seqid=6;
+    										 
+    frame_open( (char *)frame, FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 16, 50 );
+	//frame_reset(frame, 3, 16, 0);
     ptr = frame_startptr(frame);
 
     for (i=0; i<6; i++)
