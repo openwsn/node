@@ -108,7 +108,7 @@ void uart_close( TiUartAdapter * uart );
  * 	-1		failed
  *****************************************************************************/ 
 intx uart_getchar( TiUartAdapter * uart, char * pc );
-char uart_getchar_wait( TiUartAdapter * uart );  
+char uart_getchar_wait( TiUartAdapter * uart ); 
 
 //uint8 uart_getchar( TiUartAdapter * uart, char * pc );
 //char uart_getchar_wait( TiUartAdapter * uart ); 
@@ -137,7 +137,7 @@ intx uart_putchar( TiUartAdapter * uart, char ch );
  * @return
  * 	the data length actually returned in the buffer.
  *****************************************************************************/ 
-uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt );
+intx uart_read( TiUartAdapter * uart, char * buf, intx size, uint8 opt );
 
 /******************************************************************************
  * write the data in the buffer to UART. 
@@ -147,7 +147,7 @@ uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt );
  * due to the UART's ability, this function may write less than "len" characters
  * to the UART.
  *****************************************************************************/ 
-uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt ); 
+intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt ); 
 
 TiBlockDeviceInterface * uart_getblockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf );
 //TiByteDeviceInterface * uart_getbyteinterface( TiUartAdapter * uart, TiByteDeviceInterface * intf );

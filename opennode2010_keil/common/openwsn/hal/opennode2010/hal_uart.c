@@ -330,7 +330,7 @@ char uart_getchar_wait( TiUartAdapter * uart )
  *	0 or positive means success, and -1 means failed (ususally due to the buffer is full)
  *  when this functions returns -1, you need retry.
  */
- intx uart_putchar( TiUartAdapter * uart, char ch )
+intx uart_putchar( TiUartAdapter * uart, char ch )
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
     intx ret;
@@ -394,14 +394,12 @@ char uart_getchar_wait( TiUartAdapter * uart )
 #endif
 }
 
-uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt )
+intx uart_read( TiUartAdapter * uart, char * buf, intx size, uint8 opt )
 {
-    uint16 i;
-    uintx ret;
-    intx copied=0;
-    uint8 count =0;
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
-
+    intx copied=0;
+    int8 count =0;
+    
     hal_enter_critical();
     copied = min( uart->rxlen, size );
     if (copied > 0)
@@ -412,35 +410,17 @@ uintx uart_read( TiUartAdapter * uart, char * buf, uintx size, uint8 opt )
             memmove( (void *)&(uart->rxbuf[0]), (void *)&(uart->rxbuf[copied]), uart->rxlen );
     }
     hal_leave_critical();
-
     return copied;
 #endif
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-
-    while (1)
-    {
-        for ( i = 0;i<0xffe;i++)
-        {
-            ret = uart_getchar( uart, buf );
-            if ( ret)
-            {
-                buf++;
-                count ++;
-                break;
-            }
-        }
-        if ( i>=0xffe)
-        {
-            break;
-        }
-    }
+    intx ret;
+	ret = uart_getchar( uart, buf );
+	return (ret>=0) ? 1 : 0;
 #endif
-
-    return count;
 }
 
-uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt )
+intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt )
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
     intx count = 0;
