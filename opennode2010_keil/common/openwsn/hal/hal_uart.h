@@ -152,6 +152,7 @@ uintx uart_write( TiUartAdapter * uart, char * buf, uintx len, uint8 opt );
 TiBlockDeviceInterface * uart_getblockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf );
 //TiByteDeviceInterface * uart_getbyteinterface( TiUartAdapter * uart, TiByteDeviceInterface * intf );
 
+// todo 
 // to be deleted
 
     //TiBlockDeviceInterface * uart_get_blockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf );
@@ -164,51 +165,5 @@ TiBlockDeviceInterface * uart_getblockinterface( TiUartAdapter * uart, TiBlockDe
 #ifdef __cplusplus
 }
 #endif
-
-/***********************************************************************************
-* INCLUDES
-*
-#include "hal_configall.h"
-#include "hal_foundation.h"
-
-***********************************************************************************
- * CONSTANTS AND DEFINES
- *
-* Serial Port Baudrate Settings *
-#define HAL_UART_BAUDRATE_4800        0x01
-#define HAL_UART_BAUDRATE_9600        0x02
-#define HAL_UART_BAUDRATE_19200       0x03
-#define HAL_UART_BAUDRATE_38400       0x04
-#define HAL_UART_BAUDRATE_57600       0x05
-#define HAL_UART_BAUDRATE_115200      0x06
-
-* Stop Bits *
-#define HAL_UART_ONE_STOP_BIT         0x01
-#define HAL_UART_TWO_STOP_BITS        0x02
-
-* Parity settings *
-#define HAL_UART_NO_PARITY            0x04
-#define HAL_UART_EVEN_PARITY          0x08
-#define HAL_UART_ODD_PARITY           0x10
-
-* Number of bits in data field *
-#define HAL_UART_7_BIT_DATA           0x20
-#define HAL_UART_8_BIT_DATA           0x40
-
-***********************************************************************************
- * GLOBAL FUNCTIONS
- *
-void   halUartInit(uint16 baudrate, uint8 options);
-uint16 halUartWrite(const uint8* buf, uint16 length);
-uint16 halUartRead(uint8* buf, uint16 length);
-uint16 halUartGetNumRxBytes(void);
-void   halUartEnableRxFlow(uint8 enable);
-uint16 halUartBufferedWrite(const uint8* buf, uint16 length);
-uint8 USART_Send( uint8 ch);
-uint8 USART_Get( uint8 ch);
-
-
-**********************************************************************************
-*/
 
 #endif

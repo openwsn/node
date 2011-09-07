@@ -290,6 +290,10 @@ void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStat
 	}
 }
 
+/** 
+ * Actively sending frames through the serial communication port. The frame is 
+ * generated in this function. 
+ */
 void _active_send_test()
 {
     char * msg = "welcome to sniffer ...";
@@ -297,32 +301,40 @@ void _active_send_test()
 	TiUartAdapter * uart;
     TiSioAcceptor * sio;
 
-	//target_init();
+	target_init();
 	led_open();
 	led_on( LED_RED );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
-	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
-	rtl_init( dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-    // dbc_mem( msg, strlen(msg) );
-    #endif
+	// #ifndef CONFIG_UART_INTERRUPT_DRIVEN
+	// rtl_init(dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report);
+    // dbc_mem(msg, strlen(msg));
+    // #endif
 
-    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-    uart = uart_open( uart,1, 9600, 8, 1, 0 );
-    hal_assert( uart != NULL );
-    uart_write( uart,msg,strlen( msg),0x00);
+    uart = uart_construct((void *)&m_uart, sizeof(TiUartAdapter));
+    uart = uart_open(uart, 1, 9600, 8, 1, 0);
+    hal_assert(uart != NULL);
+    uart_write(uart, msg, strlen(msg), 0x00);
 
-    sio = sac_open(&m_sac,sizeof( m_sac),uart);
+	rtl_init(uart, uart_putchar, uart_getchar_wait, hal_assert_report);
+    dbc_mem(msg, strlen(msg));
 
-    txbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    sio = sac_open(&m_sac,sizeof(m_sac), uart);
+
 	while(1) 
 	{
         _init_test_response(txbuf);
+		if (sac_framesend(sio, txbuf, 0) > 0)
+			frame_clear(txbuf);
+
         sac_evolve( sio, NULL );
         hal_delayms(1000);
 		led_toggle( LED_RED );
     }
+    
+    uart_close(uart);
+    uart_destroy(uart);
 }
 
 /**

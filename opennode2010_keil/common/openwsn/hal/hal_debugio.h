@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,7 +25,6 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
-
 
 /* 
  *******************************************************************************
@@ -97,28 +96,23 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate );
 void dbio_close( TiDebugIoAdapter * dbio );
 char dbio_getchar( TiDebugIoAdapter * dbio );
 intx dbio_putchar( TiDebugIoAdapter * dbio, char ch );
+
+/**
+ * Initialize the debug I/O functionality of the system. It will call dbio_open() 
+ * and rtl_init() inside. 
+ * 
+ * @attention This function replace the former dbo_open() function.
+ * 
+ * @return None. 
+ */
+void dbio_init();
+
 //TiByteDeviceInterface * dbio_interface( TiByteDeviceInterface * intf );
 
-/* the following are kept here only to keep compatible with the old versions
- */
 
 #ifdef CONFIG_DEBUG
-
-//void _dbo_open( uint8 uart_id, uint16 bandrate );
-//void _dbo_close();
-
-//char _dbo_getchar();
-//void _dbo_putchar( char c);
-//void _dbo_putbyte( uint8 val );
-//void _dbo_write( char * buf, uintx len );
-//void _dbo_write_n8toa( char * buf, uintx len );
-//uintx _dbo_asyncwrite( char * buf, uintx len );
-//void _dbo_evolve();
-//void dbo_string( char * string );
-
 void dbo_open( uint16 baudrate );
 #define dbo_close() dbio_close()
-
 //inline void dbo_open( uint8 uart_id, uint16 baudrate ) {_dbo_open((uart_id),(baudrate));}
 //inline void dbo_close() {_dbo_close();}
 
