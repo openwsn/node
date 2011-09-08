@@ -40,8 +40,6 @@
 #include "../hal_mcu.h"
 #include "../hal_uart.h"
 
-
-
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 void _uart_rx0_interrupt_handler( void * uartptr, TiEvent * e );
 void _uart_tx0_interrupt_handler( void * uartptr, TiEvent * e );
@@ -318,6 +316,8 @@ char uart_getchar_wait( TiUartAdapter * uart )
             }
             break;
         }
+
+		hal_assert(false);
 
     #endif
 
