@@ -15,7 +15,7 @@ void ieee802frame154_dump( TiFrame * f )
 	{   
 		dbc_putchar( '>' );
 	 	dbc_n8toa( len );
-		 ieee802frame154_open( &meta );
+		ieee802frame154_open( &meta );
         if (ieee802frame154_parse(&meta, frame_startptr(f), frame_length(f)))
         {
 			dbc_putchar( ':' );

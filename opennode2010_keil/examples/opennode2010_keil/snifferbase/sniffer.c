@@ -297,7 +297,7 @@ void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStat
 void _active_send_test()
 {
     char * msg = "welcome to sniffer ...";
-	TiFrame * txbuf;
+	TiFrame * txbuf = (TiFrame *)(m_sio_rxbuf[0]);
 	TiUartAdapter * uart;
     TiSioAcceptor * sio;
 
@@ -320,7 +320,7 @@ void _active_send_test()
 	rtl_init(uart, uart_putchar, uart_getchar_wait, hal_assert_report);
     dbc_mem(msg, strlen(msg));
 
-    sio = sac_open(&m_sac,sizeof(m_sac), uart);
+    sio = sac_open(&m_sac, sizeof(m_sac), uart); 
 
 	while(1) 
 	{
@@ -347,7 +347,7 @@ void _init_test_response( TiFrame * frame )
 {
     int i;
 	char * ptr;
-	TiIEEE802Frame154Descriptor * desc;
+	TiIEEE802Frame154Descriptor m_desc, *desc;
 	uint8 seqid=6;
     										 
     frame_open( (char *)frame, FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 16, 50 );
@@ -355,9 +355,11 @@ void _init_test_response( TiFrame * frame )
     ptr = frame_startptr(frame);
 
     for (i=0; i<6; i++)
-        ptr[i] = i;
+        ptr[i] = '0' + i;
     frame_skipouter(frame, 12, 2);
-    desc = ieee802frame154_format(desc, frame_startptr(frame), frame_capacity(frame), 
+
+    ieee802frame154_open(&m_desc);
+    desc = ieee802frame154_format(&m_desc, frame_startptr(frame), frame_capacity(frame), 
         FRAME154_DEF_FRAMECONTROL_DATA ); 
     rtl_assert( desc != NULL );
 
