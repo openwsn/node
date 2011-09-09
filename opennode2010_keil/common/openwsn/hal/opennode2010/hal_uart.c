@@ -209,7 +209,7 @@ void uart_close( TiUartAdapter * uart )
 	#endif
 }
 
-/****************************************************************************** 
+/******************************************************************************* 
  * this function is hardware related
  * you should change the register in this function
  *
@@ -220,7 +220,7 @@ void uart_close( TiUartAdapter * uart )
  * @return
  * 	0		success, *ch is char just read from UART
  *  -1		failed
- *****************************************************************************/
+ ******************************************************************************/
 intx uart_getchar( TiUartAdapter * uart, char * pc )
 {
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
@@ -238,46 +238,33 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
 #endif
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-    uint8 ret=0;
+    int8 ret=0;
 
     switch (uart->id)
     {
-        case 0:
-            if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
-            {
-                *pc = (USART_ReceiveData(USART1) & 0xFF); 
-                ret = 1;
-            }
-            else
-            {
-                ret = 0;
-            }
-            break;
+    case 0:
+        if (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
+        {
+            *pc = (USART_ReceiveData(USART1) & 0xFF); 
+            ret = 1;
+        }
+        break;
 
-
-        case 1:
-            if ( USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
-            {
-                *pc = (USART_ReceiveData(USART2) & 0xFF); 
-                ret = 1;
-            }
-            else
-            {
-                ret = 0;
-            }
-            break;
+    case 1:
+        if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
+        {
+            *pc = (USART_ReceiveData(USART2) & 0xFF); 
+            ret = 1;
+        }
+        break;
             
-        case 2:
-            if ( USART_GetFlagStatus(USART3, USART_FLAG_RXNE) != RESET)
-            {
-                *pc = (USART_ReceiveData(USART3) & 0xFF); 
-                ret = 1;
-            }
-            else
-            {
-                ret = 0;
-            }
-            break;
+    case 2:
+        if (USART_GetFlagStatus(USART3, USART_FLAG_RXNE) != RESET)
+        {
+            *pc = (USART_ReceiveData(USART3) & 0xFF); 
+            ret = 1;
+        }
+        break;
 
     default:
         ret = -1;
@@ -290,37 +277,34 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
 char uart_getchar_wait( TiUartAdapter * uart )   
 {
     #ifdef CONFIG_UART_INTERRUPT_DRIVEN
-        char ch=0;
-        while (uart->rxlen <= 0) {};
-        uart_getchar( uart, &ch );
-        return ch;
+    char ch=0;
+    while (uart->rxlen <= 0) {};
+    uart_getchar( uart, &ch );
+    return ch;
     #endif
 
     #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-
-        switch (uart->id)
-        {
-        case 0:
-            while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
-            {
-            }
-            break;
-        case 1:
-            while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
-            {
-            }
-            break;
-        case 2:
-            while(USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET)
-            {
-            }
-            break;
-        }
-
-		hal_assert(false);
-
+	char ch=0;
+    switch (uart->id)
+    {
+    case 0:
+        while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET){};
+        ch = (USART_ReceiveData(USART1) & 0xFF); 
+        break;
+    case 1:
+        while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET){};
+        ch = (USART_ReceiveData(USART2) & 0xFF); 
+        break;
+    case 2:
+        while(USART_GetFlagStatus(USART3, USART_FLAG_RXNE) == RESET){};
+        ch = (USART_ReceiveData(USART3) & 0xFF); 
+        break;
+    default:
+        ch = 0x00;
+        break;
+    }
+    return ch;
     #endif
-
 }
 
 /* uart_putchar()
@@ -369,28 +353,26 @@ intx uart_putchar( TiUartAdapter * uart, char ch )
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
     /* wait for the transmit buffer empty */
+    // todo: should adjust the order 
+    intx ret=1;
     switch (uart->id)
     {
-        case 0:
-            USART_SendData( USART1,ch);
-            while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
-            {
-            }
-            break;
-        case 1:
-            USART_SendData( USART2,ch);
-            while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
-            {
-            }
-            break;
-        case 2:
-            USART_SendData( USART3,ch);
-            while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
-            {
-            }
-            break;
-     }
-        return 0;
+    case 0:
+        USART_SendData( USART1,ch);
+        while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        break;
+    case 1:
+        USART_SendData( USART2,ch);
+        while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        break;
+    case 2:
+        USART_SendData( USART3,ch);
+        while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        break;
+    default: 
+        ret = 0;
+    }
+    return ret;
 #endif
 }
 
@@ -414,9 +396,12 @@ intx uart_read( TiUartAdapter * uart, char * buf, intx size, uint8 opt )
 #endif
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-    intx ret;
-	ret = uart_getchar( uart, buf );
-	return (ret>=0) ? 1 : 0;
+    intx ret=0;
+    if (size > 0)
+    {
+        ret = uart_getchar( uart, buf );
+	}
+    return (ret>=0) ? 1 : 0;
 #endif
 }
 
@@ -480,6 +465,7 @@ intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt )
 #endif
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
+/*
     int16 count = 0;
     while (count < len)
     {
@@ -487,8 +473,16 @@ intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt )
             break;
         count ++;
     }
-
     return count;
+*/
+    int16 count = len;
+    while (count > 0)
+    {
+        if (uart_putchar(uart, buf[len-count]) < 0)
+            break;
+        count --;
+    }
+    return len-count;
 #endif
 }
 

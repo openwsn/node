@@ -176,7 +176,7 @@ void _nss_execute(void)
 	cc2520_disable_addrdecode( cc );				// disable address decoding
 	cc2520_disable_autoack( cc );
 
-   // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
+    // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
     uart = uart_open( uart,1, 9600, 8, 1, 0 );
@@ -189,7 +189,7 @@ void _nss_execute(void)
     sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 	
 	memset( &stat, 0x00, sizeof(stat) );
-    uart_write( uart,msg,strlen( msg),0x00);
+    uart_write( uart, msg, strlen(msg), 0x00 );
 
 	while(1) 
 	{
