@@ -6,7 +6,7 @@
 #include "openwsn/hal/hal_cpu.h"
 #include "openwsn/hal/hal_uart.h"
 
-TiUartAdapter               m_uart;
+TiUartAdapter m_uart;
 
 
 void main( void)
@@ -49,3 +49,16 @@ void main( void)
 
     }
 }
+
+void _uart_active_send()
+{
+}
+
+void _uart_echo_01()
+{
+}
+
+void _uart_echo_02()
+{
+}
+
