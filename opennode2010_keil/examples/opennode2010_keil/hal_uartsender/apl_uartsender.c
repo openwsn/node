@@ -27,6 +27,11 @@
 #include "apl_foundation.h"
 
 /**
+ * @state 
+ * - Released. Tested Ok by zhangwei and NingHuaqiang on 2011.09.13
+ */
+
+/**
  * @attention
  * - You should attention the which UART you use by default. The node hardware (mainly
  *   the MCU) should provide at least 1 U(S)ART. A lot of example and testing programs

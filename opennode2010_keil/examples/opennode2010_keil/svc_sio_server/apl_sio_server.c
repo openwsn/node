@@ -116,7 +116,8 @@ static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
 
 int main(void)
 {
-    _sio_active_sender();
+    //_sio_active_sender();
+    _sio_passive_service();
 }
 
 /** 

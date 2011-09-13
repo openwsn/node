@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>target</TargetName>
+      <TargetName>sio_frame</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -42,17 +42,17 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>D:\temp\keil\</OutputDirectory>
-          <OutputName>apl_cc2520tx</OutputName>
+          <OutputDirectory>.\</OutputDirectory>
+          <OutputName>apl_sio_frame</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>D:\temp\keil\</ListingPath>
-          <HexFormatSelection>0</HexFormatSelection>
+          <ListingPath>D:\temp\openwsn\</ListingPath>
+          <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
-          <CreateBatchFile>0</CreateBatchFile>
+          <CreateBatchFile>1</CreateBatchFile>
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
@@ -107,7 +107,7 @@
         </DllOption>
         <DebugOption>
           <OPTHX>
-            <HexSelection>0</HexSelection>
+            <HexSelection>1</HexSelection>
             <HexRangeLowAddress>0</HexRangeLowAddress>
             <HexRangeHighAddress>0</HexRangeHighAddress>
             <HexOffset>0</HexOffset>
@@ -126,7 +126,7 @@
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>0</LoadApplicationAtStartup>
+            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
@@ -213,7 +213,7 @@
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>0</OptFeed>
+            <OptFeed>1</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -318,7 +318,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x5000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -386,9 +386,24 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>cc2520tx.c</FileName>
+              <FileName>apl_ieee802frame154_dump.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\cc2520tx.c</FilePath>
+              <FilePath>.\apl_ieee802frame154_dump.c</FilePath>
+            </File>
+            <File>
+              <FileName>apl_sio_frame.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\apl_sio_frame.c</FilePath>
+            </File>
+            <File>
+              <FileName>apl_foundation.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\apl_foundation.h</FilePath>
+            </File>
+            <File>
+              <FileName>apl_ieee802frame154_dump.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\apl_ieee802frame154_dump.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -431,34 +446,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_cec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_cec.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dac.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
@@ -481,24 +471,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_iwdg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_pwr.c</FileName>
@@ -511,34 +486,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_tim.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -546,29 +496,9 @@
           <GroupName>hal</GroupName>
           <Files>
             <File>
-              <FileName>basic_rf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\basic_rf.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_assert.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_assert.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520base.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520base.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520vx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520vx.c</FilePath>
             </File>
             <File>
               <FileName>hal_cpu.c</FileName>
@@ -596,11 +526,6 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_mcu.c</FilePath>
             </File>
             <File>
-              <FileName>hal_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_timer.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</FilePath>
@@ -616,9 +541,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_interrupt.c</FilePath>
             </File>
             <File>
-              <FileName>hal_stm32f10x_it.c</FileName>
+              <FileName>hal_targetboard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.c</FilePath>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -641,9 +566,34 @@
               <FilePath>..\..\..\common\openwsn\rtl\rtl_frame.c</FilePath>
             </File>
             <File>
+              <FileName>rtl_lightqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_lightqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtl_iobuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_iobuf.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtl_slipfilter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_slipfilter.c</FilePath>
+            </File>
+            <File>
               <FileName>rtl_ieee802frame154.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_ieee802frame154.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>svc</GroupName>
+          <Files>
+            <File>
+              <FileName>svc_sio_acceptor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\svc\svc_sio_acceptor.c</FilePath>
             </File>
           </Files>
         </Group>

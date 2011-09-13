@@ -80,7 +80,7 @@ void sendnode1(void)
     hal_delayms( 500 );
     led_off( LED_ALL );
     
-    halUartInit( 9600,0);
+    //halUartInit( 9600,0);
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
     cc2520_open( cc, 0, NULL, NULL, 0x00 );
     cc2520_setchannel( cc, DEFAULT_CHANNEL );

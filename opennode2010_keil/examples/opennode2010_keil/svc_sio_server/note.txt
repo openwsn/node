@@ -1,0 +1,5 @@
+Demonstrate how to communicate with the host computer under the support of TiSioAcceptor. Different to the TiUartAdapter testings, these test including the framing support.
+
+@todo 
+
+You'd better change the uart output to interrupt driven mode, which can further improve the outputing performance. However, currently seems problems.... :)
