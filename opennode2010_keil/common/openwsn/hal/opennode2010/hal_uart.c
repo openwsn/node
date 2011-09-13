@@ -227,7 +227,7 @@ void uart_close( TiUartAdapter * uart )
  * 
  * @return
  * 	0		success, *ch is char just read from UART
- *  -1		failed
+ *  -1		failed. The value of -1 means the uart object doesn't exists.
  ******************************************************************************/
 intx uart_getchar( TiUartAdapter * uart, char * pc )
 {
@@ -275,7 +275,7 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
         break;
 
     default:
-        ret = 0;
+        ret = -1;
     }
 
     return ret;
@@ -321,6 +321,8 @@ char uart_getchar_wait( TiUartAdapter * uart )
  * @return
  *	0 or positive means success, and -1 means failed (ususally due to the buffer is full)
  *  when this functions returns -1, you need retry.
+ * 
+ * -1 means the uart object doesn't exist.
  */
 intx uart_putchar( TiUartAdapter * uart, char ch )
 {
@@ -378,7 +380,7 @@ intx uart_putchar( TiUartAdapter * uart, char ch )
         USART_SendData(USART3, ch);
         break;
     default: 
-        ret = 0;
+        ret = -1;
     }
     return ret;
 #endif
@@ -409,7 +411,7 @@ intx uart_read( TiUartAdapter * uart, char * buf, intx size, uint8 opt )
     {
         ret = uart_getchar( uart, buf );
 	}
-    return (ret>=0) ? 1 : 0;
+    return ret;
 #endif
 }
 
@@ -473,20 +475,10 @@ intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt )
 #endif
 
 #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-/*
-    int16 count = 0;
-    while (count < len)
-    {
-        if (uart_putchar(uart, buf[count]) < 0)
-            break;
-        count ++;
-    }
-    return count;
-*/
     intx count = len;
     while (count > 0)
     {
-        if (uart_putchar(uart, buf[len-count]) < 0)
+        if (uart_putchar(uart, buf[len-count]) <= 0)
             break;
         count --;
     }

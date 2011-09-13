@@ -42,43 +42,6 @@ int main(void)
     return 0;
 }
 
-/*
-void main( void)
-{
-    TiUartAdapter * uart;
-    uint8 ch;
-    char buf[40];
-    uintx count;
-
-    count = 0;
-
-    target_init();
-    led_open();
-    led_on( LED_ALL);
-    hal_delayms( 500 );
-    led_off( LED_ALL );
-
-    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, 2, 9600, 8, 1, 0);
-
-    while ( 1)
-    {
-        len = uart_read(uart, buf, sizeof(buf), 0);
-        if (len > 0)
-        {
-            uart_write(uart, buf, len, 0);
-            led_toggle(LED_RED);
-        }
-
-//        if ( uart_getchar(uart,&ch))
-//        {
-//            uart_putchar(uart,ch);
-//        }
-
-    }
-}
-*/
-
 void uartecho1()
 {
     TiUartAdapter * uart;
