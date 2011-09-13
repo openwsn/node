@@ -263,15 +263,15 @@ TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type)
     // memory, memory size, init_layer, init_layerstart, init_layercapacity
     frame = frame_open( buf, len, 3, 16, 50 );
 	//frame_reset(frame, 3, 16, 0);
+    
     data = frame_startptr(frame);
-
-    for (i=0; i<6; i++)
+    for (i=0; i<frame_capacity(frame); i++)
     {
         data[i] = '0' + i;
 	}
     data[0] = (uint8)type;
-    frame_skipouter(frame, 12, 2);
 
+    frame_skipouter(frame, 12, 2);
     desc = ieee802frame154_open(&m_desc);
     desc = ieee802frame154_format(desc, frame_startptr(frame), frame_capacity(frame), 
         FRAME154_DEF_FRAMECONTROL_DATA ); 
