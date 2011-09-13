@@ -142,6 +142,13 @@ intx uart_read( TiUartAdapter * uart, char * buf, intx size, uint8 opt );
 /******************************************************************************
  * write the data in the buffer to UART. 
  * 
+ * @param uart TiUartAdapter object.
+ * @param buf Data to be sent.
+ * @param len The data length in the buffer.
+ * @param opt 0x00 means blocked operation and 0x01 means non-blocked operation. 
+ *      In the non-blocked mode, the function will return immediately, so not
+ *      all the data can be sent.
+ * 
  * @attention
  * 	you should NOT assume this function can write "len" characters to UART.
  * due to the UART's ability, this function may write less than "len" characters
@@ -157,9 +164,9 @@ TiBlockDeviceInterface * uart_getblockinterface( TiUartAdapter * uart, TiBlockDe
 
     //TiBlockDeviceInterface * uart_get_blockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf );
     //以下三个函数临时保留
-    void   halUartInit(uint16 baudrate, uint8 options);//uart_open( TiUartAdapter * uart,2, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option );
-    uint8 USART_Send( uint8 ch);//intx uart_putchar( TiUartAdapter * uart, char ch );
-    uint8 USART_Get( uint8 ch); //uint8 uart_getchar( TiUartAdapter * uart, char * pc );
+//    void   halUartInit(uint16 baudrate, uint8 options);//uart_open( TiUartAdapter * uart,2, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option );
+//    uint8 USART_Send( uint8 ch);//intx uart_putchar( TiUartAdapter * uart, char ch );
+//    uint8 USART_Get( uint8 ch); //uint8 uart_getchar( TiUartAdapter * uart, char * pc );
 
 
 #ifdef __cplusplus
