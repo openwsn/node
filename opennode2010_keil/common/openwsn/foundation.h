@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  * 
  * OpenWSN is a free software; you can redistribute it and/or modify it under 
  * the terms of the GNU General Public License as published by the Free Software 
@@ -41,6 +41,8 @@
  *   STM32F10x_StdPeriph_Examples/SPI/Simplex_Interrupt in STM32F10x_StdPeriph_Library 3.5.0
  *   Some contents may be modified to adapt to the current project.
  *
+ * @modified by zhangwei on 2011.06.03 
+ * - Revised
  ******************************************************************************/
 
 #include "configall.h"

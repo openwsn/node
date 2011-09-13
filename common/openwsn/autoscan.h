@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -38,6 +38,33 @@
  * - first created.
  */
  
+/**
+ * The "autoscan.h" will try to decide current compiler automatically. Currently, 
+ * the following compiler is support by the scan process. If the file cannot decides
+ * the current compiler, then the macro CONFIG_COMPILER_UNKNOWN will be defined. 
+ * You can add your own compiler configuration by defining your own macro.
+ * 
+ * CONFIG_COMPILER_UNKNOWN 
+ * CONFIG_COMPILER_MICROBLAZEC
+ * CONFIG_COMPILER_ARMCC
+ * CONFIG_COMPILER_BORLANDC
+ * CONFIG_COMPILER_GNUC
+ * CONFIG_COMPILER_IAR
+ * CONFIG_COMPILER_INTEL
+ * CONFIG_COMPILER_KEILC166
+ * CONFIG_COMPILER_KEILC51
+ * CONFIG_COMPILER_LCC
+ * CONFIG_COMPILER_LLVM
+ * CONFIG_COMPILER_MWERKS
+ * CONFIG_COMPILER_MINGW
+ * CONFIG_COMPILER_MIPSPRO
+ * CONFIG_COMPILER__MICROSOFT
+ * CONFIG_COMPILER_SDCC
+ * CONFIG_COMPILER_TINYC
+ * CONFIG_STDC
+ * CONFIG_STDCPP
+ */
+
 #define CONFIG_COMPILER_UNKNOWN
  
 /* Altium MicroBlaze C */
@@ -50,12 +77,22 @@
  * The ARM compiler is also identified by macro  __arm__. 
  * Please note that the __ARMCC_VERSION macro is also used as version indicator 
  * for Norcroft C, but that the format is different.
+ *
+ * @attention
+ * - Macro __arm__ is always defined for the ARM compiler. Using __ARMCC_VERSION to 
+ * to distinguish between RVCT and other tools that define __arm__.
+ * - The ARM compiler in Keil also support __GNUC__ macro in GNU mode.
  */
 #ifdef __CC_ARM 
 #ifdef __ARMCC_VERSION
 #define CONFIG_COMPILER_ARMCC
 #undef CONFIG_COMPILER_UNKNOWN
 #endif
+#endif
+ 
+#ifdef __arm__ 
+#define CONFIG_COMPILER_ARMCC
+#undef CONFIG_COMPILER_UNKNOWN
 #endif
  
 /* Borland C++ */
@@ -173,9 +210,8 @@
 #define CONFIG_STDCPP
 #endif
 
+#ifdef CONFIG_COMPILER_UNKNOWN
+#error "This file failed to decide the current compiler. Suggest decide it manually."
+#endif
+
 #endif /* _AUTOSCAN_H_7484_ */
-
-
-
- 
- 

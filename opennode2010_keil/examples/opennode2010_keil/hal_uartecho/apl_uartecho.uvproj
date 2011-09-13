@@ -540,6 +540,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_targetboard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_stm32f10x_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_interrupt.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

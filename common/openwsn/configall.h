@@ -109,7 +109,7 @@
 #define OPENWSN_MAJOR_VERSION 2
 #define OPENWSN_MINOR_VERSION 4
 #define OPENWSN_MICRO_VERSION 0
-#define OPENWSN_BUILD_VERSION 365
+#define OPENWSN_BUILD_VERSION 256
 
 /* a macro to enable the debug source code
  * for release version, you should undef this macro
@@ -118,42 +118,121 @@
   #define GDEBUG
 #endif
 
-/* Hardware Platform Choosing Configuration
+//#define CONFIG_TARGETBOARD_GAINZ
+#define CONFIG_TARGETBOARD_OPENNODE2010
+
+#define CONFIG_OS_OSX
+
+
+/*******************************************************************************
+ * Target Board Configuration
+ * If failed to decide the current compiler automatically, then you should define
+ * it manually.
+ *
+ * Hardware Platform Choosing Configuration
  * now we have four hardware platforms:
- * - CONFIG_TARGET_OPENNODE_10  for OpenNODE version 1.0
- * - CONFIG_TARGET_OPENNODE_20  for OpenNODE version 2.0
- * - CONFIG_TARGET_OPENNODE_30  for OpenNODE version 3.0
- * - CONFIG_TARGET_WLSMODEM_11 for WlsModem version 1.1
- * - CONFIG_TARGET_GAINZ for ICT's GAINZ hardware
+ * - CONFIG_TARGETBOARD_OPENNODE_10  for OpenNODE version 1.0
+ * - CONFIG_TARGETBOARD_OPENNODE_20  for OpenNODE version 2.0
+ * - CONFIG_TARGETBOARD_OPENNODE_30  for OpenNODE version 3.0
+ * - CONFIG_TARGETBOARD_WLSMODEM_11 for WlsModem version 1.1
+ * - CONFIG_TARGETBOARD_GAINZ for ICT's GAINZ hardware
  *
  * @attention: there're only one above macro allowed in the system!
  * currently, openwsn only support OPENNODE_10, 20, 30
+ ******************************************************************************/
+ 
+/**
+ * @attention 
+ * - Currently, the openwsn supports mainly the CONFIG_TARGETBOARD_OPENNODE2010
+ * and CONFIG_TARGETBOARD_GAINZ.
+ * - You should guarantee there's only one target board macro is defined!
  */
-#define CONFIG_TARGETBOARD_OPENNODE_10
-#undef  CONFIG_TARGETBOARD_OPENNODE_10
 
-#define CONFIG_TARGETBOARD_OPENNODE_20
-#undef  CONFIG_TARGETBOARD_OPENNODE_20
+#define CONFIG_TARGETBOARD_UNKNOWN
+ 
+#ifdef CONFIG_TARGETBOARD_OPENNODE_10
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#define CONFIG_TARGETBOARD_OPENNODE_30
-#undef  CONFIG_TARGETBOARD_OPENNODE_30
+#ifdef CONFIG_TARGETBOARD_OPENNODE_20
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#define CONFIG_TARGETBOARD_OPENNODE2010
-#undef  CONFIG_TARGETBOARD_OPENNODE2010
+#ifdef CONFIG_TARGETBOARD_OPENNODE_30
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#define CONFIG_TARGETBOARD_WLSMODEM_11
-#undef  CONFIG_TARGETBOARD_WLSMODEM_11
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#undef  CONFIG_TARGETBOARD_GAINZ
-#define CONFIG_TARGETBOARD_GAINZ
+#ifdef CONFIG_TARGETBOARD_WLSMODEM_11
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#define CONFIG_TARGETBOARD_CC2520DK
-#undef  CONFIG_TARGETBOARD_CC2520DK
+#ifdef CONFIG_TARGETBOARD_GAINZ
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
-#define CONFIG_TARGETBOARD_CC2430DK
-#undef  CONFIG_TARGETBOARD_CC2430DK
+#ifdef CONFIG_TARGETBOARD_CC2520DK
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
+#ifdef CONFIG_TARGETBOARD_CC2430DK
+#undef CONFIG_TARGETBOARD_UNKNOWN
+#endif
 
+#ifdef CONFIG_TARGETBOARD_UNKNOWN
+#error "You should select your target board in the user configuration section!"
+#endif
+
+#ifdef CONFIG_TARGETBOARD_OPENNODE2010
+  
+  // The OpenNode 2010 platform (STM32F103x + cc2520) supports the following three
+  // macros: 
+  // - CONFIG_CPU_FREQUENCY_8MHZ 
+  // - CONFIG_CPU_FREQUENCY_48MHZ 
+  // - CONFIG_CPU_FREQUENCY_72MHZ 
+  // You should define one and only one above macro.
+  
+  #define CONFIG_CPU_FREQUENCY 8
+  #define CONFIG_CPU_FREQUENCY_8MHZ 1
+  //#warning "The target board running at 8MHz defined by CONFIG_CPU_FREQUENCY_8MHZ in configall.h"
+#endif
+
+/*******************************************************************************
+ * Compiler Configuration
+ * If the autoscan file failed to decide the current compiler automatically, then 
+ * suggest you choose the compiler type manually.
+ *
+ * The "autoscan.h" will try to decide current compiler automatically. Currently, 
+ * the following compiler is support by the scan process. If the file cannot decides
+ * the current compiler, then the macro CONFIG_COMPILER_UNKNOWN will be defined. 
+ * You can add your own compiler configuration by defining your own macro.
+ * 
+ * CONFIG_COMPILER_UNKNOWN
+ * CONFIG_COMPILER_MICROBLAZEC
+ * CONFIG_COMPILER_ARMCC
+ * CONFIG_COMPILER_BORLANDC
+ * CONFIG_COMPILER_GNUC
+ * CONFIG_COMPILER_IAR
+ * CONFIG_COMPILER_INTEL
+ * CONFIG_COMPILER_KEILC166
+ * CONFIG_COMPILER_KEILC51
+ * CONFIG_COMPILER_LCC
+ * CONFIG_COMPILER_LLVM
+ * CONFIG_COMPILER_MWERKS
+ * CONFIG_COMPILER_MINGW
+ * CONFIG_COMPILER_MIPSPRO
+ * CONFIG_COMPILER__MICROSOFT
+ * CONFIG_COMPILER_SDCC
+ * CONFIG_COMPILER_TINYC
+ * CONFIG_STDC
+ * CONFIG_STDCPP
+ * 
+ * Please refer to "autoscan.h" for detail.
+ ******************************************************************************/
+ 
 /* Compiler used to Compile the Source code
  * CONFIG_COMPILER_GNU
  * should be defined when using GNU c/c++ compiler. this includes:
@@ -161,7 +240,7 @@
  *	- WinAVR for GAINZ platform
  *	- AVR Studio for GAINZ platform
  * 
- * CONFIG_TOOLCHAIN_MDK
+ * CONFIG_COMPILER_ARMCC
  * ARM Development Kit(MDK) is provided by ARM. It's used by Keil uVision IDE.
  * Which is the default developing software for OpenNode-2010.  
  * Another suggestion for OpenNode-2010 is TrueSTUDIO from ST.com. 
@@ -172,22 +251,15 @@
  * your compiler, then you can assign the compiler macro manually.
  */
 
-/* @attention
- * - Macro __arm__ is always defined for the ARM compiler. Using __ARMCC_VERSION to 
- * to distinguish between RVCT and other tools that define __arm__.
- * - The ARM compiler in Keil also support __GNUC__ macro in GNU mode.
- */
-#ifdef __arm__
-#ifdef __ARMCC_VERSION
-#endif
-#endif
- 
-#define CONFIG_COMPILER_ADS
-#undef  CONFIG_COMPILER_ADS
+// @obsolate
+// ads is obsolate. will be removed
+//#define CONFIG_COMPILER_ADS
+//#undef  CONFIG_COMPILER_ADS
 
-#undef  CONFIG_COMPILER_GNU
-#define CONFIG_COMPILER_GNU
-
+#ifdef CONFIG_COMPILER_UNKNOWN
+#error "You should choose at least one compiler by defining related macro! Or else simply choose CONFIG_STDC or CONFIG_STDCPP"
+#define CONFIG_STDC
+#endif
 
 #ifdef __BORLANDC__
 	#define CONFIG_COMPILER_BORLAND
@@ -198,43 +270,40 @@
 #endif
 
 
-/* "inline" and "_Bool" are standard C99 keywords. but not all the embedded compilers
- * support they two.
- *
- * Reference
- * [1] http://en.wikibooks.org/wiki/C_Programming/Reference_Tables
- * [2] http://publib.boulder.ibm.com/infocenter/lnxpcomp/v8v101/index.jsp?topic=/com.ibm.xlcpp8l.doc/language/ref/keyw.htm
- * [3] Supported Features of C99, http://docs.sun.com/source/819-3688/c99.app.html
- */
- 
-#ifdef CONFIG_COMPILER_GNU
-  #define INLINE __inline__
-#else
-  #define INLINE inline
-#endif
-
-/* Keil MDK cannot recognize "inline", but it do support "__inline". */
-#ifdef CONFIG_TOOLCHAIN_MDK
-  #define inline __inline
-#endif
-
-#ifdef CONFIG_COMPILER_UNKNOWN
-#error "You should choose at least one compiler by defining related macro! Or else simply choose CONFIG_STDC or CONFIG_STDCPP"
-#define CONFIG_STDC
-#endif
-
-/* "openwsn" is designed to be integrated with existed mature OS. currently, it
+/*******************************************************************************
+ * Configure OS Kernel 
+ * "openwsn" is designed to be integrated with existed mature OS. currently, it
  * only support uCOS-II. you can change the following macro to configure the OS
  * to be integrated.
  * currently, it only support uCOS. it's also the default settings.
  * in the future, the default setting will be OS_NONE
- */
-#undef  CONFIG_OS_NONE
-#undef  CONFIG_OS_TINYOS
-#undef  CONFIG_OS_UCOSII
-#undef  CONFIG_OS_EMBEDDEDLINUX
-#undef  CONFIG_OS_FREERTOS
-#define CONFIG_OS_OSX
+ ******************************************************************************/
+
+#define CONFIG_OS_UNKNOWN
+
+#ifdef CONFIG_OS_NONE
+#undef CONFIG_OS_UNKNOWN
+#endif
+
+#ifdef CONFIG_OS_TINYOS
+#undef CONFIG_OS_UNKNOWN
+#endif
+
+#ifdef CONFIG_OS_UCOSII
+#undef CONFIG_OS_UNKNOWN
+#endif
+
+#ifdef CONFIG_OS_FREERTOS
+#undef CONFIG_OS_UNKNOWN
+#endif
+
+#ifdef CONFIG_OS_EMBEDDEDLINUX
+#undef CONFIG_OS_UNKNOWN
+#endif
+
+#ifdef CONFIG_OS_OSX
+#undef CONFIG_OS_UNKNOWN
+#endif
 
 
 /*******************************************************************************
@@ -265,7 +334,8 @@
 /* for atmega128 MCU and avr-gcc (WinAVR or AVR Studio)
  * ref: <stdint.h> in WinAVR
  */
-#ifdef CONFIG_TARGETBOARD_GAINZ 
+//#ifdef CONFIG_TARGET_GAINZ 
+#ifdef CONFIG_COMPILER_GNUC
 typedef signed char         int8;
 typedef unsigned char       uint8;
 typedef signed short int    int16;
@@ -280,9 +350,11 @@ typedef signed char         intx;
 //typedef unsigned char       uintx;
 #define uintx uint16
 #define intx int16
+#define byte uint8
 #endif
 
-#ifndef CONFIG_TARGETBOARD_GAINZ 
+//#ifndef CONFIG_TARGET_GAINZ 
+#ifndef CONFIG_COMPILER_GNUC
 typedef signed char         int8;
 typedef unsigned char 	    uint8;
 typedef signed short        int16; // todo?
@@ -293,17 +365,36 @@ typedef long long 		    int64;
 typedef unsigned long long  uint64;
 typedef float          	    fp32;             /* single precision floating point variable (32bits)  */
 typedef double         	    fp64;             /* double precision floating point variable (64bits)  */
-typedef signed int          intx;
-typedef unsigned int        uintx;
+typedef signed short        intx;
+typedef unsigned short      uintx;
+#define byte uint8
+#endif
+
+/*******************************************************************************
+ * Compiler Specific Settings for Adaptation
+ ******************************************************************************/
+
+/* "inline" and "_Bool" are standard C99 keywords. but not all the embedded compilers
+ * support they two.
+ *
+ * Reference
+ * [1] http://en.wikibooks.org/wiki/C_Programming/Reference_Tables
+ * [2] http://publib.boulder.ibm.com/infocenter/lnxpcomp/v8v101/index.jsp?topic=/com.ibm.xlcpp8l.doc/language/ref/keyw.htm
+ * [3] Supported Features of C99, http://docs.sun.com/source/819-3688/c99.app.html
+ */
+ 
+#ifdef CONFIG_COMPILER_GNU
+  #define INLINE __inline__
+#else
+  #define INLINE inline
+#endif
+
+/* Keil MDK (ARM compiler) cannot recognize keyword "inline", but it do support "__inline". */
+#ifdef CONFIG_COMPILER_ARMCC
+  #define inline __inline
 #endif
 
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
-  #ifdef CONFIG_TOOLCHAIN_MDK
-    //#define uint8_t uint8
-    //#define uint16_t uint16
-    //#define uint32_t uint32
-  #endif 
-
   #if defined (__CC_ARM)
     #define __ASM            __asm    		/*!< asm keyword for ARM Compiler          */
     #define __INLINE         __inline       /*!< inline keyword for ARM Compiler       */
@@ -328,6 +419,7 @@ typedef unsigned int        uintx;
 	#endif
 #endif
 
+/* If the current compiler only support C rather than C++ */
 #ifndef __cplusplus
 	#define bool char
     #define true 1

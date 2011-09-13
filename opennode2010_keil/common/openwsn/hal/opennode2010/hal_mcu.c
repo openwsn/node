@@ -1,10 +1,15 @@
-
+/*
+ * @section history
+ * - modified by zhangwei on 2011.09.12
+ *   - include system_stm32f10x.h to enable the SystemInit() function.
+ */
 
 #include "../hal_foundation.h"
 //#include <intrins.h>
 #include "../hal_cpu.h"
 #include "../hal_mcu.h"
 #include "cm3/device/stm32f10x/stm32f10x.h"
+#include "cm3/device/stm32f10x/system_stm32f10x.h"
 
 GPIO_InitTypeDef GPIO_InitStructure;
 ErrorStatus HSEStartUpStatus;
@@ -30,6 +35,12 @@ static void _NVIC_Configuration(void);
  */
 void mcu_init(void)
 {
+    // Setup the microcontroller system Initialize the Embedded Flash Interface, 
+    // the PLL and update the SystemFrequency variable. This function should be used 
+    // only after reset. 
+    //
+    //SystemInit();
+    
   /* Configure the system clocks */
   //_RCC_Configuration();
     

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,9 +28,9 @@
 #include <string.h>
 #include "../hal_foundation.h"
 #include "../../rtl/rtl_debugio.h"
-#include "../hal_debugio.h"
 #include "../hal_assert.h"
 #include "../hal_mcu.h"
+#include "../hal_debugio.h"
 
 #ifdef CONFIG_DEBUG
 
@@ -50,9 +50,13 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate )
 
 	memset( &g_dbio, 0x00, sizeof(TiDebugIoAdapter) );
 
+	#ifdef CONFIG_DBO_UART1
+	#endif
+
 	#ifdef CONFIG_DBO_UART2
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -75,9 +79,6 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate )
     USART_Cmd( USART2,ENABLE);
 	#endif
 	
-	#ifdef CONFIG_DBO_UART1
-	#endif
-
 	g_dbio_init = true;
     return &g_dbio;
 }
@@ -94,10 +95,11 @@ void dbio_close( TiDebugIoAdapter * dbio )
  */
 char dbio_getchar( TiDebugIoAdapter * dbio )
 {
-    while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET)
-    {
-    }
-    return (USART_ReceiveData(USART2) & 0x7F); 
+    // Loop until the USARTz Receive Data Register is not empty 
+    while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET) {};
+    return (USART_ReceiveData(USART2) & 0xFF); 
+    //return (USART_ReceiveData(USART2) & 0x7F); 
+    
 //	#ifdef CONFIG_DBO_UART0
 //	while (!(UCSR0A & (1<<RXC0))) {};
 //	return UDR0;
@@ -119,10 +121,10 @@ char dbio_getchar( TiDebugIoAdapter * dbio )
  */
 intx dbio_putchar( TiDebugIoAdapter * dbio, char ch )
 {
+    /* Loop until USARTy DR register is empty */
+    while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
     USART_SendData( USART2,ch);
-    while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
-    {
-    }
+
 //	/* wait for the transmit buffer empty */
 //	#ifdef CONFIG_DBO_UART0
 //	while (!(UCSR0A & (1<<UDRE0))) {};

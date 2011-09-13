@@ -23,6 +23,11 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
+ 
+/**
+ * @modified by zhangwei on 2011.09.12
+ * - Revised
+ */ 
 
 /*
  * @todo目前用的都是查询方式，中断方式还没有解决
@@ -80,6 +85,7 @@ void uart_destroy( TiUartAdapter * uart )
  * on the global interrupt flag. 
  *
  * @assume: the global interrupt should be disabled before calling this function.
+ * @todo stop bits input is actually no use now.
  *****************************************************************************/
 TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option )
 {
@@ -104,16 +110,16 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
 	uart->lisowner = NULL;
     #endif
 
-	switch (uart->id)
+	switch (id)
 	{
 	    case 0:
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+            
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
-
 
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -133,11 +139,11 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
 	    case 1:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
             RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+            
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
             GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
-
 
             GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -179,6 +185,8 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
 		    break;
 
 	    default:
+            // not support now.
+            hal_assert(false);
 		    uart = NULL;
 		    break;
 	}
@@ -267,7 +275,7 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
         break;
 
     default:
-        ret = -1;
+        ret = 0;
     }
 
     return ret;
@@ -358,16 +366,16 @@ intx uart_putchar( TiUartAdapter * uart, char ch )
     switch (uart->id)
     {
     case 0:
-        USART_SendData( USART1,ch);
-        while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        while ( USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET) {};
+        USART_SendData(USART1, ch);
         break;
     case 1:
-        USART_SendData( USART2,ch);
         while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        USART_SendData(USART2, ch);
         break;
     case 2:
-        USART_SendData( USART3,ch);
-        while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+        while ( USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET) {};
+        USART_SendData(USART3, ch);
         break;
     default: 
         ret = 0;
@@ -475,7 +483,7 @@ intx uart_write( TiUartAdapter * uart, char * buf, intx len, uint8 opt )
     }
     return count;
 */
-    int16 count = len;
+    intx count = len;
     while (count > 0)
     {
         if (uart_putchar(uart, buf[len-count]) < 0)

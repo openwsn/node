@@ -1,5 +1,6 @@
 current version features
 
+
 2011.02
 - add next generation network I/O architecture (svc_nio_xxx) with some basic components.
 - add svc_nio_acceptor (tested)

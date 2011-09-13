@@ -1,14 +1,48 @@
-#include "openwsn/hal/hal_configall.h"
-#include "openwsn/hal/hal_foundation.h"
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
+ ******************************************************************************/
+
 #include "apl_foundation.h"
-#include "openwsn/hal/hal_debugio.h"
-#include "openwsn/hal/hal_assert.h"
-#include "openwsn/hal/hal_cpu.h"
-#include "openwsn/hal/hal_uart.h"
+
+#define UART_ID 1
 
 TiUartAdapter m_uart;
 
+static void uartecho1(void);
+static void uartecho2(void);
+static void uart_active_send(void);
 
+int main(void)
+{
+    uartecho1();
+    //uartecho2();
+    //uart_active_send();
+    return 0;
+}
+
+/*
 void main( void)
 {
     TiUartAdapter * uart;
@@ -18,29 +52,23 @@ void main( void)
 
     count = 0;
 
+    target_init();
     led_open();
+    led_on( LED_ALL);
+    hal_delayms( 500 );
+    led_off( LED_ALL );
 
-    uart = uart_construct( (void *)(&m_uart),sizeof(m_uart));
-
-    uart = uart_open( uart,2,9600,8,1,0);
-
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, 2, 9600, 8, 1, 0);
 
     while ( 1)
     {
-        count = uart_read(uart,buf,40,0);
-
-        if ( count)
+        len = uart_read(uart, buf, sizeof(buf), 0);
+        if (len > 0)
         {
-            uart_write( uart,buf,count,0);
+            uart_write(uart, buf, len, 0);
             led_toggle(LED_RED);
         }
-        /*
-        if ( uart_getchar(uart,&ch))
-        {
-            uart_putchar( uart,ch);
-            led_toggle(LED_RED);
-
-        }*/
 
 //        if ( uart_getchar(uart,&ch))
 //        {
@@ -49,16 +77,94 @@ void main( void)
 
     }
 }
+*/
 
-void _uart_active_send()
+void uartecho1()
 {
+    TiUartAdapter * uart;
+    char ch;
+    intx count;
+
+    target_init();
+    led_open();
+    led_on( LED_ALL);
+    hal_delayms( 500 );
+    led_off( LED_ALL );
+
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+
+    while (1)
+    {
+        count = uart_getchar(uart, &ch);
+        if (count > 0)
+        {
+            while (1)
+            {
+                count = uart_putchar(uart, ch+1);
+                if (count > 0)
+                    break;
+            }
+            led_toggle(LED_RED);
+        }
+    }
 }
 
-void _uart_echo_01()
+void uartecho2()
 {
+    TiUartAdapter * uart;
+    char buf[40];
+    intx len, count;
+
+    count = 0;
+
+    //target_init();
+    led_open();
+    led_on( LED_ALL);
+    hal_delayms( 500 );
+    led_off( LED_ALL );
+
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+
+    while (1)
+    {
+        len = uart_read(uart, buf, sizeof(buf), 0);
+        if (len > 0)
+        {
+            count = 0;
+            while (count < len)
+            {
+                count += uart_write(uart, buf, len, 0);
+            }
+            
+            led_toggle(LED_RED);
+        }
+    }
 }
 
-void _uart_echo_02()
+void uart_active_send()
 {
-}
+    TiUartAdapter * uart;
+    uint8 ch;
+    intx count;
 
+    count = 0;
+
+    target_init();
+    led_open();
+    led_on( LED_ALL);
+    hal_delayms( 500 );
+    led_off( LED_ALL );
+
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+
+    while ( 1)
+    {
+        ch = count++;
+        uart_putchar(uart, ch);
+        hal_delayms(500);
+        led_toggle(LED_RED);
+    }
+}

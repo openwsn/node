@@ -1,1 +1,13 @@
 sniffer node in an sniffer network
+
+Q: Difference between snifferbase and sniffernode?
+R:
+- Snifferbase can be also used as a sniffer device, which is the same as the sniffer node
+- Snifferbase will actively send the data to the computer, while the sniffer node program is an node in the sniffer network, it only send the frame when it receives an request from snifferbase or computer.
+
+Besides the above, the two program should be almost same.
+
+History
+==================================================
+modified by zhangwei in 2011.09.10
+- Revision

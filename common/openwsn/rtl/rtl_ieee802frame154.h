@@ -305,7 +305,7 @@ TiIEEE802Frame154Descriptor * ieee802frame154_format( TiIEEE802Frame154Descripto
 char * ieee802frame154_assemble( TiIEEE802Frame154Descriptor * desc, uint8 * total_length );
 bool ieee802frame154_parse( TiIEEE802Frame154Descriptor * desc, char * buf, uint8 len );
 
-inline char * ieee802frame154_buffer( TiIEEE802Frame154Descriptor * desc ) 
+__inline char * ieee802frame154_buffer( TiIEEE802Frame154Descriptor * desc ) 
 {
 	return ((desc)->buf);
 }

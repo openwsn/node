@@ -1,5 +1,3 @@
-#ifndef _HAL_DEBUGIO_H_6579_
-#define _HAL_DEBUGIO_H_6579_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -25,6 +23,8 @@
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
  *
  ******************************************************************************/
+#ifndef _HAL_DEBUGIO_H_6579_
+#define _HAL_DEBUGIO_H_6579_
 
 /* 
  *******************************************************************************
@@ -91,7 +91,7 @@ extern "C"{
  * display state value using the default three LEDs
  * state = 000 wll turn off all the LEDs. other values include 001 to 111.
  */
-
+                   
 TiDebugIoAdapter * dbio_open( uint16 bandrate );
 void dbio_close( TiDebugIoAdapter * dbio );
 char dbio_getchar( TiDebugIoAdapter * dbio );
@@ -105,7 +105,7 @@ intx dbio_putchar( TiDebugIoAdapter * dbio, char ch );
  * 
  * @return None. 
  */
-void dbio_init();
+void dbio_init(void);
 
 //TiByteDeviceInterface * dbio_interface( TiByteDeviceInterface * intf );
 

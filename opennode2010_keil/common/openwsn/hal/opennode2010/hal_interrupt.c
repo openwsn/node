@@ -42,6 +42,7 @@
 
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 // #include "./cm3/device/stm32f10x/stm32f10x.h"
+//#include "hal_stm32f10x_it.c" 
 #endif
 
 #ifdef CONFIG_TARGETBOARD_GAINZ
@@ -103,10 +104,18 @@ int hal_getobjecthandler( uint8 num, TiFunEventHandler * phandler, void ** powne
 }
 #endif
 
-/* transfer the call to an interrupt as the call to an object handler. this function 
+/**
+ * transfer the call to an interrupt as the call to an object handler. this function 
  * is usually called inside an interrupt routine 
+ *
+ * @attention
+ * - In order to improve performance, this function should be an inline function.
+ *   However, since I moved the interrupt handler service routines to other module,
+ *   i had to remove the inline decorator or else link error. The linker will complain
+ *   it cannot find hal_invokehandler if inline is still kept.
  */
-inline void hal_invokehandler( uint8 num, TiEvent * e )
+//inline void hal_invokehandler( uint8 num, TiEvent * e )
+void hal_invokehandler( uint8 num, TiEvent * e )
 {
 	_TiIntHandlerItem * item;
 	item = &(m_int2handler[num % CONFIG_INT2HANDLER_CAPACITY]);
@@ -133,6 +142,7 @@ inline void hal_invokehandler( uint8 num, TiEvent * e )
  * The current versioin startup file recognize the following interrupt service routines
  * (You can find them in startup_stm32f10x_hd.s):
  */
+ 
 
 /*
 WWDG_IRQHandler
@@ -211,20 +221,26 @@ void TAMPER_IRQHandler(void)
 {
 }
 */
+/* @modified by zhangwei on 2011.09.11
+ * moved to hal_stm32f10x_it.c
 void RTC_IRQHandler(void)
 {
 	hal_invokehandler( INTNUM_RTC, NULL );
 }
+*/
 /*
 void FLASH_IRQHandler(void)
 {
 }
 */
 // RCC_IRQHandler
+/* @modified by zhangwei on 2011.09.11
+ * moved to hal_stm32f10x_it.c
 void EXTI0_IRQHandler(void)
 {
 	hal_invokehandler( INTNUM_FRAME_ACCEPTED, NULL );
 }
+*/
 /*
 void EXTI1_IRQHandler(void)
 {
@@ -273,6 +289,10 @@ void CAN1_SCE_IRQHandler(void)
 // TIM1_TRG_COM_IRQHandler
 // TIM1_CC_IRQHandler
 */
+
+/* @modified by zhangwei on 2011.09.11
+ * moved to hal_stm32f10x_it.c
+
 void TIM2_IRQHandler(void)
 {
 	hal_invokehandler( INTNUM_TIMER2, NULL );
@@ -308,6 +328,7 @@ void RTCAlarm_IRQHandler(void)
 {
 	hal_invokehandler( INTNUM_RTCALARM, NULL );
 }
+*/
 
 // USBWakeUp_IRQHandler
 // TIM8_BRK_IRQHandler

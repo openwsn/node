@@ -1,3 +1,12 @@
+Examples Tested Ok
+
+- hal_blink
+- hal_cc2520_regread
+- hal_cc2520echo
+- hal_cc2520tx
+- hal_cc2520rx
+
+
 2011.06.05
 
 - upgrade global interrupt control support by improve four functions: hal_enable_interrupts(), hal_disable_interrupts(), hal_atomic_begin(), hal_atomic_end()
