@@ -396,9 +396,9 @@
               <FilePath>.\apl_configall.h</FilePath>
             </File>
             <File>
-              <FileName>sio_acceptor_test.c</FileName>
+              <FileName>apl_sio_acceptor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sio_acceptor_test.c</FilePath>
+              <FilePath>.\apl_sio_acceptor.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -40,81 +40,13 @@
 
 TiUartAdapter m_uart;
 
-static void uartecho1(void);
-static void uartecho2(void);
 static void uart_active_send1(void);
 static void uart_active_send2(void);
 
 int main(void)
 {
-    uartecho1();
-    //uartecho2();
-    //uart_active_send();
+    uart_active_send2();
     return 0;
-}
-
-void uartecho1()
-{
-    TiUartAdapter * uart;
-    char ch;
-    intx count;
-
-    target_init();
-    led_open();
-    led_on( LED_ALL);
-    hal_delayms( 500 );
-    led_off( LED_ALL );
-
-    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
-
-    while (1)
-    {
-        count = uart_getchar(uart, &ch);
-        if (count > 0)
-        {
-            while (1)
-            {
-                count = uart_putchar(uart, ch+1);
-                if (count > 0)
-                    break;
-            }
-            led_toggle(LED_RED);
-        }
-    }
-}
-
-void uartecho2()
-{
-    TiUartAdapter * uart;
-    char buf[40];
-    intx len, count;
-
-    count = 0;
-
-    //target_init();
-    led_open();
-    led_on( LED_ALL);
-    hal_delayms( 500 );
-    led_off( LED_ALL );
-
-    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
-
-    while (1)
-    {
-        len = uart_read(uart, buf, sizeof(buf), 0);
-        if (len > 0)
-        {
-            count = 0;
-            while (count < len)
-            {
-                count += uart_write(uart, buf, len, 0);
-            }
-            
-            led_toggle(LED_RED);
-        }
-    }
 }
 
 void uart_active_send1()
