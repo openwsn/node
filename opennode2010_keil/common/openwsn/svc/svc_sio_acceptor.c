@@ -35,6 +35,18 @@
 #include "../rtl/rtl_frame.h"
 #include "svc_sio_acceptor.h"
 
+/* About the packing and alignment 
+ * - #pragma pack(n)
+ *   http://www.keil.com/support/man/docs/armccref/armccref_CJAFEEDG.htm    
+ * - __packed
+ *   http://www.keil.com/support/man/docs/armccref/armccref_CJAFJHJD.htm
+ * - __attribute__((packed))
+ *   http://www.keil.com/support/man/docs/armccref/armccref_Cacejdia.htm
+ * - 解析#pragma指令
+ *   http://blog.csdn.net/jamestaosh/article/details/5816009
+ *   这篇文章讲到了#pragma pack(1)和__packed区别，值得阅读和思考
+ */
+
 static void _sac_txbuf_to_device( TiSioAcceptor * sac );
 static void _sac_device_to_rxbuf( TiSioAcceptor * sac );
 

@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>sio_frame</TargetName>
+      <TargetName>sio_server</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -42,14 +42,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\</OutputDirectory>
-          <OutputName>apl_sio_frame</OutputName>
+          <OutputDirectory>D:\temp\keil\</OutputDirectory>
+          <OutputName>apl_sio_server</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>D:\temp\openwsn\</ListingPath>
+          <ListingPath>D:\temp\keil\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>1</CreateBatchFile>
@@ -391,11 +391,6 @@
               <FilePath>.\apl_ieee802frame154_dump.c</FilePath>
             </File>
             <File>
-              <FileName>apl_sio_frame.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\apl_sio_frame.c</FilePath>
-            </File>
-            <File>
               <FileName>apl_foundation.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\apl_foundation.h</FilePath>
@@ -404,6 +399,11 @@
               <FileName>apl_ieee802frame154_dump.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\apl_ieee802frame154_dump.h</FilePath>
+            </File>
+            <File>
+              <FileName>apl_sio_server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\apl_sio_server.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -544,6 +544,11 @@
               <FileName>hal_targetboard.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_stm32f10x_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.c</FilePath>
             </File>
           </Files>
         </Group>

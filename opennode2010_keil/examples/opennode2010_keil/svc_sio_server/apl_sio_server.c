@@ -104,10 +104,9 @@
 TiUartAdapter m_uart;
 TiSioAcceptor m_sac;
 
-static char m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static byte m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
-static void _sio_active_sender(void);
-static void _sio_passive_service();
+static void _sio_frameserver();
 static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
 
 /*******************************************************************************
@@ -116,70 +115,14 @@ static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
 
 int main(void)
 {
-    //_sio_active_sender();
-    _sio_passive_service();
-}
-
-/** 
- * Actively sending frames through the serial communication port. The frame is 
- * generated in this function. 
- */
-void _sio_active_sender()
-{
-    char * msg = "welcome to active frame sender ...";
-	TiFrame * txbuf = (TiFrame *)(&m_sio_rxbuf[0]);
-	TiUartAdapter * uart;
-    TiSioAcceptor * sio;
-
-	// initialize the target board and flash welcome LED to indicate the application
-    // is started successfully.
-
-	target_init();
-	led_open();
-	led_on( LED_RED );
-	hal_delayms( 500 );
-	led_off( LED_ALL );
-
-	// #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-	// rtl_init(dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report);
-    // dbc_mem(msg, strlen(msg));
-    // #endif
-
-    uart = uart_construct((void *)&m_uart, sizeof(TiUartAdapter));
-    uart = uart_open(uart, 1, 9600, 8, 1, 0);
-    hal_assert(uart != NULL);
-    uart_write(uart, msg, strlen(msg), 0x00);
-
-	rtl_init(uart, uart_putchar, uart_getchar_wait, hal_assert_report);
-    dbc_mem(msg, strlen(msg));
-
-    // initialize the serial I/O acceptor object for frame based sending and receiving.
-    sio = sac_open(&m_sac, sizeof(m_sac), uart); 
-
-	while(1) 
-	{    
-        // uart_write(uart, msg, strlen(msg), 0x00);
-    
-        txbuf = (TiFrame *)(&m_sio_rxbuf[0]);
-        txbuf = _sio_init_frame((byte*)(&m_sio_rxbuf[0]), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), CMD_DATA_RESPONSE);
-		if (sac_framesend(sio, txbuf, 0) > 0)
-			frame_clear(txbuf);
-
-        sac_evolve( sio, NULL ); 
-        hal_delayms(500);
-		led_toggle( LED_RED );
-    }
-    
-    sac_close(sio);
-    uart_close(uart);
-    uart_destroy(uart);
+    _sio_frameserver();
 }
 
 /** 
  * This is a simple frame based serial I/O server. It wills send response frame 
  * when only receiving an request frame.
  */
-void _sio_passive_service(void)
+void _sio_frameserver(void)
 {
     char * msg = "welcome to serial I/O service ...";
 	TiFrame * rxbuf = (TiFrame *)(m_sio_rxbuf[0]);

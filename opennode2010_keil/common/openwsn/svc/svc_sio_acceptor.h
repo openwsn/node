@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -75,7 +75,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 /**
  * TiSioAcceptor component
  * 
@@ -88,8 +88,10 @@ extern "C" {
  * function of TiSioAcceptor, you will read/write an complete packet/frame.
  * The framing mechanism currently is based on the rules in SLIP protocol. 
  */
-#pragma pack(1) 
-typedef struct{
+//#pragma pack(push) 
+//#pragma pack(1) 
+// the above two line equals #pragma pack(push,1)
+typedef __packed struct{
 	uint8 state;
 	TiUartAdapter * device;
 	TiIoBuf * rxbuf;
@@ -105,6 +107,7 @@ typedef struct{
 	char tmpbuf_block[CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY];
     #endif
 }TiSioAcceptor;
+//#pragma pack(pop) 
 
 #ifdef CONFIG_DYNA_MEMORY
 TiSioAcceptor * sac_create( TiUartAdapter * uart )

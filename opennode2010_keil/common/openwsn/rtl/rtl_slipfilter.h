@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -30,8 +30,8 @@
 #include "rtl_foundation.h"
 #include "rtl_iobuf.h"
 
-#pragma pack(1) 
-typedef struct{
+//#pragma pack(1) 
+typedef __packed struct{
   // int received;
   // uint8 tx_state; // not used now
   uint8 rx_state;
