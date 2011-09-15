@@ -106,8 +106,8 @@ TiSioAcceptor m_sac;
 
 static byte m_sio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
-static void _sio_frameserver();
-static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
+static void _sio_frameserver(void);
+//static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
 
 /*******************************************************************************
  * functions 
@@ -116,6 +116,7 @@ static TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type);
 int main(void)
 {
     _sio_frameserver();
+	return 0;
 }
 
 /** 
@@ -125,7 +126,7 @@ int main(void)
 void _sio_frameserver(void)
 {
     char * msg = "welcome to serial I/O service ...";
-	TiFrame * rxbuf = (TiFrame *)(m_sio_rxbuf[0]);
+	TiFrame * rxbuf = (TiFrame *)(&m_sio_rxbuf[0]);
     TiFrame * txbuf;
 	TiUartAdapter * uart;
     TiSioAcceptor * sio;
@@ -142,7 +143,7 @@ void _sio_frameserver(void)
 	led_off( LED_ALL );
 
 	// #ifndef CONFIG_UART_INTERRUPT_DRIVEN
-	// rtl_init(dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report);
+    // rtl_init(dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report);
     // dbc_mem(msg, strlen(msg));
     // #endif
 
@@ -151,7 +152,7 @@ void _sio_frameserver(void)
     hal_assert(uart != NULL);
     uart_write(uart, msg, strlen(msg), 0x00);
 
-	rtl_init(uart, uart_putchar, uart_getchar_wait, hal_assert_report);
+	rtl_init(uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report);
     dbc_mem(msg, strlen(msg));
 
     // initialize the serial I/O acceptor object for frame based sending and receiving.
@@ -168,7 +169,6 @@ void _sio_frameserver(void)
             {
         		led_toggle( LED_RED );
                 state = 1;
-                state = 0;
                 hal_delayms(500);
             };
             break;
@@ -198,40 +198,40 @@ void _sio_frameserver(void)
  *      and frame_length(f).
  * @return None. 
  */
-TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type)
-{
-    TiFrame * frame;
-	char * data;
-	TiIEEE802Frame154Descriptor m_desc, *desc;
-	uint8 seqid=6;
-    int i;
-    						
-    hal_assert(len >= FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE));                            				 
-    // memory, memory size, init_layer, init_layerstart, init_layercapacity
-    frame = frame_open( buf, len, 3, 16, 20 );
-	//frame_reset(frame, 3, 16, 0);
-    
-    data = frame_startptr(frame);
-    for (i=0; i<frame_capacity(frame); i++)
-    {
-        data[i] = '0' + i;
-	}
-    data[0] = (uint8)type;
-    frame_setlength(frame, frame_capacity(frame));
-
-    frame_skipouter(frame, 12, 2);
-    desc = ieee802frame154_open(&m_desc);
-    desc = ieee802frame154_format(desc, frame_startptr(frame), frame_capacity(frame), 
-        FRAME154_DEF_FRAMECONTROL_DATA ); 
-    hal_assert(desc != NULL);
-
-    ieee802frame154_set_sequence(desc, seqid++); 
-    ieee802frame154_set_panto(desc, PANID);
-    ieee802frame154_set_shortaddrto(desc, REMOTE_ADDRESS);
-    ieee802frame154_set_panfrom(desc, PANID);
-    ieee802frame154_set_shortaddrfrom(desc, LOCAL_ADDRESS);
-    frame_setlength(frame, 12+2+20);
-
-	frame_movefirst(frame);
-    return frame;
-}
+//TiFrame * _sio_init_frame(byte * buf, uint16 len, uint8 type)
+//{
+//    TiFrame * frame;
+//	char * data;
+//	TiIEEE802Frame154Descriptor m_desc, *desc;
+//	uint8 seqid=6;
+//    int i;
+//    						
+//    hal_assert(len >= FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE));                            				 
+//    // memory, memory size, init_layer, init_layerstart, init_layercapacity
+//    frame = frame_open( (char *) buf, len, 3, 16, 20 );
+//	//frame_reset(frame, 3, 16, 0);
+//    
+//    data = frame_startptr(frame);
+//    for (i=0; i<frame_capacity(frame); i++)
+//    {
+//        data[i] = '0' + i;
+//	}
+//    data[0] = (uint8)type;
+//    frame_setlength(frame, frame_capacity(frame));
+//
+//    frame_skipouter(frame, 12, 2);
+//    desc = ieee802frame154_open(&m_desc);
+//    desc = ieee802frame154_format(desc, frame_startptr(frame), frame_capacity(frame), 
+//        FRAME154_DEF_FRAMECONTROL_DATA ); 
+//    hal_assert(desc != NULL);
+//
+//    ieee802frame154_set_sequence(desc, seqid++); 
+//    ieee802frame154_set_panto(desc, PANID);
+//    ieee802frame154_set_shortaddrto(desc, REMOTE_ADDRESS);
+//    ieee802frame154_set_panfrom(desc, PANID);
+//    ieee802frame154_set_shortaddrfrom(desc, LOCAL_ADDRESS);
+//    frame_setlength(frame, 12+2+20);
+//
+//	frame_movefirst(frame);
+//    return frame;
+//}

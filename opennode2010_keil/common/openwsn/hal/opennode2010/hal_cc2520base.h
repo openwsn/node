@@ -405,7 +405,7 @@ typedef union {
     struct {
         BYTE b0;
         BYTE b1;
-    };
+    }mem;
 } EWORD;
 typedef union {
     DWORD dw;
@@ -414,7 +414,7 @@ typedef union {
         BYTE b1;
         BYTE b2;
         BYTE b3;
-    };
+    }men;
 } EDWORD;    
 #endif /* CONFIG_TOOLCHAIN_MDK */
 #else
@@ -423,7 +423,7 @@ typedef union {
     struct {
         BYTE b0;
         BYTE b1;
-    };
+    }men;
 } EWORD;
 typedef union {
     DWORD dw;
@@ -432,7 +432,7 @@ typedef union {
         BYTE b1;
         BYTE b2;
         BYTE b3;
-    };
+    }men;
 } EDWORD;    
 #endif /* CONFIG_TARGETBOATD_OPENNODE2010 */
 
