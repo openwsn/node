@@ -169,8 +169,8 @@ void _sio_frameserver(void)
             {
         		led_toggle( LED_RED );
                 state = 1;
-                hal_delayms(500);
-            };
+                //hal_delayms(500);  w
+           };
             break;
         case 1:
             txbuf = rxbuf;
@@ -187,9 +187,9 @@ void _sio_frameserver(void)
         sac_evolve( sio, NULL );
     }
     
-    sac_close(sio);
-    uart_close(uart);
-    uart_destroy(uart);
+    // sac_close(sio);
+    // uart_close(uart);
+    // uart_destroy(uart);
 }
 
 /**

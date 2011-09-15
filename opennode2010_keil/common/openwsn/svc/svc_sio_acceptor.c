@@ -90,12 +90,12 @@ TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * u
 		memset( sac, 0x00, memsize );
 		sac->state = 0;
 		sac->device = uart;
-		sac->txbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
+		sac->txbuf = iobuf_open( &sac->txbuf_block, CONFIG_SIOACCEPTOR_TXBUF_CAPACITY );
 		sac->rxbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_RXBUF_CAPACITY );
 		#ifdef SIO_ACCEPTOR_SLIP_ENABLE
 		sac->rx_accepted = false;
 		slip_filter_open( &sac->slipfilter, sizeof(TiSlipFilter) );
-		sac->tmpbuf = iobuf_open( &sac->rxbuf_block, CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY );
+		sac->tmpbuf = iobuf_open( &sac->tmpbuf_block, CONFIG_SIOACCEPTOR_TMPBUF_CAPACITY );
 		#endif
 	}
 
@@ -379,7 +379,7 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 		 * found will be placed into io->rxbuf by the framing process.
 		 */
         count = uart_read( sac->device, iobuf_endptr(sac->tmpbuf), iobuf_available(sac->tmpbuf), 0x00);
-		iobuf_adjustlength( sac->rxbuf, count );
+		iobuf_adjustlength( sac->tmpbuf, count );
 	}
 
 	if ((sac->rx_accepted == 0) && (!iobuf_empty(sac->tmpbuf)))

@@ -275,7 +275,7 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 		if (iobuf_full(output))
 			break;
 
-		iobuf_getchar(input, &c );
+		iobuf_getchar(input, (char *)&c );
 		count ++;
 
         switch(c){
@@ -309,7 +309,7 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 
         /* otherwise, we just send the character */  
         default:
-            iobuf_putchar(output, c);
+            iobuf_putchar(output, (char)c);
         }
 	}
 
@@ -354,7 +354,7 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 		}
 
 		/* get a character from input buffer to process */
-        iobuf_getchar( input, &c );
+        iobuf_getchar( input, (char *)&c );
 
 		switch (slip->rx_state)
 		{
@@ -405,6 +405,8 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 			}
 			break;
 		}
+
+		
 	}
 
 	/* If there're two END characters consecutively, then the state machine will 
