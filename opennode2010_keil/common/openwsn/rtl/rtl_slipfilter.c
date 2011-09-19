@@ -24,6 +24,12 @@
  *
  ******************************************************************************/
 
+/* @section history
+ * @modified by zhangwei on 2011.08.17
+ * - add support to judge output buffer full. If the output buffer is full, then
+ *   rxhandler will return -1.
+ */
+
 /* This module implements a framing mechanism named SLIP protocol. It's used to 
  * split the continuous byte stream into consecutive frames. 
  * 
@@ -228,7 +234,7 @@ void slip_filter_free( TiSlipFilter * slip )
 
 TiSlipFilter * slip_filter_open( TiSlipFilter * slip, uintx size )
 {
-	rtl_assert( sizeof(TiSlipFilter) <= size ); 
+	rtl_assert( sizeof(TiSlipFilter) <= size );
 	memset( slip, 0x00, sizeof(TiSlipFilter) );
 	slip->rx_state = SLIP_STATE_IDLE;
 	return slip;
@@ -245,22 +251,39 @@ void slip_filter_close( TiSlipFilter * slip )
  *
  * Currently, the output buffer must be large enough to hold all temperarily output
  * or else the possible truncate may lead to unexpected error.
- * 
+ *
  * Attention: How many bytes the TiIoBuf object can hold depends on "uintx" macro.
  * This type limits the maximum capacity of the TiIoBuf object. In most of the systems,
  * uintx is defined as uint16 or uint32.
- * 
+ *
+ * @attention
+ * Negative "count" value indicates the output buffer is full and the frame
+ * inside the output buffer is still not complete. This should never happen.
+ * However, the TiSlipFilter cannot able to process it. The master program
+ * should deal with it, for example, clear the buffer.
+ *
  * @param input Contains the packet to be sent. iobuf_ptr() is the data address and
  *		iobuf_length() is the data length.
- * @param output Contains the frame for sending. 
+ * @param output Contains the frame for sending.
  * @return The length of the frame successfully processed in the input buffer.
- *		May return 0 or negetive value if failed. Attention the data inside input 
+ *		May return 0 or negetive value if failed. Attention the data inside input
  *      buffer will be cleared if they were processed successfully into output buffer.
+ *
+ * @return
+ *      - 1     indicate buffer full and failed to place more characters in the output buffer.
+ *              if the buffer is full and the frame is complete, then still return non negative.
+ *
+ * @modified by zhangwei on 2011.08.17
+ *  - Add support to negative return value. If this function returns -1, then indicate
+ * the frame in output buffer isn't complete but the buffer is already full. The
+ * master program should deal with it.
  */
 int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
 {
 	int count = 0;
 	unsigned char c;
+
+    rtl_assert(iobuf_capacity(output) >= 2);
 
     /* send an initial END character to flush out any data that may
      * have accumulated in the receiver due to line noise
@@ -273,8 +296,10 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 	while (!iobuf_empty(input))
 	{
 		if (iobuf_full(output))
+        {
+            count = -1;
 			break;
-
+        }
 		iobuf_getchar(input, (char *)&c );
 		count ++;
 
@@ -290,6 +315,11 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 			// @todo
 			// You must guarantee the output buffer is enough to hold the char
 			// or else iobuf_putchar will drop the char
+            if (iobuf_full(output))
+            {
+                count = -1;
+                break;
+            }
             iobuf_putchar(output, ESC_END);
             break;
 
@@ -304,46 +334,71 @@ int slip_filter_txhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 			// @todo
 			// You must guarantee the output buffer is enough to hold the char
 			// or else iobuf_putchar will drop the char
+            if (iobuf_full(output))
+            {
+                count = -1;
+                break;
+            }
             iobuf_putchar(output, ESC_ESC);
             break;
 
-        /* otherwise, we just send the character */  
+        /* otherwise, we just send the character */
         default:
             iobuf_putchar(output, (char)c);
         }
 	}
 
     /* tell the receiver that we're done sending the packet */
-    iobuf_putchar(output, END);
+    if (iobuf_full(output))
+        count = -1;
+    else
+        iobuf_putchar(output, END);
+
+    // @attention
+    // Negative "count" value indicates the output buffer is full and the frame
+    // inside the output buffer is still not complete. This should never happen.
+    // However, the TiSlipFilter cannot able to process it. The master program
+    // should deal with it, for example, clear the buffer.
+    //
+    if (count < 0)
+    {
+        // May error processing here. But this should be done by the master program
+        // instead of the TiSlipFilter itself.
+    }
 
 	return count;
 }
 
 /**
  * Process input stream can do framing with it. The founded frame is placed inside
- * output buffer. 
- * 
- * attention the output buffer should be large enough to hold an entire frame 
+ * output buffer.
+ *
+ * attention the output buffer should be large enough to hold an entire frame
  * or else this function will drop these long frames to enable the program continue
  * running. However, this should not happen for high reliable applications.
- * 
- * @return 
- *      > 0				Indicate there's an entire frame inside output buffer. 
+ *
+ * @attention
+ * - This function affect input, output queue and slip->rs_state.
+ * - Before you calling this function, attention there may data already in input
+ *   and output queue.
+ *
+ * @return
+ *      > 0				Indicate there's an entire frame inside output buffer.
  *		0               not found yet. but there maybe data already pending inside output buffer.
  */
 int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * output )
 {
 	/* @modified by Jiang Ridong on 2011.08.09
-     * - Bug fixed. In the past, we use signed char, so the comparison between a 
+     * - Bug fixed. In the past, we use signed char, so the comparison between a
      * signed char and END character (0xC0) is always false. This is at least occured
-     * in MSVC DotNET 2010 because VC will truncate 0xC0 as a signed char which value 
+     * in MSVC DotNET 2010 because VC will truncate 0xC0 as a signed char which value
      * is 0x40(64). This bug is fixed by define variable c as unsigned type.
      */
 	unsigned char c = 0x00;
 	char done = 0;
-    while ((!iobuf_empty(input)) && (!done)) 
+    while ((!iobuf_empty(input)) && (!done))
 	{
-		/* Output buffer full means the frame is too long. We had no better idea but to 
+		/* Output buffer full means the frame is too long. We had no better idea but to
 		 * clear the output buffer and restart the framing process from IDLE state again.
 		 */
 		if (iobuf_full(output))
@@ -404,17 +459,21 @@ int slip_filter_rxhandler( TiSlipFilter * slip, TiIoBuf * input, TiIoBuf * outpu
 				slip->rx_state = SLIP_STATE_RECVING;
 			}
 			break;
+
+		default:
+			slip->rx_state = SLIP_STATE_IDLE;
+			break;
 		}
 
 		
 	}
 
-	/* If there're two END characters consecutively, then the state machine will 
+	/* If there're two END characters consecutively, then the state machine will
 	 * mistaken it as an valid frame. We should ignore those frame whose length is 0.
 	 *
 	 * @attention
 	 * The following judgement assume every frame is start at 0 in the output buffer.
-	 * The caller of this function should guarantee this. 
+	 * The caller of this function should guarantee this.
 	 */
 	if (slip->rx_state == SLIP_STATE_ACCEPTTED)
     {

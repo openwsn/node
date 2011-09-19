@@ -57,21 +57,23 @@
 
 #define VTM_RESOLUTION 5
 
+#define UART_ID 1
+
 #define CONFIG_MIN_SENDING_INTERVAL 1000
 #define CONFIG_MAX_SENDING_INTERVAL 1000
 #define CONFIG_RESPONSE_TIMEOUT 500
 
-static TiTimerAdapter                         	m_timer2;
-static TiTimerAdapter                         	m_timer3;
+static TiUartAdapter m_uart;                                     
+static TiTimerAdapter m_timer2;
+static TiTimerAdapter m_timer3;
 
-
-static TiFrameRxTxInterface                     m_rxtx;
+static TiFrameRxTxInterface m_rxtx;
 static char m_nacmem[NAC_SIZE];
-static TiAloha                                  m_aloha;
-static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                                     m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-TiCc2520Adapter                                 m_cc;
+static TiAloha m_aloha;
+static char m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+TiCc2520Adapter m_cc;
 
 
 static void _aloha_sendnode(void);
@@ -86,7 +88,9 @@ int main(void)
 
 void _aloha_sendnode(void)
 {   
+    char * msg = "welcome to aloha sendnode...\r\n";
     TiCc2520Adapter * cc;
+    TiUartAdapter * uart;
     TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
 	TiAloha * mac;
@@ -102,19 +106,24 @@ void _aloha_sendnode(void)
 	uint8 state;
 	uint16 sendcount, succeed;
     int i;
-    char *pc;
+    char * pc;
 
 	// Initialize the hardware. You can observe the LED flash and UART welcome
 	// string to decide whether the application is started successfully or not.
     seqid =0;
     failed = 0;
 	
+	target_init();
 	led_open();
 	led_on( LED_ALL );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
-    halUartInit(9600,0);
+    //halUartInit(9600,0);
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
 
 	// Construct objects on specified memory blocks. This step should be success 
 	// or you may encounter unexpected mistake or behaviors.
@@ -135,8 +144,6 @@ void _aloha_sendnode(void)
 	
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
     timer3 = timer_open( timer3, 3, NULL, NULL, 0x00 );	
-
-
 	
 	cc2520_open( cc, 0, NULL, NULL, 0x00 );
 	
@@ -206,7 +213,7 @@ void _aloha_sendnode(void)
                     pc = frame_startptr( rxbuf);
                     for ( i=0;i<len;i++)
                     {
-                        USART_Send( pc[i]);
+                        uart_putchar(uart, pc[i]);
                     }
 					state = INIT_STATE;
 					led_toggle(LED_RED);
