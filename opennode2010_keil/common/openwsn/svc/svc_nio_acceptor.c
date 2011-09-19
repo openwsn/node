@@ -235,7 +235,7 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 	nac_evolve(nac, NULL);
 
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    cpu_state = hal_enter_critical();
+    hal_enter_critical();
 #endif
 
     front = fmque_front( nac->rxque );
@@ -250,7 +250,7 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 		ret = 0;
         
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    hal_leave_critical(cpu_state);
+    hal_leave_critical();
 #endif
 
     return ret;
@@ -315,13 +315,15 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	if (!fmque_full(nac->rxque))
 	{   
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		cpu_state = hal_enter_critical();
+		//cpu_state = hal_enter_critical();
+        hal_enter_critical();
 		#endif
         
         _nac_try_recv(nac);
         
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-		hal_leave_critical(cpu_state);
+		//hal_leave_critical(cpu_state);
+        hal_leave_critical();
 		#endif
 	}
 }

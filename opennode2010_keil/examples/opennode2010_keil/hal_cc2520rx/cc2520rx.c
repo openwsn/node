@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -30,15 +30,19 @@
 #include <string.h>
 #include "openwsn/hal/hal_foundation.h"
 #include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/hal/hal_cpu.h"
 #include "openwsn/hal/hal_led.h"
 #include "openwsn/hal/hal_assert.h"
 #include "openwsn/hal/hal_uart.h"
 #include "openwsn/hal/hal_cc2520.h"
 #include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_targetboard.h"
 
 #define CONFIG_LISTENER    
 #undef  CONFIG_LISTENER    
+
+#define UART_ID 1
 
 #define TEST_CHOICE 1
 //#define TEST_ACK
@@ -54,10 +58,8 @@
 
 static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiCc2520Adapter             m_cc;
+TiUartAdapter               m_uart;
 
-void recvnode1(void);
-
-/*
 #if (TEST_CHOICE == 1)
 static void recvnode1(void);
 #endif
@@ -66,12 +68,9 @@ static void recvnode1(void);
 static void recvnode2(void);
 static void _cc2420_listener( void * ccptr, TiEvent * e );
 #endif
-*/
 
 int main(void)
 {
-   recvnode1();
-   /*
     #if (TEST_CHOICE == 1)
 	recvnode1();
     #endif
@@ -79,14 +78,14 @@ int main(void)
     #if (TEST_CHOICE == 2)
 	recvnode2();
     #endif
-	*/
 }
 
-//#if (TEST_CHOICE == 1)
+#if (TEST_CHOICE == 1)
 void recvnode1(void)
 {
-    TiCc2520Adapter * cc;
 	char * msg = "welcome to recvnode...";
+    TiCc2520Adapter * cc;
+    TiUartAdapter * uart;
 	TiFrame * rxbuf;
 	uint8 len;
     uint8 i;
@@ -99,9 +98,10 @@ void recvnode1(void)
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
-	halUartInit(9600,0);
-	//rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-	//dbc_mem( msg, strlen(msg) );
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 
@@ -133,9 +133,23 @@ void recvnode1(void)
             pc = frame_startptr(rxbuf);
             for (i=0; i<len; i++)
             {
-                USART_Send(pc[i]);
+                //uart_putchar(uart, pc[i]);
+                dbc_putchar(pc[i]);
             }
 			led_toggle( LED_RED);
         }
 	}
 }
+#endif
+
+#if (TEST_CHOICE == 2)
+void recvnode2(void)
+{
+}
+#endif
+
+#if (TEST_CHOICE == 2)
+void _cc2420_listener( void * ccptr, TiEvent * e )
+{
+}
+#endif
