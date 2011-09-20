@@ -12,7 +12,7 @@
  ******************************************************************************/
 
 #include "asv_configall.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
 #include "../../../common/openwsn/osx/osx_foundation.h"
 
 #endif

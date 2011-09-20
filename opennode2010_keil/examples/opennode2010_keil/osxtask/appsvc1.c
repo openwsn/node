@@ -7,11 +7,12 @@
 #include "asv_configall.h"
 #include <string.h>
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"
 
+#define USART_Send
  //TiAdcAdapter  g_adc;
  //TiLightSensor g_light;
  //TiUartAdapter g_uart;

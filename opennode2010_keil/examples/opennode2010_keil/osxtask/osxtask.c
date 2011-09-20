@@ -19,14 +19,14 @@
 #include "apl_foundation.h"
 #include "../../../common/openwsn/rtl/rtl_foundation.h"
 #include "../../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"//why include hal_timer?
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_timer.h"//why include hal_timer?
+#include "../../../common/openwsn/hal/hal_debugio.h"
 #include "../../../common/openwsn/osx/osx_kernel.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_rtc.h"
+#include "../../../common/openwsn/hal/hal_rtc.h"
 #include "../../../common/openwsn/osx/osx_taskpool.h"
 #include "../../../common/openwsn/osx/osx_taskheap.h"
 #include "asv_foundation.h"
@@ -41,6 +41,11 @@
 
 #define CONFIG_UART_ID              0
 #define CONFIG_TIMER_ID             1
+
+#define target_init(void);
+#define USART_Send
+#define halUartInit
+#define hal_delay
 
 static TiUartAdapter        m_uart;      
 static TiAppService1                       m_svcmem1;
@@ -174,7 +179,7 @@ void osx_task_stop_mode( void)
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,3,1);
-    rtc_setalrm_count(rtc,0);
+    rtc_setalrm_count(rtc,0,0);
     rtc_setprscaler( rtc,32767);//基本单位秒
     rtc_start( rtc);
 
@@ -182,7 +187,7 @@ void osx_task_stop_mode( void)
     {
         USART_Send( 0xac);//todo for testing
         heap_task_evovle(heap,rtc);
-        rtc_setalrm_count(rtc,0);
+        rtc_setalrm_count(rtc,0,0);
         hal_delay(1);//todo for testing
         PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
     }

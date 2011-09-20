@@ -145,7 +145,7 @@ void ledflood( uint16 ontime, uint16 offtime )
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
 	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 
 		NULL, NULL, 0x00);
-	flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	flood_open( net, (TiNioNetLayerDispatcher *) mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	hal_assert( (timer2 != NULL) && (mac != NULL) );
 
    
