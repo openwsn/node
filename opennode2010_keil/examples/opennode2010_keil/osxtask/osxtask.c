@@ -41,6 +41,8 @@
 
 #define CONFIG_UART_ID              0
 #define CONFIG_TIMER_ID             1
+
+#define target_init(void);
 #define USART_Send
 #define halUartInit
 #define hal_delay
