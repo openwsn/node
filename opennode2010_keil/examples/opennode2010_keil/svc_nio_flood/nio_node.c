@@ -181,7 +181,7 @@ void floodnode(void)
 	#ifdef CONFIG_TEST_LISTENER
 	net = flood_open( net, mac, NULL, _flood_listener, NULL, PANID, LOCAL_ADDRESS );
 	#else
-	net = flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	net = flood_open( net, (TiNioNetLayerDispatcher *)mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	#endif
 
 	//todo 
