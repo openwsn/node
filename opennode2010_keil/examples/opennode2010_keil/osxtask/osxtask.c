@@ -45,12 +45,12 @@
 #define halUartInit
 #define hal_delay
 
-TiAppService1                       m_svcmem1;
-TiAppService2                       m_svcmem2;
-
-   uint16                            g_count=0;
-   uint16                            rtccount=0;
-   int16                             tasktimeline=0;
+static TiUartAdapter        m_uart;      
+static TiAppService1                       m_svcmem1;
+static TiAppService2                       m_svcmem2;
+static uint16                            g_count=0;
+static    uint16                            rtccount=0;
+static   int16                             tasktimeline=0;
 
 static TiRtc m_rtc;
 
@@ -84,6 +84,9 @@ int main()
 
 void osx_task_second_interrupt_rtc( void)
 {
+	char * msg = "welcome to sendnode...";
+    TiUartAdapter * uart;
+
     TiAppService1 * asv1;
     TiAppService2 * asv2;
 
@@ -91,6 +94,18 @@ void osx_task_second_interrupt_rtc( void)
 
     int8 idx;
     TiOsxTaskHeapItem item;
+    
+	target_init();
+	led_open();
+	led_on( LED_ALL );
+	hal_delayms( 500 );
+	led_off( LED_ALL );
+
+    //uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    //uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	//rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
+   
 
     tpl = osx_taskpool_construct( (void *)&m_taskpool, sizeof(TiOsxTaskPool) );
     heap = osx_taskheap_open( &m_taskheap, tpl );//构造一个堆
@@ -111,12 +126,9 @@ void osx_task_second_interrupt_rtc( void)
     idx = osx_taskheap_insert( heap, &item );
 
 
-    led_open();
-    halUartInit(9600,0);
-    led_on( LED_RED);
-    hal_delay( 500);
-    led_off( LED_RED);
-    USART_Send( 0xf1);//todo for testing
+    //halUartInit(9600,0);
+    //USART_Send( 0xf1);
+    //dbc_putchar(0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,1,1);
     rtc_setprscaler( rtc,32767);
