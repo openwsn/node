@@ -12,6 +12,7 @@
 #include "asv_foundation.h"
 #include "appsvc2.h"
 
+#define USART_Send
 //TiCc2420Adapter		g_cc;
 TiUartAdapter		g_uart;
 

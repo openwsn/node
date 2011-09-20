@@ -12,6 +12,7 @@
 #include "asv_foundation.h"
 #include "appsvc1.h"
 
+#define USART_Send
  //TiAdcAdapter  g_adc;
  //TiLightSensor g_light;
  //TiUartAdapter g_uart;

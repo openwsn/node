@@ -41,6 +41,9 @@
 
 #define CONFIG_UART_ID              0
 #define CONFIG_TIMER_ID             1
+#define USART_Send
+#define halUartInit
+#define hal_delay
 
 TiAppService1                       m_svcmem1;
 TiAppService2                       m_svcmem2;
