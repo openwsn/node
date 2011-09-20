@@ -74,7 +74,10 @@ void sendnode1(void)
     TiUartAdapter * uart;
     TiFrame * txbuf;
     TiIEEE802Frame154Descriptor * desc;
-    uintx tmp=0;
+    uint8 initlayer;
+    uint8 initlayerstart;
+    uint8 initlayersize;
+    uint8 tmp=0;
 
     uint8 i, first, seqid, option, len;
     char * ptr;
@@ -104,29 +107,40 @@ void sendnode1(void)
     desc = ieee802frame154_open( &m_desc );
     option = 0x00;
 
+    // to see the structure size. for debugging only
+    tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
+    dbc_uint8(tmp);
+    tmp = sizeof(TiFrame); 
+    dbc_uint8(tmp);
+
     while(1)  
     {
         // @attention
         // - When you open the frame, you must guarantee there're at least two empty
         //   byte space for later frame_skipouter(), or else you'll encounter assertion
         //   failure in the rtl_frame module.
-        tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE); // for debug seeing local variable only
-        txbuf = frame_open((char*)(&m_txbuf), tmp, 3, 20, tmp-23 );
-        // frame_reset(txbuf, 3, 20, .. );
-        ptr = frame_startptr(txbuf);
+        initlayer = 3;
+        initlayerstart = 13;
+        initlayersize = 6;
+        txbuf = frame_open((char*)(&m_txbuf), sizeof(m_txbuf), initlayer, initlayerstart, initlayersize );
 
+        // assign some random data into the frame. for demostration only.        
+        ptr = frame_startptr(txbuf);
         for (i = 0; i< 6; i++)
             ptr[i] = i;
-        frame_skipouter(txbuf, 12, 2);
-        desc = ieee802frame154_format( desc, frame_startptr( txbuf), frame_capacity( txbuf ), 
-            FRAME154_DEF_FRAMECONTROL_DATA ); 
+
+        // create the 802.15.4 protocol header. attention it requires at least 12 bytes 
+        // for the header and 2 bytes for the tail(CRC checdum).
+        frame_skipouter(txbuf, initlayerstart-1, 2);
+        desc = ieee802frame154_format(desc, frame_startptr(txbuf), frame_capacity(txbuf), 
+            FRAME154_DEF_FRAMECONTROL_DATA); 
         rtl_assert( desc != NULL );
         ieee802frame154_set_sequence( desc, seqid); 
         ieee802frame154_set_panto( desc, PANID );
         ieee802frame154_set_shortaddrto( desc, REMOTE_ADDRESS );
         ieee802frame154_set_panfrom( desc, PANID );
         ieee802frame154_set_shortaddrfrom( desc, LOCAL_ADDRESS );
-        frame_setlength(txbuf, 20);
+        frame_setlength(txbuf, initlayerstart + initlayersize + 2);
         first = frame_firstlayer(txbuf);
 
         //len = cc2420_write(cc, frame_layerstartptr(txbuf,first), frame_layercapacity(txbuf,first), option);
