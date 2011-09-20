@@ -43,6 +43,8 @@
 #endif
 //#define TEST_ACK_REQUEST
 
+#define UART_ID 1
+
 // The following macro is acutally an constant 128. You cannot change its value.
 #define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
 
@@ -52,9 +54,11 @@
 #define REMOTE_ADDRESS		0x02
 #define DEFAULT_CHANNEL     11
 
+static TiUartAdapter        m_uart;      
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-TiIEEE802Frame154Descriptor m_desc;
-TiCc2520Adapter             m_cc;
+static TiIEEE802Frame154Descriptor m_desc;
+static TiCc2520Adapter      m_cc;
+
 void sendnode1(void);
 //void sendnode2(void);
 
@@ -65,22 +69,29 @@ int main(void)
 
 void sendnode1(void)
 {
+	char * msg = "welcome to sendnode...";
     TiCc2520Adapter * cc;
+    TiUartAdapter * uart;
     TiFrame * txbuf;
     TiIEEE802Frame154Descriptor * desc;
+    uintx tmp=0;
 
     uint8 i, first, seqid, option, len;
     char * ptr;
 
     seqid = 0;
 
-    led_open();
+	target_init();
+	led_open();
+	led_on( LED_ALL );
+	hal_delayms( 500 );
+	led_off( LED_ALL );
 
-    led_on( LED_ALL);
-    hal_delayms( 500 );
-    led_off( LED_ALL );
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
     
-    //halUartInit( 9600,0);
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
     cc2520_open( cc, 0, NULL, NULL, 0x00 );
     cc2520_setchannel( cc, DEFAULT_CHANNEL );
@@ -91,18 +102,22 @@ void sendnode1(void)
     cc2520_enable_autoack( cc );
 
     desc = ieee802frame154_open( &m_desc );
-    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-
     option = 0x00;
 
     while(1)  
     {
-        frame_reset( txbuf,3,20,0);
-        ptr = frame_startptr( txbuf);
+        // @attention
+        // - When you open the frame, you must guarantee there're at least two empty
+        //   byte space for later frame_skipouter(), or else you'll encounter assertion
+        //   failure in the rtl_frame module.
+        tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE); // for debug seeing local variable only
+        txbuf = frame_open((char*)(&m_txbuf), tmp, 3, 20, tmp-23 );
+        // frame_reset(txbuf, 3, 20, .. );
+        ptr = frame_startptr(txbuf);
 
-        for ( i = 0;i< 6;i++)
+        for (i = 0; i< 6; i++)
             ptr[i] = i;
-        frame_skipouter( txbuf,12,2);
+        frame_skipouter(txbuf, 12, 2);
         desc = ieee802frame154_format( desc, frame_startptr( txbuf), frame_capacity( txbuf ), 
             FRAME154_DEF_FRAMECONTROL_DATA ); 
         rtl_assert( desc != NULL );
