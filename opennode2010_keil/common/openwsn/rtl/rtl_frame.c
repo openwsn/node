@@ -257,6 +257,11 @@ void frame_reset( TiFrame * frame, uintx init_layerindex, uintx init_layerstart,
 void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity )
 {
 	/* the input layerindex must inside range [0,CONFIG_FRAME_LAYER_CAPACITY-1] */
+
+    /* @attention If the following assertion fails, you should check the higher layer capacity.
+     * Generally, it's often because the higher layer occupis too much and the lower layer
+     * allocation (frame_skipouter) fails.
+     */
 	rtl_assert( layer < CONFIG_FRAME_LAYER_CAPACITY );
 	rtl_assert( layerstart + layercapacity < frame_totalcapacity(frame) );
 

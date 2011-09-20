@@ -63,13 +63,13 @@ void hal_assert_report( bool cond, char * file, uint16 line )
 		if (true)
 		{
 			led_on( LED_RED );
-			hal_delayms( 500 );
+			hal_delayms( 100 );
 			led_off( LED_RED );
 			led_on( LED_GREEN );
-			hal_delayms( 500 );
+			hal_delayms( 100 );
 			led_off( LED_GREEN );
 			led_on( LED_YELLOW );
-			hal_delayms( 500 );
+			hal_delayms( 100 );
 			led_off( LED_YELLOW );
 		}
 	}
