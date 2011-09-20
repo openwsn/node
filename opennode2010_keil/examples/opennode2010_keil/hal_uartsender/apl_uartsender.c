@@ -104,7 +104,7 @@ void uart_active_send2()
         {
             uart_write(uart, &ch, 1, 0x00);
         }
-        hal_delayms(500);
+        hal_delayms(1000);
         led_toggle(LED_RED);
     }
 }
