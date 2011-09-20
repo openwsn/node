@@ -12,7 +12,7 @@
 #include "asv_foundation.h"
 #include "appsvc1.h"
 
-#define USART_Send
+#define USART_Send(int)
  //TiAdcAdapter  g_adc;
  //TiLightSensor g_light;
  //TiUartAdapter g_uart;
@@ -70,14 +70,14 @@ void createtask(int8 id,TiOsxTaskHeap *heap,int16 timeline)
 	{
 	case 1:{	
 		memset( &item, 0x00, sizeof(item) );
-		item.taskfunction =asv1_evolve;
+		item.taskfunction =(TiFunEventHandler)asv1_evolve;
 		item.taskdata = NULL;
 		item.timeline = timeline;
 		item.priority = 1;
 		break;}
 	case 2:{	
 		memset( &item, 0x00, sizeof(item) );
-		item.taskfunction =asv2_evolve;
+		item.taskfunction =(TiFunEventHandler)asv2_evolve;
 		item.taskdata = NULL;
 		item.timeline = timeline;
 		item.priority = 1;
