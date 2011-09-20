@@ -33,6 +33,20 @@
 uint8 g_atomic_flag = 0;
 #endif
 
+/** 
+ * @todo:
+ * STM32 Lib provides following macros:
+ * 
+ #define SYSCLK_FREQ_HSE    HSE_VALUE
+ #define SYSCLK_FREQ_24MHz  24000000
+ #define SYSCLK_FREQ_HSE    HSE_VALUE
+ #define SYSCLK_FREQ_24MHz  24000000 
+ #define SYSCLK_FREQ_36MHz  36000000 
+ #define SYSCLK_FREQ_48MHz  48000000 
+ #define SYSCLK_FREQ_56MHz  56000000 
+ #define SYSCLK_FREQ_72MHz  72000000 
+ */
+
 /**
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
  * in some special cases. 

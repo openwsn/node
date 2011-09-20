@@ -213,7 +213,7 @@
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>1</OptFeed>
+            <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -386,9 +386,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>cc2520tx.c</FileName>
+              <FileName>apl_cc2520tx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\cc2520tx.c</FilePath>
+              <FilePath>.\apl_cc2520tx.c</FilePath>
             </File>
           </Files>
         </Group>
