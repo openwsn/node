@@ -332,7 +332,8 @@ void EXTI0_IRQHandler(void)//fifopÖÐ¶Ïº¯Êý  fifphandlerÖ¸Ïò¸ÃÖÐ¶Ï,²»ÖªµÀhandler£
         CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
 	}*/
     /*
-	cc->rxlen = _cc2520_read_rxbuf( cc, cc->rxbuf, 128 );
+	cc->rxlen = (uint8)_cc2520_read_rxbuf( cc, cc->rxbuf, 128 );
+
 
 	__enable_irq();
 	
@@ -1201,7 +1202,7 @@ uint8 halRfTransmitCCA(void)
 
     // Reconfigure GPIO2
     HAL_INT_OFF();
-    CC2520_CFG_GPIO_OUT(2,     CC2520_GPIO_RSSI_VALID);
+    CC2520_CFG_GPIO_OUT(2, CC2520_GPIO_RSSI_VALID);
     HAL_INT_ON();
     return status;
 }
@@ -1372,6 +1373,7 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
 	//hal_delayms(1);
     hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, cc->rxbuf, CC2520_RXBUF_SIZE);
+
     if (cc->listener != NULL)
     {
         cc->listener( cc->lisowner, NULL);

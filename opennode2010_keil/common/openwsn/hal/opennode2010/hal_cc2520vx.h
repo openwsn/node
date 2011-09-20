@@ -99,23 +99,23 @@ inline uint8 CC2520_SPI_TXRX(uint8 x)
 #endif
 
 //// todo
-//#define MCU_PIN_DIR_OUT(port,bit) (0)
-//#define MCU_PIN_DIR_IN(port,bit) (0)
+#define MCU_PIN_DIR_OUT(port,bit) (0)
+#define MCU_PIN_DIR_IN(port,bit) (0)
 
 /* CC2520 I/O Definitions */
 /* Basic I/O pin setup */
 #define CC2520_BASIC_IO_DIR_INIT()      st( MCU_PIN_DIR_OUT(5,7); MCU_PIN_DIR_OUT(1,0); )
 
 //// todo
-//#define CC2520_BASIC_IO_DIR_INIT() (0)
+#define CC2520_BASIC_IO_DIR_INIT() (0)
 
 /* MCU port control for SPI interface */
 #define CC2520_DISABLE_SPI_FUNC()       st( P5SEL &= ~(BV(1) | BV(2) | BV(3)); )
 #define CC2520_ENABLE_SPI_FUNC()        st( P5SEL |= BV(1) | BV(2) | BV(3); )
 
 //// todo
-//#define CC2520_DISABLE_SPI_FUNC() (0)
-//#define CC2520_ENABLE_SPI_FUNC()  (0)
+#define CC2520_DISABLE_SPI_FUNC() (0)
+#define CC2520_ENABLE_SPI_FUNC()  (0)
 
 /* GPIO pin direction control */
 #define CC2520_GPIO_DIR_OUT(pin) \
@@ -210,10 +210,10 @@ inline uint8 CC2520_SPI_TXRX(uint8 x)
 #define CC2520_GPIO0_IRQ_CLEAR()        st( P1IFG &= ~0x08; )
 
 //// todo
-//#define CC2520_GPIO0_IRQ_INIT()         (0)
-//#define CC2520_GPIO0_IRQ_ENABLE()       (0)
-//#define CC2520_GPIO0_IRQ_DISABLE()      (0)
-//#define CC2520_GPIO0_IRQ_CLEAR()        (0)
+#define CC2520_GPIO0_IRQ_INIT()         (0)
+#define CC2520_GPIO0_IRQ_ENABLE()       (0)
+#define CC2520_GPIO0_IRQ_DISABLE()      (0)
+#define CC2520_GPIO0_IRQ_CLEAR()        (0)
 
 // todo should be eliminated and adapt to STM32 rather than msp430
 //extern const digioConfig pinRadio_GPIO0;
