@@ -199,8 +199,9 @@ __inline void cpu_atomic_end(void);
   #error "Unsupport compile and toolsuite. More proting work needed."  
 #endif
 
-#if defined(__CC_ARM)
-  #define cpu_nop() __nop
+//#if defined(__CC_ARM)
+  #ifdef CONFIG_COMPILER_ARMCC
+  #define cpu_nop() __nop()
   #define cpu_sleep() __WFI()
   #define cpu_enable_interrupts() __enable_irq()
   #define cpu_disable_interrupts() __disable_irq()

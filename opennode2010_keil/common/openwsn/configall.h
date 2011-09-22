@@ -200,12 +200,18 @@
   // to really make the frequency setting enabled. Another settings in in the Keil
   // project options UI. 
   
-  //#define CONFIG_CPU_FREQUENCY 8
-  //#define CONFIG_CPU_FREQUENCY_8MHZ 1
+  #define CONFIG_CPU_FREQUENCY 8
+  #define CONFIG_CPU_FREQUENCY_8MHZ 1
   
-  #define CONFIG_CPU_FREQUENCY 24
-  #define CONFIG_CPU_FREQUENCY_24MHZ 1
+  //#define CONFIG_CPU_FREQUENCY 24
+  //#define CONFIG_CPU_FREQUENCY_24MHZ 1
   
+//  #define CONFIG_CPU_FREQUENCY 48
+//  #define CONFIG_CPU_FREQUENCY_48MHZ 1
+
+//  #define CONFIG_CPU_FREQUENCY 72
+//  #define CONFIG_CPU_FREQUENCY_72MHZ 1
+
   //#warning "The target board running at 8MHz defined by CONFIG_CPU_FREQUENCY_8MHZ in configall.h"
 #endif
 

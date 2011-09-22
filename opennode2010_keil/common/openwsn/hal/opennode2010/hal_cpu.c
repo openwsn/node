@@ -47,9 +47,13 @@ uint8 g_atomic_flag = 0;
  #define SYSCLK_FREQ_72MHz  72000000 
  */
 
-#ifdef SYSCLK_FREQ_24MHz
-#define CONFIG_CPU_FREQUENCY_24MHZ
-#endif
+//#ifdef SYSCLK_FREQ_8MHz
+//#define CONFIG_CPU_FREQUENCY_8MHZ
+//#endif
+
+//#ifdef SYSCLK_FREQ_8MHz
+//#define CONFIG_CPU_FREQUENCY_8MHZ
+//#endif
 
 /**
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
@@ -118,13 +122,13 @@ void cpu_delay250ns(void)
 inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
-    int counter = 2;//6; // 8-2
+    int counter = 500;//6; // 8-2
 #elif defined(CONFIG_CPU_FREQUENCY_24MHZ)
-    int counter = 22;
+    int counter = 2000; //22
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
-    int counter = 46 // 48-2
+    int counter = 2000; // 48-2
 #elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
-    int counter = 70 // 72-2
+    int counter = 2500; // 72-2
 #else
   #error "You must choose your CPU frequency and implement this function again."
 #endif  
@@ -159,9 +163,8 @@ void cpu_delayus(uint16 usec)
 #pragma O0 
 void cpu_delayms(uint16 msec) 
 {
-    uint16 usec = 800;
-
-    while (msec > 0)
+    uint16 usec = 1000;
+	while (msec > 0)
     {
     	while (usec > 0) 
     	{
