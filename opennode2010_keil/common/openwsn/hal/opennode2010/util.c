@@ -11,8 +11,8 @@
 * INCLUDES
 */
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
 #include "util.h"
 //#include "hal_uart.h"
 #include "string.h"

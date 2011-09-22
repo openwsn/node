@@ -122,7 +122,7 @@ void cpu_delay250ns(void)
 inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
-    int counter = 500;//6; // 8-2
+    int counter = 30;//6; // 8-2
 #elif defined(CONFIG_CPU_FREQUENCY_24MHZ)
     int counter = 2000; //22
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
@@ -163,7 +163,7 @@ void cpu_delayus(uint16 usec)
 #pragma O0 
 void cpu_delayms(uint16 msec) 
 {
-    uint16 usec = 1000;
+    uint16 usec = 750;
 	while (msec > 0)
     {
     	while (usec > 0) 

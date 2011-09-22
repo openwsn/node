@@ -16,7 +16,7 @@
   its documentation for any purpose.
 
   YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
-  PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+  PROVIDED “AS IS?WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
   INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE, 
   NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
   TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -41,11 +41,11 @@
 /***********************************************************************************
 * INCLUDES
 */
-#include "hal_configall.h"
-#include "hal_foundation.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
 #include "util_buffer.h"
-#include "hal_targetboard.h"
-#include "hal_cpu.h"
+#include "../hal_targetboard.h"
+#include "../hal_cpu.h"
 
 /***********************************************************************************
 * GLOBAL FUNCTIONS

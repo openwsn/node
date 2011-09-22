@@ -186,9 +186,10 @@ void TIM3_IRQHandler(void)
 
 
 #include "apl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
-//#include "../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
+#include "../../../common/openwsn/hal/hal_led.h"
 #define MAX_IEEE802FRAME154_SIZE                128//todo
 
 #define FAILED 1
@@ -327,7 +328,7 @@ static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiIEEE802Frame154Descriptor m_desc;
 
 static void appPrintMenu(void);
-void RCC_Configuration(void);
+static void RCC_Configuration(void);
 static void CC2520_Activate( void);
 static void SPI_GPIO_Configuration( void);
 
@@ -619,10 +620,12 @@ void main (void)
              
 			//让2520有足够的时间发出去
 			hal_delayms( 500);
-
-			led_off( LED_RED);
-			hal_delayms( 500);
-            /*
+			led_toggle(LED_RED);
+			
+			//led_off( LED_RED);
+			//hal_delayms( 500);
+            
+			/*
 			CC2520_SPI_BEGIN();//HAL_CLR_CC_CS_PIN();
 
 			CC2520_SPI_TX( len-1);//_cc2420_spi_put( len-1 );
