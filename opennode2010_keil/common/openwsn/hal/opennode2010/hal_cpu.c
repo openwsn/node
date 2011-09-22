@@ -47,6 +47,10 @@ uint8 g_atomic_flag = 0;
  #define SYSCLK_FREQ_72MHz  72000000 
  */
 
+#ifdef SYSCLK_FREQ_24MHz
+#define CONFIG_CPU_FREQUENCY_24MHZ
+#endif
+
 /**
  * A very short delay for only 250ns. This one is used to adjust hardware timing 
  * in some special cases. 
@@ -58,6 +62,13 @@ uint8 g_atomic_flag = 0;
 void cpu_delay250ns(void)
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
+    cpu_nop();
+    cpu_nop();
+#elif defined(CONFIG_CPU_FREQUENCY_24MHZ)
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
     cpu_nop();
     cpu_nop();
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
@@ -74,12 +85,24 @@ void cpu_delay250ns(void)
     cpu_nop();
     cpu_nop();
 #elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
-    int counter = 9; // = 18/2
-    while (count > 0)
-    {
-        cpu_nop();
-        count --;
-    }
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
+    cpu_nop();
 #else
   #error "You must choose your CPU frequency and implement this function again."
 #endif  
@@ -96,6 +119,8 @@ inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
     int counter = 2;//6; // 8-2
+#elif defined(CONFIG_CPU_FREQUENCY_24MHZ)
+    int counter = 22;
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
     int counter = 46 // 48-2
 #elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
@@ -134,7 +159,7 @@ void cpu_delayus(uint16 usec)
 #pragma O0 
 void cpu_delayms(uint16 msec) 
 {
-    uint16 usec = 100000;
+    uint16 usec = 800;
 
     while (msec > 0)
     {
