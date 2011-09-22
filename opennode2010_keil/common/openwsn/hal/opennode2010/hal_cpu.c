@@ -134,7 +134,7 @@ void cpu_delayus(uint16 usec)
 #pragma O0 
 void cpu_delayms(uint16 msec) 
 {
-    uint16 usec = 750;
+    uint16 usec = 100000;
 
     while (msec > 0)
     {

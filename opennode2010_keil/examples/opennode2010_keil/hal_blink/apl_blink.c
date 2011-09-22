@@ -20,7 +20,7 @@ int main (void)
 	while(1) 
 	{
 	  	led_toggle( LED_RED);
-	  	hal_delayms(1000);
+	  	hal_delayms(10000);
   	}
   	return 0;
 }
