@@ -32,6 +32,7 @@ void target_init(void)
 
 	hal_init( NULL, NULL );
     mcu_init();
+    hal_disable_interrupts();
     
     rtl_init( (void*)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, 
         hal_assert_report );
@@ -50,7 +51,6 @@ void target_init(void)
     halAssyInit();
 				  
 	*/
-    hal_disable_interrupts();
 }
 
 void target_reset()

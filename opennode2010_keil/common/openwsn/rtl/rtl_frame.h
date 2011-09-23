@@ -105,7 +105,7 @@ typedef struct{
 	uintx option;
     uintx firstlayer;
     uintx curlayer;
-    uint16 address;// no use now
+    uint16 address;// not use now
     uintx layercount;
     uintx layerstart[CONFIG_FRAME_LAYER_CAPACITY];
     uintx layerlength[CONFIG_FRAME_LAYER_CAPACITY];

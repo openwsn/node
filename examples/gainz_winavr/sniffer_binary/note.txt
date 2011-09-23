@@ -12,6 +12,11 @@ sniffer可协助开发人员观察空中数据包的情况
 3) History 修改历史，哪些工作还没有完成需要特别注意的
 
 
+Configuration: 
+RS232: baudrate = 38400, databits = 8, stopbits = 1, parity = none
+
+
+
 History
 ========================================================================
 2009-12-23

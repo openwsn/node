@@ -18,68 +18,80 @@ static SPI_InitTypeDef SPI_InitStructure;
 
 void CC2520_ACTIVATE(void)
 {
-    int i;
+    //int i;
 
     // activate the SPI module which is used for communication between MCU and cc2520.
+
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,  ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
+    // configure Port B Pin 14
     // Port B Pin 14 is used for SPI's MISO (IPD means Input Pull Down). 
+
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init( GPIOB,&GPIO_InitStructure);
+    GPIO_Init(GPIOB,&GPIO_InitStructure);
 
     // Port B Pin 1 is used for cc2520 RST   
     // Port B Pin 5 is used for VREG_EN
     // Port B Pin 12 is used for NSS  
     // GPIO_Mode_Out_PP here means Push Pull(推挽输出)
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_5|GPIO_Pin_12;
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_5 | GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init( GPIOB,&GPIO_InitStructure);
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     // reset the cc2520 nRST
-    GPIO_ResetBits( GPIOB, GPIO_Pin_1);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_1);
     // set VREG_EN which will enable the cc2520's internal voltage regulator
     GPIO_SetBits( GPIOB,GPIO_Pin_5);
     // wait for the regulator to be stabe.
     // @todo
-    for ( i=0;i<13500;i++);
+    //for ( i=0;i<13500;i++);
     // hal_delayus(?)
+    hal_delayms(2);
 
     // set the cc2520 nRST
-    GPIO_SetBits( GPIOB,GPIO_Pin_1);
-    //reset the cc2520 CSn
+    GPIO_SetBits(GPIOB,GPIO_Pin_1);
+    hal_delayus(1);
+
+    // reset the cc2520 CSn
     GPIO_ResetBits( GPIOB,GPIO_Pin_12);
     // @todo: shall we need to wait a little while after CS and then RST for stable?
     // @todo repalce with hal_delayus(?)
-    for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
-    hal_assert( GPIO_ReadInputDataBit( GPIOB, GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+    hal_delayms(2); // todo
+    //for ( i=0;i<13500;i++);//wait for the output of SO to be 1//todo for testing
+    hal_assert(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14));//todo该语句报错，可能是因为SO引脚的 输出模式改变的原
+    
     // set the cc2520 CSn
-    GPIO_SetBits( GPIOB, GPIO_Pin_12);
-    hal_delayus( 2 );
+    GPIO_SetBits(GPIOB, GPIO_Pin_12);
+    hal_delayus(1);
 
-    // Port B Pin 13 is used for SCK 
-    // Port B Pin 15 is used for SPI's MOSI 
-    GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI|SPI_pin_SCK;
+    // configure Port B Pin 13 for SCK 
+    // configure Port B Pin 15 for SPI's MOSI 
+
+    GPIO_InitStructure.GPIO_Pin = SPI_pin_MOSI | SPI_pin_SCK;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
 
-    // Port B Pin 14 is used for MISO
+    // configure Port B Pin 14 for MISO
+
     GPIO_InitStructure.GPIO_Pin = SPI_pin_MISO;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init( GPIO_SPI, &GPIO_InitStructure);
+    GPIO_Init(GPIO_SPI, &GPIO_InitStructure);
 
-    // Port B Pin 12 is used for NSS
+    // configure Port B Pin 12 for NSS
+
     GPIO_InitStructure.GPIO_Pin = SPI_pin_SS;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init( GPIO_SPI,&GPIO_InitStructure);
+    GPIO_Init(GPIO_SPI,&GPIO_InitStructure);
 }
 
 /**
@@ -170,12 +182,12 @@ void CC2520_SPI_OPEN(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 
-	//**************todo********************
+	// **************todo********************
 	//start 2520
 	GPIO_ResetBits( GPIOB,GPIO_Pin_1);
 	hal_delayus( 100);
 	GPIO_SetBits( GPIOB,GPIO_Pin_1);
-	//*********************************/
+	// *********************************/
 }
 
 void CC2520_SPI_CLOSE(void)

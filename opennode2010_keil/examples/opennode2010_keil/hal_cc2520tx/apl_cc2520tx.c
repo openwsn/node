@@ -107,11 +107,7 @@ void sendnode1(void)
     desc = ieee802frame154_open( &m_desc );
     option = 0x00;
 
-    // to see the structure size. for debugging only
-    tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
-    dbc_uint8(tmp);
-    tmp = sizeof(TiFrame); 
-    dbc_uint8(tmp);
+    hal_enable_interrupts();
 
     while(1)  
     {
@@ -122,6 +118,7 @@ void sendnode1(void)
         initlayer = 3;
         initlayerstart = 13;
         initlayersize = 6;
+
         txbuf = frame_open((char*)(&m_txbuf), sizeof(m_txbuf), initlayer, initlayerstart, initlayersize );
 
         // assign some random data into the frame. for demostration only.        
@@ -140,17 +137,33 @@ void sendnode1(void)
         ieee802frame154_set_shortaddrto( desc, REMOTE_ADDRESS );
         ieee802frame154_set_panfrom( desc, PANID );
         ieee802frame154_set_shortaddrfrom( desc, LOCAL_ADDRESS );
-        frame_setlength(txbuf, initlayerstart + initlayersize + 2);
+        frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
         first = frame_firstlayer(txbuf);
 
         //len = cc2420_write(cc, frame_layerstartptr(txbuf,first), frame_layercapacity(txbuf,first), option);
-        len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length( txbuf), option);
+        len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length(txbuf), option);
 
         if (len > 0)
         {
             led_toggle(LED_RED);
             seqid++;
+
+            tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
+            dbc_uint8(tmp);                     // size of the TiFrame object
+            tmp = sizeof(TiFrame); 
+            dbc_uint8(tmp);                     // size of the TiFrame description header size
+            dbc_uint8(frame_capacity(txbuf));   // frame capacity
+            dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
+            dbc_uint8(len);                     // data length actually sent
+
+            // The output is as the following:
+            // 0xBC = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE) 
+            // 0x3C = sizeof(TiFrame) (occupies 60 bytes in STM32F103, 0x3C+0x80=0xBC. Ok)
+            // 0x14 = frame_capacity(txbuf) 
+            // 0x14 = frame_length(txbuf) 
+            // 0x14 = actually sent (equal to frame_length(txbuf). Ok).
         }
-        hal_delayms(1000);
+
+        hal_delayms(500);
     }
 }

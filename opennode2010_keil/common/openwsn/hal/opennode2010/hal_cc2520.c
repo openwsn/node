@@ -332,7 +332,7 @@ void EXTI0_IRQHandler(void)//fifopÖÐ¶Ïº¯Êý  fifphandlerÖ¸Ïò¸ÃÖÐ¶Ï,²»ÖªµÀhandler£
         CC2520_REGWR8(CC2520_EXCFLAG1,0x00);//todo clear the exception
 	}*/
     /*
-	cc->rxlen = (uint8)_cc2520_read_rxbuf( cc, cc->rxbuf, 128 );
+	cc->rxlen = (uint8)_cc2520_read_rxbuf( cc, &cc->rxbuf[0], 128 );
 
 
 	__enable_irq();
