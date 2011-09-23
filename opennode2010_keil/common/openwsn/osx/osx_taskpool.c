@@ -53,7 +53,7 @@ void osx_taskpool_free( TiOsxTaskPool * tpl )
 }
 */
 
-TiOsxTaskPool * osx_taskpool_construct( char * mem, uint16 memsize )
+TiOsxTaskPool * osx_taskpool_construct( char * me  m, uint16 memsize )
 {
     TiOsxTaskPool * tpl = (TiOsxTaskPool *)mem;
     TiOsxTaskPoolItem * item;

@@ -170,12 +170,12 @@ void CC2520_SPI_OPEN(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 
-	/**************todo********************
+	//**************todo********************
 	//start 2520
 	GPIO_ResetBits( GPIOB,GPIO_Pin_1);
 	hal_delayus( 100);
 	GPIO_SetBits( GPIOB,GPIO_Pin_1);
-	/*********************************/
+	//*********************************/
 }
 
 void CC2520_SPI_CLOSE(void)

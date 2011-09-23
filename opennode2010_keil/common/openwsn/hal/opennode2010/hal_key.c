@@ -24,9 +24,9 @@
  *
  ******************************************************************************/
 
-#include "hal_configall.h"
-#include "hal_foundation.h"
-#include "hal_key.h"
+#include "../hal_configall.h"
+#include "../hal_foundation.h"
+#include "../hal_key.h"
 
 void key_init( void )
 {
