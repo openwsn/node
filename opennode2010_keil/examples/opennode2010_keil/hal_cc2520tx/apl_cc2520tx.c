@@ -24,6 +24,13 @@
  *
  ******************************************************************************/
 
+/*******************************************************************************
+ * @history
+ * - modified by zhangwei on 2011.09.23
+ *   add hal_enable_interrupts() before while loop. This is mandatory.
+ *   Revised and tested ok.
+ ******************************************************************************/
+
 #include "apl_foundation.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>

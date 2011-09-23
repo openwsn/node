@@ -24,6 +24,12 @@
  *
  ******************************************************************************/
 
+/*******************************************************************************
+ * @history
+ * - modified by zhangwei on 2011.09.23
+ *   add hal_enable_interrupts() before while loop. This is mandatory.
+ ******************************************************************************/
+
 #include "apl_foundation.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
@@ -104,7 +110,6 @@ void recvnode1(void)
 	dbc_mem( msg, strlen(msg) );
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
-
 	cc2520_open( cc, 0, NULL, NULL, 0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
 	cc2520_rxon( cc );							    // enable RX
@@ -119,7 +124,9 @@ void recvnode1(void)
  	// Attention: in this scan mode, MCU always try to read and in my  test it is faster than the transmission of data. 
 	// Thus, after 4 times, there no data at all, and the MCU still want to read, which lead to an assert. So we'd better
 	// not use this scan mode.
-    
+
+    hal_enable_interrupts();
+
 	while(1) 
 	{
 		frame_reset(rxbuf, 0, 0, 0);
