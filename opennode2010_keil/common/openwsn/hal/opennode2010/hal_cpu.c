@@ -118,17 +118,27 @@ void cpu_delay250ns(void)
  * 
  * @attention Not tested yet.
  */
+
+
+/*
+ tested by ninghuaqiang in Sep/23/2011.
+ when define counter = 2200, the  hal_delayms(1000) woule make the device delay 1000ms.
+ For different CPU_FREQUENCY defined, it would have the same phenomenon.
+ #todo
+ in fact, it should not have the same delay for the same counter in different CPU_FREQUENCY,
+ therefore, further test for this project is needed. 
+ */
 #pragma O0 
 inline void cpu_delay1us()
 {
 #if defined(CONFIG_CPU_FREQUENCY_8MHZ)
-    int counter = 30;//6; // 8-2
+    int counter = 2200;//6; // 8-2
 #elif defined(CONFIG_CPU_FREQUENCY_24MHZ)
-    int counter = 2000; //22
+    int counter = 2200; //22
 #elif defined(CONFIG_CPU_FREQUENCY_48MHZ)
-    int counter = 2000; // 48-2
+    int counter = 2200; // 48-2
 #elif defined(CONFIG_CPU_FREQUENCY_72MHZ)
-    int counter = 2500; // 72-2
+    int counter = 2200; // 72-2
 #else
   #error "You must choose your CPU frequency and implement this function again."
 #endif  
