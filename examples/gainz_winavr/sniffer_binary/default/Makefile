@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Library Directories
-LIBDIRS = -L"D:\dev\openwsn\source\node\gainz-winavr\sniffer_binary\..\lib" 
+LIBDIRS = -L"D:\dev\openwsn\source\node\examples\gainz_winavr\sniffer_binary\..\lib" 
 
 ## Objects that must be built in order to link
 OBJECTS = sniffer.o hal_assert.o hal_cc2420.o hal_cpu.o hal_debugio.o hal_foundation.o hal_led.o hal_spi.o hal_targetboard.o hal_timer.o hal_uart.o hpl_atmega128.o rtl_debugio.o rtl_foundation.o rtl_frame.o hal_interrupt.o apl_ieee802frame154_dump.o rtl_ieee802frame154.o 
@@ -52,55 +52,55 @@ all: $(TARGET) sniffer.hex sniffer.eep sniffer.lss size
 sniffer.o: ../sniffer.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_assert.o: ../../../common/openwsn/hal/gainz/hal_assert.c
+hal_assert.o: ../../../../common/openwsn/hal/gainz/hal_assert.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_cc2420.o: ../../../common/openwsn/hal/gainz/hal_cc2420.c
+hal_cc2420.o: ../../../../common/openwsn/hal/gainz/hal_cc2420.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_cpu.o: ../../../common/openwsn/hal/gainz/hal_cpu.c
+hal_cpu.o: ../../../../common/openwsn/hal/gainz/hal_cpu.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_debugio.o: ../../../common/openwsn/hal/gainz/hal_debugio.c
+hal_debugio.o: ../../../../common/openwsn/hal/gainz/hal_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_foundation.o: ../../../common/openwsn/hal/gainz/hal_foundation.c
+hal_foundation.o: ../../../../common/openwsn/hal/gainz/hal_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_led.o: ../../../common/openwsn/hal/gainz/hal_led.c
+hal_led.o: ../../../../common/openwsn/hal/gainz/hal_led.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_spi.o: ../../../common/openwsn/hal/gainz/hal_spi.c
+hal_spi.o: ../../../../common/openwsn/hal/gainz/hal_spi.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_targetboard.o: ../../../common/openwsn/hal/gainz/hal_targetboard.c
+hal_targetboard.o: ../../../../common/openwsn/hal/gainz/hal_targetboard.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_timer.o: ../../../common/openwsn/hal/gainz/hal_timer.c
+hal_timer.o: ../../../../common/openwsn/hal/gainz/hal_timer.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_uart.o: ../../../common/openwsn/hal/gainz/hal_uart.c
+hal_uart.o: ../../../../common/openwsn/hal/gainz/hal_uart.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hpl_atmega128.o: ../../../common/openwsn/hal/gainz/hpl_atmega128.c
+hpl_atmega128.o: ../../../../common/openwsn/hal/gainz/hpl_atmega128.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_debugio.o: ../../../common/openwsn/rtl/rtl_debugio.c
+rtl_debugio.o: ../../../../common/openwsn/rtl/rtl_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_foundation.o: ../../../common/openwsn/rtl/rtl_foundation.c
+rtl_foundation.o: ../../../../common/openwsn/rtl/rtl_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_frame.o: ../../../common/openwsn/rtl/rtl_frame.c
+rtl_frame.o: ../../../../common/openwsn/rtl/rtl_frame.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_interrupt.o: ../../../common/openwsn/hal/gainz/hal_interrupt.c
+hal_interrupt.o: ../../../../common/openwsn/hal/gainz/hal_interrupt.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 apl_ieee802frame154_dump.o: ../apl_ieee802frame154_dump.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_ieee802frame154.o: ../../../common/openwsn/rtl/rtl_ieee802frame154.c
+rtl_ieee802frame154.o: ../../../../common/openwsn/rtl/rtl_ieee802frame154.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link

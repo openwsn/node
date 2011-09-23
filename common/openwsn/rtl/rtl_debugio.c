@@ -30,6 +30,8 @@
 #include "rtl_foundation.h"
 #include "rtl_debugio.h"
 
+#define min(x,y) (((x)<(y))?(x):(y))
+
 TiDebugConsole g_dbc;
 
 char _dbc_digit2hexchar( uint8 digit ) 

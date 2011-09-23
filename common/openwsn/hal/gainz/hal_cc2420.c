@@ -635,7 +635,7 @@ uint8 _cc2420_writetxfifo( TiCc2420Adapter * cc, char * buf, uint8 len, uint8 op
  */
 uint8 _cc2420_readrxfifo( TiCc2420Adapter * cc, char * buf, uint8 size, uint8 option )
 {
-	cpu_atomic_t cpu_status;
+	//cpu_atomic_t cpu_status;
 	uint8 i, len, count=0;
 	uint8 status;
 

@@ -55,7 +55,7 @@
  *
  * #include "../hal_assert.h"
  */
- 
+
 uint8 g_atomic_level = 0;
 TiFunEventHandler m_listener = NULL;
 void * m_listener_owner = NULL;

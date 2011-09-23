@@ -99,11 +99,13 @@ extern "C" {
  *  - layerlength[]: each layers length.
  *  - layercapacity[]: each layers capacity.
  */
+#pragma pack(1) 
 typedef struct{
     uintx memsize;
 	uintx option;
     uintx firstlayer;
     uintx curlayer;
+    uint16 address;// no use now
     uintx layercount;
     uintx layerstart[CONFIG_FRAME_LAYER_CAPACITY];
     uintx layerlength[CONFIG_FRAME_LAYER_CAPACITY];
@@ -215,8 +217,8 @@ uintx frame_totalcapacity( TiFrame * frame );
 #define frame_totalend(frame) frame_layerend((frame),((frame)->firstlayer))
 #define frame_totallength(frame) frame_layerlength((frame),((frame)->firstlayer))
 #define frame_settotallength(frame,len) frame_setlayerlength((frame),((frame)->firstlayer),(len))
-#define frame_totalcapacity(frame) frame_layercapacity((frame),((frame)->firstlayer))
-#define frame_settotalcapacity(frame,capacity) frame_setlayerlength((frame),((frame)->firstlayer),(capacity))
+//#define frame_totalcapacity(frame) frame_layercapacity((frame),((frame)->firstlayer))
+//#define frame_settotalcapacity(frame,capacity) frame_setlayerlength((frame),((frame)->firstlayer),(capacity))
 
 /** Copy an TiFrame entirely from one to another */
 uintx frame_totalcopyfrom( TiFrame * frame, TiFrame * from );

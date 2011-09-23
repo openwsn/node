@@ -46,25 +46,25 @@
  * 	- revision.
  ******************************************************************************/ 
 
-#include "../../common/openwsn/hal/hal_configall.h"
+#include "../../../common/openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
 #include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ascii.h"
-#include "../../common/openwsn/rtl/rtl_assert.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_interrupt.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_uart.h"
+#include "../../../common/openwsn/hal/hal_cc2420.h"
+#include "../../../common/openwsn/hal/hal_targetboard.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_ascii.h"
+#include "../../../common/openwsn/rtl/rtl_assert.h"
+#include "../../../common/openwsn/rtl/rtl_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
 
 /** 
  * This macro controls the apl_ieee802frame154_dump module to output
@@ -130,7 +130,7 @@ void sniffer(void)
 
 	led_open();
 	led_on( LED_RED );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
     rtl_init( dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );

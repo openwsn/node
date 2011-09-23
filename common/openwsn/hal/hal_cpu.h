@@ -43,7 +43,6 @@
  * for platform GAINZ supplied by ICT controlled by macro CONFIG_TARGET_GAINZ
  * gainz is provided by ICT in China.
  ******************************************************************************/
-
 #ifdef CONFIG_TARGETBOARD_GAINZ
 #include "./gainz/hpl_cpu.h"
 #endif 

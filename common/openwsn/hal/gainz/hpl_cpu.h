@@ -160,6 +160,9 @@ inline void hal_atomic_end( void )
 
 #define hal_delay250ns() cpu_delay250ns()
 #define hal_delayus(usec) cpu_delayus(usec)
+#define hal_delayms(msec) cpu_delayms(msec)
+
+#define cpu_delayms(msec) cpu_delay(msec)
 #define hal_delay(msec) cpu_delay(msec)
 
 /* this function maybe obsolete in the future. currently, it only used in wireless 

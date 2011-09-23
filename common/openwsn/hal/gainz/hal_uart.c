@@ -94,6 +94,8 @@
  * 
  *****************************************************************************/
 
+#define min(x,y) (((x)<(y))?(x):(y))
+ 
 #ifdef CONFIG_UART_INTERRUPT_DRIVEN
 void _uart_rx0_interrupt_handler( void * uartptr, TiEvent * e );
 void _uart_tx0_interrupt_handler( void * uartptr, TiEvent * e );

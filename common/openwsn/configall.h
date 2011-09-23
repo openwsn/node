@@ -118,8 +118,18 @@
   #define GDEBUG
 #endif
 
-//#define CONFIG_TARGETBOARD_GAINZ
+/**
+ * @attention Decide the target board by compiler automatically. Attention this 
+ * isn't always work. You may need to modify it to adapte to your own platform.
+ */
+ 
+#ifdef CONFIG_COMPILER_GNUC
+#define CONFIG_TARGETBOARD_GAINZ
+#endif
+
+#ifdef CONFIG_COMPILER_ARMCC
 #define CONFIG_TARGETBOARD_OPENNODE2010
+#endif
 
 #define CONFIG_OS_OSX
 
@@ -346,10 +356,10 @@ typedef signed long long    int64;
 typedef unsigned long long  uint64;
 typedef float               fp32;             /* single precision floating point variable (32bits)  */
 typedef double              fp64;             /* double precision floating point variable (64bits)  */
-typedef signed char         intx;
+//typedef signed char         intx;
 //typedef unsigned char       uintx;
-#define uintx uint16
 #define intx int16
+#define uintx uint16
 #define byte uint8
 #endif
 

@@ -29,6 +29,8 @@
 void target_init(void)
 {
     /* @todo I think you should place disable interrupts here. */
+
+	hal_init( NULL, NULL );
     mcu_init();
     
     rtl_init( (void*)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, 

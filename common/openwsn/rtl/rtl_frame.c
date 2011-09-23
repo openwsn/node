@@ -80,12 +80,14 @@
 #include "rtl_debugio.h"
 #endif
 
-#define _frame_layer_start(frame,idx) (frame->layerstart[idx])
-#define _frame_layer_end(frame,idx) (frame->layerstart[idx] + frame->layerlength[idx] - 1)
-#define _frame_layer_length(frame,idx) (frame->layerlength[idx])
-#define _frame_layer_capacityframe,idx) (frame->layercapacity[idx])
+#define min(x,y) (((x)<(y))?(x):(y))
 
-static _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity );
+#define _frame_layer_start(frame,idx) ((frame)->layerstart[idx])
+#define _frame_layer_end(frame,idx) ((frame)->layerstart[idx] + (frame)->layerlength[idx] - 1)
+#define _frame_layer_length(frame,idx) ((frame)->layerlength[idx])
+#define _frame_layer_capacity(frame,idx) ((frame)->layercapacity[idx])
+
+static void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity );
 
 /** 
  * create an TiFrame object with required capacity.
@@ -100,7 +102,7 @@ TiFrame * frame_create( uintx buffercapacity, uintx init_layerindex, uintx init_
     buf = (char *)malloc( memsize );
     rtl_assert( buf != NULL );
     if (buf != NULL);
-        frame_open( buf, buffercapacity, init_layerindex, init_layerstart, layer_layercapacity );
+        frame_open( buf, buffercapacity, init_layerindex, init_layerstart, init_layercapacity );
 
     return (TiFrame *)buf;
 }
@@ -256,9 +258,12 @@ void frame_reset( TiFrame * frame, uintx init_layerindex, uintx init_layerstart,
  */
 void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx layercapacity )
 {
-	bool ret;
-	
 	/* the input layerindex must inside range [0,CONFIG_FRAME_LAYER_CAPACITY-1] */
+
+    /* @attention If the following assertion fails, you should check the higher layer capacity.
+     * Generally, it's often because the higher layer occupis too much and the lower layer
+     * allocation (frame_skipouter) fails.
+     */
 	rtl_assert( layer < CONFIG_FRAME_LAYER_CAPACITY );
 	rtl_assert( layerstart + layercapacity < frame_totalcapacity(frame) );
 
@@ -269,10 +274,7 @@ void _frame_initlayer( TiFrame * frame, uint8 layer, uintx layerstart, uintx lay
     if (frame->layercount == 0)
     {
 		frame->firstlayer = layer;
-        // frame->curlayer = layerindex;
     }
-            
-    // frame->layercount ++;
 }
 
 /** 
@@ -312,10 +314,15 @@ void frame_totalclear( TiFrame * frame )
 /**
  * Total capacity of the TiFrame object. It's biggest frame size that TiFrame can 
  * accepted. It's also the maximum size of the lowest layer frame.
+ * 
+ * @modified by openwsn on 2011.08.03
+ * - In the previous version, the frame_totalcapacity is defined as macro to the capacity
+ * of the first existed layer. But this isn't convenient in some cases. So it was finally
+ * changed to the total possible space length of the entire frame.
  */
 uintx frame_totalcapacity( TiFrame * frame )
 {
-    return frame->memsize - sizeof(TiFrame);
+    return (uintx)((frame->memsize) - sizeof(TiFrame));
 }
 
 /** Copy an TiFrame entirely from one to another */
@@ -447,9 +454,10 @@ void frame_shrinklayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
         delta = frame->layercapacity[layer] - newcapacity;
 		
 		rtl_assert( choice < 4 );
-		from=0; to=0;
+		from=0; 
+		to=0;
 		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
-		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer ;
+		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer);
 		
         for (i=from; i<=to; i++)
         {
@@ -494,7 +502,7 @@ void frame_expandlayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 
     if (frame_layerexists(frame,layer))
     {
-		rtl_assert((frame->layercapacity[layer] <= newcapacity) && (newcapacity <= frame_totalcapacity(frame));
+		rtl_assert((frame->layercapacity[layer] <= newcapacity) && (newcapacity <= frame_totalcapacity(frame)));
         frame->layercapacity[layer] = newcapacity;
 
         delta = newcapacity - frame->layercapacity[layer];
@@ -502,7 +510,7 @@ void frame_expandlayer( TiFrame * frame, uint8 layer, uintx newcapacity, uint8 c
 		rtl_assert( choice < 4 );
 		from=0; to=0;
 		from = (((choice == 2) || (choice == 3)) ? frame->firstlayer : layer);
-		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer ;
+		to = (((choice == 1) || (choice == 3)) ? (frame->firstlayer + frame->layercount-1) : layer);
 		
         for (i=from; i<=to; i++)
         {
@@ -642,7 +650,7 @@ bool frame_addlayerexterior( TiFrame * frame, uintx offset, uintx left )
 	uintx first = frame->firstlayer;
 	if (first > 0)
 	{
-		rtl_assert( frame->layerstart[first] - offset >= 0 );
+		rtl_assert( frame->layerstart[first] > offset );
 		rtl_assert( frame->layercapacity[first] + offset + left <= frame_totalcapacity(frame) );
 		_frame_initlayer( frame, first-1, frame->layerstart[first] - offset,
 			frame->layercapacity[first] + offset + left ); 
@@ -757,7 +765,7 @@ bool frame_skipinner( TiFrame * frame, uintx skiplen, uintx left )
         cur = frame->curlayer;
         if (cur < CONFIG_FRAME_LAYER_CAPACITY - 1)
         {
-            if (cur == (frame->firstlayer + frame->layercount - 1)
+            if (cur == (frame->firstlayer + frame->layercount - 1))
             {
                 rtl_assert(frame->layercapacity[cur] >= (skiplen + left));
                 _frame_initlayer( frame, cur+1, frame->layerstart[cur] + skiplen, frame->layercapacity[cur] - skiplen - left);
