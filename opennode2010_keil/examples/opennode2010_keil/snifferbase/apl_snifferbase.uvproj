@@ -159,7 +159,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4098</DriverSelection>
+            <DriverSelection>4099</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -386,9 +386,24 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>sniffer.c</FileName>
+              <FileName>apl_ieee802frame154_dump.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\sniffer.c</FilePath>
+              <FilePath>.\apl_ieee802frame154_dump.c</FilePath>
+            </File>
+            <File>
+              <FileName>apl_snifferbase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\apl_snifferbase.c</FilePath>
+            </File>
+            <File>
+              <FileName>apl_foundation.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\apl_foundation.h</FilePath>
+            </File>
+            <File>
+              <FileName>apl_ieee802frame154_dump.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\apl_ieee802frame154_dump.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,11 +451,6 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dbgmcu.c</FilePath>
@@ -459,11 +469,6 @@
               <FileName>stm32f10x_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_gpio.c</FileName>

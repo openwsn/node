@@ -1,3 +1,6 @@
+sniffer base + sniffer node = sniffer network
+
+
 Sniffer Network
 =================================================================
 

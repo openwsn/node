@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  * 
  * OpenWSN is a free software; you can redistribute it and/or modify it under 
  * the terms of the GNU General Public License as published by the Free Software 
@@ -49,6 +49,8 @@
  * 	- revision.
  * @modified by zhangwei on 2011.05.06
  * 	- revised.
+ * @modified by jiang ridong, zhangwei in 2011.08
+ * 	- revised.
  ******************************************************************************/ 
 
 /** 
@@ -70,8 +72,8 @@
 #define CONFIG_ASCII_OUTPUT
 #undef CONFIG_ASCII_OUTPUT
 
+#undef CONFIG_ACTIVE_SENDING_MODE
 #define CONFIG_ACTIVE_SENDING_MODE
-//#undef CONFIG_ACTIVE_SENDING_MODE
 
 /**
  * CONFIG_LISTENER
@@ -95,7 +97,7 @@
 
 #define MAX_IEEE802FRAME154_SIZE    128
 
-#define SNIFFER_FMQUE_HOPESIZE  	FRAMEQUEUE_HOPESIZE(2)
+#define SNIFFER_FMQUE_HOPESIZE  	FRAMEQUEUE_HOPESIZE(4)
 
 #define CMD_DATA_REQUEST            0x01
 #define CMD_DATA_RESET              0x02
@@ -125,8 +127,8 @@ static void _init_test_response( TiFrame * frame );
 
 int main(void)
 {
-    // _nss_execute();
-    _active_send_test();
+    _nss_execute();
+    // _active_send_test();
 }
 
 /** 
@@ -137,7 +139,7 @@ int main(void)
  */
 void _nss_execute(void)
 {
-	char * msg = "welcome to sniffer ...";
+	char * msg = "welcome to snifferbase ...";
     TiCc2520Adapter * cc;
     TiFrame * nio_rxbuf;
     TiFrame * sio_rxbuf;
@@ -154,21 +156,21 @@ void _nss_execute(void)
     char *pc;
 	#endif
 
-	//target_init();
-	led_open();
-	led_on( LED_RED );
-	hal_delayms( 500 );
-	led_off( LED_ALL );
+    target_init();
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
-	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
-	rtl_init( dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-    // dbc_mem( msg, strlen(msg) );
-    #endif
-	
-	// Initialize the radio communication component for wireless communication.
+    led_open();
+    led_on( LED_ALL );
+    hal_delayms( 500 );
+    led_off( LED_ALL );
+    dbc_write( msg, strlen(msg) );
 
-	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
-	cc = cc2520_open( cc, 0, NULL, NULL, 0x00 );
+    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,1, 9600, 8, 1, 0 );
+    hal_assert( uart != NULL );
+
+    cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));
+    cc2520_open(cc, 0, NULL, NULL, 0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
 	cc2520_rxon( cc );								// enable RX mode
 	cc2520_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
@@ -176,20 +178,15 @@ void _nss_execute(void)
 	cc2520_disable_addrdecode( cc );				// disable address decoding
 	cc2520_disable_autoack( cc );
 
-    // sio = sac_construct( (void *)(&m_sac),sizeof(m_sac));
-
-    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-    uart = uart_open( uart,1, 9600, 8, 1, 0 );
-    hal_assert( uart != NULL );
-
-    sio = sac_open(&m_sac,sizeof( m_sac),uart);
+    sio = sac_open(&m_sac, sizeof(m_sac), uart);
 
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    #ifndef CONFIG_ACTIVE_SENDING_MODE
     sio_rxbuf = frame_open( (char*)(&m_sio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    #endif
 	
 	memset( &stat, 0x00, sizeof(stat) );
-    uart_write( uart, msg, strlen(msg), 0x00 );
 
 	while(1) 
 	{
@@ -197,7 +194,10 @@ void _nss_execute(void)
 		// into the frame queue for sending later.
 
         frame_reset( nio_rxbuf, 0, 0, 0 );
+        #ifndef CONFIG_ACTIVE_SENDING_MODE
         frame_reset( sio_rxbuf, 0, 0, 0 );
+        #endif
+        
         len = cc2520_read( cc, frame_startptr(nio_rxbuf), frame_capacity(nio_rxbuf), 0x00 );
         if (len > 0)
         {
@@ -290,6 +290,7 @@ void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStat
 	}
 }
 
+#ifdef CONFIG_ACTIVE_SENDING_MODE
 /** 
  * Actively sending frames through the serial communication port. The frame is 
  * generated in this function. 
@@ -336,6 +337,7 @@ void _active_send_test()
     uart_close(uart);
     uart_destroy(uart);
 }
+#endif
 
 /**
  * This function will fill an response frame. It's used for testing purpose only.

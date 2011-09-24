@@ -47,8 +47,10 @@
  * @modified by zhangwei on 2010520
  *  - upgraded to winavr20090313
  * 
- * @modified by zhangwei, jiangridong in 201108
+ * @modified by jiangridong in 201108
  *  - tested ok.
+ * @modified by zhangwei in 201108
+ *  - no-ack mode tested ok.
  ******************************************************************************/
 
 
@@ -56,8 +58,6 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "openwsn/hal/hal_mcu.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
@@ -67,14 +67,15 @@
 #include "openwsn/rtl/rtl_debugio.h"
 #include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/rtl/rtl_random.h"
+#include "openwsn/hal/hal_mcu.h"
 #include "openwsn/hal/hal_cpu.h"
 #include "openwsn/hal/hal_led.h"
 #include "openwsn/hal/hal_assert.h"
 #include "openwsn/hal/hal_uart.h"
 #include "openwsn/hal/hal_cc2520.h"
 #include "openwsn/hal/hal_debugio.h"
-#include "openwsn/svc/svc_nio_aloha.h"
 #include "openwsn/hal/hal_interrupt.h"
+#include "openwsn/svc/svc_nio_aloha.h"
 
 /* actually equal to 128 */
 #define MAX_IEEE802FRAME154_SIZE    I802F154_MAX_FRAME_LENGTH
@@ -191,7 +192,12 @@ void recvnode(void)
 		len = aloha_recv(mac, rxbuf, 0x00);        
 		if (len > 0)
 		{   
+            // output the frame data. it will first output F1, F2 and F3 as the start flag
+            // just before the frame data. 
             frame_movelower( rxbuf );
+            dbc_putchar(0xf1);
+            dbc_putchar(0xf2);
+            dbc_putchar(0xf3);
             pc = frame_startptr(rxbuf);
             for (i=0; i<frame_length(rxbuf); i++)
             {
