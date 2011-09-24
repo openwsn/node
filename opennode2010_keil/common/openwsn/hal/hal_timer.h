@@ -212,7 +212,7 @@ void timer_close( TiTimerAdapter * timer );
  */
 
 //repeat:1->use interrupt 0->not use interrupt.
-void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint8 repeat );
+void timer_setinterval( TiTimerAdapter * timer, uint16 interval, uint8 repeat );
 
 void timer_setscale( TiTimerAdapter * timer, uint16 prescaler );
 

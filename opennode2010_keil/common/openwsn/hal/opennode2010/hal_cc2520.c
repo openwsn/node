@@ -1001,7 +1001,7 @@ HAL_RF_STATUS halRfWaitXoscStable(void)
 *
 * @return  uint8 - result
 */
-uint8 halRfGetChipId(void)
+uint8 cc2520_chipid(void)
 {
     return(CC2520_MEMRD8(CC2520_CHIPID));
 }
@@ -1016,7 +1016,7 @@ uint8 halRfGetChipId(void)
 *
 * @return  uint8 - result
 */
-uint8 halRfGetChipVer(void)
+uint8 cc2520_chipver(void)
 {
     return(CC2520_MEMRD8(CC2520_VERSION));
 }

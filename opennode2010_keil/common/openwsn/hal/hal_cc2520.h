@@ -254,8 +254,9 @@ void halRfResetChip(void);
 HAL_RF_STATUS halRfInit(void);
 HAL_RF_STATUS halRfWaitXoscStable(void);
 
-uint8 halRfGetChipId(void);
-uint8 halRfGetChipVer(void);
+// formerly as halRfGetChipId
+uint8 cc2520_chipid(void);
+uint8 cc2520_chipver(void);
 HAL_RF_STATUS halRfGetStatusByte(void);
 uint8 halRfGetRandomByte(void);
 uint8 halRfGetRssiOffset(void);

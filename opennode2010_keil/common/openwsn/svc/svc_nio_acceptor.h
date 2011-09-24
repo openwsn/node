@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  * 
  * OpenWSN is a free software; you can redistribute it and/or modify it under 
  * the terms of the GNU General Public License as published by the Free Software 
@@ -85,18 +85,19 @@
  * @see rtl_framequeue.h, rtl_frame.h, rtl_ieee802frame154.h
  */
 #define NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity) \
-	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+FRAMEQUEUE_HOPESIZE((txque_capacity))+(FRAMEQUEUE_ITEMSIZE))
+	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+(FRAMEQUEUE_ITEMSIZE))
+//	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+FRAMEQUEUE_HOPESIZE((txque_capacity))+(FRAMEQUEUE_ITEMSIZE))
     
     
 #define nac_rxque_front(nac) fmque_front(nac_rxque(nac))
 #define nac_rxque_rear(nac) fmque_rear(nac_rxque(nac))
-#define nac_txque_front(nac) fmque_front(nac_txque(nac))
-#define nac_txque_rear(nac) fmque_rear(nac_txque(nac))
+//#define nac_txque_front(nac) fmque_front(nac_txque(nac))
+//#define nac_txque_rear(nac) fmque_rear(nac_txque(nac))
 
 #define nac_rxque_empty(nac) fmque_empty(nac_rxque(nac))
 #define nac_rxque_full(nac) fmque_full(nac_rxque(nac))
-#define nac_txque_empty(nac) fmque_empty(nac_txque(nac))
-#define nac_txque_full(nac) fmque_full(nac_txque(nac))
+//#define nac_txque_empty(nac) fmque_empty(nac_txque(nac))
+//#define nac_txque_full(nac) fmque_full(nac_txque(nac))
     
 
 #ifdef __cplusplus
@@ -137,7 +138,6 @@ typedef struct{
 	TiFrameTxRxInterface * rxtx;
 	TiFrameQueue * rxque;
 	TiFrameQueue * txque;
-	//TiFrame * rxframe;
     TiTimeSyncAdapter * timesync;
 }TiNioAcceptor;
 

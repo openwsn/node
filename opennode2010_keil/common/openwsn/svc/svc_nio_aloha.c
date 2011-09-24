@@ -423,9 +423,9 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 
 	// @todo: frame_length is better, but the frame length property should be 
 	// assigned correct value first
-	//uintx len = frame_capacity( frame);
+	//uintx len = frame_capacity(frame);
 	
-	uintx len = frame_length( frame);
+	uintx len = frame_length(frame);
 	hal_assert( (frame != NULL) && (len > 0) );
 
 

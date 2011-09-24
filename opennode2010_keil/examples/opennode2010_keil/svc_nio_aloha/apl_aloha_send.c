@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -59,25 +59,22 @@
 #define MAX_IEEE802FRAME154_SIZE                128
 
 #include "apl_foundation.h"
-//#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "openwsn/hal/hal_mcu.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
 #include "openwsn/hal/hal_foundation.h"
-#include "openwsn/rtl/rtl_foundation.h"
 #include "openwsn/rtl/rtl_frame.h"
 #include "openwsn/rtl/rtl_debugio.h"
 #include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/rtl/rtl_random.h"
+#include "openwsn/rtl/rtl_dumpframe.h"
 #include "openwsn/hal/hal_mcu.h"
 #include "openwsn/hal/hal_led.h"
 #include "openwsn/hal/hal_assert.h"
 #include "openwsn/hal/hal_uart.h"
-#include "openwsn/hal/hal_cc2520.h"
 #include "openwsn/hal/hal_interrupt.h"
 #include "openwsn/hal/hal_debugio.h"
-#include "openwsn/rtl/rtl_dumpframe.h"
+#include "openwsn/hal/hal_cc2520.h"
 #include "openwsn/svc/svc_nio_aloha.h"
 
 
@@ -91,6 +88,8 @@
 #define CONFIG_ALOHA_LOCAL_ADDRESS		        0x01
 #define CONFIG_ALOHA_REMOTE_ADDRESS		        0x02
 #define CONFIG_ALOHA_CHANNEL                    11
+
+#define TEST1
 
 #define VTM_RESOLUTION                          5
 
@@ -114,6 +113,7 @@ int main(void)
 
 void aloha_sendnode(void)
 {   
+    char * msg = "welcome to sendnode...\r\n";
     TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
@@ -121,32 +121,24 @@ void aloha_sendnode(void)
 	TiTimerAdapter * timer;
 	TiFrame * txbuf;
 	char * pc;
-
-	char * msg = "welcome to aloha sendnode...";
 	uint8 i, seqid=0, option, len;
 
     target_init();
-    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
 	led_open();
 	led_on( LED_ALL );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 	
+    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+    dbc_mem(msg, strlen(msg));
+
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
-    /*
-    while (1)//todo for testing
-    {
-        dbc_putchar( sizeof(TiCc2520Adapter));//todo for testing
-        hal_delayms( 1000);//todo for testing
-    }
-    */
-	nac = nac_construct( &m_nac[0], NAC_SIZE );//todo
+	nac = nac_construct( &m_nac[0], NAC_SIZE );
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
     timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
     
 	cc2520_open(cc, 0, NULL, NULL, 0x00 );
-    
     timer = timer_open(timer, 2, NULL, NULL, 0x00); 
     timer_setinterval(timer, 1000, 0);
     timer_setscale(timer,7999);
@@ -164,20 +156,18 @@ void aloha_sendnode(void)
 		aloha_setremoteaddress( mac, CONFIG_ALOHA_REMOTE_ADDRESS );
         frame_reset(txbuf, 3, 20, 25);
       
-	    #define TEST1
-
         #ifdef TEST1
-        pc = frame_startptr( txbuf );
+        pc = frame_startptr(txbuf);
         len = min(10, frame_capacity(txbuf));
-        for (i=0; i<10; i++)
-        {
-            pc[i] = i;
-        }
+        for (i=0; i<len; i++)
+            pc[i] = '0' + i;
+        pc[0] = seqid ++;
 		frame_setlength(txbuf, len);
         #endif
 
         #ifdef TEST2
-        frame_pushback( txbuf, "01234567890123456789", 20 ); 
+        frame_pushback(txbuf, seqid++);
+        frame_pushback(txbuf, "1234567890123456789", 19); 
         #endif
 
         // if option is 0x00, then aloha send will not require ACK from the receiver. 
@@ -197,9 +187,9 @@ void aloha_sendnode(void)
                 break;
             }
 
-            // @attention Needn't delay here, because the aloha protocol should 
-            // solve the backoff delay problem.
-            // hal_delay(2000);
+            // @attention Needn't delay here. If there're really confliction occurs, 
+            // then the aloha protocol should solve the backoff delay problem.
+            // hal_delay(250);
         }
 		
 		// for simple aloha, you needn't to call aloha_evolve(). it's necessary for 

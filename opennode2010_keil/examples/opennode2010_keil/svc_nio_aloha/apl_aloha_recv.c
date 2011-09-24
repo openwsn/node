@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -46,6 +46,9 @@
  *
  * @modified by zhangwei on 2010520
  *  - upgraded to winavr20090313
+ * 
+ * @modified by zhangwei, jiangridong in 201108
+ *  - tested ok.
  ******************************************************************************/
 
 
@@ -73,7 +76,8 @@
 #include "openwsn/svc/svc_nio_aloha.h"
 #include "openwsn/hal/hal_interrupt.h"
 
-#define MAX_IEEE802FRAME154_SIZE    128
+/* actually equal to 128 */
+#define MAX_IEEE802FRAME154_SIZE    I802F154_MAX_FRAME_LENGTH
 
 #define CONFIG_DEBUG
 
@@ -133,7 +137,6 @@ void recvnode(void)
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
     led_open();
-    //halUartInit( 9600,0);
     led_on( LED_ALL );
     hal_delayms( 500 );
     led_off( LED_ALL );
