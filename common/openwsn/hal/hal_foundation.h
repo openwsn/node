@@ -56,7 +56,7 @@
  * 8~32. It depends on how many hardware interrupts you used in your system. 
  */
 #define CONFIG_INT2HANDLER_ENABLE
-#define CONFIG_INT2HANDLER_CAPACITY 32
+#define CONFIG_INT2HANDLER_CAPACITY 16
 
 // this macro seems no use in hal layer and should move to osx layer. (2011)
 #define CONFIG_NANOS_ENABLE

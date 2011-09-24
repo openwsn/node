@@ -118,6 +118,8 @@ void sendnode1(void)
 
     while(1)  
     {
+        //led_off(LED_RED);
+
         // @attention
         // - When you open the frame, you must guarantee there're at least two empty
         //   byte space for later frame_skipouter(), or else you'll encounter assertion
@@ -131,7 +133,7 @@ void sendnode1(void)
         // assign some random data into the frame. for demostration only.        
         ptr = frame_startptr(txbuf);
         for (i = 0; i< 6; i++)
-            ptr[i] = i;
+            ptr[i] = '0' + i;
 
         // create the 802.15.4 protocol header. attention it requires at least 12 bytes 
         // for the header and 2 bytes for the tail(CRC checdum).
@@ -153,6 +155,9 @@ void sendnode1(void)
         if (len > 0)
         {
             led_toggle(LED_RED);
+            //led_on(LED_RED);
+            //hal_delayms(500);
+
             seqid++;
 
             tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
@@ -170,7 +175,9 @@ void sendnode1(void)
             // 0x14 = frame_length(txbuf) 
             // 0x14 = actually sent (equal to frame_length(txbuf). Ok).
         }
-
-        hal_delayms(500);
+        else{
+            //led_on(LED_RED);
+            //hal_delayms(100);
+        }
     }
 }

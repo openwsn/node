@@ -84,8 +84,6 @@ void recvnode1(void)
     TiUartAdapter * uart;
 	TiFrame * rxbuf;
 	uint8 len;
-    uint8 i;
-    char *pc;
     
 	target_init();
 

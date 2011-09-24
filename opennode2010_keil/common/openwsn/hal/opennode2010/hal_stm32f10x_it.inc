@@ -215,6 +215,10 @@ void RCC_IRQHandler(void)
 {
 }
 
+/**
+ * For opennode 2010 hardware (stm32f103 + cc2520), EXTI0 is used for FIFOP interrupt
+ * request.
+ */
 /*******************************************************************************
 * Function Name  : EXTI0_IRQHandler
 * Description    : This function handles External interrupt Line 0 request.

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,12 +28,12 @@
 #define _HAL_CC2520_H_4842_
 
 /*******************************************************************************
- * @file    stm32f10x_dac.h
- * @author  MCD Application Team
- * @version V3.5.0
+ * @file    hal_cc2520.h
+ * @author  Zhang Wei, Jiang Ridong
+ * @version V 1.0.0
  * @date    11-March-2011
- * @brief   This file contains an transceiver adapter. It's an simple wraper of the 
- *          Simple wraper of cc2520 low power wireless transceiver. it helps to implement 
+ * @brief   This file contains the adapter object of cc2520 transceiver. It's an 
+ *          Simple wraper of cc2520 low power wireless transceiver. 
  *
  * @state released
  * 
@@ -49,8 +49,6 @@
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
-#include "opennode2010/hal_cc2520vx.h"
-#include "opennode2010/hal_cc2520base.h"
 #include "hal_frame_transceiver.h"
 
 /* The following constants represent the size of cc2520 RXBUF and TXBUF size. You 

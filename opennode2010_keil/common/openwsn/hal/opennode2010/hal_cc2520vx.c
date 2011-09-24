@@ -20,7 +20,7 @@ void CC2520_ACTIVATE(void)
 {
     //int i;
 
-    // activate the SPI module which is used for communication between MCU and cc2520.
+    // enable the SPI module which is used for communication between MCU and cc2520.
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,  ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
