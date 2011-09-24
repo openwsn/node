@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = ledremote.o hal_assert.o hal_cc2420.o hal_cpu.o hal_foundation.o hal_interrupt.o hal_led.o hal_targetboard.o hal_timer.o hpl_atmega128.o rtl_openframe.o hal_uart.o rtl_debugio.o hal_startup.o rtl_foundation.o hal_debugio1.o 
+OBJECTS = ledremote.o hal_assert.o hal_cc2420.o hal_cpu.o hal_foundation.o hal_interrupt.o hal_led.o hal_targetboard.o hal_timer.o hpl_atmega128.o hal_uart.o rtl_debugio.o hal_startup.o rtl_foundation.o hal_debugio.o rtl_frame.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -49,49 +49,49 @@ all: $(TARGET) ledremote.hex ledremote.eep ledremote.lss size
 ledremote.o: ../ledremote.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_assert.o: ../../../common/openwsn/hal/gainz/hal_assert.c
+hal_assert.o: ../../../../common/openwsn/hal/gainz/hal_assert.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_cc2420.o: ../../../common/openwsn/hal/gainz/hal_cc2420.c
+hal_cc2420.o: ../../../../common/openwsn/hal/gainz/hal_cc2420.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_cpu.o: ../../../common/openwsn/hal/gainz/hal_cpu.c
+hal_cpu.o: ../../../../common/openwsn/hal/gainz/hal_cpu.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_foundation.o: ../../../common/openwsn/hal/gainz/hal_foundation.c
+hal_foundation.o: ../../../../common/openwsn/hal/gainz/hal_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_interrupt.o: ../../../common/openwsn/hal/gainz/hal_interrupt.c
+hal_interrupt.o: ../../../../common/openwsn/hal/gainz/hal_interrupt.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_led.o: ../../../common/openwsn/hal/gainz/hal_led.c
+hal_led.o: ../../../../common/openwsn/hal/gainz/hal_led.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_targetboard.o: ../../../common/openwsn/hal/gainz/hal_targetboard.c
+hal_targetboard.o: ../../../../common/openwsn/hal/gainz/hal_targetboard.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_timer.o: ../../../common/openwsn/hal/gainz/hal_timer.c
+hal_timer.o: ../../../../common/openwsn/hal/gainz/hal_timer.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hpl_atmega128.o: ../../../common/openwsn/hal/gainz/hpl_atmega128.c
+hpl_atmega128.o: ../../../../common/openwsn/hal/gainz/hpl_atmega128.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_openframe.o: ../../../common/openwsn/rtl/rtl_openframe.c
+hal_uart.o: ../../../../common/openwsn/hal/gainz/hal_uart.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_uart.o: ../../../common/openwsn/hal/gainz/hal_uart.c
+rtl_debugio.o: ../../../../common/openwsn/rtl/rtl_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_debugio.o: ../../../common/openwsn/rtl/rtl_debugio.c
+hal_startup.o: ../../../../common/openwsn/hal/gainz/hal_startup.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_startup.o: ../../../common/openwsn/hal/gainz/hal_startup.c
+rtl_foundation.o: ../../../../common/openwsn/rtl/rtl_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_foundation.o: ../../../common/openwsn/rtl/rtl_foundation.c
+hal_debugio.o: ../../../../common/openwsn/hal/gainz/hal_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_debugio1.o: ../../../common/openwsn/hal/gainz/hal_debugio1.c
+rtl_frame.o: ../../../../common/openwsn/rtl/rtl_frame.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
@@ -118,5 +118,5 @@ clean:
 
 
 ## Other dependencies
--include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
+-include $(shell mkdir dep 2>NUL) $(wildcard dep/*)
 

@@ -1194,7 +1194,7 @@ uint8 halRfTransmitCCA(void)
     else {
         status = SUCCESS;
         // Wait for TX_FRM_DONE exception
-        while(!CC2520_TX_FRM_DONE_PIN);
+        while(!CC2520_TX_FRM_DONE_PIN);		  
         HAL_INT_OFF();
         CC2520_CLEAR_EXC(CC2520_EXC_TX_FRM_DONE);
         HAL_INT_ON();
