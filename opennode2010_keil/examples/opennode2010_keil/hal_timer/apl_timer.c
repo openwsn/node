@@ -1,17 +1,13 @@
- /*
- * 下面是定时器的程序
- */
 
 #include "apl_foundation.h"
-//#include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
-#include "openwsn/rtl/rtl_debugio.h"
-#include "openwsn/hal/hal_timer.h"
-#include "openwsn/hal/hal_interrupt.h"
                                    
 static TiTimerAdapter g_timer3;
 static TiTimerAdapter g_timer2;
 static void _timer2_handler(void * object, TiEvent * e);
 static void _timer3_handler(void * object, TiEvent * e);
+
+#define TEST1
+#undef TEST2
 
 int main( void)
 {
