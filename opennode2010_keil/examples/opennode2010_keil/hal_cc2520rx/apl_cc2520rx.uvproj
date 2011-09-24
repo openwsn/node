@@ -386,9 +386,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>cc2520rx.c</FileName>
+              <FileName>apl_cc2520rx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\cc2520rx.c</FilePath>
+              <FilePath>.\apl_cc2520rx.c</FilePath>
             </File>
           </Files>
         </Group>
