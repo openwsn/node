@@ -25,6 +25,9 @@
  ******************************************************************************/
 
 /*******************************************************************************
+ * @state
+ * - Released. Tested Ok with apl_cc2520tx.
+ *
  * @history
  * - modified by zhangwei on 2011.09.23
  *   add hal_enable_interrupts() before while loop. This is mandatory.
