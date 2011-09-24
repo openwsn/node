@@ -69,7 +69,8 @@
 #define FRAME154_BROADCAST_PAN               0xFFFF
 #define FRAME154_BROADCAST_ADDRESS           0xFFFF
 
-#define FRAME154_MAKEWORD(highbyte,lowbyte)  ((((uint16)(highbyte))<<8) | ((uint16)(lowbyte)))
+#define I802F154_MAKEWORD(highbyte,lowbyte)  ((((uint16)(highbyte))<<8) | ((uint16)(lowbyte)))
+#define FRAME154_MAKEWORD(highbyte,lowbyte)  I802F154_MAKEWORD((highbyte),(lowbyte))
 
 
 /* todo

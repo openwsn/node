@@ -391,9 +391,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>hal_timer_test.c</FileName>
+              <FileName>apl_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hal_timer_test.c</FilePath>
+              <FilePath>.\apl_timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -551,29 +551,9 @@
           <GroupName>hal</GroupName>
           <Files>
             <File>
-              <FileName>basic_rf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\basic_rf.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_assert.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_assert.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520base.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520base.c</FilePath>
-            </File>
-            <File>
-              <FileName>hal_cc2520vx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520vx.c</FilePath>
             </File>
             <File>
               <FileName>hal_cpu.c</FileName>
@@ -619,6 +599,11 @@
               <FileName>hal_interrupt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_interrupt.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_targetboard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
             </File>
           </Files>
         </Group>
