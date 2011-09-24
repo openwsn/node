@@ -202,6 +202,7 @@ uintx iobuf_pushback( TiIoBuf * iobuf, char * data, uintx len )
 uintx iobuf_pushbyte( TiIoBuf * iobuf, unsigned char value )
 {
 	char * ptr = iobuf_ptr(iobuf) + iobuf->length;
+    rtl_assert(iobuf_length(iobuf) < iobuf_capacity(iobuf));
 	*ptr = value;
 	iobuf->length ++;
 	return 1;

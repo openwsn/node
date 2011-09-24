@@ -1,5 +1,7 @@
 sniffer base + sniffer node = sniffer network
 
+tested ok on 2011.09.24
+
 
 Sniffer Network
 =================================================================
