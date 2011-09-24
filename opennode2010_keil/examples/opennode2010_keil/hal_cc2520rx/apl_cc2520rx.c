@@ -25,32 +25,25 @@
  ******************************************************************************/
 
 /*******************************************************************************
+ * @state
+ * - Released. Tested Ok with apl_cc2520tx.
+ *
  * @history
  * - modified by zhangwei on 2011.09.23
  *   add hal_enable_interrupts() before while loop. This is mandatory.
  ******************************************************************************/
 
 #include "apl_foundation.h"
-#include "openwsn/hal/hal_configall.h"
-#include <stdlib.h>
-#include <string.h>
-#include "openwsn/hal/hal_foundation.h"
-#include "openwsn/rtl/rtl_frame.h"
-#include "openwsn/rtl/rtl_ieee802frame154.h"
-#include "openwsn/hal/hal_cpu.h"
-#include "openwsn/hal/hal_led.h"
-#include "openwsn/hal/hal_assert.h"
-#include "openwsn/hal/hal_uart.h"
-#include "openwsn/hal/hal_cc2520.h"
-#include "openwsn/hal/hal_debugio.h"
-#include "openwsn/hal/hal_targetboard.h"
+
 
 #define CONFIG_LISTENER    
 #undef  CONFIG_LISTENER    
 
 #define UART_ID 1
 
+/* define TEST_CHOICE 1 or 2 to choose different test branches. */
 #define TEST_CHOICE 1
+
 //#define TEST_ACK
 //#undef  TEST_ACK
 
@@ -63,8 +56,8 @@
 #define MAX_IEEE802FRAME154_SIZE                I802F154_MAX_FRAME_LENGTH
 
 static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-TiCc2520Adapter             m_cc;
-TiUartAdapter               m_uart;
+static TiCc2520Adapter     	m_cc;
+static TiUartAdapter        m_uart;
 
 #if (TEST_CHOICE == 1)
 static void recvnode1(void);
@@ -94,8 +87,6 @@ void recvnode1(void)
     TiUartAdapter * uart;
 	TiFrame * rxbuf;
 	uint8 len;
-    uint8 i;
-    char *pc;
     
 	target_init();
 
@@ -117,7 +108,7 @@ void recvnode1(void)
 	cc2520_setpanid( cc, PANID );					// network identifier 
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// node identifier in sub-network
 
-	rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+	rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 
 	// when use this scan mode to receive data, interrupt should be disable; otherwise the data will be
 	// read twice and in the second time there are no data actually which leads to a assert.
@@ -137,12 +128,11 @@ void recvnode1(void)
         if (len > 0)
         {
 			frame_setlength(rxbuf, len);
-            pc = frame_startptr(rxbuf);
-            for (i=0; i<len; i++)
-            {
-                //uart_putchar(uart, pc[i]);
-                dbc_putchar(pc[i]);
-            }
+            dbc_putchar(len);
+			dbc_write(frame_startptr( rxbuf), len);
+            dbc_putchar(0xff);
+            dbc_putchar(0xff);
+            dbc_putchar(0xff);
 			led_toggle( LED_RED);
         }
 	}

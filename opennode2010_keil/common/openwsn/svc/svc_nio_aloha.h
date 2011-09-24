@@ -100,8 +100,8 @@
 #define CONFIG_ALOHA_MAX_FRAME_SIZE             128
 
 
-#define CONFIG_ALOHA_MIN_ACK_TIME               2
-#define CONFIG_ALOHA_MAX_ACK_TIME               200
+#define CONFIG_ALOHA_MIN_ACK_TIME               1
+#define CONFIG_ALOHA_MAX_ACK_TIME               50
 
 #define CONFIG_ALOHA_MAX_BACKOFF                100
 #define CONFIG_ALOHA_MIN_BACKOFF                2    //该宏必须大于0，否则timer会出现异常
@@ -197,18 +197,18 @@ void aloha_close( TiAloha * mac );
  * frame out. you should guarantee to repeated call aloha_evolve() to try to send the
  * frame out if this occurs.
  */
-uintx aloha_send( TiAloha * mac, uint16 shortaddrto, TiFrame * frame, uint8 option );
+intx aloha_send( TiAloha * mac, uint16 shortaddrto, TiFrame * frame, uint8 option );
 
 /**
  * \brief This function broadcast a frame out.
  */
-uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option );
+intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option );
 
 /**
  * \brief This function try to receive a frame and place it into parameter "frame".
  * If there's no frame coming, then returns 0.
  */
-uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option );
+intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option );
 
 
 /**

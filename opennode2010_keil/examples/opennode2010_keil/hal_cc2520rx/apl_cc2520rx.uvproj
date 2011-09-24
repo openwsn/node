@@ -7,18 +7,18 @@
 
   <Targets>
     <Target>
-      <TargetName>Target 1</TargetName>
+      <TargetName>target</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F101C8</Device>
+          <Device>STM32F103C8</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x200027FF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
+          <Cpu>IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x800FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"STARTUP\ST\STM32F10x.s" ("STM32 Startup Code")</StartupFile>
           <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL010000)</FlashDriverDll>
-          <DeviceId>4249</DeviceId>
+          <DeviceId>4235</DeviceId>
           <RegisterFile>stm32f10x_lib.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -42,15 +42,15 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\</OutputDirectory>
-          <OutputName>timer_new_test</OutputName>
+          <OutputDirectory>D:\temp\keil\</OutputDirectory>
+          <OutputName>hal_cc2520rx</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\</ListingPath>
-          <HexFormatSelection>1</HexFormatSelection>
+          <ListingPath>D:\temp\keil\</ListingPath>
+          <HexFormatSelection>0</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
           <BeforeCompile>
@@ -99,15 +99,15 @@
           <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments></SimDllArguments>
           <SimDlgDll>DARMSTM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pSTM32F101C8</SimDlgDllArguments>
+          <SimDlgDllArguments>-pSTM32F103C8</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMSTM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pSTM32F101C8</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pSTM32F103C8</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
-            <HexSelection>1</HexSelection>
+            <HexSelection>0</HexSelection>
             <HexRangeLowAddress>0</HexRangeLowAddress>
             <HexRangeHighAddress>0</HexRangeHighAddress>
             <HexOffset>0</HexOffset>
@@ -126,7 +126,7 @@
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>0</LoadApplicationAtStartup>
+            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
@@ -159,7 +159,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -263,7 +263,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x2800</Size>
+                <Size>0x5000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -318,7 +318,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x200000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -386,14 +386,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>apl_foundation.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\apl_foundation.h</FilePath>
-            </File>
-            <File>
-              <FileName>hal_timer_test.c</FileName>
+              <FileName>apl_cc2520rx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\hal_timer_test.c</FilePath>
+              <FilePath>.\apl_cc2520rx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -436,34 +431,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_bkp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_cec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_cec.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dac.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
@@ -481,24 +451,9 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_exti.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_iwdg.c</FileName>
@@ -521,11 +476,6 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_rtc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_spi.c</FilePath>
@@ -544,6 +494,11 @@
               <FileName>stm32f10x_wwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -620,6 +575,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_interrupt.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_targetboard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -634,6 +594,16 @@
               <FileName>rtl_foundation.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_foundation.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtl_frame.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_frame.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtl_ieee802frame154.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_ieee802frame154.c</FilePath>
             </File>
           </Files>
         </Group>

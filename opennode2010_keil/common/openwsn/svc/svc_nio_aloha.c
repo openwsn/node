@@ -93,8 +93,11 @@
 #define MAC_HEADER_LENGTH 12
 #define MAC_TAIL_LENGTH 2
 
-static uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option );
-static uintx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option );
+static intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option );
+static intx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option );
+static void _aloha_on_ack_frame(TiAloha * mac, TiFrame * frame);
+static void _aloha_on_command_frame(TiAloha * mac, TiFrame * frame);
+static void _aloha_on_beacon_frame(TiAloha * mac, TiFrame * frame);
 
 TiAloha * aloha_construct( char * buf, uint16 size )
 {
@@ -190,7 +193,7 @@ void aloha_close( TiAloha * mac )
  * @attention: This function assumes you should set the "destination address" field 
  * of the frame object.
  */
-uintx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option )
+intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option )
 {   
 	
 	TiIEEE802Frame154Descriptor * desc;
@@ -306,11 +309,11 @@ uintx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opt
     return ret;
 }
 
-uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
+intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 {
     TiIEEE802Frame154Descriptor * desc;
 	bool failed=true;
-    uintx ret=0;
+    intx ret=0;
 
 	// clear the ACK REQUEST bit
 	option &= 0xFE;
@@ -320,6 +323,7 @@ uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 		// make a copy of the original frame inside the MAC component
         frame_totalcopyfrom( mac->txbuf, frame );
 		ret = frame_length( mac->txbuf );
+        
         // according to 802.15.4 specification:
         // header 12 B = 1B frame length (required by the transceiver driver currently) 
         //  + 2B frame control + 1B sequence number + 2B destination pan + 2B destination address
@@ -329,9 +333,9 @@ uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
         //desc = ieee802frame154_format( &(mac->desc), frame_startptr(frame), frame_capacity(frame), 
 			//FRAME154_DEF_FRAMECONTROL_DATA_NOACK );
 
-		desc = ieee802frame154_format( &(mac->desc), frame_startptr(mac->txbuf), frame_capacity(mac->txbuf), 
-			FRAME154_DEF_FRAMECONTROL_DATA );// @todo 如果使用上一句则前12个字节没有赋值成功！2011.04.11
-        rtl_assert( desc != NULL );
+		desc = ieee802frame154_format(&(mac->desc), frame_startptr(mac->txbuf), frame_capacity(mac->txbuf), 
+			FRAME154_DEF_FRAMECONTROL_DATA);// @todo 如果使用上一句则前12个字节没有赋值成功！2011.04.11
+        rtl_assert(desc != NULL);
 		
         ieee802frame154_set_sequence( desc, mac->seqid );
 	    ieee802frame154_set_panto( desc, mac->panto );
@@ -341,7 +345,8 @@ uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 
 		mac->txbuf->option = option;
         mac->sendoption = option;
-		frame_setlength( mac->txbuf,(ret + MAC_HEADER_LENGTH + MAC_TAIL_LENGTH));
+		frame_setlength( mac->txbuf, (ret + MAC_HEADER_LENGTH + MAC_TAIL_LENGTH) );
+
         // standard aloha protocol behavior
         #ifdef CONFIG_ALOHA_STANDARD
 		failed = true;
@@ -412,22 +417,22 @@ uintx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
  * @return
  *	> 0			success
  *	0           failed. no byte has been sent successfully. need call this function to retry.
- *  - 1:  retry reach maximum count. failed the whole sending 
+ *  - 1:        failed. 
  */
-uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
+intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 {   
-	uintx count=0;
+	uintx count=0, len;
 	char * buf;
 	bool ack_success;
 	uint16 fcf; 
+    TiFrame * rxf;
 
 	// @todo: frame_length is better, but the frame length property should be 
-	// assigned correct value first
-	//uintx len = frame_capacity( frame);
-	
-	uintx len = frame_length( frame);
-	hal_assert( (frame != NULL) && (len > 0) );
-
+	// assigned correct value first by the upper layer component.
+    //
+	// len = frame_capacity(frame);
+	len = frame_length(frame);
+	hal_assert((frame != NULL) && (len > 0));
 
     // @modified by openwsn on 2010.08.24
     // - needn't wait for channel clear here. because the caller can guarantee the 
@@ -457,29 +462,45 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
     
     if (len > 0)
     { 
-		count = nac_send( mac->nac, frame, option );
+		count = nac_send(mac->nac, frame, option);
 		
-		// If this frame requires ACK response
-
+		// If this frame requires the ACK response, then wait for the ACK
 		if (option & 0x01)
 		{
-            timer_setinterval( mac->timer, CONFIG_ALOHA_MIN_ACK_TIME, 7999 );
-            timer_start( mac->timer );
-			while (!timer_expired(mac->timer)) 
-			{
-				
-			}
+            //timer_setinterval( mac->timer, CONFIG_ALOHA_MIN_ACK_TIME, 7999 );
+            timer_setinterval(mac->timer, CONFIG_ALOHA_MIN_ACK_TIME, 0);
+            timer_start(mac->timer);
+			while (!timer_expired(mac->timer)) { NULL; }
 
-			
 			// @attention: For this timer, the maximum duration input is 8 due to 
 			// the limited width of the timer hardware (8 bits only). So I add the
 			// following assertion to do the check. This is only on GAINZ node.
-			//hal_assert( CONFIG_ALOHA_MAX_ACK_TIME - CONFIG_ALOHA_MIN_ACK_TIME <= 80 );
-            timer_setinterval( mac->timer, CONFIG_ALOHA_MAX_ACK_TIME - CONFIG_ALOHA_MIN_ACK_TIME, 7999 );
-            timer_start( mac->timer );
-			ack_success = false;
+            //
+			// hal_assert( CONFIG_ALOHA_MAX_ACK_TIME - CONFIG_ALOHA_MIN_ACK_TIME <= 80 );
+            // timer_setinterval( mac->timer, CONFIG_ALOHA_MAX_ACK_TIME - CONFIG_ALOHA_MIN_ACK_TIME, 7999 );
+            timer_setinterval(mac->timer, CONFIG_ALOHA_MAX_ACK_TIME - CONFIG_ALOHA_MIN_ACK_TIME, 0);
+            timer_start(mac->timer);
+			
+            ack_success = false;
 			while (!timer_expired(mac->timer)) 
 			{ 
+                nac_evolve(mac->nac, NULL);
+                rxf = fmque_rear(nac_rxque(mac->nac));
+                if (rxf != NULL)
+                {
+                    buf = frame_startptr(rxf);
+					fcf = FRAME154_MAKEWORD( buf[2], buf[1] );
+					if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
+					{
+						if (*(buf+3) == mac->seqid)
+						{   
+							ack_success = true;
+							break;
+						}
+					}
+                }
+                
+/*            
 				buf = &(mac->rxbuf_ack[0]);
 				memset( buf, 0x00, FRAME154_ACK_FRAME_SIZE );
 				mac->rxtx->recv( mac->rxtx->provider,buf,FRAME154_ACK_FRAME_SIZE, 0x00 );
@@ -500,6 +521,7 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 						}
 					}
 				}
+*/                
 			}
 			
 			if (!ack_success)
@@ -524,7 +546,8 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 				mac->backoff = CONFIG_ALOHA_MIN_BACKOFF + rand_uint8( mac->backoff << 1 );
 				if (mac->backoff > CONFIG_ALOHA_MAX_BACKOFF)
 					mac->backoff = CONFIG_ALOHA_MAX_BACKOFF;
-                timer_setinterval( mac->timer, mac->backoff, 7999 );
+                //timer_setinterval( mac->timer, mac->backoff, 7999 );
+                timer_setinterval( mac->timer, mac->backoff, 0 );
                 timer_start( mac->timer );
 				mac->state = ALOHA_STATE_BACKOFF;
 			}
@@ -535,18 +558,24 @@ uintx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 }
 
 /**
- * Check whether there's some frame arrivaled. This function can be called anytime. 
+ * Check whether there's some frame arrivaled. If there's a frame arrived, then place
+ * it into "frame" parameter. This function can be called anytime. 
  * 
- * @attention: If aloha_recv() doesn't got an frame, the input buffer "frame" is 
- * still changed. The upper layer should consider this behavior. This is different 
+ * @attention: If aloha_recv() doesn't got an frame, the input buffer "frame" may
+ * still be changed. The upper layer should consider this behavior. This is different 
  * to aloha_send(). 
+ * 
+ * @param frame Containing the frame received.
+ * @param option Reseved. Should be always 0x00 now.
+ * @return > 0 if frame received. 0 if none. -1 if failed.
  */
-uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
+intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 {
     const uint8 HEADER_SIZE = 12, TAIL_SIZE = 2;
 	uintx count;
 	uint16 fcf;
     char * ptr=NULL;
+    uint8 cur;
 
 	// @modified by zhangwei on 2011.03.14
 	// - Since the network acceptor will reset the frame inside, we needn't call
@@ -575,14 +604,20 @@ uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 			// only the DATA type frame will be transfered to upper layers. The other types, 
             // such as COMMAND, BEACON and ACK will be ignored here.
 			// buf[0] is the length byte. buf[1] and buf[2] are frame control bytes.
-			fcf = FRAME154_MAKEWORD( ptr[2], ptr[1] );
-			if (FCF_FRAMETYPE(fcf) != FCF_FRAMETYPE_DATA)
-			{
+            //
+			fcf = I802F154_MAKEWORD(ptr[2], ptr[1]);
+			switch (FCF_FRAMETYPE(fcf))
+            {
+            case FCF_FRAMETYPE_DATA:
+                frame_setlength(frame, count);
+                //frame_setcapacity(frame, count);   
+                break;
+                
+            case FCF_FRAMETYPE_ACK:
+            case FCF_FRAMETYPE_COMMAND:
+            case FCF_FRAMETYPE_BEACON:
+            default:
 				count = 0;
-			}
-			else{
-                frame_setlength( frame, count );
-                //frame_setcapacity( frame, count );   todo for testing
 			}
         }
     }
@@ -598,22 +633,34 @@ uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 
     if (count > 0)
 	{
-		uintx cur;
+        svc_assert(frame->layercapacity[cur] >= (HEADER_SIZE + TAIL_SIZE));
+        if (frame_skipinner(frame, HEADER_SIZE+1, TAIL_SIZE))
+        {
+            count --;
+            count -= HEADER_SIZE;
+            count -= TAIL_SIZE;
+            frame_setlength(frame, count);
+        }
+        else
+            count = 0;
+        /*
         cur = frame->curlayer;
 		if(frame->layercapacity[cur] >= (HEADER_SIZE + TAIL_SIZE))
 		{
 			//todo frame_skipinne执行完后会使应用层帧的seqid清零，不知道为什么？
-			if(!frame_skipinner( frame,  HEADER_SIZE, TAIL_SIZE ))
+			if (frame_skipinner(frame, HEADER_SIZE, TAIL_SIZE))
 			{
+                frame_setlength( frame, count - HEADER_SIZE - TAIL_SIZE );
+                count = count - HEADER_SIZE - TAIL_SIZE;//todo for testing
+            }
+            else
 				count = 0;
-			}
-			frame_setlength( frame, count - HEADER_SIZE - TAIL_SIZE );
-			count = count - HEADER_SIZE - TAIL_SIZE;//todo for testing
 		}
 		else
 		{
 			count = 0;
 		}
+        */
 
 		
 		// - bug fix: since frame_skipinner can calculate correct layer capacity, 
@@ -621,17 +668,24 @@ uintx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
         // frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE );
     }
     else{
-        frame_setlength( frame, 0 );
+        frame_setlength(frame, 0);
     }
 
 	aloha_evolve( mac, NULL );
 	return count;
 }
 
-uintx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option )
+/**
+ * Try to receive an frame from low level component.
+ * 
+ * @param frame Containing the frame received.
+ * @param option Reseved. Should be always 0x00 now.
+ * @return > 0 if frame received. 0 if none. -1 if failed.
+ */
+intx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option )
 {   
 	//TiFrameTxRxInterface  * rxtx = mac->rxtx;
-	uintx count;
+	intx count;
 
 	// @attention: According to ALOHA protocol, the program should send ACK/NAK after 
 	// receiving a data frame. however, this is done by the low level transceiver's
@@ -639,9 +693,23 @@ uintx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option )
 
 	// count = rxtx->recv( rxtx->provider, frame_startptr(frame), frame_capacity(frame), option );
 	count = nac_recv( mac->nac, frame, option);
-
 	return count;
+}
 
+/**
+ * This function is called when a ACK frame received 
+ */
+
+void _aloha_on_ack_frame(TiAloha * mac, TiFrame * frame)
+{
+}
+
+void _aloha_on_command_frame(TiAloha * mac, TiFrame * frame)
+{
+}
+
+void _aloha_on_beacon_frame(TiAloha * mac, TiFrame * frame)
+{
 }
 
 /* this function can be used as TiCc2420Adapter's listener directly. so you can get
@@ -651,7 +719,6 @@ uintx _aloha_tryrecv( TiAloha * mac, TiFrame * frame, uint8 option )
  *
  * the evolve() function also behaviors like a thread.
  */
-
 void aloha_evolve( void * macptr, TiEvent * e )
 {  
 	TiAloha * mac = (TiAloha *)macptr;
@@ -668,10 +735,10 @@ void aloha_evolve( void * macptr, TiEvent * e )
         
 		// Retry sending the frame inside mac->txbuf. if sending successfully, then 
 		// transfer to IDLE state. if failed, then still in WAITFOR_SENDING state.
-        while ( !timer_expired( mac->timer))//我觉得这一句应该加上去
-        {
-        }
-		hal_assert( timer_expired( mac->timer));
+        
+        //while ( !timer_expired( mac->timer))//我觉得这一句应该加上去 201108
+        //{
+        //}
         if (timer_expired(mac->timer))
 		{
 			ret = 0;
@@ -688,9 +755,8 @@ void aloha_evolve( void * macptr, TiEvent * e )
 			// will also be started by _aloha_trysend() function.
 			
 
-			//todo 我觉得这里即使发送成功，状态也不会转变，所以要加上状态装换语句。
 			ret = _aloha_trysend(  mac, mac->txbuf, mac->txbuf->option );
-			if ( ret>0)
+			if (ret > 0)
 			{
 				mac->state = ALOHA_STATE_IDLE;
 			}

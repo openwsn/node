@@ -499,7 +499,7 @@ uint8 CC2520_MEMRD8(uint16 addr)
 {
     uint8 value;
     CC2520_SPI_BEGIN();
-	hal_delayus( 1);//todo for testing
+	hal_delayus(1);//todo for testing
     CC2520_SPI_TXRX(CC2520_INS_MEMRD | HIBYTE(addr));
     CC2520_SPI_TXRX(LOBYTE(addr));
     value = CC2520_SPI_TXRX(0x00);

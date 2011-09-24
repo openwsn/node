@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -31,6 +31,14 @@
  *          undefined reference to 'm_int2handler'
  *    this is due to you haven't add hal_foundation.c into your project. the above
  *    variable is declared in hal_foundation.c
+ * 
+ *  - This module doesn't provides the interrupt handler routines directly. They're
+ *    gathered in module hal_stm32f10x_it. if you don't add this module into your 
+ *    project, then you will encounter infinite loop in the default interrupt handler
+ *    routine provided by the startup asm file. However, the project can still be 
+ *    compiled successfully. 
+ * 
+ *    Suggest you always add hal_stm32f10x_it.c into your project.
  */
 
 #include "../hal_configall.h" 
@@ -42,11 +50,15 @@
 
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 // #include "./cm3/device/stm32f10x/stm32f10x.h"
-//#include "hal_stm32f10x_it.c" 
+#include "hal_stm32f10x_it.inc" 
 #endif
 
 #ifdef CONFIG_TARGETBOARD_GAINZ
 #include <avr/interrupt.h>
+#endif
+
+#ifndef CONFIG_INT2HANDLER_ENABLE
+#error "You didn't define configuration macro CONFIG_INT2HANDLER_ENABLE if you want to use module"
 #endif
 
 #ifdef __cplusplus
@@ -142,7 +154,8 @@ void hal_invokehandler( uint8 num, TiEvent * e )
  * The current versioin startup file recognize the following interrupt service routines
  * (You can find them in startup_stm32f10x_hd.s):
  */
- 
+
+//#include "hal_stm32f10x_it.c" 
 
 /*
 WWDG_IRQHandler

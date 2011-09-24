@@ -1,4 +1,28 @@
-
+/*******************************************************************************
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
+ *
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
+ * 
+ * OpenWSN is a free software; you can redistribute it and/or modify it under 
+ * the terms of the GNU General Public License as published by the Free Software 
+ * Foundation; either version 2 or (at your option) any later version.
+ * 
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple 
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ * 
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ * 
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi 
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ * 
+ ******************************************************************************/ 
 
 #include "../hal_configall.h"
 #include <string.h>
@@ -26,8 +50,8 @@
 #include "../hal_cc2520.h"
 
 static void _cc2520_fifop_handler(void * object, TiEvent * e);
-static intx _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len );
-static intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity );
+static uint8 _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len );
+static uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity );
 
 TiCc2520Adapter * cc2520_construct( void * mem, uint16 size )
 {
@@ -77,10 +101,18 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
     
     // Map the cc2520 FIFOP interrupt to cc2520 FIFOP handler. This is done inside
     // hal_interrupt module and hal_foundation module.
-	hal_attachhandler( INTNUM_FIFOP, _cc2520_fifop_handler, cc );
+	//
+    // @modified by zhangwei on 2011.09.24
+    // - You can also use macro constant INTNUM_FIFOP. It's equal to INTNUM_FRAME_ACCEPTED.
+	hal_attachhandler( INTNUM_FRAME_ACCEPTED, _cc2520_fifop_handler, cc );
     
-    // Enable the FIFOP interrupt so that the FIFOP request can activate the handler
-    // function _cc2520_fifop_handler().
+    // By default, the TiCc2520Adapter is interrupt driven. The interrupt handler
+    // _cc2520_fifop_handler() will retrieve the frame from the transceiver hardware
+    // into the adapter's internal RX buffer. 
+    // 
+    // In order to make the receiveing process work, you should enable the FIFOP
+    // interrupt so that the FIFOP request can activate the handler function _cc2520_fifop_handler().
+    
 	CC2520_ENABLE_FIFOP();
 
     return cc;
@@ -171,7 +203,7 @@ intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option
 	return count;
 }
 
-intx _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len )
+uint8 _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len )
 {
     return 0;
 }
@@ -209,14 +241,14 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
     hal_enter_critical();
     if (ret == 0)
     {
-		ret = _cc2520_read_rxbuf( cc, buf, size );
+		ret = (intx)_cc2520_read_rxbuf(cc, buf, size);
     }
     hal_leave_critical();
 
 	return ret;
 }
 
-intx _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
+uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 {
 	intx ret;
 	uint8 state;
@@ -969,7 +1001,7 @@ HAL_RF_STATUS halRfWaitXoscStable(void)
 *
 * @return  uint8 - result
 */
-uint8 halRfGetChipId(void)
+uint8 cc2520_chipid(void)
 {
     return(CC2520_MEMRD8(CC2520_CHIPID));
 }
@@ -984,7 +1016,7 @@ uint8 halRfGetChipId(void)
 *
 * @return  uint8 - result
 */
-uint8 halRfGetChipVer(void)
+uint8 cc2520_chipver(void)
 {
     return(CC2520_MEMRD8(CC2520_VERSION));
 }
@@ -1365,6 +1397,11 @@ HAL_RF_STATUS halRfReceiveOff(void)
     return halRfStrobe(CC2520_INS_SRFOFF);
 }
 
+/**
+ * _cc2520_fifop_handler
+ * This function is the simple wrapper of the FIFOP interrupt handler. It will be 
+ * called when the cc2520 raises an FIFOP interrupt request.
+ */
 void _cc2520_fifop_handler(void * object, TiEvent * e)
 {
     TiCc2520Adapter * cc = (TiCc2520Adapter *)object;
