@@ -8,6 +8,9 @@
 #include "openwsn/hal/hal_timer.h"
 #include "openwsn/hal/hal_interrupt.h"
                                    
+//#define TEST1
+#define TEST2
+
 static TiTimerAdapter g_timer3;
 static TiTimerAdapter g_timer2;
 static void _timer2_handler(void * object, TiEvent * e);

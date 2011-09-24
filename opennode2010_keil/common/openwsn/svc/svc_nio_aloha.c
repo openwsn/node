@@ -569,7 +569,7 @@ intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
  * @param option Reseved. Should be always 0x00 now.
  * @return > 0 if frame received. 0 if none. -1 if failed.
  */
-intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
+intx  aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 {
     const uint8 HEADER_SIZE = 12, TAIL_SIZE = 2;
 	uintx count;
