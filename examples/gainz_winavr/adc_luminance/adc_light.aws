@@ -1,1 +1,1 @@
-<AVRWorkspace><IOSettings><CurrentRegisters/></IOSettings><part name="ATMEGA128"/><Files/></AVRWorkspace>
+<AVRWorkspace><IOSettings><CurrentRegisters/></IOSettings><part name="ATMEGA128"/><Files><File00000 Name="D:\dev\openwsn\source\node\examples\gainz_winavr\adc_luminance\adc_light.c" Position="268 99 805 413" LineCol="56 0"/></Files></AVRWorkspace>
