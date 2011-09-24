@@ -571,7 +571,6 @@ intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
  */
 intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 {
-    const uint8 HEADER_SIZE = 12, TAIL_SIZE = 2;
 	uintx count;
 	uint16 fcf;
     char * ptr=NULL;
@@ -585,7 +584,7 @@ intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
     // move the frame current layer to mac protocol related layer. the default layer
     // only contains the data (mac payload) rather than mac frame.
 	// 
-    // frame_skipouter( frame, HEADER_SIZE, TAIL_SIZE );
+    // frame_skipouter( frame, HEADER_SIZE+1, TAIL_SIZE );
 	
     // assert: the skipouter must be success
 	// attention the network acceptor requirement of the frame layer
@@ -618,6 +617,7 @@ intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
             case FCF_FRAMETYPE_BEACON:
             default:
 				count = 0;
+                break;
 			}
         }
     }
@@ -631,41 +631,25 @@ intx aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
 	// the current layer setting of the frame.
     // frame_moveinner( frame );
 
+    // The value of count equal to the total data length, which equals to framelength+1.
     if (count > 0)
 	{
-        svc_assert(frame->layercapacity[cur] >= (HEADER_SIZE + TAIL_SIZE));
-        if (frame_skipinner(frame, HEADER_SIZE+1, TAIL_SIZE))
+        cur = frame_curlayer(frame);
+        svc_assert(frame->layercapacity[cur] >= (ALOHA_HEADER_SIZE + ALOHA_TAIL_SIZE));
+        if (frame_skipinner(frame, ALOHA_HEADER_SIZE+1, ALOHA_TAIL_SIZE))
         {
-            count --;
-            count -= HEADER_SIZE;
-            count -= TAIL_SIZE;
+            // substract 1 byte occupied by the frame length
+            count --;    
+            count -= ALOHA_HEADER_SIZE;
+            count -= ALOHA_TAIL_SIZE;
             frame_setlength(frame, count);
         }
         else
             count = 0;
-        /*
-        cur = frame->curlayer;
-		if(frame->layercapacity[cur] >= (HEADER_SIZE + TAIL_SIZE))
-		{
-			//todo frame_skipinne执行完后会使应用层帧的seqid清零，不知道为什么？
-			if (frame_skipinner(frame, HEADER_SIZE, TAIL_SIZE))
-			{
-                frame_setlength( frame, count - HEADER_SIZE - TAIL_SIZE );
-                count = count - HEADER_SIZE - TAIL_SIZE;//todo for testing
-            }
-            else
-				count = 0;
-		}
-		else
-		{
-			count = 0;
-		}
-        */
-
 		
 		// - bug fix: since frame_skipinner can calculate correct layer capacity, 
 		// the following line is unecessary now
-        // frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE );
+        // frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE-1 );
     }
     else{
         frame_setlength(frame, 0);

@@ -166,9 +166,9 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
 	hal_leave_critical();
   	
-    hal_delayms(1);
+    hal_delayus(1);
 	CC2520_STXON();
-	hal_delayms(1);
+	hal_delayus(1);
 	
 	return len;
 }

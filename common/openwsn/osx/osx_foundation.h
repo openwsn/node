@@ -73,13 +73,13 @@
  */
 
 #include "osx_configall.h"
-#include "../rtl/rtl_foundation.h"
-#include "../rtl/rtl_lightqueue.h"
-#include "../hal/hal_foundation.h"
-#include "../hal/hal_interrupt.h"
-#include "../hal/hal_cpu.h"
-#include "../hal/hal_assert.h"
-#include "../hal/hal_ticker.h"
+#include "../../../common/openwsn/rtl/rtl_foundation.h"
+#include "../../../common/openwsn/rtl/rtl_lightqueue.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_interrupt.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_ticker.h"
 
 #define osx_assert(x) hal_assert(x)
 

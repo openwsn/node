@@ -6,7 +6,7 @@
 PROJECT = osxdemo
 MCU = atmega128
 TARGET = osxdemo.elf
-CC = AVR-GCC.EXE
+CC = avr-gcc
 
 CPP = avr-g++
 
@@ -46,7 +46,9 @@ OBJECTS = osxdemo.o appsvc3.o appsvc1.o appsvc2.o osx_kernel.o rtl_lightqueue.o 
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) osxdemo.hex osxdemo.eep osxdemo.lss## Compile
+all: $(TARGET) osxdemo.hex osxdemo.eep osxdemo.lss size
+
+## Compile
 osxdemo.o: ../osxdemo.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
@@ -59,55 +61,55 @@ appsvc1.o: ../appsvc1.c
 appsvc2.o: ../appsvc2.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-osx_kernel.o: ../../../common/openwsn/osx/osx_kernel.c
+osx_kernel.o: ../../../../common/openwsn/osx/osx_kernel.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_lightqueue.o: ../../../common/openwsn/rtl/rtl_lightqueue.c
+rtl_lightqueue.o: ../../../../common/openwsn/rtl/rtl_lightqueue.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_dispatcher.o: ../../../common/openwsn/rtl/rtl_dispatcher.c
+rtl_dispatcher.o: ../../../../common/openwsn/rtl/rtl_dispatcher.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hpl_atmega128.o: ../../../common/openwsn/hal/gainz/hpl_atmega128.c
+hpl_atmega128.o: ../../../../common/openwsn/hal/gainz/hpl_atmega128.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_assert.o: ../../../common/openwsn/hal/gainz/hal_assert.c
+hal_assert.o: ../../../../common/openwsn/hal/gainz/hal_assert.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_cpu.o: ../../../common/openwsn/hal/gainz/hal_cpu.c
+hal_cpu.o: ../../../../common/openwsn/hal/gainz/hal_cpu.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_debugio.o: ../../../common/openwsn/hal/gainz/hal_debugio.c
+hal_debugio.o: ../../../../common/openwsn/hal/gainz/hal_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_foundation.o: ../../../common/openwsn/hal/gainz/hal_foundation.c
+hal_foundation.o: ../../../../common/openwsn/hal/gainz/hal_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_interrupt.o: ../../../common/openwsn/hal/gainz/hal_interrupt.c
+hal_interrupt.o: ../../../../common/openwsn/hal/gainz/hal_interrupt.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_led.o: ../../../common/openwsn/hal/gainz/hal_led.c
+hal_led.o: ../../../../common/openwsn/hal/gainz/hal_led.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_rtc.o: ../../../common/openwsn/hal/gainz/hal_rtc.c
+hal_rtc.o: ../../../../common/openwsn/hal/gainz/hal_rtc.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_uart.o: ../../../common/openwsn/hal/gainz/hal_uart.c
+hal_uart.o: ../../../../common/openwsn/hal/gainz/hal_uart.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_foundation.o: ../../../common/openwsn/rtl/rtl_foundation.c
+rtl_foundation.o: ../../../../common/openwsn/rtl/rtl_foundation.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_targetboard.o: ../../../common/openwsn/hal/gainz/hal_targetboard.c
+hal_targetboard.o: ../../../../common/openwsn/hal/gainz/hal_targetboard.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-rtl_debugio.o: ../../../common/openwsn/rtl/rtl_debugio.c
+rtl_debugio.o: ../../../../common/openwsn/rtl/rtl_debugio.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-svc_timer.o: ../../../common/openwsn/svc/svc_timer.c
+svc_timer.o: ../../../../common/openwsn/svc/svc_timer.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-hal_timer.o: ../../../common/openwsn/hal/gainz/hal_timer.c
+hal_timer.o: ../../../../common/openwsn/hal/gainz/hal_timer.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
@@ -122,6 +124,10 @@ $(TARGET): $(OBJECTS)
 
 %.lss: $(TARGET)
 	avr-objdump -h -S $< > $@
+
+size: ${TARGET}
+	@echo
+	@avr-size -C --mcu=${MCU} ${TARGET}
 
 ## Clean target
 .PHONY: clean

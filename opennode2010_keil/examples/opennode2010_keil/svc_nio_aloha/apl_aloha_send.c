@@ -54,8 +54,8 @@
  *
  ******************************************************************************/
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
-#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
+#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 2
+#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 0
 #define MAX_IEEE802FRAME154_SIZE                128
 
 #include "apl_foundation.h"
@@ -90,6 +90,10 @@
 #define CONFIG_ALOHA_CHANNEL                    11
 
 #define TEST1
+#undef  TEST2
+
+#define TEST_ENABLE_ACK
+#undef TEST_ENABLE_ACK
 
 #define VTM_RESOLUTION                          5
 
@@ -175,9 +179,12 @@ void aloha_sendnode(void)
         // suggest you use option 0x00.
         // the default setting is 0x01, which means ACK is required.
         //
-		option = 0x01;//0x00->no ack,0x01->ack
-		//option = 0x01;//ack  todo
-        txbuf->option = option;//todo
+        #ifdef TEST_ENABLE_ACK
+        txbuf->option = 0x01;
+        #endif
+        #ifndef TEST_ENABLE_ACK
+        txbuf->option = 0x00;
+        #endif
 
         while (1)
         {  

@@ -7,8 +7,9 @@
 #define   TiTime32     uint32 
 #define   TiTime64     uint64
 
-<<<<<<< .minetypedef uint64 TiSystemTime;
-=======void tm8_reset( uint8 * var, uint8 value );
+//<<<<<<< .minetypedef uint64 TiSystemTime;
+//=======void tm8_reset( uint8 * var, uint8 value );
+
 /*
 inline void tm8_clear( TiTime8 * var );
 >>>>>>> .theirs
@@ -18,7 +19,10 @@ inline void tm8_clear( TiTime8 * var );
 }
 =======inline TiTime8 * tm8_plus( TiTime8 * var1, TiTime8 * var2 );
 >>>>>>> .theirs
-<<<<<<< .mine/**
+<<<<<<< .mine
+*/
+
+/**
  * Plus two time value.
  * @return true if success and false is overflow.
  */
@@ -26,17 +30,24 @@ inline bool systime_plus( TiSystemTime * op1, TiSystemTime * op2 )
 {
 	
 }
+
+/*
 =======inline TiTime8 * tm8_minus( TiTime8 * var1, TiTime8 * var2 );
  
 inline bool tm8_forward( TiTime8 * var, uint8 interval );
 >>>>>>> .theirs
-<<<<<<< .mine/**
+<<<<<<< .mine
+*/
+
+/**
  * Minus two time value.
  * @return true if success and false is overflow.
  */
 inline bool systime_minus( TiSystemTime * op1, TiSystemTime * op2 )
 {
 }
+
+/*
 =======inline bool tm8_backward( TiTime8 * var, uint8 interval );
 >>>>>>> .theirs
 <<<<<<< .mine#define systime_forward(tm,step) systime_plus(tm,step)
@@ -50,20 +61,28 @@ COMPOENT_ATTACH( COMP_A, COMP_B );
 
 USE_COMPONENT( TiUartAdapter, uart_ );
 USE_COMPONENT( T, prefix );
+*/
 
+/*
 #define mac_send(T) prefix##_send
 #define mac_recv prefix##_recv
+*/
 
 /* interface requirement */
+
+/*
 #define TiPhyAdapter 
 TiPhyAdapter * phy_send
 #define MAKE_USE_OF(type,prefix) \\
 	type * ##prefix##_send   \
 	prefix_recv
+*/
 	
 /* implementation  */
 
 /* how to use it */
+
+/*
 include "interface.h"
 
 IMPL_INTERFACE_BY_COMPONENT
@@ -92,8 +111,11 @@ compa_xxxx
 
 
 
+*/
 
 /*********************** the following are undetermined ***********************/
+
+/*
 =======inline TiTime64 * tm64_plus( TiTime64 * var1, TiTime64 * var2 );
 >>>>>>> .theirs
 

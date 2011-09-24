@@ -108,6 +108,19 @@
 
 #define CONFIG_ALOHA_STANDARD
 
+/* The aloha header here includes: 
+ *  - 2B for frame control
+ *  - 1B for sequence number
+ *  - 4B for destination address
+ *  - 4B for source address
+ * So the total header length is 11.
+ * 
+ * @attention: The first byte, which includes the total length of the frame is actually
+ * not belong to the MAC layer. So this aloha header doesn't include this byte.
+ */
+#define ALOHA_HEADER_SIZE   11
+#define ALOHA_TAIL_SIZE     2
+
 
 #define ALOHA_OPTION_ACK                    0x00
 #define ALOHA_DEF_OPTION                    0x00

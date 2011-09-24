@@ -10,11 +10,11 @@
  */
 
 
-#include "../common/hal/hal_configall.h"
+#include "../../../common/openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
 #include <avr/wdt.h>
-#include "../common/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
 #include "../common/hal/hal_cpu.h"
 #include "../common/hal/hal_interrupt.h"
 #include "../common/hal/hal_led.h"

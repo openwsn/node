@@ -6,8 +6,8 @@
 
 #include "task_configall.h"
 #include <string.h>
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
 #include "task_foundation.h"
 #include "task_siocomm.h"
 

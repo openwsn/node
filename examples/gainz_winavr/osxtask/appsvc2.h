@@ -7,9 +7,9 @@
  */
 
 #include "asv_foundation.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/osx/osx_taskpool.h"
-#include "../../common/openwsn/osx/osx_taskheap.h"
+#include "../../../common/openwsn/hal/hal_cc2420.h"
+#include "../../../common/openwsn/osx/osx_taskpool.h"
+#include "../../../common/openwsn/osx/osx_taskheap.h"
 
 #define PANID				0x0001
 #define LOCAL_ADDRESS		0x01  

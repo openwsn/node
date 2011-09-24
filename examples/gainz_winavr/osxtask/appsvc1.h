@@ -7,9 +7,9 @@
  */
 
 #include "asv_foundation.h"
-#include "../../common/openwsn/hal/hal_luminance.h"
-#include "../../common/openwsn/osx/osx_taskpool.h"
-#include "../../common/openwsn/osx/osx_taskheap.h"
+#include "openwsn/hal/hal_luminance.h"
+#include "openwsn/osx/osx_taskpool.h"
+#include "openwsn/osx/osx_taskheap.h"
 #include "appsvc2.h"
 
 extern TiOsxTaskHeap * heap;

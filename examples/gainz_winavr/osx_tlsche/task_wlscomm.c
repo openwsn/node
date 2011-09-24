@@ -6,9 +6,9 @@
 
 #include "task_configall.h"
 #include <string.h>
-#include "../../common/openwsn/hal/hal_led.h"
-#include"../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/osx/osx_tlsche.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/osx/osx_tlsche.h"
 #include "task_foundation.h"
 #include "task_wlscomm.h"
 #include "task_siocomm.h"

@@ -6,10 +6,10 @@
 
 #include "asv_configall.h"
 #include <string.h>
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/rtl/rtl_openframe.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_cc2420.h"
+#include "openwsn/rtl/rtl_frame.h"
 #include "asv_foundation.h"
 #include "appsvc2.h"
 
@@ -36,7 +36,7 @@ void asv2_setlistener( TiAppService2 * svc, TiFunEventHandler listener, void * l
 	svc->listener = listener;
 	svc->lisowner = lisowner;
 }
-
+/*
 void send(void)
 {
 	char opfmem[OPF_SUGGEST_SIZE];
@@ -88,17 +88,17 @@ void send(void)
 		opf_set_panfrom( opf, PANID );
 		opf_set_shortaddrfrom( opf, LOCAL_ADDRESS );
 
-		/* datalen should be opf->msdu_len */
+		// datalen should be opf->msdu_len 
 		for (i=0; i<opf->msdu_len; i++)
 			opf->msdu[i] = i;
 
 		
-		/*dbo_putchar(0x88);
+		// dbo_putchar(0x88);
 
-		for (i=0; i<opf->buf[0]; i++)
-		{
-			dbo_putchar(opf->buf[i]);
-		}*/
+		// for (i=0; i<opf->buf[0]; i++)
+		// {
+		// 	dbo_putchar(opf->buf[i]);
+		// }
 		
 
 		#ifdef TEST_ACK_REQUEST
@@ -115,15 +115,13 @@ void send(void)
 				hal_delay( 500 );              
             
 }
+*/
+
 void asv2_evolve( void * svcptr, TiOsxTaskHeapItem *item )
 {
 	led_toggle(LED_GREEN);
 
 	//send();
-
-
-
-	
 }
 
 

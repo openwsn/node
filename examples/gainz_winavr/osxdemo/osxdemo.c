@@ -16,15 +16,15 @@
 
 #include "asv_configall.h"
 #include <string.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_timer.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/osx/osx_kernel.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_interrupt.h"
+#include "../../../common/openwsn/hal/hal_targetboard.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_timer.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/osx/osx_kernel.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"
 #include "appsvc2.h"
@@ -84,7 +84,7 @@ int main()
 	hal_delay( 1000 );
 	led_off( LED_ALL );
 
-	dbo_open( CONFIG_UART_ID, 38400 );
+	//dbo_open( CONFIG_UART_ID, 38400 );
 	rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 	dbio_putchar(NULL,0xF4);
 

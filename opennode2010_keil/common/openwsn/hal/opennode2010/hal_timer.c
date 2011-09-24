@@ -280,6 +280,9 @@ uint8 timer_expired( TiTimerAdapter *timer)//1 time interrupt occur,0 not occur.
             break;
     }
 
+    if (ret > 0)
+        timer_CLR_IT(timer);
+
     return ret;
 }
 

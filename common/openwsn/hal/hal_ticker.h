@@ -54,6 +54,10 @@
   #define tm_value_t uintx
 #endif
 */
+
+#include "hal_configall.h"
+#include "hal_foundation.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

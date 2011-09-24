@@ -64,7 +64,7 @@ int main( void)
         //若想用查询模式则timer->option必须为0x00.
        if (timer_expired(tm3))
        {
-           timer_CLR_IT(tm3);
+           //timer_CLR_IT(tm3);
            led_toggle(LED_RED);
            dbc_putchar(0xf3);
        }

@@ -6,9 +6,11 @@
 
 #include "asv_configall.h"
 #include <string.h>
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_luminance.h"
+#include "openwsn/rtl/rtl_debugio.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_luminance.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"
 

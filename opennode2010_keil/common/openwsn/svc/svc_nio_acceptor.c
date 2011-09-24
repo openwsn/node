@@ -110,7 +110,7 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	
 	buf = (char*)nac + sizeof(TiNioAcceptor);
 	nac->rxque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(rxque_capacity) );
-	buf += FRAMEQUEUE_HOPESIZE(rxque_capacity);
+	//buf += FRAMEQUEUE_HOPESIZE(rxque_capacity);
     nac->txque = NULL;
 	// nac->txque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(txque_capacity) );
 	// buf += FRAMEQUEUE_HOPESIZE(txque_capacity);
@@ -202,7 +202,7 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
     //   in the txque should be sent immediately without any delay, we simply call
     //   the transceiver's send() method to send the frame out.
     //
-	frame_movelowest(item);
+	// frame_movelowest(item);
 	return rxtx->send( rxtx->provider, frame_startptr(item), frame_length(item), item->option );
 }
 
