@@ -65,13 +65,15 @@
 #include "openwsn/hal/hal_timer.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
 #include "openwsn/svc/svc_nio_aloha.h"
-#include "openwsn/svc/svc_nio_flood.h"
+#include "openwsn/svc/svc_wio_flood.h"
 
 #define PANID				0x0001
 #define BROADCAST_PAN       0xffff
 #define LOCAL_ADDRESS		0x0009   
 #define BROADCAST_ADDRESS	0xffff
 #define DEFAULT_CHANNEL     11
+
+#define UART_ID 1
 
 #define MAX_IEEE802FRAME154_SIZE                128 
 
@@ -85,6 +87,7 @@ static TiFloodNetwork       m_net;
 static TiTimerAdapter       m_timer;
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiCc2520Adapter             m_cc;
+static TiUartAdapter        m_uart;
 
 static void ledflood( uint16 ontime, uint16 offtime );
 
@@ -97,12 +100,14 @@ int main(void)
 void ledflood( uint16 ontime, uint16 offtime )
 {
     TiCc2520Adapter * cc;
+	TiUartAdapter * uart;
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
     TiAloha * mac;
 	TiFloodNetwork * net;
 	TiFrame * txbuf;
     TiTimerAdapter * timer2;
+	uint8 state;
 	char * msg = "welcome to floodsender";
 	uint8 seqid=0;
 	int k;
@@ -113,12 +118,18 @@ void ledflood( uint16 ontime, uint16 offtime )
 	 * Device Startup and Initialization 
      **************************************************************************/
 	 
+	target_init();
+
 	led_open();
 	led_on(LED_ALL);
 	hal_delayms( 1000 );
 	led_off( LED_ALL );
 
-	halUartInit(9600,0);
+	dbc_mem(msg, strlen(msg));
+
+	//halUartInit(9600,0);
+	uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
     /***************************************************************************
 	 * Flood Startup
      **************************************************************************/
@@ -145,42 +156,36 @@ void ledflood( uint16 ontime, uint16 offtime )
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
 	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 
 		NULL, NULL, 0x00);
-	flood_open( net, (TiNioNetLayerDispatcher *) mac, NULL, NULL, PANID, LOCAL_ADDRESS );
-	//flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	//flood_open( net, (TiNioNetLayerDispatcher *) mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	net = flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	hal_assert( (timer2 != NULL) && (mac != NULL) );
-
-   
-	txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-	pc = frame_startptr( txbuf );
-	
+	state = 0;
 	while(1) 
 	{
-		//txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-		//pc = frame_startptr( txbuf );
-        pc[0] = !pc[0]; // command byte, controls the LED state
-
-		
-		pc[1] = seqid;
+		txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 25, 6 );
+		pc = frame_startptr( txbuf );
+		pc[0] = state;
+		state = !state; 
+//        pc[0] = !pc[0]; // command byte, controls the LED state
+		pc[1] = seqid ++;
 		for (k = 2; k<6; k++)
 		{
-			pc[k] = k;
+			pc[k] = '0' + k;
 		}
 		
-		frame_setlength( txbuf,5);//todo 
+		frame_setlength( txbuf, 6);
 
 		while (1)
         {
             if (flood_broadcast(net, txbuf, 0x00) > 0)
             {   
-				
                 led_toggle( LED_RED);
-                seqid++;
                 break;
             }
 			
 			// delay some time before retry in order to avoid occupy the wireless 
 			// channel all the time.
-            hal_delayms(1000);                       
+            hal_delayms(50);                       
         }
 		
 
@@ -189,7 +194,7 @@ void ledflood( uint16 ontime, uint16 offtime )
 
 		// delay the LED long enough so we can observe its flash
 		if( pc[0])
-			hal_delayms( 500 );
+			hal_delayms( 200 );
 		else
 			hal_delayms( 1000 );
 	}	

@@ -646,7 +646,7 @@ void halUartInit(uint16 baudrate, uint8 options)
 	USART_Init( USART2,&USART_InitStructure);
 	USART_Cmd( USART2,ENABLE);
 }
-
+*/
 uint8 USART_Send( uint8 ch)
 {
 	USART_SendData( USART2,ch);
@@ -665,7 +665,7 @@ uint8 USART_Get( uint8 ch)
 
     return ch;
 }
-*/
+
 
 /***********************************************************************************
 * @fn      halUartWrite

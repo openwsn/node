@@ -164,8 +164,7 @@ uintx cache_visit( TiCache * cache, char * item, uint16 itemlen )
 	if (cache_hit(cache, item, itemlen, &idx))
 	{
 		return true;
-	
-     }
+    }
 	_cache_displace( cache, item, itemlen, idx );
     
 	// decrease the life time of each in the cache

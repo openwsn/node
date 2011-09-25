@@ -576,6 +576,9 @@ intx  aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
     char * ptr=NULL;
     uint8 cur;
 
+	char *pc;//todo for testing
+	int i;//todo for testing
+
 	// @modified by zhangwei on 2011.03.14
 	// - Since the network acceptor will reset the frame inside, we needn't call
 	// frame_slipouter() and frame_moveinner() in this function. The following 
@@ -596,6 +599,16 @@ intx  aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
         // incomplete frame or not. if it's an bad frame, then we should ignore it.
         //
         ptr = frame_startptr(frame);
+		/*
+		pc = frame_startptr(frame);//todo for testing
+		USART_Send( 0xff);//todo for testing
+		USART_Send( count);//todo for testing
+		USART_Send( 0xff);//todo for testing
+		for( i=0;i<count;i++)//todo for testing
+		{
+			USART_Send( pc[i]);
+		}
+		*/
         if (*ptr == count-1)
         {
             // get the pointer to the frame control field according to 802.15.4 frame format

@@ -391,9 +391,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>nio_aloha_send.c</FileName>
+              <FileName>apl_aloha_send.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\nio_aloha_send.c</FilePath>
+              <FilePath>.\apl_aloha_send.c</FilePath>
             </File>
           </Files>
         </Group>

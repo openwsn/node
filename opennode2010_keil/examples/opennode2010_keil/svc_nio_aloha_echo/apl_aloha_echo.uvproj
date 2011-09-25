@@ -391,9 +391,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>nio_aloha_echo.c</FileName>
+              <FileName>apl_aloha_echo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\nio_aloha_echo.c</FilePath>
+              <FilePath>.\apl_aloha_echo.c</FilePath>
             </File>
           </Files>
         </Group>

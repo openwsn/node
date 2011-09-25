@@ -156,24 +156,25 @@ void _aloha_sendnode(void)
 	mac = aloha_open( mac, rxtx, nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID,
 		CONFIG_ALOHA_LOCAL_ADDRESS,timer2, NULL, NULL, 0x00 );
 
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    //mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 
-    mac->txbuf = mactxbuf;
+   // mac->txbuf = mactxbuf;
 
     cc2520_setchannel( cc, CONFIG_ALOHA_CHANNEL );
 	cc2520_rxon( cc );							            // enable RX mode
 	cc2520_setpanid( cc, CONFIG_ALOHA_PANID );					// network identifier, seems no use in sniffer mode
 	cc2520_setshortaddress( cc, CONFIG_ALOHA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2520_enable_autoack( cc );
+	//cc2520_enable_autoack( cc );
     //cc2420_enable_addrdecode( cc );
 
-    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-	rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20,6 );
+	rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20,6 );
     
 	sendcount = 0;
 	succeed = 0;
 	seqid = 1;
-	option = 0x01; // request ack
+	option = 0x00; // request ack
 
 	state = INIT_STATE;
 
@@ -203,10 +204,19 @@ void _aloha_sendnode(void)
 			break;
 		
 		case WAIT_RESPONSE_STATE:
-			frame_reset( rxbuf,3,20,0);
+			frame_reset( rxbuf,3,20,6);
 			len = aloha_recv( mac, rxbuf, 0x00 );
 			if (len > 0)
-			{   
+			{ 
+				/*
+				uart_putchar(uart, (seqid-1)); //todo for testing
+				pc = frame_startptr( rxbuf);//todo for testing
+                    for ( i=0;i<len;i++)
+                    {
+                        uart_putchar(uart, pc[i]);
+                    }//todo for testing
+					*/
+					 
 				if (_match(CONFIG_ALOHA_LOCAL_ADDRESS, CONFIG_ALOHA_REMOTE_ADDRESS, (seqid-1), rxbuf))
 				{
 					succeed ++;
@@ -260,7 +270,7 @@ void _init_request( TiFrame * txbuf, uint16 addrfrom, uint16 addrto, uint8 seqid
 	uint8 i;
 	// todo
 	//因为aloha_recv（）函数中的skipinner会使前两个字节清零，所以先将前两个字节保留起来。
-	frame_reset( txbuf, 3, 20, 0 );
+	frame_reset( txbuf, 3, 20, 6 );
 	ptr = frame_startptr( txbuf );
 
    //*ptr ++ = seqid;
@@ -285,14 +295,16 @@ bool _match( uint16 addrfrom, uint16 addrto, uint8 seqid, TiFrame * response )
 	ret = false;
 	frame_moveouter( response );
 	desc = ieee802frame154_open( &(m_desc) );
-	if (ieee802frame154_parse( desc, frame_startptr(response), frame_capacity(response)))
+	if (ieee802frame154_parse( desc, frame_startptr(response), frame_length(response)))//if (ieee802frame154_parse( desc, frame_startptr(response), frame_capacity(response)))
 	{
 		if (ieee802frame154_shortaddrfrom(desc) != addrto) 
 		{
+			USART_Send( 0xf1);//todo for testing
 			ret = false;
 		}
 		else if (ieee802frame154_shortaddrto(desc) != addrfrom)
 		{
+			USART_Send( 0xf2);//todo for testing
 			ret = false;
 		}
 		else
@@ -311,6 +323,7 @@ bool _match( uint16 addrfrom, uint16 addrto, uint8 seqid, TiFrame * response )
 		ptr = frame_startptr( response);
 		if ( ptr[3]!= seqid)
 		{
+			USART_Send( 0xf3);//todo for testing
 			ret = false;
 		}
 	}

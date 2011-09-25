@@ -136,9 +136,8 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
  */
 intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
-	intx count;
 	uint8 status;
-    TiCpuState cpu_state;
+    //TiCpuState cpu_state;
 
 	hal_assert( len > 0 );
 
@@ -151,7 +150,7 @@ intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
     // set buf[0] here, which is the frame length. This is because this byte may
     // not be set by the above layer.
     buf[0] = len-1;
-	
+
     // @todo
     // Wait for the last sending finished. Delay isn't recommend here.
 	CC2520_SFLUSHTX();
@@ -177,8 +176,6 @@ intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option
 {
 	intx count;
 	
-	TiCpuState cpu_state;
-
 	hal_assert( len > 0 );
 
     // Set the frame control for broadcast. Bit 5 in frame control byte 0 is cleared.

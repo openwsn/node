@@ -318,7 +318,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x5000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -575,6 +575,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_timesync.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_targetboard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -636,9 +641,9 @@
               <FilePath>..\..\..\common\openwsn\svc\svc_nio_aloha.c</FilePath>
             </File>
             <File>
-              <FileName>svc_nio_flood.c</FileName>
+              <FileName>svc_wio_flood.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\svc\svc_nio_flood.c</FilePath>
+              <FilePath>..\..\..\common\openwsn\svc\svc_wio_flood.c</FilePath>
             </File>
           </Files>
         </Group>
