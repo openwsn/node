@@ -115,16 +115,13 @@ void _aloha_sendnode(void)
     TiStatistics stat;
     
 	uint8 seqid, option,len;
-	uint8 failed ;
 	uint8 state;
 	uint16 sendcount, succeed;
     int i;
     char * pc;
     
-    
-
+    memset(&stat, 0x00, sizeof(stat));
     seqid =0;
-    failed = 0;
 	
 	// Initialize the hardware. You can observe the LED flash and UART welcome
 	// string to decide whether the application is started successfully or not.
@@ -135,7 +132,6 @@ void _aloha_sendnode(void)
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
-    //halUartInit(9600,0);
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
 	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
