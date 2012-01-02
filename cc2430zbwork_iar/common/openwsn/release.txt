@@ -1,0 +1,67 @@
+current version features
+
+2011.02
+- add next generation network I/O architecture (svc_nio_xxx) with some basic components.
+- add svc_nio_acceptor (tested)
+- add svc_nio_tinymac (tested)
+- buf fix: rtl_framequeue
+- add example: svc_nio_tinymac
+
+2010.12
+- add new network i/o architecture (svc_nio_acceptor, svc_nio_service, svc_nio_dispatcher)
+
+2010.11
+- upgrade TiRtcAdapter (hal_rtc)
+- correct bugs in rtl_debugio
+
+2010.08.23
+- improved TiSimpleAloha (svc_simplealoha)
+- add TiTinyMAC (svc_tinymac)
+- add TiAloha (svc_aloha)
+
+
+2010-08-17
+- Improved hal_debugio and rtl_debugio
+- Change function dbo_open(id,baudrate) in module hal_debugio to dbo_open(baudrate). Also improves the dbo_open() function.
+- Recompile gainz-winavr/simplealoha/aloha_recv project
+
+2010-06
+
+- improved MAC protocols. now four MAC modules are supported including simple aloha (in svc_simplealoha), standard aloha (svc_aloha), csma (in svc_csma) and maca (in svc_maca) module. (2010.05)
+- improved time sync mechnism. now two different time synchronization mechanism are support, long term synchronization (in svc_clocksync) and high percision synchronization (in  svc_timesync). (2010.06)
+
+ 
+
+Atmega Version
+
+2009.08
+- cc2420_read/cc2420_write已经修改为cc2420_recv/cc2420_send
+但是原cc2420_read/cc2420_write仍然通过MACRO定义保持与过去代码的兼容性
+
+
+
+
+ARM version
+
+- add support opennode-3.0 hardware. and now 3.0 hardware is the default supporting now.
+- revision on TCc2420's interface, and correct some errors found in it (hal_cc2420.*)
+- add OpenMAC support (svc_openmac.*)
+- support TUart (hal_uart.*)
+- support TTimer (hal_timer.*)
+- support TDebugIo (hal_debugio.*)
+- support TLed (hal_led.*)
+- improved booting module 
+- support "assert" mechanism (hal_assert.h)
+- improved interrupt utility functions (hal_interrupt.h)
+- support TSpi (hal_spi.*)
+- support TSioComm which is based on TUart HAL object (svc_siocomm.*)
+- support blink test (test/blink.*)
+- support cc2420 RX/TX test (test/cc2420rx.*, test/cc2420tx.*)
+- support led test (test/led.*)
+- support rssi test(test/rssi.*)
+- support timer test(test/time_led_*.*)
+- support uart test (test/uartecho.*)
+- support unique id test (uniqueid_test.*) (the current unique id test is only working with opennode-2.0 hardware. for opennoe-3.0, the unique id generating mechanism has been changed)
+- support siniffer (test/sniffer.*) (still in testing...)
+
+

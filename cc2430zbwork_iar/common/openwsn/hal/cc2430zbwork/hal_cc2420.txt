@@ -1,0 +1,171 @@
+
+/*
+
+USIGN8 CC2420_Init()
+{
+USIGN8 status;
+// 初始化相关引脚
+SPIInit();
+...
+_cc2420_pin_init
+...
+MAKE_CC_CS_HIGH();
+// 对CC2420上电进行初始化
+MAKE_CC_VREN_HIGH();
+_delay_us(600);
+MAKE_CC_RSTN_LOW();
+_delay_us(1);
+MAKE_CC_RSTN_HIGH();
+_delay_us(1);
+// 打开晶振并等待其稳定
+//while (!((CC2420_StrobCmd(CC2420_SXOSCON)) & 0x40));
+status = CC2420_StrobCmd(CC2420_SXOSCON);
+
+while (!(status & 0x40))
+{
+  //CC2420_StrobCmd(CC2420_SXOSCOFF);
+  status = CC2420_StrobCmd(CC2420_SXOSCON);
+}
+
+return status;
+}
+*/
+
+/* 
+另外一个老版本
+void _cc2420_init( TiCc2420Adapter * cc ) 
+{
+    //uint16 rereg;
+    uint8 status;
+
+   _gwrite( "cc2420_init...\r\n" );
+
+	cc->state = CC_STATE_POWERDOWN;
+	cc->nextstate = CC_STATE_IDLE;
+	cc->panid = CC2420_DEFAULT_PANID; 
+	cc->address = CC2420_DEFAULT_ADDRESS; 
+	cc->channel = CC2420_DEFAULT_CHANNEL; 
+	cc->txlen = 0;
+	cc->rxlen = 0;
+	cc->power = 1;
+	cc->ackrequest = 0;
+	cc->sleeprequest = FALSE;
+
+	spi_open( cc->spi, 0 );
+	spi_configure( cc->spi );
+
+    // Make sure that the voltage regulator is on, and reset the transceiver.
+	// finally it will set the reset pin to inactive
+	//
+    SET_VREG_ACTIVE();
+    hal_delay(1000); 	//at least delay_us(600);
+    SET_RESET_ACTIVE();
+    hal_delay(10); 		// at least delay_us(1). low voltage is effective
+    SET_RESET_INACTIVE();
+    hal_delay(50); 		// at least dela_us(1) 
+
+	// assert: FIFOP interrupt pin is selected and enabled
+
+    // Turn off all interrupts while we're accessing the CC2420 registers
+	hal_disable_interrupts();
+	
+    status = cc2420_spi_strobe( cc->spi, CC2420_SXOSCON );
+	/ * while (!(status & 0x40)) 
+	{
+		//uart_putchar( g_uart, status ); 
+		hal_delay( 100 );
+		status = cc2420_spi_strobe( cc->spi,CC2420_SXOSCON );
+	} * /
+    hal_delay(500);
+    //FAST2420_SETREG(CC2420_TXCTRL, 0xA0E3); // To control the output power, added by huanghuan
+    FAST2420_SETREG(cc->spi,CC2420_MDMCTRL0, 0x0AF2); // Turn on automatic packet acknowledgment 
+    FAST2420_SETREG(cc->spi,CC2420_MDMCTRL1, 0x0500); // Set the correlation threshold = 20
+    FAST2420_SETREG(cc->spi,CC2420_IOCFG0, 0x007F);   // Set the FIFOP threshold to maximum
+    FAST2420_SETREG(cc->spi,CC2420_SECCTRL0, 0x01C4); // Turn off "Security enable"
+    // Set the RF channel
+    cc2420_setchannel(cc, cc->channel);
+	
+	#ifdef GDEBUG
+    //led_twinkle(LED_RED,1);
+	#endif
+ 
+    // the following sections are used for debugging only. it will dump serveral 
+    // important registers to uart. so you can see them on the host computer.
+    / *
+	#ifdef GDEBUG
+    //while(1){
+    FAST2420_GETREG(cc->spi,CC2420_MDMCTRL0, &rereg);   
+    uart_putchar(g_uart,(char)rereg);
+    uart_putchar(g_uart,(char)(rereg>>8));
+    
+    FAST2420_GETREG(cc->spi,CC2420_MDMCTRL1, &rereg);    
+    uart_putchar(g_uart,(char)rereg);
+    uart_putchar(g_uart,(char)(rereg>>8));
+    
+    FAST2420_GETREG(cc->spi,CC2420_IOCFG0, &rereg);    
+    uart_putchar(g_uart,(char)rereg);
+    uart_putchar(g_uart,(char)(rereg>>8));
+    //FAST2420_GETREG(cc,CC2420_SECCTRL0, &rereg); 
+    //}
+    #endif
+    * /
+    
+    cc->seqid = 0;
+    cc->receiveOn = FALSE;
+    cc->ack_response = FALSE;
+    
+    //FAST2420_UPD_STATUS(cc->spi, (uint8*)(&rereg) );
+    //uart_putchar(g_uart,(char)rereg);
+	// Wait for the crystal oscillator to become stable
+
+    //hal_disable_interrupts();
+	_cc2420_waitfor_crystal_oscillator( cc->spi );
+    // Write the short address and the PAN ID to the CC2420 RAM (requires that the XOSC is on and stable)
+    //hal_enable_interrupts();
+
+    FAST2420_WRITE_RAM_LE(cc->spi,&(cc->address), CC2420RAM_SHORTADDR, 2);
+    FAST2420_WRITE_RAM_LE(cc->spi,&(cc->panid), CC2420RAM_PANID, 2);
+    //FAST2420_READ_RAM_LE(cc,reram,CC2420RAM_SHORTADDR,2);
+    //reram[0]++;
+    //reram[1]++;
+    _cc2420_interrupt_init();
+    
+	cc->state = CC_STATE_IDLE;
+	cc->nextstate = CC_STATE_IDLE;
+}
+*/
+
+
+/*
+void cc2420_flushFlushRxFIFO()
+{
+MAKE_CC_CS_LOW();
+SPIPut(CC2420_RXFIFO | 0x40);
+SPIGet();
+MAKE_CC_CS_HIGH();
+MAKE_CC_CS_LOW();
+SPIPut(CC2420_SFLUSHRX);
+    SPIPut(CC2420_SFLUSHRX);
+MAKE_CC_CS_HIGH();
+}
+*/
+
+/*
+void cc2420_restart( TiCc2420Adapter * cc )
+{
+	uint8 status;
+
+USIGN8 status;
+status = CC2420_StrobCmd(CC2420_SXOSCON);
+while (!(status & 0x40))
+{
+  //CC2420_StrobCmd(CC2420_SXOSCOFF);
+  status = CC2420_StrobCmd(CC2420_SXOSCON);
+}
+status = CC2420_StrobCmd(CC2420_SRXON);
+MAKE_CC_CS_LOW();
+SPIPut(CC2420_SFLUSHRX);
+SPIPut(CC2420_SFLUSHRX);
+MAKE_CC_CS_HIGH();
+}
+*/

@@ -1,0 +1,12 @@
+23:41 2009-12-28
+changed rtl_vector to rtl_lightvector
+changed rtl_vectorx to rtl_lightcollection
+
+rtl_light<xxxx>
+data structure and algorithm implementations
+
+rtl_wls<xxx>
+wireless related modules
+rtl_openframe
+rtl_openmac
+rtl_opennet

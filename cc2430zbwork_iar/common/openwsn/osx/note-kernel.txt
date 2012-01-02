@@ -1,0 +1,150 @@
+几个关键的对象
+ Runnable, RunnableCollection, Notifier, Dispatcher, Scheduler
+
+辅助的
+MemoryManager MMU not support now
+UART
+Timer
+Wireless
+LED
+Key
+
+
+关于object
+state
+notifier
+read
+write
+msghandler( void * object, uint32 msg )
+
+
+sche内部包含三个队列
+urgent
+normal
+future
+periodic
+类似于不同的优先级，在同一优先级内部，FIFO处理，push的时候要指明是进入哪一个队列，
+一般，interrupt消息进入urgent, 大多数进入normal, 对指名时间的进入future
+
+最简单scheduler
+仅仅支持normal，不必引入临界区控制
+再复杂一点，支持urgent，且支持临界区
+再复杂的，就是支持future，这样整个scheduler的调度都有可能更改
+
+TiSimpleScheduler: normal queue only
+TiRealtimeSechduler: normal + urgent
+TiFutureScheduler: normal + future
+TiRealtimeFutureScheduler: normal + urgent + future
+
+统称TiEventScheduler，且具有几乎相同的接口
+sche_push( TiEvent e, option )， option在future模式下可以表示time
+e中要留出最高2个bit表示TiEventAttribute, 00表示normal, 10表示urgent，01表示future,11表示urgent+future
+
+
+filter:
+lwrite, lread => leftexec( in, out )
+rwrite, rread => rightexec( in, out )
+
+iohandler
+read
+write
+但我们的设计中不需要iohandler，不想多引入一个概念
+
+filters
+insert( filter )
+remove( filter )
+leftexec( in, out )
+rightexec( in, out )
+lwrite, lread
+rwrite, rread
+
+为了避免数据包多次拷贝，提高效率，节省memory
+buf传递的时候不是简单的传递指针
+而是采用如下形式[buf, offset, size]
+buf, size, input, &output, &len
+input, output都是offset，不是指针
+如果只有输入
+buf, size, input
+如果只有输出
+buf, size, &output, &len
+如果两者都有
+buf, size, input, &output, &len
+这样我们只要开辟一个大buffer
+
+
+
+关于scheduler的设计
+
+
+
+
+#define TiEventScheduler TiSimpleScheduler
+
+
+objects分为这样几种
+- adapter: 硬件的软件封装，仅仅提供最基本之功能，原则上越简单越好。一般都应该是passive的，
+但也可提供notifier机制通知上层某些事件，例如ERROR, DATA ARRIVAL, SEND_INISHED等
+- 工具类对象：passive
+- 工具类对象：active: 支持notifier接口
+- state类对象：提供msghandler接口，可接受message，msghandler与notifier是配套使用的，notifier会用到该接口
+- runnable对象：可接受scheduler的调用，提供evolve或者execute接口，对C就是evolve，以避免和execute冲突，对C++，因为参数不同，可用execute
+
+主要接口
+
+Adapter接口：construct, destroy, read, write
+我想adapter接口中还是不要支持notifier吧，就用最简单的回调函数，一者效率高，二者简单，三者绝大多数adapter都不要notifier中复杂的listener机制
+
+  TiEventHandler( object, e，option )
+	adapter可以通过这个函数指针向scheduler中的queue投递e, 这样就可以在scheduler中实现延迟处理
+	option = NOW | TAIL | FUTURE + time | IGNORABLE
+
+支持发送消息的接口
+	只要增加notifier即可
+	借notifier提供了subscribe/unsubscribe机制
+
+支持接收消息的接口
+	增加TxFunNotifyHandler( owner, e )
+	上述两个配套使用
+
+支持状态机运行的接口 Runnable接口
+	construct, destroy, evolve( owner, e), state
+	注意evolve = TiFunNotifyHandler，所以二者也就统一起来了. 但是需要定义一个NULL event以让我们可以空调用evolve
+	且可以和scheduler很好配合
+
+
+如何与现有的thread模式协调？
+将其中的while替换成为evolve
+
+增加一个PrempbleScheduler，接受定时的tick message，相当于是传统的OS scheduler，例如uC/OS-II
+然后把我们的scheduler作为它的一个task运行起来，或者在我们的scheduler中发送message tick给PrembleScheduler，运行以前的系统。
+但前者看上去好一点，因为可以Premple就是为了fast。但两者都应该是可行的，事实上，我们的scheduler在realtime上的要求一点也不低
+
+
+
+/* Scheduler is driven by a infinite loop or an periodic hardware timer. for example:
+ * demo 1: 
+ *	while (1)
+ *	{
+ *		msg = que_pop(g_msgqueue);
+ *		sche_evolve(g_sche);
+ *	}
+ * or
+ *	timer_installnotifier( g_sche, sche_evolve, msg );
+ *	timer_setperiod(100)
+ *	timer_start();
+ */
+
+sche_evolve( TiScheduler, msg )
+
+interrupt => message => queue => scheduler
+objects => messages => queue => scheduler
+
+sche_addtask
+sche_pushmsg( g_sche, msg，object, handler )
+
+scheduler可适当负责，以简化TimerAdapter，因此周期循环也放在scheduler实现而不是放在TimerAdapter中
+addtask( reference, future_time, period, task_object, task_handler )
+		reference = ABSOLUTE | ORIGIN
+		period = YES | NO
+这里无须考虑interrupt，因为已经被封装掉了，如果timer不封装掉，那么scheduler层次也可以把interrupt封装掉。
+事实上，在hal曾之上，除了看到一些notifier，是感觉不到interrupt的

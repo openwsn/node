@@ -1,0 +1,5 @@
+from core to outside
+
+hal_cpu(formerly named hal_arch) => hal_mcu => hal_targetinit => hal_targetboard
+
+they defines the interface, and usually implemented in their specific modules such as hal_mcu: hal_atmega128, hal_msp430f2618

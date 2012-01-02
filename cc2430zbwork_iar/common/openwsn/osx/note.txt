@@ -1,0 +1,58 @@
+Kernel/OpenCore/TinyCore
+Energy Saving Tiny Kernel of OpenWSN (abbrevated as esvk or svk or nvk nvk ntk)
+
+10:29 2009-01-21
+Q: 如何协调message处理和realtime的中断处理？
+R: msg虽然及时，但是毕竟不是realtime，scheduler在这点上由于借助的是Timer中断，因此要好得多，但这样就带给程序可重入性的问题。不过realtime对于通信和采样还是必须的，系统不能完全依赖msg的异步处理能力
+
+故提供两套方案
+- realtime要求不高时，仅使用msg方案，可移植性、与其它RTOS配合性最好
+- realtime要求高时，同时采用msg和scheduler，高时间精度任务交给scheduler，放在中断态运行（这与msg用户态不同），但任务何时执行完毕，仍然需要msg机制通知用户态
+
+
+16:34 2009-01-14
+change osal directory as kernel directory
+kernel is almost an plugin-based architecture for the whole system. it replaces "osal". 
+for openwsn project, kernel is the core part. 
+
+if you're an application developer, you can give your object to kernel and let kernel to deal with the left. 
+
+The kernel includes the following parts
+
+- scheduler
+- timer management
+- interrupt management
+- memory management
+- sleep/wakeup
+- mutex and lock
+- message queue
+- debug support, autoupgrade
+
+ntk_scheduler, ntk_timer, ntk_debug, ntk_interrupt, ntk_memory, ntk_mutex/ntk_interobject
+
+
+12:42 AM 1/12/2008
+osal ---- Operating System Abstraction Layer
+first created.
+in the first design of openwsn, the "osal" functions are placed into "service" directory because they're too simple, or use some external embedded OS instead such as uCOS.
+
+actually, "openwsn" adopts static memory allocation so there's no need for dynamic memory management. however, there do need a thread scheduling mechanism in a complicated system. thus the born of "osal" in openwsn project.
+
+the "osal" is designed to include:
+- thread-like scheduling support
+- or event-based scheduling support 
+- timer management 
+- interrupt management
+- debug support (based on hal.uart directly, so every service can use it)
+- memory management (is it mandatory?)
+- sleep/wakeup support (part of the high level power management)
+- mutex and lock
+
+attention: the "osal" only provide the mandatory functionality of an OS that "openwsn" project will needed. it's not a full functional OS kernel. for example,  it needn't provide inter-process communication mechanisms (IPC) such as MailBox and Pipe. i think they're too complicated for an light weight sensor system. 
+
+attention: different to "hal" and "service", the "osal" needn't accord to the OOP programming style. because there will be alway only one OS in the system. 
+
+
+
+
+
