@@ -1,0 +1,8 @@
+common folder description
+==============================================================
+
+This folder contains the shared files and resources for the final application. 
+Attention the "openwsn" inside "common" folder is an independent component. You 
+should use the "cm3" (contains Cortex-M3 support files) and "stm32f103" folder 
+inside "openwsn/hal/opennode2010/cm3" and "openwsn/hal/opennode2010/stm32f103". 
+There's some modifications adapt to opennode 2010. 

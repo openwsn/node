@@ -100,6 +100,7 @@ static char                         m_macbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME1
 static TiFloodNetwork			    m_net;
 TiCc2520Adapter                     m_cc;
 TiNioNetLayerDispatcher     m_disp;
+TiUartAdapter m_uart;
 
 
 #ifdef CONFIG_TEST_LISTENER
@@ -122,6 +123,7 @@ int main(void)
 
 void floodnode(void)
 {
+    TiUartAdapter * uart;
     TiCc2520Adapter * cc;
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
@@ -147,7 +149,9 @@ void floodnode(void)
 	hal_delayms( 1000 );
 	led_off( LED_ALL );
 
-	halUartInit(9600,0);
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, 0, 9600, 8, 1, 0);
+
     /***************************************************************************
 	 * Flood Protocol Startup
      **************************************************************************/
@@ -207,7 +211,7 @@ void floodnode(void)
             //len = len -4;
             for ( i=0;i<len;i++)
             {
-                USART_Send( pc[i]);
+				uart_putchar(uart,pc[i]);
             }
 			
 			if (pc[0])
@@ -231,7 +235,7 @@ void _flood_listener( void * owner, TiEvent * e )
 {
 	TiFloodNetwork * net = &(m_net);
     TiFrame * f = (TiFrame *)g_rxbufmem;
-
+					  
 	dbc_putchar( 0x77);
 	led_toggle( LED_RED );
 	while (1)

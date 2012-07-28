@@ -57,8 +57,8 @@
 
 
 #define PANID				0x0001
-#define LOCAL_ADDRESS		0x01  
-#define REMOTE_ADDRESS		0x02
+#define LOCAL_ADDRESS		0x06  
+#define REMOTE_ADDRESS		0x07
 #define DEFAULT_CHANNEL     11
 
 static TiUartAdapter        m_uart;      
@@ -109,7 +109,8 @@ void sendnode1(void)
     cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
     cc2520_setpanid( cc, PANID );					// set network identifier 
     cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
-    cc2520_enable_autoack( cc );
+    //cc2520_enable_autoack( cc );
+	cc2520_disable_autoack( cc );
 
     desc = ieee802frame154_open( &m_desc );
     option = 0x00;
@@ -159,7 +160,7 @@ void sendnode1(void)
             //hal_delayms(500);
 
             seqid++;
-
+/*
             tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
             dbc_uint8(tmp);                     // size of the TiFrame object
             tmp = sizeof(TiFrame); 
@@ -167,8 +168,18 @@ void sendnode1(void)
             dbc_uint8(frame_capacity(txbuf));   // frame capacity
             dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
             dbc_uint8(len);                     // data length actually sent
+*/
+            
+           // tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
+            //dbc_uint8(tmp);                     // size of the TiFrame object
+            //tmp = sizeof(TiFrame); 
+           // dbc_uint8(tmp);                     // size of the TiFrame description header size
+           // dbc_uint8(frame_capacity(txbuf));   // frame capacity
+            //dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
+            //dbc_uint8(len);                     // data length actually sent
+			hal_delayus(5);
 
-            // The output is as the following:
+			// The output is as the following:
             // 0xBC = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE) 
             // 0x3C = sizeof(TiFrame) (occupies 60 bytes in STM32F103, 0x3C+0x80=0xBC. Ok)
             // 0x14 = frame_capacity(txbuf) 

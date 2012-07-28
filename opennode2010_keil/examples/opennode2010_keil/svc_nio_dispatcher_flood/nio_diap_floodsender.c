@@ -165,7 +165,6 @@ void ledflood( uint16 ontime, uint16 offtime )
         {
             if (nio_dispa_send( net->disp,0xffff,txbuf,txbuf->option) > 0)
             {   
-				
                 led_toggle( LED_RED);
                 seqid++;
                 break;

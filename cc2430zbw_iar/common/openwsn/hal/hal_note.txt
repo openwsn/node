@@ -1,0 +1,9 @@
+
+
+modified by zhangwei on 2011.09.10
+
+In hal_targetboard module:
+
+add rtl_init() call in target_init(). So the developer can enjoy some pre-initialized
+components in their own code segments. This means you needn't call rtl_init()
+in your own programs from now on.

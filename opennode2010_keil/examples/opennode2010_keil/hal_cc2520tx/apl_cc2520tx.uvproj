@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>1.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -29,6 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -318,7 +319,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x5000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -505,6 +506,46 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f10x_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_can.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_cec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_cec.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dac.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_fsmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_sdio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -581,14 +622,14 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_interrupt.c</FilePath>
             </File>
             <File>
-              <FileName>hal_stm32f10x_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_targetboard.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_stm32f10x_it.inc</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.inc</FilePath>
             </File>
           </Files>
         </Group>

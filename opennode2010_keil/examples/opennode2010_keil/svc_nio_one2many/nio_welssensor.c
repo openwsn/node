@@ -35,20 +35,20 @@
  ******************************************************************************/
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"  
+#include "../../../common/openwsn/hal/hal_mcu.h"
+#include "../../../common/openwsn/hal/hal_configall.h"  
 #include "../../../common/openwsn/svc/svc_configall.h"  
 #include "../../../common/openwsn/rtl/rtl_foundation.h"
 #include "../../../common/openwsn/rtl/rtl_iobuf.h"
 #include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_timer.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_cc2520.h"
+#include "../../../common/openwsn/hal/hal_uart.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
 //#include "../../common/openwsn/hal/hal_adc.h"
 //#include "../../common/openwsn/hal/hal_luminance.h"
 #include "../../../common/openwsn/svc/svc_foundation.h"
@@ -56,7 +56,7 @@
 #include "../../../common/openwsn/svc/svc_nio_aloha.h"
 #include "../../../common/openwsn/svc/svc_nio_one2many.h"
 
-#define CONFIG_NODE_ADDRESS 0x02
+#define CONFIG_NODE_ADDRESS 0x11//02
 #define CONFIG_NODE_PANID 0x01
 #define CONFIG_NODE_CHANNEL 11
 #define CONFIG_RESPONSE_SIZE             7
@@ -66,11 +66,15 @@
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
-static TiTimerAdapter 		m_timer2;
+
+static TiUartAdapter		m_uart;
+static TiTimerAdapter 		m_timer2;	   
+static TiTimerAdapter 		m_timer1;
 static TiFrameRxTxInterface m_rxtx;
 static TiAloha              m_aloha;
 static char                 m_rxbuf[ IOBUF_HOPESIZE(0x7F) ];
 static TiOne2Many 			m_o2m;
+static TiCc2520Adapter		m_cc;
 static char                 m_nacmem[NAC_SIZE];
 static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
@@ -86,11 +90,14 @@ int main(void)
 	char * msg = "welcome to wlssensor node...";
 
 	TiTimerAdapter * timer2;
+	TiTimerAdapter * timer1;
 
 	TiCc2520Adapter * cc;
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
     TiAloha * mac;
+	TiUartAdapter * uart;
+
 
 	TiOne2Many * o2m;
 	TiIoBuf * rxbuf;
@@ -101,12 +108,12 @@ int main(void)
 
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
-	halUartInit(9600,0);
+//	halUartInit(9600,0);
 	timer2 = timer_construct( (void *)(&m_timer2), sizeof(m_timer2) );
-	
+	timer1 = timer_construct( (void *)(&m_timer1), sizeof(m_timer1) );	
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
@@ -118,11 +125,15 @@ int main(void)
 	cc = cc2520_open(cc, 0, NULL, NULL, 0x00 );
 	rxtx = cc2520_interface( cc, &m_rxtx );
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
+	timer1 = timer_open( timer1, 3, NULL, NULL, 0x00 ); 
+
 	nac = nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 	mac =  aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
 
 	//adc_open( adc, 0, NULL, NULL, 0 );
 	//lum_open( lum, 0, adc );
+    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,1, 9600, 8, 1, 0 );
 
 	rxbuf = iobuf_construct( (void *)(&m_rxbuf[0]), sizeof(m_rxbuf) );
 	txbuf = rxbuf;
@@ -132,7 +143,7 @@ int main(void)
     mac->txbuf = mactxbuf;
 	
     o2m = one2many_construct( (void *)(&m_o2m), sizeof(m_o2m) );
-	one2many_open( o2m, mac);
+	one2many_open( o2m, mac,timer1,SENSORTYPE);
 
 	//todo
 
@@ -143,7 +154,7 @@ int main(void)
 	//cc2420_enable_autoack( cc );
 
 	//todo
-    
+    value = 0;
 	while(1)
 	{
 		len = one2many_recv( o2m, rxbuf, 0x00 );
@@ -157,13 +168,13 @@ int main(void)
 			if (request[0] != 0x01)
 				continue;
 			for( i=0;i<len;i++)
-				USART_Send(request[i]);
+				uart_putchar(uart,request[i]);
 
 			// start measurement;
 			// adc_start
 			// adc_value
 			//value = lum_value( lum ); 
-            value = 0x1234;//todo for testing
+            //todo for testing
 			led_toggle(LED_RED);
 			response = iobuf_ptr( txbuf );
 			response[0] = 0x02;                                   // set response type
@@ -178,13 +189,15 @@ int main(void)
 			response[6] = (uint8)(value & 0xfF);
 			iobuf_setlength( txbuf, CONFIG_RESPONSE_SIZE );
 
-			len = one2many_send( o2m,addr,txbuf, 0x00 );
+
+			len = one2many_send( o2m,addr,txbuf, 0x01 );	   //00
 			//len = one2many_send( o2m,0x01,txbuf, 0x00 );
 			if (len <= 0)
 			{
 				//dbo_string( "send response failed" );
-                USART_Send( 0x00);
+                uart_putchar(uart, 0x00);
 			}
+			value++;
 		}
 
 		one2many_evolve(o2m, NULL);

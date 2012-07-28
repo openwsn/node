@@ -53,7 +53,7 @@
 
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
-#define MAX_IEEE802FRAME154_SIZE                128
+#define MAX_IEEE802FRAME154_SIZE          128
 #include "apl_foundation.h"
 #include "openwsn/hal/opennode2010/cm3/core/core_cm3.h"
 #include "openwsn/hal/hal_mcu.h"
@@ -113,6 +113,9 @@ TiRtcAdapter                                    m_rtc;
 TiTimeSyncAdapter                               m_syn;
 TiCc2520Adapter                                 m_cc;
 
+static TiUartAdapter		m_uart;
+
+
 
 
 #ifdef CONFIG_TEST_LISTENER
@@ -141,6 +144,8 @@ void recvnode(void)
     uint8 len;
     TiRtcAdapter * rtc;
     TiTimeSyncAdapter *syn;
+		TiUartAdapter * uart;
+
 
     uint8 i, seqid=0, option;
 
@@ -150,12 +155,13 @@ void recvnode(void)
     hal_delayms( 500 );
     led_off( LED_ALL );
 
-    halUartInit( 9600,0);
-
     cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
     nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
     mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
     timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
+
+   	uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,0, 9600, 8, 1, 0 );
 
 
     cc2520_open(cc, 0, NULL, NULL, 0x00 );
@@ -192,7 +198,8 @@ void recvnode(void)
     hal_attachhandler(  INTNUM_RTC, _rtc_handler,rtc );
     rtc_start( rtc);
 
-    dbc_putchar(0x11);
+    //dbc_putchar(0x11);
+	uart_putchar( uart, 0x11);
 
     #ifdef CONFIG_TEST_ACK
     //fcf = OPF_DEF_FRAMECONTROL_DATA_ACK; 
@@ -221,7 +228,7 @@ void recvnode(void)
             pc = frame_startptr( rxbuf);
             for ( i=0;i< frame_length( rxbuf);i++)
             {
-                USART_Send( pc[i]);
+				uart_putchar( uart, pc[i]);
             }
           // frame_moveinner( rxbuf );
         }
@@ -265,7 +272,8 @@ void _aloha_listener( void * owner, TiEvent * e )
     TiFrame * frame = (TiFrame *)m_rxbufmem;
     uint8 len;
 
-	dbc_putchar( 0xF4 );
+	//dbc_putchar( 0xF4 );
+	uart_putchar( uart, 0xF4);
 	led_toggle( LED_RED );
 	while (1)
 	{

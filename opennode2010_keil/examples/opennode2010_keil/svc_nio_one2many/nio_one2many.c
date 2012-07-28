@@ -38,22 +38,22 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_mcu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"  
+#include "../../../common/openwsn/hal/hal_mcu.h"
+#include "../../../common/openwsn/hal/hal_configall.h"  
 #include "../../../common/openwsn/svc/svc_configall.h"  
 #include "../../../common/openwsn/rtl/rtl_foundation.h"
 #include "../../../common/openwsn/rtl/rtl_iobuf.h"
 #include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
 //#include "../../common/openwsn/hal/hal_adc.h"
 //#include "../../common/openwsn/hal/hal_luminance.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_timer.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_uart.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_timer.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_cc2520.h"
+#include "../../../common/openwsn/hal/hal_uart.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
 #include "../../../common/openwsn/svc/svc_foundation.h"
 #include "../../../common/openwsn/svc/svc_nio_acceptor.h"
 #include "../../../common/openwsn/svc/svc_nio_aloha.h"
@@ -71,7 +71,7 @@
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
-
+static TiTimerAdapter 		m_timer1;
 static TiTimerAdapter 		m_timer2;
 static TiTimerAdapter 		m_timer3;
 static TiAloha              m_aloha;
@@ -82,6 +82,10 @@ static char                 m_nacmem[NAC_SIZE];
 
 static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
+static TiUartAdapter		m_uart;
+
+
+TiCc2520Adapter m_cc; 		 //JOE
 
 
 
@@ -89,13 +93,16 @@ static char                 m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)]
 
 int main(void)
 {
+	TiUartAdapter * uart;			//JOE
+
+
 	char * request;
 	char * response;
 	uint8 len;	
 	char * msg = "welcome to gateway node...";
 
 	TiTimerAdapter * timer2;
-
+	TiTimerAdapter * timer1;
     TiTimerAdapter * timer3;
 
 	TiCc2520Adapter * cc;
@@ -113,12 +120,18 @@ int main(void)
 
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
     
-    halUartInit(9600,0);
-	timer2  = timer_construct( (void *)(&m_timer2), sizeof(m_timer2) );
+	//JOE
+    uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,0, 9600, 8, 1, 0 );
+    hal_assert( uart != NULL );
+    //halUartInit(9600,0);
+	//JOE
 
+	timer2  = timer_construct( (void *)(&m_timer2), sizeof(m_timer2) );
+	timer1 = timer_construct( (void *)(&m_timer1), sizeof(m_timer1) );
     timer3  = timer_construct( (void *)(&m_timer3), sizeof(m_timer3) );
 
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
@@ -135,12 +148,14 @@ int main(void)
 	nac  = nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
     timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
     timer3 = timer_open( timer3, 3, NULL, NULL, 0x00 ); 
+    timer1 = timer_open( timer1, 4, NULL, NULL, 0x00 ); 
 	mac =  aloha_open( mac, rxtx,nac, CONFIG_NODE_CHANNEL, CONFIG_NODE_PANID, CONFIG_NODE_ADDRESS,timer2, NULL, NULL,0x00);
 
 	mac->txbuf = mactxbuf;
 
 	o2m = one2many_construct( (void *)(&m_o2m), sizeof(m_o2m) );
-	one2many_open( o2m, mac);
+	//one2many_open( o2m, mac);
+	one2many_open( o2m, mac,timer1,GATEWAYTYPE);
 
 	//todo
 
@@ -150,9 +165,10 @@ int main(void)
 	cc2520_setshortaddress( cc, CONFIG_NODE_ADDRESS );	// in network address, seems no use in sniffer mode
 
 
-    timer_setinterval( timer3,1000,7999);
+    timer_setinterval( timer3,1000,7999); //JOE 1000
 	while(1)
-	{   
+	{ 
+		hal_delayms(500);  
 		request = iobuf_ptr( txbuf );
 		request[0] = 0x01;              // request type
 		request[1] = 0xFF;              // set destination address
@@ -172,8 +188,9 @@ int main(void)
 		}
 		else//todo for testing
 		{
-			USART_Send( 0xf0);//todo for testing
-			
+			//USART_Send( 0xf0);//todo for testing	
+			uart_putchar(uart,0xf0);	
+			//led_toggle( LED_RED);//JOE	
 		}
 
 		// configure the time interval as 2 seconds. non-periodical
@@ -192,7 +209,9 @@ int main(void)
 
                 for ( i=0;i<len;i++)//todo for testing
                 {
-                    USART_Send( response[i]);//todo for testing
+                    //USART_Send( response[i]);//todo for testing
+					uart_putchar(uart,response[i]);		
+
                 }
 
 				if(response[0] == 0x02)
@@ -200,9 +219,7 @@ int main(void)
                     led_toggle( LED_RED);
 				}
 			}
-		}
-		
+		}	
 		one2many_evolve(o2m, NULL);
 	}
 }
-

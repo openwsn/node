@@ -128,7 +128,7 @@ static void _init_test_response( TiFrame * frame );
 int main(void)
 {
     _nss_execute();
-    // _active_send_test();
+     //_active_send_test();
 }
 
 /** 
@@ -166,7 +166,8 @@ void _nss_execute(void)
     dbc_write( msg, strlen(msg) );
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-    uart = uart_open( uart,1, 9600, 8, 1, 0 );
+    // uart = uart_open( uart,1, 9600, 8, 1, 0 );
+    uart = uart_open( uart,0, 9600, 8, 1, 0 );
     hal_assert( uart != NULL );
 
     cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));
@@ -298,7 +299,8 @@ void _nss_send_response( TiSioAcceptor *sac, TiFrameQueue * fmque, TiSnifferStat
 void _active_send_test()
 {
     char * msg = "welcome to sniffer ...";
-	TiFrame * txbuf = (TiFrame *)(m_sio_rxbuf[0]);
+	//TiFrame * txbuf = (TiFrame *)(m_sio_rxbuf[0]);
+	TiFrame * txbuf = (TiFrame *)(m_sio_rxbuf);
 	TiUartAdapter * uart;
     TiSioAcceptor * sio;
 
@@ -314,7 +316,8 @@ void _active_send_test()
     // #endif
 
     uart = uart_construct((void *)&m_uart, sizeof(TiUartAdapter));
-    uart = uart_open(uart, 1, 9600, 8, 1, 0);
+    //uart = uart_open(uart, 1, 9600, 8, 1, 0);
+    uart = uart_open(uart, 0, 9600, 8, 1, 0);
     hal_assert(uart != NULL);
     uart_write(uart, msg, strlen(msg), 0x00);
 

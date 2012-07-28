@@ -167,7 +167,8 @@ void recvnode(void)
 	cc2520_setshortaddress( cc, CONFIG_ALOHA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2520_enable_autoack( cc );
  
-    rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    //rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 6 );
     dbc_putchar(0x11);
 
     #ifdef CONFIG_TEST_ACK
@@ -188,7 +189,7 @@ void recvnode(void)
 	#ifndef CONFIG_TEST_LISTENER
 	while(1) 
 	{	
-        frame_reset(rxbuf, 3, 20, 0);
+        frame_reset(rxbuf, 3, 20, 6);
 		len = aloha_recv(mac, rxbuf, 0x00);        
 		if (len > 0)
 		{   

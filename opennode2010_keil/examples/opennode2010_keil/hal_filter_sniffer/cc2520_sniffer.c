@@ -51,8 +51,12 @@ void recvnode1(void)
 	led_on( LED_RED );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
-	halUartInit(9600,0);
+	//halUartInit(9600,0);
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
+
+	//JOE
+	    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+
 
 	cc2520_open( cc, 0, NULL, NULL, 0x00 );
 	
@@ -77,9 +81,12 @@ void recvnode1(void)
         {
 			frame_setlength( rxbuf,len);
             pc = frame_startptr(rxbuf);
+			//dbc_putchar(0xF1);
+			//dbc_putchar(0xF2);
+			//dbc_putchar(0xF3);
             for ( i=0;i<len;i++)
             {
-                USART_Send( pc[i]);
+                dbc_putchar( pc[i]);
             }
 			led_toggle( LED_RED);
         }

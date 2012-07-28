@@ -70,6 +70,7 @@
 #include "openwsn/svc/svc_nio_aloha.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
 #include "openwsn/svc/svc_nio_flood.h"
+//#include "openwsn/svc/svc_wio_flood.h"
 
 //#define CONFIG_TEST_LISTENER  
 #define CONFIG_TEST_ADDRESSRECOGNITION
@@ -79,7 +80,7 @@
 //#define CONFIG_TEST_ACK
  
 #define PANID						0x0001
-#define LOCAL_ADDRESS				0x0003
+#define LOCAL_ADDRESS				0x0005
 #define REMOTE_ADDRESS				0xffff
 #define DEFAULT_CHANNEL				11
 
@@ -87,6 +88,8 @@
 
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
+
+#define UART_ID 1
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
@@ -98,6 +101,7 @@ static char                         m_rxbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME15
 static char                         m_macbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiFloodNetwork			    m_net;
 TiCc2520Adapter                     m_cc;
+static TiUartAdapter                m_uart;
 
 #ifdef CONFIG_TEST_LISTENER
 static void _aloha_listener( void * ccptr, TiEvent * e );
@@ -120,6 +124,7 @@ int main(void)
 void floodnode(void)
 {
     TiCc2520Adapter * cc;
+	TiUartAdapter * uart;
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
 	TiTimerAdapter   *timer2;
@@ -136,13 +141,16 @@ void floodnode(void)
 	 * Device Startup and Initialization 
      **************************************************************************/
 	 
+	target_init();
 	led_open();
 	
 	led_on(LED_ALL);
 	hal_delayms( 1000 );
 	led_off( LED_ALL );
 
-	halUartInit(9600,0);
+	//halUartInit(9600,0);
+	uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
     /***************************************************************************
 	 * Flood Protocol Startup
      **************************************************************************/
@@ -181,7 +189,8 @@ void floodnode(void)
 	#ifdef CONFIG_TEST_LISTENER
 	net = flood_open( net, mac, NULL, _flood_listener, NULL, PANID, LOCAL_ADDRESS );
 	#else
-	net = flood_open( net, (TiNioNetLayerDispatcher *)mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	//net = flood_open( net, (TiNioNetLayerDispatcher *)mac, NULL, NULL, PANID, LOCAL_ADDRESS );
+	net = flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	#endif
 
 	//todo 
@@ -201,8 +210,10 @@ void floodnode(void)
 		flood_evolve( net, NULL );
 
 		frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );		
-		len = flood_recv( net, frame, 0x00 );
+		//frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );		
 
+		len = flood_recv( net, frame, 0x00 );
+/*
 		if (len > 0)
 		{ 
 		    frame_skipinner( frame,4,0);//todo 
@@ -219,6 +230,32 @@ void floodnode(void)
 			else
 				led_off( LED_RED );
 			frame_moveouter( frame );
+			
+		}
+*/
+		if (len > 0)
+		{ 
+		    
+		    //frame_skipinner( frame,4,0);//todo 
+			pc = frame_startptr( frame);
+
+			for( i=0;i<len;i++)//todo for testing
+			{
+			   dbc_putchar(pc[i]);
+			}
+			/*
+            len = len -4;
+            for ( i=0;i<len;i++)
+            {
+                //USART_Send( pc[i]);
+            }
+			*/
+			if (pc[0])
+				led_on( LED_RED );
+
+			else
+				led_off( LED_RED );
+			//frame_moveouter( frame );
 			
 		}
 	}

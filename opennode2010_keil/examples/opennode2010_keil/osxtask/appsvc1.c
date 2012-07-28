@@ -12,7 +12,7 @@
 #include "asv_foundation.h"
 #include "appsvc1.h"
 
-#define USART_Send(int)
+//#define USART_Send(int)
  //TiAdcAdapter  g_adc;
  //TiLightSensor g_light;
  //TiUartAdapter g_uart;
@@ -91,7 +91,8 @@ void createtask(int8 id,TiOsxTaskHeap *heap,int16 timeline)
 
 void asv1_evolve( void * svcptr, TiOsxTaskHeapItem *item )
  {  
-	 USART_Send(0xf2);//led_toggle(LED_RED);
+	 USART_Send(0xA1);//led_toggle(LED_RED);
+
 	 createtask(1,heap,3);
 	 createtask(2,heap,2);
 	

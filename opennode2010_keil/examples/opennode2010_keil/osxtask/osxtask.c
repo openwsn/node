@@ -12,6 +12,8 @@
  *	- finished osx kernel, this demo program and compile them passed
  * @modified by yan shixing(TongJi University) on 20091112
  *	- tested success.
+ * @modified by shizhirong on 20120627
+ *  - tested success.
  ******************************************************************************/
 
 #include "asv_configall.h"
@@ -42,19 +44,18 @@
 #define CONFIG_UART_ID              0
 #define CONFIG_TIMER_ID             1
 
-#define target_init(void);
-#define USART_Send
-#define halUartInit
-#define hal_delay
+//#define target_init(void);
+//#define USART_Send
+//#define halUartInit
+//#define hal_delay
 
-static TiUartAdapter        m_uart;      
-static TiAppService1                       m_svcmem1;
-static TiAppService2                       m_svcmem2;
-static uint16                            g_count=0;
-static    uint16                            rtccount=0;
-static   int16                             tasktimeline=0;
-
-static TiRtc m_rtc;
+static TiUartAdapter         	    m_uart;      
+static TiAppService1				m_svcmem1;
+static TiAppService2				m_svcmem2;
+static uint16						g_count=0;
+static uint16						rtccount=0;
+static int16						tasktimeline=0;
+static TiRtc						m_rtc;
 
 
 TiOsxTaskPool m_taskpool;
@@ -69,8 +70,8 @@ TiOsxTaskHeap * heap;
 void on_timer_expired( void * object, TiEvent * e );
 void _osx_priority_queue_popfront_test( TiOsxTaskHeap * heap );
 void heap_task_evovle(TiOsxTaskHeap *heap,TiRtc *rtc);
-void RTC_IRQHandler(void);
-void RTCAlarm_IRQHandler( void );
+void _RTC_IRQHandler(void);
+void _RTCAlarm_IRQHandler( void );
 void osx_task_second_interrupt_rtc( void);
 void osx_task_stop_mode( void);
 
@@ -80,67 +81,10 @@ void osx_task_stop_mode( void);
 
 int main()
 {
-    //osx_task_second_interrupt_rtc();
-    osx_task_stop_mode();
+    osx_task_second_interrupt_rtc();
+    //osx_task_stop_mode();
 }
 
-void osx_task_second_interrupt_rtc( void)
-{
-	char * msg = "welcome to sendnode...";
-    TiUartAdapter * uart;
-
-    TiAppService1 * asv1;
-    TiAppService2 * asv2;
-
-    TiRtc * rtc;
-
-    int8 idx;
-    TiOsxTaskHeapItem item;
-    
-	target_init();
-	led_open();
-	led_on( LED_ALL );
-	hal_delayms( 500 );
-	led_off( LED_ALL );
-
-    //uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    //uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
-	//rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
-	dbc_mem( msg, strlen(msg) );
-   
-
-    tpl = osx_taskpool_construct( (void *)&m_taskpool, sizeof(TiOsxTaskPool) );
-    heap = osx_taskheap_open( &m_taskheap, tpl );//ππ‘Ï“ª∏ˆ∂—
-
-    osx_assert( tpl != NULL );
-    osx_assert( heap != NULL );	
-
-    asv1 = asv1_open( &m_svcmem1, sizeof(TiAppService1) );//¥Úø™¡Ω∏ˆtask
-    asv2 = asv2_open( &m_svcmem2, sizeof(TiAppService2) );
-
-    tasktimeline=3;
-    memset( &item, 0x00, sizeof(item) );//¥À ±œ»≤˙…˙“ª∏ˆtask1£¨≤¢∞—À¸∑≈»Î∂—÷–
-    item.taskfunction =asv1_evolve;
-    item.taskdata = NULL;
-    item.timeline = tasktimeline;//»√∆‰∂® ±∆˜¥Úø™∫Û»˝√Î‘À––
-    item.priority = 1;
-
-    idx = osx_taskheap_insert( heap, &item );
-
-
-    //halUartInit(9600,0);
-    //USART_Send( 0xf1);
-    //dbc_putchar(0xf1);//todo for testing
-    rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
-    rtc = rtc_open(rtc,NULL,NULL,1,1);
-    rtc_setprscaler( rtc,32767);
-    rtc_start( rtc);
-
-    while(1)//‘› ±”√RTCµƒ÷–∂œ¿¥ µœ÷øÿ÷∆taskµƒ÷¥––£¨“≤æÕ «on_timer_expired,heap_task_evole”¶∏√∏¸  ”√“ª∞„£¨¥À ±æÕø…“‘≤ª”√on_timer_expired
-    {
-        heap_task_evovle(heap,rtc);
-    }
-}
 
 void osx_task_stop_mode( void)
 {
@@ -178,28 +122,88 @@ void osx_task_stop_mode( void)
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
-    rtc = rtc_open(rtc,NULL,NULL,3,1);
+    rtc = rtc_open(rtc,NULL,_RTCAlarm_IRQHandler,NULL,3,1);
     rtc_setalrm_count(rtc,0,0);
     rtc_setprscaler( rtc,32767);//ª˘±æµ•Œª√Î
     rtc_start( rtc);
+	USART_Send( 0xf2);//todo for testing
+
 
     while(1)//‘› ±”√RTCµƒ÷–∂œ¿¥ µœ÷øÿ÷∆taskµƒ÷¥––£¨“≤æÕ «on_timer_expired,heap_task_evole”¶∏√∏¸  ”√“ª∞„£¨¥À ±æÕø…“‘≤ª”√on_timer_expired
     {
-        USART_Send( 0xac);//todo for testing
-        heap_task_evovle(heap,rtc);
-        rtc_setalrm_count(rtc,0,0);
-        hal_delay(1);//todo for testing
+		heap_task_evovle(heap,rtc);
+        rtc_setalrm_count(rtc,1,0);
+        hal_delayms(1);//todo for testing
         PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
     }
 }
 
+
+
+void osx_task_second_interrupt_rtc( void)
+{
+	char * msg = "welcome to sendnode...";
+    TiUartAdapter * uart;
+
+    TiAppService1 * asv1;
+    TiAppService2 * asv2;
+
+    TiRtc * rtc;
+
+    int8 idx;
+    TiOsxTaskHeapItem item;
+    
+	target_init();
+    halUartInit(9600,0);    
+	led_open();
+	led_on( LED_ALL );
+	hal_delayms( 500 );
+	led_off( LED_ALL );
+
+    //uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    //uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	//rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
+   
+   
+	tpl = osx_taskpool_construct( (void *)&m_taskpool, sizeof(TiOsxTaskPool) );
+    heap = osx_taskheap_open( &m_taskheap, tpl );//ππ‘Ï“ª∏ˆ∂—
+
+    osx_assert( tpl != NULL );
+    osx_assert( heap != NULL );	
+
+    asv1 = asv1_open( &m_svcmem1, sizeof(TiAppService1) );//¥Úø™¡Ω∏ˆtask
+    asv2 = asv2_open( &m_svcmem2, sizeof(TiAppService2) );
+
+    tasktimeline=3;
+    memset( &item, 0x00, sizeof(item) );//¥À ±œ»≤˙…˙“ª∏ˆtask1£¨≤¢∞—À¸∑≈»Î∂—÷–
+    item.taskfunction =asv1_evolve;
+    item.taskdata = NULL;
+    item.timeline = tasktimeline;//»√∆‰∂® ±∆˜¥Úø™∫Û»˝√Î‘À––
+    item.priority = 1;
+
+    idx = osx_taskheap_insert( heap, &item );
+
+    USART_Send( 0xf1);
+    rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
+    rtc = rtc_open(rtc,NULL,_RTC_IRQHandler,NULL,1,1);
+    rtc_setprscaler( rtc,32767);
+    rtc_start( rtc);
+    USART_Send( 0xf2);
+
+    while(1)//‘› ±”√RTCµƒ÷–∂œ¿¥ µœ÷øÿ÷∆taskµƒ÷¥––£¨“≤æÕ «on_timer_expired,heap_task_evole”¶∏√∏¸  ”√“ª∞„£¨¥À ±æÕø…“‘≤ª”√on_timer_expired
+    {
+        heap_task_evovle(heap,rtc);
+    }
+}
 
 void on_timer_expired( void * object, TiEvent * e )//√ø√Î÷”π˝∫Û÷¥––’‚∏ˆ∫Ø ˝
 {
 	led_toggle(LED_YELLOW);
 
 	g_count ++;
-/*	TiOsxTaskHeapItem item;
+/*	
+	TiOsxTaskHeapItem item;
 
 	if(!osx_taskheap_empty(heap))//∑«ø’µƒª∞»°≥ˆ¿¥
 	{
@@ -223,10 +227,9 @@ void on_timer_expired( void * object, TiEvent * e )//√ø√Î÷”π˝∫Û÷¥––’‚∏ˆ∫Ø ˝
 
 	}
 */
-
 }
 
-void RTC_IRQHandler(void)
+void _RTC_IRQHandler(void)
 {
     if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
     {
@@ -235,11 +238,11 @@ void RTC_IRQHandler(void)
 
         g_count ++;
         led_toggle( LED_RED);
-        USART_Send( 0xf1);
+        USART_Send( 0x00);
     }
 }
 
-void RTCAlarm_IRQHandler(void)
+void _RTCAlarm_IRQHandler(void)
 {
     EXTI_ClearITPendingBit(EXTI_Line17);
     if (RTC_GetITStatus(RTC_IT_ALR) != RESET)
@@ -248,6 +251,7 @@ void RTCAlarm_IRQHandler(void)
         RTC_ClearITPendingBit(RTC_IT_ALR);
         g_count ++;
         led_toggle( LED_RED);
+		USART_Send( 0x01);
     }
 }
 
@@ -320,3 +324,5 @@ void heap_task_evovle(TiOsxTaskHeap *heap,TiRtc *rtc)//‘≠¿ÌÕ¨…œ Œ“œÎ”√rtc¿Ôµƒ∫Ø 
 
 	}
 }
+
+

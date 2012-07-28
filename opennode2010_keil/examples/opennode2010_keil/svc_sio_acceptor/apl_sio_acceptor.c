@@ -9,18 +9,20 @@
 #include "apl_foundation.h"
 */
 #include "apl_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_configall.h"
+#include "../../../common/openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include "../../../common/openwsn/hal/opennode2010/hal_foundation.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cpu.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_led.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_assert.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_cc2520.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_cc2520.h"
 #include "../../../common/openwsn/rtl/rtl_frame.h"
-#include "../../../common/openwsn/hal/opennode2010/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
 #include "../../../common/openwsn/rtl/rtl_slipfilter.h"
 #include "../../../common/openwsn/svc/svc_sio_acceptor.h"
+//
+#include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
 
 #ifdef CONFIG_DEBUG
 #define GDEBUG
@@ -72,7 +74,16 @@ void sio_acceptor_sender(void)
     //char m_txbuf[FRAME_MEMSIZE];
     //TiUartAdapter m_uart;
     //TiSioAcceptor m_sioacceptor;
+
+	char type_id=0x55;	   
+	char dev_id[4]={0x00,0x01,0x02,0x03};
+	int seq_id=1;
     
+	char tempmsg[8]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+	char powermsg[8]={0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38};
+	float temmsg=27.1;
+	float hummsg=80.1;
+
     TiFrame * txbuf;
     TiUartAdapter * uart;
     TiSioAcceptor * sio;
@@ -96,7 +107,8 @@ void sio_acceptor_sender(void)
      */
     
     uart = uart_construct( ( void*)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, 2, 9600, 8, 1, 0);
+    //uart = uart_open(uart, 2, 9600, 8, 1, 0);
+    uart = uart_open(uart, 0, 9600, 8, 1, 0);
     rtl_init( (void *)uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar, hal_assert_report );
     
     sio_buf_tx = iobuf_construct(( void *)(&txbuf_block), IOBUF_HOPESIZE(CONFIG_SIOACCEPTOR_TXBUF_CAPACITY) );
@@ -125,7 +137,22 @@ void sio_acceptor_sender(void)
     
     while(1)  
     {
-        init_request( txbuf );
+        // init_request( txbuf );
+        //init_request( txbuf );
+
+		iobuf_pushbyte(txbuf,type_id);
+		iobuf_pushbyte(txbuf,dev_id,4,0);
+		iobuf_pushbyte(txbuf,(char *)(&seq_id),sizeof(seq_id),0);
+		seq_id++;
+		iobuf_pushbyte(txbuf,tempmsg,8,0);
+		iobuf_pushbyte(txbuf,(char *)(&temmsg),sizeof(float),0);
+		iobuf_pushbyte(txbuf,(char *)(&hummsg),sizeof(float),0);
+
+		for(i=0;i<5;i++)
+		{
+			iobuf_pushbyte(txbuf,(char *)(powermsg),8,0);
+		}
+
         sac_send( sio, txbuf, 0x00 );
         
         #ifdef CONFIG_DEBUG

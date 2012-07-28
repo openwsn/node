@@ -1,6 +1,7 @@
 #ifndef _APL_FOUNDATION_H_5678_
 #define _APL_FOUNDATION_H_5678_
 
+
 #include "openwsn/hal/hal_foundation.h"
 #include "openwsn/hal/hal_cpu.h"
 #include "openwsn/hal/hal_mcu.h"
@@ -12,5 +13,9 @@
 
 #include "openwsn/hal/opennode2010/util.h"
 #include "openwsn/hal/opennode2010/basic_rf.h"
+
+
+#include "openwsn/hal/opennode2010/hal_cc2520base.h"
+
 
 #endif /* _APL_FOUNDATION_H_5678_ */

@@ -2,8 +2,11 @@
 #include "apl_foundation.h"
 #include "openwsn/hal/hal_rtc.h"
 
-void RTC_IRQHandler(void);
-void RTCAlarm_IRQHandler( void );
+
+#define CONFIG_INT2HANDLER_ENABLE
+
+//void RTC_IRQHandler(void);
+//void RTCAlarm_IRQHandler( void );
 void RTC_sec_test(void);
 void RTC_alarm_test(void);
 
@@ -20,11 +23,11 @@ void RTC_sec_test(void)
 {
     TiRtcAdapter *rtc;
     led_open();
-    halUartInit(9600,0);
+    //halUartInit(9600,0);
     led_on( LED_RED);
     hal_delayms( 500);
     led_off( LED_RED);
-    USART_Send( 0xf1);//todo for testing
+    //USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,1,1);
     rtc_setprscaler( rtc,3276);//此时基本单位是0.1秒//rtc_setprscaler( rtc,32767);//此时基本单位是1秒
@@ -38,15 +41,16 @@ void RTC_alarm_test(void)
 {
     TiRtcAdapter *rtc;
     led_open();
-    halUartInit(9600,0);
+    //halUartInit(9600,0);
     led_on( LED_RED);
     hal_delayms( 500);
     led_off( LED_RED);
-    USART_Send( 0xf1);//todo for testing
+    //USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
     rtc = rtc_open(rtc,NULL,NULL,3,1);
-    rtc_setprscaler( rtc,3276);//此时基本单位是0.1秒//rtc_setprscaler( rtc,32767);//此时基本单位是1秒
-    rtc_setalrm_count(rtc,2,0);
+    rtc_setprscaler( rtc,3276);//此时基本单位是0.1秒
+	//rtc_setprscaler( rtc,32767);//此时基本单位是1秒
+    //rtc_setalrm_count(rtc,2,0);
     rtc_start( rtc);
     while (1)
     {
@@ -63,7 +67,8 @@ void RTC_alarm_test(void)
 
         USART_Send( 0xac);
 
-        rtc_setalrm_count(rtc,9);//interval = 9+1 =10(基本单位）
+        rtc_setalrm_count(rtc,50,0);//interval = 9+1 =10(基本单位）
+        //rtc_setalrm_count(rtc,9);//interval = 9+1 =10(基本单位）
         
         //RTC_WaitForLastTask();
         //RTC_SetAlarm(RTC_GetCounter()+ 0);
@@ -72,14 +77,10 @@ void RTC_alarm_test(void)
         hal_delayms( 1);//如果这一句延时不加上去，usart输出会出错。实际上是将rtc_setalrm_count(rtc,0);与 PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);保留间隔
         led_toggle( LED_RED);
        
-        PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
-        
-        USART_Send( 0xab);
-        
-        
+        PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);     
     }
 }
-
+/*
 void RTC_IRQHandler(void)
 {
 	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
@@ -102,6 +103,7 @@ void RTCAlarm_IRQHandler(void)
         RTC_ClearITPendingBit(RTC_IT_ALR);
     }
 }
+*/
 
 
 

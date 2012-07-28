@@ -12,7 +12,7 @@
 #include "asv_foundation.h"
 #include "appsvc2.h"
 
-#define USART_Send
+//#define USART_Send
 //TiCc2420Adapter		g_cc;
 TiUartAdapter		g_uart;
 
@@ -121,7 +121,9 @@ void send(void)
 }
 void asv2_evolve( void * svcptr, TiOsxTaskHeapItem *item )
 {
-	USART_Send(0xff);//todo for testing
+	//uart_putchar(uart,0x02);
+
+	USART_Send(0xA2);//todo for testing
 	//send();
 
 

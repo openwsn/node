@@ -61,6 +61,8 @@
 
 #define ECHO_VTM_RESOLUTION         5
 
+#define UART_ID 1
+
 
 static TiFrameRxTxInterface         m_rxtx;
 static TiAloha                      m_aloha;
@@ -71,6 +73,7 @@ static char                         m_txbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME15
 static char                         m_nacmem[NAC_SIZE];
 static char                         m_mactxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 TiCc2520Adapter                     m_cc;
+static TiUartAdapter                m_uart;  
 
 
 
@@ -89,6 +92,7 @@ int main(void)
 void recvnode(void)
 {
     TiCc2520Adapter * cc;
+	TiUartAdapter * uart;
     TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
     //TiALOHA * mac;
@@ -116,7 +120,9 @@ void recvnode(void)
     // initialize the runtime library for debugging input/output and assertion
     // hal_assert_report is defined in module "hal_assert"
     //
-    halUartInit(9600,0);
+    //halUartInit(9600,0);
+	uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
    
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
@@ -135,9 +141,9 @@ void recvnode(void)
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 	mac = aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID,
 		CONFIG_ALOHA_LOCAL_ADDRESS, timer2, NULL, NULL, 0x00 );
-    mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
+    //mactxbuf = frame_open( (char*)(&m_mactxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 
-    mac->txbuf = mactxbuf;
+    //mac->txbuf = mactxbuf;
 
 	cc2520_setchannel( cc, CONFIG_ALOHA_CHANNEL );
 	cc2520_rxon( cc );							            // enable RX mode
@@ -146,8 +152,8 @@ void recvnode(void)
 	cc2520_enable_autoack( cc );
 	//cc2420_enable_addrdecode( cc );
 
-    rxbuf = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
-    txbuf = frame_open( (char*)(&m_txbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );
+    rxbuf = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 6 );
+    txbuf = frame_open( (char*)(&m_txbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 6 );
 
 
 	recvcount = 0;
@@ -194,13 +200,13 @@ void recvnode(void)
 		switch ( state)
 		{
 		case INIT_STATE:
-            frame_reset( rxbuf, 3, 20, 0 );
+            frame_reset( rxbuf, 3, 20, 6 );
             len = aloha_recv( mac, rxbuf, 0x00 );
 			if (len > 0)
 			{   
 				recvcount ++;
 				_process( rxbuf, txbuf );
-				if ( aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, 0x01) > 0)
+				if ( aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, 0x00) > 0)
 				{
 					sendcount ++;
 					led_toggle( LED_RED);
@@ -233,7 +239,7 @@ void recvnode(void)
 				{
 					recvcount ++;
 					_process( rxbuf, txbuf );
-					if ( aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, 0x01) > 0)
+					if ( aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, 0x00) > 0)
 					{
 						sendcount ++;
 						led_toggle( LED_RED);
@@ -266,13 +272,13 @@ void recvnode(void)
 
 void _process( TiFrame * request, TiFrame * response )
 {
-	frame_moveouter( request );
+	//frame_moveouter( request );
 	//ieee802frame154_dump( request);
-	frame_skipinner( request, 12, 2);
+	//frame_skipinner( request, 12, 2);
 	
-	frame_reset( response, 3, 20, 0 );
+	frame_reset( response, 3, 20, 6 );
 	frame_totalcopyto( request, response );
-	frame_setlength( response,frame_capacity(response));
+	frame_setlength( response,frame_length(request));
     
 	
 }

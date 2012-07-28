@@ -108,6 +108,9 @@ static char                                     m_mactxbuf[FRAME_HOPESIZE(MAX_IE
 TiTimeSyncAdapter                               m_syn;
 TiCc2520Adapter                                 m_cc;
 
+static TiUartAdapter		m_uart;
+
+
 void aloha_sendnode(void);
 //void RTC_IRQHandler(void);
 static void _rtc_handler(void * object, TiEvent * e);
@@ -130,6 +133,10 @@ void aloha_sendnode(void)
     TiFrame * mactxbuf;
     TiRtcAdapter * rtc;
     TiTimeSyncAdapter *syn;
+
+	TiUartAdapter * uart;
+
+
 	char * pc;
 	uint8 i, seqid=0, option;
 
@@ -144,6 +151,10 @@ void aloha_sendnode(void)
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );//todo
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
     timer2= timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
+
+	uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
+    uart = uart_open( uart,0, 9600, 8, 1, 0 );
+
     
 	
 	cc2520_open(cc, 0, NULL, NULL, 0x00 );
@@ -186,7 +197,7 @@ void aloha_sendnode(void)
         {
             pc[i] = 0;
         }
-        frame_setlength( txbuf,10);
+        frame_setlength( txbuf,20);
         
 		
 
@@ -194,8 +205,9 @@ void aloha_sendnode(void)
         {  
    
             if (aloha_send(mac,0xffff, txbuf, 0x00) > 0)
-            {	
-                USART_Send( 0xa0);
+            {
+				led_toggle(LED_RED);	
+                uart_putchar( uart,0xa0);
                 break;
             }
 			else{

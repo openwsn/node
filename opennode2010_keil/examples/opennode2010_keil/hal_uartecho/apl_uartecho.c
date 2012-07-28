@@ -58,6 +58,7 @@ void uartecho1()
     TiUartAdapter * uart;
     char ch;
     intx count;
+	static int seq_id=1;
 
     target_init();
     led_open();
@@ -65,6 +66,7 @@ void uartecho1()
     hal_delayms( 500 );
     led_off( LED_ALL );
 
+    //halUartInit(9600,0);
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
 

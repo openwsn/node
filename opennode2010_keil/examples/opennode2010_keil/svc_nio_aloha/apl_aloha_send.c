@@ -89,14 +89,22 @@
 #define CONFIG_ALOHA_REMOTE_ADDRESS		        0x02
 #define CONFIG_ALOHA_CHANNEL                    11
 
-#define TEST1
-#undef  TEST2
+//#define TEST1
+//#undef  TEST2
+#define TEST2
+#undef TEST1
 
 #define TEST_ENABLE_ACK
 #undef TEST_ENABLE_ACK
 
 #define VTM_RESOLUTION                          5
 
+//JOE
+#ifndef CONFIG_SIO_UART_ID
+#define UART_ID 1
+#else
+#define UART_ID CONFIG_SIO_UART_ID
+#endif
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
@@ -107,6 +115,8 @@ static TiTimerAdapter                           m_timer;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiCc2520Adapter                          m_cc;
 
+TiUartAdapter m_uart;//JOE
+
 static void aloha_sendnode(void);
 
 int main(void)
@@ -116,7 +126,11 @@ int main(void)
 }
 
 void aloha_sendnode(void)
-{   
+{ 
+  //JOE  
+    TiUartAdapter * uart;
+	    intx count;
+
     char * msg = "welcome to sendnode...\r\n";
     TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
@@ -133,7 +147,11 @@ void aloha_sendnode(void)
 	led_on( LED_ALL );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
-	
+
+	 		//JOE	
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
     dbc_mem(msg, strlen(msg));
 
@@ -170,7 +188,8 @@ void aloha_sendnode(void)
         #endif
 
         #ifdef TEST2
-        frame_pushback(txbuf, seqid++);
+		frame_pushbyte(txbuf, seqid++);
+        //frame_pushback(txbuf, seqid++);
         frame_pushback(txbuf, "1234567890123456789", 19); 
         #endif
 
@@ -188,7 +207,10 @@ void aloha_sendnode(void)
 
         while (1)
         {  
-            if (aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
+            //if (aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
+		    //if (aloha_send(mac, 0xffff, txbuf, 0x00) > 0)
+			if(aloha_broadcast(mac,txbuf,0x00)>0)
+            //if (aloha_send(mac, CONFIG_ALOHA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
             {	
                 led_toggle( LED_RED );
                 break;
