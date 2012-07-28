@@ -5,7 +5,7 @@
  *******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -40,21 +40,21 @@
  * @author xu fuzhen and zhang wei on 2010.08.22
  *  - first developed.
  *  
- * @modified by XXX on 2010.08.23
- *  - compile passed.
+ * @modified by zhangwei on 2012.07.28
+ *  - revised.
  */
 
-#define CONFIG_TINYMAC_DEFAULT_PANID		 0x0001
-#define CONFIG_TINYMAC_DEFAULT_CHANNEL       11
-#define CONFIG_TINYMAC_BROADCAST_ADDRESS     0xFFFF
+#define CONFIG_TINYMAC_DEFAULT_PANID		0x0001
+#define CONFIG_TINYMAC_DEFAULT_CHANNEL       	11
+#define CONFIG_TINYMAC_BROADCAST_ADDRESS     	0xFFFF
 
-#define CONFIG_TINYMAC_ACK_RESPONSE_TIME     10
+#define CONFIG_TINYMAC_ACK_RESPONSE_TIME     	10
 
 /* reference
- * - »ùÓÚ¶Ì¾àÀëÎÞÏß´«ÊäµÄCSMA/CAÐ­ÒéÊµÏÖ·½·¨, http://www.dzsc.com/data/html/2010-7-5/83921.html;
- * - ÔØ²¨ÕìÌý¶àÂ··ÃÎÊÐ­Òé½éÉÜ, http://www.pcdog.com/network/protocol/2005/10/e038098.html;
- * - ÎÞÏß´«¸ÐÆ÷ÍøÂçCSMAÐ­ÒéµÄÉè¼ÆÓëÊµÏÖ, http://blog.21ic.com/user1/1600/archives/2009/61918.html;
- * - CSMAÍË±ÜËã·¨, http://book.51cto.com/art/200911/163450.htm;
+ * - ï¿½ï¿½ï¿½Ú¶Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½CSMA/CAÐ­ï¿½ï¿½Êµï¿½Ö·ï¿½ï¿½ï¿½, http://www.dzsc.com/data/html/2010-7-5/83921.html;
+ * - ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, http://www.pcdog.com/network/protocol/2005/10/e038098.html;
+ * - ï¿½ï¿½ï¿½ß´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CSMAÐ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½, http://blog.21ic.com/user1/1600/archives/2009/61918.html;
+ * - CSMAï¿½Ë±ï¿½ï¿½ã·¨, http://book.51cto.com/art/200911/163450.htm;
  * - CSMA, Carrier sense multiple access, http://en.wikipedia.org/wiki/Carrier_sense_multiple_access;
  * - CSMA/CA, Carrier sense multiple access with collision avoidance, http://en.wikipedia.org/wiki/CSMA_CA;
  * - IEEE 802.11 RTS/CTS, http://en.wikipedia.org/wiki/IEEE_802.11_RTS/CTS;
@@ -65,11 +65,11 @@
 
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
+#include "../rtl/rtl_ieee802frame154.h"
 #include "../hal/hal_foundation.h"
 #include "../hal/hal_debugio.h"
 #include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timer.h"
-#include "../rtl/rtl_ieee802frame154.h"
 #include "svc_foundation.h"
 
 #define TINYMAC_OPTION_ACK 0x00
@@ -87,7 +87,7 @@ extern "C"{
  * it's more simpler than TiSimplaAloha and TiAloha.
  */
 typedef struct{
-	uint8 state;
+    uint8 state;
     TiFrameTxRxInterface * rxtx;
     uint16 panto;
     uint16 shortaddrto;
@@ -97,10 +97,15 @@ typedef struct{
     TiIEEE802Frame154Descriptor desc;
     TiFunEventHandler listener;
     void * lisowner;
-	uint8 option;
+    uint8 option;
 }TiTinyMAC; 
 
-TiTinyMAC *	tinymac_construct( char * buf, uintx size );
+/**
+ * Construct an TiTinyMAC object on the specified memory block.
+ * 
+ * @return NULL if failed.
+ */
+TiTinyMAC * tinymac_construct( char * buf, uintx size );
 void tinymac_destroy( TiTinyMAC * mac );
 
 /**
@@ -110,16 +115,23 @@ void tinymac_destroy( TiTinyMAC * mac );
  * tinymac_open().
  */
 
-TiTinyMAC *	tinymac_open( TiTinyMAC * mac, TiFrameTxRxInterface * rxtx, uint8 chn, uint16 panid, 
-			uint16 address, TiFunEventHandler listener, void * lisowner, uint8 option );
-void        tinymac_close( TiTinyMAC * mac );
+TiTinyMAC * tinymac_open( TiTinyMAC * mac, TiFrameTxRxInterface * rxtx, uint8 chn, uint16 panid, 
+    uint16 address, TiFunEventHandler listener, void * lisowner, uint8 option );
+
+/** 
+ * Close the TiTinyMAC object opened before. The resources applied in the open() process will
+ * be released in this function.
+ * 
+ * @return (none)
+ */
+void tinymac_close( TiTinyMAC * mac );
 
 /** if bit 0 of option is 1, then this function will request ACK from the receiver.
  */
-uintx       tinymac_send( TiTinyMAC * mac, TiFrame * frame, uint8 option );
-uintx       tinymac_broadcast( TiTinyMAC * mac, TiFrame * frame, uint8 option );
-uintx       tinymac_recv( TiTinyMAC * mac, TiFrame * frame, uint8 option );
-void        tinymac_evolve( void * macptr, TiEvent * e );
+uintx tinymac_send( TiTinyMAC * mac, TiFrame * frame, uint8 option );
+uintx tinymac_broadcast( TiTinyMAC * mac, TiFrame * frame, uint8 option );
+uintx tinymac_recv( TiTinyMAC * mac, TiFrame * frame, uint8 option );
+void tinymac_evolve( void * macptr, TiEvent * e );
 
 inline void tinymac_setlocaladdress( TiTinyMAC * mac, uint16 addr )
 {
