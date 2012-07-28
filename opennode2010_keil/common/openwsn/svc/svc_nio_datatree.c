@@ -203,7 +203,7 @@ void dtp_close( TiDataTreeNetwork * net )
  *	currently, the root node doesn't need the maintain response packet. So I don't
  * implement the maintain response in this service.
  */
-uint8 dtp_maintain( TiDataTreeNetwork * net, TiFrame * f,uint8 max_hopcount )
+uint8 dtp_maintain( TiDataTreeNetwork * net, TiFrame * f,uint8 max_hopcount )		//evolve sink
 {	
 	char * request;
     uint8 len, count;

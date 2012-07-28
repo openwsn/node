@@ -130,4 +130,11 @@ void osx_tlsche_stepforward( TiOsxTimeLineScheduler * sche, uint16 slicecount )
     }
 }
 
+void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e )  //0705
+{
+	hal_enter_critical();
+	osx_tlsche_stepforward( sche, 1 );
+	hal_leave_critical();
+}
+
 

@@ -65,6 +65,7 @@ TiNioNeighborDiscover * ndp_open( TiNioNeighborDiscover * nei, TiNioNetLayerDisp
     nei->seqid =0;
     nei->state =INIT_STATE;
     nei->scheduler = scheduler;
+	return nei;
 }
 
 void ndp_close( TiNioNeighborDiscover * nei )
@@ -76,6 +77,57 @@ void ndp_evolve( void * svcptr, TiEvent * e )
 {
 
 }
+/*
+uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
+{
+    uint8 count=0;
+    char * response;
+    TiFrame * nei_frame;
+    char * nei;
+    char * pkt;
+    uint8 legth;
+    uint8 i;
+    char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+    TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
+
+    response = frame_startptr(frame);
+    legth = frame_length( frame);
+    nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20,102 );
+    frame_reset( nei_frame,3,20,102);
+    nei = frame_startptr( nei_frame);
+
+    NHB_SET_PROTOID( nei,NDP_PROTOCAL_IDENTIFIER );
+	NHB_SET_TYPE(nei,NDP_TYPE_RESPONSE);
+    NHB_SET_SEQUENCEID( nei,svc->seqid);
+    NHB_SET_SHORTADDRTO( nei,NHB_MAKEWORD( response[1],response[2]));
+    NHB_SET_SHORTADDRFROM( nei,NHB_MAKEWORD( response[3],response[4]));
+    NHB_SET_PANTO(nei,CONFIG_PANTO);
+    NHB_SET_PANFROME(nei,CONFIG_PANTO);
+    pkt = NHB_PAYLOAD_PTR( nei);
+/*
+    for (i=0; i<legth; i++)
+        pkt[i] = response[i];
+    frame_setlength( nei_frame,( legth+8));//frame_setlength( s_frame,( legth+8));
+
+    count = net_disp_send( svc->dispatcher,nei_frame,addr,0x00);
+    if (count > 0)
+        svc->seqid ++;
+*/
+
+////	count=aloha_send(svc->dispatcher->mac,addr,nei_frame,0x00);		  //JOE 0718 
+////
+////    if (count > 0)			//JOE 0718 
+////        svc->seqid ++;		//JOE 0718 
+	svc->seqid++;							//JOE 0718
+	frame_totalcopyfrom(frame,nei_frame);
+	frame->address=addr;
+	frame->option=0x00;
+////    return count;			//JOE 0718 
+
+    return count;
+}
+*/
+
 
 uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
 {
@@ -86,7 +138,6 @@ uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
     char * pkt;
     uint8 legth;
     uint8 i;
-    uint8 seqid;
     char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
     TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
 
@@ -94,26 +145,28 @@ uint8 ndp_response( void * object, uint16 addr, TiFrame * frame, uint8 option)
     legth = frame_length( frame);
     nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20,102 );
     frame_reset( nei_frame,3,20,102);
-    nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
+    nei = frame_startptr( nei_frame);
 
-    //response[0] stores the protocal information.
-    //0x03 neighbornode discover response,0x02 neibournode discover request.
-    NHB_SET_PROTOID( nei,0x03);
+    NHB_SET_PROTOID( nei,NDP_PROTOCAL_IDENTIFIER );
+	NHB_SET_TYPE(nei,NDP_TYPE_RESPONSE);
     NHB_SET_SEQUENCEID( nei,svc->seqid);
     NHB_SET_SHORTADDRTO( nei,NHB_MAKEWORD( response[1],response[2]));
     NHB_SET_SHORTADDRFROM( nei,NHB_MAKEWORD( response[3],response[4]));
     NHB_SET_PANTO(nei,CONFIG_PANTO);
     NHB_SET_PANFROME(nei,CONFIG_PANTO);
     pkt = NHB_PAYLOAD_PTR( nei);
-    for (i=0; i<legth; i++)
-        pkt[i] = response[i];
-    frame_setlength( nei_frame,( legth+8));//frame_setlength( s_frame,( legth+8));
 
-    count = net_disp_send( svc->dispatcher,nei_frame,addr,0x00);
-    if (count > 0)
-        svc->seqid ++;
+    frame_setlength( nei_frame,(11));
 
-    return count;
+////	count=aloha_send(svc->dispatcher->mac,addr,nei_frame,0x00);		  //JOE 0718 
+////
+////    if (count > 0)			//JOE 0718 
+////        svc->seqid ++;		//JOE 0718 
+	svc->seqid++;							//JOE 0718
+	frame_totalcopyfrom(frame,nei_frame);
+	frame->address=addr;
+	frame->option=0x00;
+////    return count;			//JOE 0718 
 }
 
 uint8 ndp_request( TiNioNeighborDiscover * svc,TiFrame * frame,uint8 option)
@@ -125,12 +178,13 @@ uint8 ndp_request( TiNioNeighborDiscover * svc,TiFrame * frame,uint8 option)
     char * pkt;
     uint8 legth;
     uint8 i;
-    uint8 sqid;
     char neiframe_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
     response = frame_startptr(frame);
     legth = frame_length( frame);
+
     nei_frame = frame_open( (char*)(&neiframe_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 102 );
     frame_reset( nei_frame,3,20,102);
+/*
     nei = frame_startptr( nei_frame);//nei = frame_startptr( s_frame);
     //response[0] stores the protocal information.
     //0x03 neighbornode discover response,0x02 neibournode discover request.
@@ -150,8 +204,28 @@ uint8 ndp_request( TiNioNeighborDiscover * svc,TiFrame * frame,uint8 option)
     if (count > 0)
         svc->seqid ++;
     return count;
-}
+*/
 
+    nei = frame_startptr( nei_frame);
+
+    NHB_SET_PROTOID( nei,NDP_PROTOCAL_IDENTIFIER);
+	NHB_SET_TYPE(nei,NDP_TYPE_REQUEST);
+    NHB_SET_SEQUENCEID( nei,svc->seqid);
+    NHB_SET_SHORTADDRTO( nei,NHB_MAKEWORD( response[1],response[2]));
+    NHB_SET_SHORTADDRFROM( nei,NHB_MAKEWORD( response[3],response[4]));
+    NHB_SET_PANTO(nei,CONFIG_PANTO);
+    NHB_SET_PANFROME(nei,CONFIG_PANTO);
+    pkt = NHB_PAYLOAD_PTR( nei);
+
+	frame_setlength(nei_frame,11);
+
+	count = aloha_broadcast( svc->dispatcher->mac, nei_frame, 0x00 );
+
+    if (count > 0)
+        svc->seqid ++;
+    return count;
+}
+/*
 uint8 ndp_send( TiNioNeighborDiscover * svc,uint16 addr,TiFrame * frame, uint8 option )
 {
     uint8 count=0;
@@ -251,7 +325,7 @@ uint8 ndp_recv( TiNioNeighborDiscover * svc,TiFrame * buf, uint8 option )
     }
     return count;
 }
-
+*/
 
 intx nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 option )
 {
@@ -259,9 +333,11 @@ intx nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 
     TiNodeDescriptor node;
     uint8 rssi;
     uint8 i;
+	uint16 addr;
+	uint8 len;
     TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
     payload = frame_startptr(input);
-
+/*
     if ( !frame_empty( input))
     {
         frame_totalcopyfrom( output,input);
@@ -284,7 +360,51 @@ intx nio_ndp_rxhandler( void * object, TiFrame * input, TiFrame * output, uint8 
         }
         
     } 
+*/
 
+
+    if ( !frame_empty( input))
+    {
+        frame_totalcopyfrom( output,input);
+
+		switch (payload[1])
+		{
+			case NDP_TYPE_REQUEST: 
+				//we should send it directly or send it through the dispatch?
+				payload = frame_startptr( input );
+	        	addr = NHB_MAKEWORD( payload[8],payload[7]);
+//////				_init_response( svc->dispatcher->txbuf,svc->nbase->shortaddress,addr);	//JOE 0718
+//////	            len = ndp_response( svc,addr,svc->dispatcher->txbuf,0x00);
+//////	
+//////				frame_clear(svc->dispatcher->txbuf);  //JOE 0705
+//////				frame_clear( input);				  //JOE 0709
+//////	            frame_clear( output);				  //JOE 0709
+				_init_response( output,svc->nbase->shortaddress,addr);		 //JOE 0718
+				ndp_response( svc, addr,output,0x00);
+				
+				break;
+
+			case NDP_TYPE_RESPONSE: 
+				frame_movelower( input);
+	            payload = frame_startptr( input);
+	            rssi = payload[ frame_length(input)-2];
+	            frame_movehigher(input);
+	            payload = frame_startptr( input);
+	
+	            node.state = 1;
+	            node.address = NHB_SHORTADDRFROM(payload);
+	            node.pan =  NHB_PANFROM(payload);
+	            node.rssi = rssi;
+	            nbase_setnode( svc->nbase,node.address,&node);
+	
+	            frame_clear( input);
+	            frame_clear( output);
+				break;	
+
+			default:
+				break;
+		}		
+    } 
   
 }
 
@@ -292,7 +412,7 @@ intx nio_ndp_txhandler( void * object, TiFrame * input, TiFrame * output, uint8 
 {
     //do nothing
 }
-
+/*
 void nio_ndp_request_evolve( void * object, TiEvent * e)
 {
     TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
@@ -358,7 +478,9 @@ void nio_ndp_request_evolve( void * object, TiEvent * e)
     */
 
 }
+*/
 
+/*
 void nio_ndp_response_evolve( void * object, TiEvent * e)
 {
     TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
@@ -381,7 +503,42 @@ void nio_ndp_response_evolve( void * object, TiEvent * e)
         }
     }
 }
+*/
 
+void nio_ndp_request_evolve( void * object, TiEvent * e)
+{
+    TiNioNeighborDiscover * svc = (TiNioNeighborDiscover *)object;
+////    hal_assert( svc->dispatcher->txbuf!=NULL);//todo for testing		//JOE 0718 不应该用dispatcher的资源
+////    _init_request( svc->dispatcher->txbuf, svc->nbase->shortaddress,0xffff );
+////    if (ndp_request( svc, svc->dispatcher->txbuf, 0x00) > 0)
+////    {  
+////        svc->state = INIT_STATE;
+////    }
+////
+////	USART_Send( 0xA1);//todo for testing
+////
+////	frame_clear(svc->dispatcher->txbuf);   
+
+    TiFrame * maintain_frame;											  //JOE 0718
+    char maintain_frame_memory[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+	maintain_frame = frame_open( (char*)(&maintain_frame_memory), FRAME_HOPESIZE( MAX_IEEE802FRAME154_SIZE ), 3, 20, 102 );
+    frame_reset( maintain_frame,3,20,102);
+    //request = frame_startptr( maintain_frame);	
+
+    _init_request(maintain_frame, svc->nbase->shortaddress,0xffff );
+    if (ndp_request( svc, maintain_frame, 0x00) > 0)
+    {  
+        svc->state = INIT_STATE;
+    }
+
+	USART_Send( 0xA1);//todo for testing
+
+	frame_clear(maintain_frame);   //JOE
+
+	osx_tlsche_taskspawn(svc->scheduler, nio_dispa_evolve,svc->dispatcher,0,0,0);
+    osx_tlsche_taskspawn(svc->scheduler, nio_ndp_request_evolve, svc, NDP_REQUEST_TIME,0,0);		 //2000//NDP_REQUEST_TIME
+}
+/*
 void nio_ndp_initiate_task()
 {
     /*
@@ -390,6 +547,7 @@ void nio_ndp_initiate_task()
         ndo_ndp_evolve( object, e)
         */
 }
+*/
 
 void _init_request( TiFrame *txbuf, uint16 localaddr, uint16 remotaddr)
 {
@@ -411,8 +569,6 @@ void _init_request( TiFrame *txbuf, uint16 localaddr, uint16 remotaddr)
 void _init_response(TiFrame *txbuf,uint16 localaddr,uint16 remotaddr)
 {
     char * response;
-    uint16 value;
-    value = 0x9999;
     frame_reset( txbuf,3,20,0);
     response = frame_startptr( txbuf );
     response[0] = 0x03;                                   // set response type
@@ -421,13 +577,13 @@ void _init_response(TiFrame *txbuf,uint16 localaddr,uint16 remotaddr)
 
     response[3] = (char)(localaddr >> 8);       // set source address, 
     response[4] = (char)(localaddr & 0x00FF);   // namely local address
-    response[5] = (uint8)(value >> 8);
-    response[6] = (uint8)(value & 0xfF);
-    frame_setlength( txbuf, 7 );    
 
+    response[5] = (uint8)(0x08);
+    response[6] = (uint8)(0x09);
+    frame_setlength( txbuf, 7 );    
 }
 
-
+/*
 uint8 ndp_found( TiNioNeighborDiscover * svc );
 
 uint8 ndp_getrssi( TiNioNeighborDiscover *svc,uint8 id,uint8 rssi);
@@ -446,4 +602,4 @@ void ndp_clear( TiNioNeighborDiscover * svc);
 void ndp_delete( TiNioNeighborDiscover * svc,uint8 id);
 void dump_nodeinf(TiNioNeighborDiscover *svc,uint8 id);
 
-
+*/

@@ -35,8 +35,6 @@
 #include "../hal/hal_uart.h"
 #include "../hal/hal_led.h"
 #include "../hal/hal_assert.h"
-//#include "../hal/hal_adc.h"
-//#include "../hal/hal_luminance.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
@@ -184,7 +182,8 @@ uint8 one2many_send( TiOne2Many * svc,uint16 addr, TiIoBuf * buf, uint8 option )
     pkt = O2M_PAYLOAD_PTR( o2m);
 	for (i=0; i<legth; i++)
 		pkt[i] = response[i];
-    frame_setlength( frame,( legth+8));//在PAYLOAD之前还有8个数据位
+    frame_setlength( frame,( legth+9));//在PAYLOAD之前还有8个数据位		  //JOE 原有为8   bug fix  0426
+    //frame_setlength( frame,( legth+8));//在PAYLOAD之前还有8个数据位
 
 
 	/*for(uint8 i=0; i<opf->datalen; i++)
@@ -248,7 +247,8 @@ uint8 one2many_broadcast( TiOne2Many * svc, TiIoBuf * buf, uint8 option )
 	for (i=0; i<legth; i++)
 		pkt[i] = response[i];
 
-     frame_setlength( frame,( legth+8));//在PAYLOAD之前还有8个数据位
+     frame_setlength( frame,( legth+9));//在PAYLOAD之前还有8个数据位	    //JOE 原有为8   bug fix  0426
+     //frame_setlength( frame,( legth+8));//在PAYLOAD之前还有8个数据位
 	/*for(uint8 i=0; i<opf->datalen; i++)
 	{
 		dbo_putchar(opf->buf[i]);
@@ -304,7 +304,8 @@ uint8 one2many_recv( TiOne2Many * svc, TiIoBuf * buf, uint8 option )
 	{	
 		pkt = O2M_PAYLOAD_PTR(o2m);
 		
-		count = min( iobuf_size(buf), (len-9) );//len -9：pkt是从o2m的第9个字节开始的。
+		count = min( iobuf_size(buf), (len-9) );//len -9：pkt是从o2m的第9个字节开始的。//JOE_0426
+		//count = min( iobuf_size(buf), (len-9) );//len -9：pkt是从o2m的第9个字节开始的。
 		memmove( response, pkt, count );
 		iobuf_setlength( buf, count );
 	}

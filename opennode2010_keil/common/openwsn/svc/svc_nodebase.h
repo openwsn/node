@@ -11,7 +11,7 @@
 #include "svc_foundation.h"
 
 #ifndef CONFIG_NBASE_NODE_CAPACITY 
-#define CONFIG_NBASE_NODE_CAPACITY 3
+#define CONFIG_NBASE_NODE_CAPACITY 4
 #endif
 
 /** 
@@ -90,7 +90,8 @@ typedef struct{
 TiNodeBase * nbase_construct(void * mem, uint16 memsize);
 //void nbase_construct(TiNodeBase * nbase);
 
-TiNodeBase * nbase_open(TiNodeBase * nbase );
+TiNodeBase * nbase_open( TiNodeBase * nbase, uint16 pan,uint16 addr,uint8 channel)
+;
 void nbase_close( TiNodeBase * nbase );
 
 void nbase_clear( TiNodeBase * nbase );
@@ -144,4 +145,3 @@ bool nbase_deleterelation( TiNodeBase * nbase, uint16 addrfrom, uint16 addrto );
 
 
 #endif /* _SVC_NODEBASE_H_7643_ */
-

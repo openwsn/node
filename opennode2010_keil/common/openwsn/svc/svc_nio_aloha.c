@@ -71,6 +71,9 @@
  *	- Revised and tested.
  * @modified by Jiang Ridong and Zhang Wei in 2011.08
  *  - Revised and tested
+
+ * @modified by Shi Zhirong in 2012.07.18
+ *  - add retval in aloha_send
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -193,9 +196,10 @@ void aloha_close( TiAloha * mac )
  * @attention: This function assumes you should set the "destination address" field 
  * of the frame object.
  */
+//JOE  add retval
 intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option )
 {   
-	
+	intx retval=0;	
 	TiIEEE802Frame154Descriptor * desc;
     uintx ret=0;
 
@@ -204,6 +208,7 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
     switch (mac->state)
     {
     case ALOHA_STATE_IDLE:
+		retval=1;
 		// make a copy of the original frame inside the MAC component
         frame_totalcopyfrom( mac->txbuf, frame );
 		frame_setlength( mac->txbuf, frame_length(frame) );
@@ -279,7 +284,7 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
          * - bug fix. should replace frame_length() here with frame_capacity()
          */
         //ret = frame_capacity( mac->txbuf );
-        aloha_evolve( mac, NULL );
+        aloha_evolve( mac, NULL );	   //JOE 这里重启发送？ retval受到影响
 		//如果没有下面这一句，即使在evolve中发送成功，send的返回值还是不为真，同一个帧可能被连续发送多次。
 		if ( failed)//todo added by Jiang Ridong on 2011.04
 		{
@@ -288,7 +293,7 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
         break;
 
     case ALOHA_STATE_BACKOFF:
-
+		retval=0;
         // in this state, there's already a frame pending inside the aloha object. 
         // you have no better choice but wait for this frame to be processed.
         //
@@ -302,24 +307,27 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
         // currently, this version implementation will ignore any frame sending request
         // if the mac component is still in sleeping state. you should wakeup it and
         // then retry aloha_send() again.
+		retval=0;
         ret = 0;
         break;
     }
-
-    return ret;
+	return retval;
+    //return ret;
 }
-
+//JOE  add retval
 intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 {
     TiIEEE802Frame154Descriptor * desc;
 	bool failed=true;
     intx ret=0;
+	intx retval=0;
 
 	// clear the ACK REQUEST bit
 	option &= 0xFE;
     switch (mac->state)
     {
     case ALOHA_STATE_IDLE:
+		retval=1;
 		// make a copy of the original frame inside the MAC component
         frame_totalcopyfrom( mac->txbuf, frame );
 		ret = frame_length( mac->txbuf );
@@ -383,13 +391,14 @@ intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
         #endif
 
         //ret = frame_capacity( mac->txbuf );
-        aloha_evolve( mac, NULL );
+        aloha_evolve( mac, NULL );				 
         break;
 
     case ALOHA_STATE_BACKOFF:
         // in this state, there's already a frame pending inside the aloha object. 
         // you have no better choice but wait for this frame to be processed.
         //
+		retval=0;
         aloha_evolve( mac, NULL );
         ret = 0;
         break;
@@ -397,6 +406,7 @@ intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
     case ALOHA_STATE_SLEEPING:
 
     default:
+		retval=0;
 		mac->state = ALOHA_STATE_IDLE;
         // currently, this version implementation will ignore any frame sending request
         // if the mac component is still in sleeping state. you should wakeup it and
@@ -405,7 +415,8 @@ intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
         break;
     }
    
-    return ret;
+    //return ret;
+	return retval;
 }
 
 /** 
@@ -576,6 +587,9 @@ intx  aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
     char * ptr=NULL;
     uint8 cur;
 
+	char *pc;//todo for testing
+	int i;//todo for testing
+
 	// @modified by zhangwei on 2011.03.14
 	// - Since the network acceptor will reset the frame inside, we needn't call
 	// frame_slipouter() and frame_moveinner() in this function. The following 
@@ -596,6 +610,16 @@ intx  aloha_recv( TiAloha * mac, TiFrame * frame, uint8 option )
         // incomplete frame or not. if it's an bad frame, then we should ignore it.
         //
         ptr = frame_startptr(frame);
+		/*
+		pc = frame_startptr(frame);//todo for testing
+		USART_Send( 0xff);//todo for testing
+		USART_Send( count);//todo for testing
+		USART_Send( 0xff);//todo for testing
+		for( i=0;i<count;i++)//todo for testing
+		{
+			USART_Send( pc[i]);
+		}
+		*/
         if (*ptr == count-1)
         {
             // get the pointer to the frame control field according to 802.15.4 frame format

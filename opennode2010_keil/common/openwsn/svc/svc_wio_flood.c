@@ -57,26 +57,33 @@
  */
 #include "svc_configall.h"
 #include "../hal/hal_mcu.h"
-//#include "../hal/opennode2010/cm3/core/core_cm3.h"
 #include <string.h>
 #include "../rtl/rtl_foundation.h"
 #include "../rtl/rtl_frame.h"
 #include "../hal/hal_cpu.h"
 #include "../hal/hal_debugio.h"
-//#include "../hal/hal_cc2520.h"
 #include "../hal/hal_uart.h"
 #include "../hal/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"
-#include "svc_nio_flood.h"
+#include "svc_wio_flood.h"
 
 /* Network layer packet format used in this flooding module:
- *  [1B Hopcount] [1B Maximum Hopcount] [1B Sequence Id]
+ *  [Protocol Identifier 1B] [Command 1B] [1B Sequence Id] [1B Hopcount] [1B Maximum Hopcount] [destination 2B] [source 2b]
+ *  //[1B Hopcount] [1B Maximum Hopcount] [1B Sequence Id]
  */
-#define PACKET_CUR_HOPCOUNT(msdu) ((msdu)[0])
-#define PACKET_MAX_HOPCOUNT(msdu) ((msdu)[1])
-#define PACKET_SET_HOPCOUNT(msdu,hop) ((msdu)[0] = (hop))
-#define PACKET_SET_MAX_HOPCOUNT(msdu,hop) ((msdu)[1] = (hop))
+#define PACKET_HEADER_SIZE 9
+
+#define PACKET_CUR_HOPCOUNT(msdu) ((msdu)[3])
+#define PACKET_MAX_HOPCOUNT(msdu) ((msdu)[4])
+#define PACKET_SET_HOPCOUNT(msdu,hop) ((msdu)[3] = (hop))
+#define PACKET_SET_MAX_HOPCOUNT(msdu,hop) ((msdu)[4] = (hop))
+
+
+// #define PACKET_CUR_HOPCOUNT(msdu) ((msdu)[0])
+// #define PACKET_MAX_HOPCOUNT(msdu) ((msdu)[1])
+// #define PACKET_SET_HOPCOUNT(msdu,hop) ((msdu)[0] = (hop))
+// #define PACKET_SET_MAX_HOPCOUNT(msdu,hop) ((msdu)[1] = (hop))
 
 #define PACKET_CUR_SEQID(msdu) ((msdu)[2])
 #define PACKET_SET_CURSEQID(msdu,id) ((msdu)[2]=(id))
@@ -110,7 +117,7 @@ TiFloodNetwork * flood_open( TiFloodNetwork * net, TiAloha * mac, TiFunEventHand
 	net->listener = listener;
 	net->lisowner = lisowner;
 
-	net->txque = frame_open( (char * )( &net->txque_mem), FLOOD_FRAMEOBJECT_SIZE, 3, 20, 0);
+	net->txque = frame_open( (char * )( &net->txque_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
 	net->rxque = frame_open( (char *)( &net->rxque_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
 	net->rxbuf = frame_open( (char *)( &net->rxbuf_mem), FLOOD_FRAMEOBJECT_SIZE, 0, 0, 0);
 
@@ -149,10 +156,14 @@ uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 		net->txque->option = option;
 		count = frame_totalcopyfrom( net->txque, frame );
         
+		// [protocol identifier][cur hop count][max hopcount][seqid]
+		frame_skipouter( net->txque, PACKET_HEADER_SIZE, 0 );
 
-		frame_skipouter( net->txque, 4, 0 );//todo 执行这一局后frame_length又变回0了！
+		frame_setlength( net->txque,(i + PACKET_HEADER_SIZE));
 
-		frame_setlength( net->txque,(i+4));//todo
+//		frame_skipouter( net->txque, 4, 0 );//todo 执行这一局后frame_length又变回0了！
+
+//		frame_setlength( net->txque,(i+4));//todo
 
 		
 		// assert( frame_skipouter must be success );
@@ -161,6 +172,7 @@ uintx flood_broadcast( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 		PACKET_SET_HOPCOUNT( pc,0 );
 		PACKET_SET_MAX_HOPCOUNT(pc , CONFIG_FLOOD_MAX_COUNT );
 		PACKET_SET_CURSEQID(pc, net->seqid );
+		net->seqid ++;
 	}
 
 	flood_evolve( net, NULL );
@@ -185,11 +197,13 @@ uintx flood_send( TiFloodNetwork * net, uint16 shortaddrto, TiFrame * frame, uin
 uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 {
 	uintx count;
+	uint8 i;
     uintx ret;
     count = 0;
     ret = 0;
-	flood_evolve( net, NULL );
 
+	flood_evolve( net, NULL );
+/*
 	if (!frame_empty( net->rxque))
 	{
 		
@@ -199,6 +213,22 @@ uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 	}
     if ( count)
     {
+        ret = frame_length( frame);
+    }
+*/	
+
+	if (!frame_empty( net->rxque))
+	{
+		i = frame_length(net->rxque);
+		count = frame_totalcopyfrom( frame, net->rxque );
+		frame_skipinner(frame, PACKET_HEADER_SIZE, 0);
+		i=i-PACKET_HEADER_SIZE;
+		//frame_bufferclear( net->rxque );
+		frame_totalclear( net->rxque ); // todo 2011.08.04 by zw //?
+	}
+    if (count > 0)
+    {
+		frame_setlength( frame,i);
         ret = frame_length( frame);
     }
 	
@@ -229,6 +259,10 @@ void flood_evolve( void * netptr, TiEvent * e )
 	uint8 len, count, cur_hopcount, max_hopcount;
 	bool done = true, cont= false;
 	char * pc;
+	int i;//todo for testing
+	char *ptr;//todo for testing
+	char * msdu;
+	char feature[FLOOD_CACHE_ITEMSIZE];
 
 	aloha_evolve( net->mac,e );
 
@@ -258,10 +292,8 @@ void flood_evolve( void * netptr, TiEvent * e )
 			
 			// Check if the TX queue is empty. If not then try to send the frame.
 			if (!frame_empty(net->txque))
-			{   
-				
-				len = aloha_broadcast( net->mac, net->txque, net->txque->option );
-				
+			{   				
+				len = aloha_broadcast( net->mac, net->txque, net->txque->option );				
 				if (len > 0)
 				{
 					//frame_bufferclear( net->txque );
@@ -297,7 +329,20 @@ void flood_evolve( void * netptr, TiEvent * e )
 				//
 	            if (cont)
 				{  
-                    
+					msdu = frame_startptr(net->rxbuf);
+					feature[0] = PACKET_CUR_SEQID(msdu);
+					feature[1] = msdu[6]; // destination address
+					feature[2] = msdu[7]; // destination address
+					feature[3] = msdu[8]; // source address
+					feature[4] = msdu[9]; // source address
+					// if (flood_cache_visit( net->cache, (frame_startptr(net->rxbuf)+1) ))//if (flood_cache_visit( net->cache, (char*)frame_startptr(net->rxbuf) ))//todo 我将CONFIG_FLOOD_CACHE_CAPACITY改成了1原先为8，不改的话不再接收新的帧.
+					if (flood_cache_visit( net->cache, &feature[0]))
+					{   
+						//frame_bufferclear( net->rxbuf );
+						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
+						cont = false;
+					}
+/*                    
 					if (flood_cache_visit( net->cache, (char*)frame_startptr(net->rxbuf) ))//todo 我将CONFIG_FLOOD_CACHE_CAPACITY改成了1原先为8，不改的话不再接收新的帧.
 					{   
 						
@@ -305,11 +350,13 @@ void flood_evolve( void * netptr, TiEvent * e )
 						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
 						cont = false;
 					}
+*/
 				}
 
 				if (cont)
 				{ 
-                    frame_reset(net->rxque,0,0,0);//todo 这一句是必须加上去的。
+
+                    //frame_reset(net->rxque,0,0,0);//todo 这一句是必须加上去的。
 					frame_totalcopyto( net->rxbuf, net->rxque );
                   
 					// Check whether this frame has reaches its maximum hopcount. 

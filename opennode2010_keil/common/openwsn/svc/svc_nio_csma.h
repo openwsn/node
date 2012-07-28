@@ -1,9 +1,7 @@
-#ifndef _SVC_NIO_CSMA_H_4829_
-#define _SVC_NIO_CSMA_H_4829_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -26,158 +24,153 @@
  *
  ******************************************************************************/
 
-/*******************************************************************************
- * svc_nio_csma
- * This module implements the standard carrier sense multi-access (CSMA) protocol. 
- * If you want more Collision Avoidance (CA) features, you can choose MACA protocol 
- * in module svc_maca.
+#ifndef _SVC_NIO_CSMA_H_4829_
+#define _SVC_NIO_CSMA_H_4829_
+
+/******************************************************************************* 
+ * svc_csma.c
+ * Standard CSMA medium access control (MAC) protocol.
+ * Thought it's called standard, this implementation has an special feature comparing 
+ * to standard CSMA protocol on that: it will insert a random delay before each 
+ * sending in order to decrease wakeup sending conflictions.
  * 
- * @state
- *  compiled successfully. tested.
+ * @todo
+ * you should replace the infinite delay when waiting for ACK frame with timer
+ * driven delay in the future!!
  *
- * @author zhangwei in 2009.12
- *  - first created
- * @modified by zhangwei on 2010.05.08
- *  - revision. replace original "cc2420.h" with "hal_frame_transceiver.h". So this
- *    module doesn't depend on the cc2420 from now on. It can run on other device
- *    drivers if the "TiFrameTxRxTransceiver" interface.
+ * you may need to add seqid management in MAC layer!
  * 
- * @modified by zhangwei on 2010.06.13
- *  - replace TiIoBuf with TiFrame
+ * @status
+ *	- in testing
+ * 
+ * @modified by zhangwei on 2010.05.10
+ *  - the original csma module was divided into two branches: simple csma and 
+ *    standard csma. the simple csma doesn't use timer so it's easy for demonstration. 
+ *    and the standard csma use timer to control the delay time and waiting time,
+ *    thus it's more reasonable and practical. 
+ *  - simple csma and standard csma are designed to share the same interface.
+ * @modified by zhangwei on 2010.08.23
+ *	- revision
  * @modified by zhangwei on 2010.08.24
- *  - revised.
- * 
- * @modified by xu-fuzhen(Control Department, TongJi University) on 2010.10.12
- *  - revision. tested ok. 
- * 
- ******************************************************************************/
+ *  - correct bug in csma_ischannelclear(). the return value should be bool type
+ * @modified by Jiang Ridong in 2011.08
+ *  - tested Ok.
+ * @modified by zhangwei on 2012.07.20
+ *
+ ******************************************************************************/  
 
 /**
- * CONFIG_CSMA_BROADCAST_ADDRESS
- * This is an const value equals 0xFFFF. You shouldn't change it.
- *
- * CONFIG_CSMA_MAX_RETRY
- * Maxium sending retry count when encounter sending failure.
- *
- * CONFIG_CSMA_ACK_RESPONSE_TIME
- * Maximum duration to wait for the ACK frame.
- *
+ * @reference
+ * - CSMAnet, http://en.wikipedia.org/wiki/Aloha_protocol#The_CSMA_protocol;
+ */
+ 
+#include "svc_configall.h"
+#include "../rtl/rtl_frame.h"
+#include "../rtl/rtl_ieee802frame154.h"
+#include "../hal/hal_mcu.h"
+#include "../hal/hal_foundation.h"
+#include "../hal/hal_debugio.h"
+#include "../hal/hal_frame_transceiver.h"
+#include "../hal/hal_timer.h"
+#include "svc_foundation.h"
+#include "svc_nio_acceptor.h"
+ 
+/**
  * CONFIG_CSMA_MAX_BACKOFF
  * Maximum backoff delay time. the really backoff time is a random number between 
- * 0 and CONFIG_ALOHA_MAX_BACKOFF. Currently, it's set to 100 milliseconds. You should 
+ * 0 and CONFIG_CSMA_MAX_BACKOFF. Currently, it's set to 100 milliseconds. You should 
  * optimize it according to your own network parameters.
  * 
- * CONFIG_CSMA_TRX_ACK_SUPPORT
- * If the transceiver support ACK (such as cc2420), then we can use it. Or else
- * we had to deal with the ACK meachanim in this module. 
- * 
- * CONFIG_CSMA_STANDATD
- * Choose standard CSMA behavior. If not defined, then the software will run as 
- * an optimized version of CSMA.
+ * CONFIG_CMSA_MIN_ACK_TIME
+ * CONFIG_CSMA_MAX_ACK_TIME
+ * These two macros defines the range for ACK waiting. You should tune it according
+ * to the transceiver parameters.
  */
 
-#define CONFIG_CSMA_DEFAULT_PANID			    0x0001
-#define CONFIG_CSMA_DEFAULT_LOCAL_ADDRESS		0x07 
-#define CONFIG_CSMA_DEFAULT_REMOTE_ADDRESS		0x08
+#ifndef CONFIG_CSMA_DEFAULT_PANID
+#define CONFIG_CSMA_DEFAULT_PANID				0x0001
+#endif
+
 #define CONFIG_CSMA_DEFAULT_CHANNEL            11
-#define CONFIG_CSMA_BROADCAST_ADDRESS          FRAME154_BROADCAST_ADDRESS
+
+#define CONFIG_CSMA_BROADCAST_ADDRESS          0xFFFF
 
 #define CONFIG_CSMA_MAX_RETRY                  3
 #define CONFIG_CSMA_ACK_RESPONSE_TIME          10
 
-#define CONFIG_CSMA_MAX_FRAME_SIZE             128
+#define CONFIG_CSMA_MAX_FRAME_SIZE             127
 
-#define CONFIG_CSMA_TRX_ACK_SUPPORT
-#define CONFIG_CSMA_MIN_BACKOFF                0
-#define CONFIG_CSMA_MAX_BACKOFF                0xFE
-
-#define CONFIG_CSMA_STANDATD
-
-#include "svc_configall.h"
-#include "svc_foundation.h"
-#include "../rtl/rtl_frame.h"
-#include "../rtl/rtl_ieee802frame154.h"
-#include "../hal/hal_frame_transceiver.h"
-#include "../hal/hal_timer.h"
-#include "../svc/svc_nio_acceptor.h"
-
-
-/**
- * TiCsma is a enhanced version of the fundamental ALOHA medium access
- * protocol. It has the same interface with TiAloha. 
+/* Time unit is milliseconds?
+ * @todo
  */
+#define CONFIG_CSMA_MIN_ACK_TIME               1
+#define CONFIG_CSMA_MAX_ACK_TIME               50
 
-/**
- * Q: what's CSMA medium access protocol?
- * R: CSMA means carrier sense multiple access. 
+#define CONFIG_CSMA_MAX_BACKOFF_TIME           100
+#define CONFIG_CSMA_MIN_BACKOFF_TIME           2    //该宏必须大于0，否则timer会出现异常
+
+/* Set the module work in standard CSMA behavior without any optimization */
+#define CONFIG_CSMA_STANDARD
+
+/* The csma header here includes: 
+ *  - 2B for frame control
+ *  - 1B for sequence number
+ *  - 4B for destination address
+ *  - 4B for source address
+ * So the total header length is 11.
  * 
- * Q: what's p-persistent CSMA?
- * R: When the sender is ready to send data, it checks continually if the medium is 
- * busy. If the medium becomes idle, the sender transmits a frame with a probability p. 
- * If the station chooses not to transmit (the probability of this event is 1-p),
- * the sender waits until the next available time slot and transmits again. This 
- * process repeats until the frame is sent or some other sender stops transmitting. 
- * In the latter case the sender monitors the channel, and when idle, transmits with 
- * a probability p, and so on.
- *
- * link: http://en.wikipedia.org/wiki/Carrier_sense_multiple_access
+ * @attention
+ * - The first byte, which includes the total length of the frame is actually
+ *   not belong to the MAC layer. So this csma header doesn't include this byte.
+ * - For 802.15.4 compatible transcevers, the MAC header is determined by the 802.15.4
+ *   protocol. The above header definition is actually only one possible format
+ *   according to 802.15.4 specification.
  */
+#define CSMA_HEADER_SIZE   11
+#define CSMA_TAIL_SIZE     2
 
-/* reference
- * - 基于短距离无线传输的CSMA/CA协议实现方法, http://www.dzsc.com/data/html/2010-7-5/83921.html;
- * - 载波侦听多路访问协议介绍, http://www.pcdog.com/network/protocol/2005/10/e038098.html;
- * - 无线传感器网络CSMA协议的设计与实现, http://blog.21ic.com/user1/1600/archives/2009/61918.html;
- * - CSMA退避算法, http://book.51cto.com/art/200911/163450.htm;
- * - CSMA, Carrier sense multiple access, http://en.wikipedia.org/wiki/Carrier_sense_multiple_access;
- * - CSMA/CA, Carrier sense multiple access with collision avoidance, http://en.wikipedia.org/wiki/CSMA_CA;
- * - IEEE 802.11 RTS/CTS, http://en.wikipedia.org/wiki/IEEE_802.11_RTS/CTS;
- * - MACA, Multiple Access with Collision Avoidance, 
- *   http://en.wikipedia.org/wiki/Multiple_Access_with_Collision_Avoidance;
- * - Multiple Access with Collision Avoidance for Wireless, http://en.wikipedia.org/wiki/MACAW;
- */
+/* The p-insist sending probability = CSMA_P_INSIST_INDICATOR / 255 */
+#define CSMA_P_INSIST_INDICATOR 200
 
+#define CSMA_OPTION_ACK                    0x01
+#define CSMA_OPTION_NOACK                  0x00
+#define CSMA_DEF_OPTION                    CSMA_OPTION_NOACK
 
-#define CSMA_OPTION_ACK                    0x00
-#define CSMA_DEF_OPTION                    0x00
+#define CSMA_IORET_SUCCESS(ret)             ((ret)>0)
+#define CSMA_IORET_NOACTION                 0
+#define CSMA_IORET_ERROR_NOACK              -1
+#define CSMA_IORET_ERROR_ACCEPTED_AND_BUSY  -2
+#define CSMA_IORET_ERROR_BUSY               -3
+#define CSMA_IORET_ERROR_UNKNOWN            -4
 
-/* In order to support low power implementation, current version CSMA component support 
- * four external request.
- */ 
-#define CSMA_STARTUP_REQUEST                1
-#define CSMA_SHUTDOWN_REQUEST               2
-#define CSMA_SLEEP_REQUEST                  3
-#define CSMA_WAKEUP_REQUEST                 4
-
-/* cama state:
+/* standard csma protocol state:
  * - IDLE: wait for sending and receiving. since the receiving is a fast process
- *      then i give up design a special state for receiving. 
- *      receiving process can be occur in any state.
- * - WAITFOR_SENDING: wait for PHY layer to sending buffer frame (namely, acceess 
- *      the channel)
- * - SLEEPING: sleep mode.
+ *         then i give up design a special state for receiving. 
+ *         receiving process can be occur in any state.
+ * - WAITFOR_SENDING: wait for sending 
+ * - BACKOFF:
+ * - SLEEP: sleep mode.
  */
 
 #define CSMA_STATE_NULL                    0
 #define CSMA_STATE_IDLE                    1
-//#define CSMA_STATE_WAITFOR_CHANNELCLEAR    2
-#define CSMA_STATE_BACKOFF                 3
-#define CSMA_STATE_SLEEPING                4
-#define CSMA_STATE_POWERDOWN               5
+#define CSMA_STATE_BACKOFF                 2
+#define CSMA_STATE_SLEEPING                3
 
-
-/* event definition */
-#define CSMA_EVENT_FRAME_ARRIVAL           7
-
-#pragma pack(1)    
 typedef struct{
-    uint8 state;
-	TiFrameTxRxInterface * rxtx;
-	TiNioAcceptor * nac;
+    uint16 sendcount;
+    uint16 sendfailed;
+    uint16 recvcount;
+    uint16 dropped;
+}TiCsmaStatistics;
+
+#pragma pack(1) 
+typedef struct{
+	uint8 state;
+    TiFrameTxRxInterface * rxtx;
+	TiNioAcceptor *nac;
 	TiTimerAdapter * timer;
 	TiFrame * txbuf;
-    uint8 sendprob;
-    uint8 loadfactor;
-    uint8 request;
     uint8 retry;
 	uint16 backoff;
     uint16 panto;
@@ -185,34 +178,86 @@ typedef struct{
     uint16 panfrom;
     uint16 shortaddrfrom;
     uint8 seqid;
-    uint8 sendoption;
-    uint8 sendfailed;
+    uint8 sendprob; 
+    TiCsmaStatistics stat;
     TiIEEE802Frame154Descriptor desc;
     TiFunEventHandler listener;
     void * lisowner;
 	uint8 option;
-	char txbuf_memory[FRAME_HOPESIZE(CONFIG_CSMA_MAX_FRAME_SIZE)];
-}TiCsma; 
+    char txbuf_memory[FRAME_HOPESIZE(CONFIG_CSMA_MAX_FRAME_SIZE+1)];
+	uintx success;
+}TiCsma;
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
+/**
+ * Construct an TiNioAloha object inside the specified memory block. Attention the memory 
+ * block must be large enough to hold the object.
+ */
 TiCsma * csma_construct( char * buf, uint16 size );
+
+/** 
+ * Destroy the TiNioAloha object.
+ */
 void csma_destroy( TiCsma * mac );
-TiCsma * csma_open( TiCsma * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac,uint8 chn, uint16 panid, uint16 address, 
-    TiTimerAdapter * timer, TiFunEventHandler listener, void * lisowner );
+
+/**
+ * Open the TiNioAloha object for sending and receiving. 
+ */
+TiCsma * csma_open( TiCsma * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac, uint8 chn, uint16 panid, 
+	uint16 address, TiTimerAdapter * timer, uint8 option );
+
+/**
+ * Close the TiNioAloha object. The closing process will release resource applied by 
+ * the csma object. 
+ */
 void csma_close( TiCsma * mac );
 
-uintx csma_send( TiCsma * mac, uint16 shortaddrto,TiFrame * frame, uint8 option );//uintx csma_send( TiCsma * mac, TiFrame * frame, uint8 option );
-uintx csma_broadcast( TiCsma * mac, TiFrame * frame, uint8 option );
-uintx csma_recv( TiCsma * mac, TiFrame * frame, uint8 option );
-void csma_evolve( void * macptr, TiEvent * e );
 
-//#define csma_setshortaddress(mac,addr) mac->rxtx->setshortaddress((mac->rxtx->provider),(addr))
-//#define csma_setpanid(mac,pan) mac->rxtx->setpanid((mac->rxtximpl),(pan))
-//#define csma_setchannel(mac,chn) mac->rxtx->setchannel((mac->rxtximpl),(chn))
-//#define csma_ischannelclear(mac) mac->rxtx->ischannelclear((mac->rxtx))
+/**
+ * \brief csma_send() will send the frame object with the option. This function will
+ * duplicate a frame object inside the MAC object, so the original input frame keeps
+ * unchanged.
+ *
+ * @param mac mac component
+ * @param frame the frame object to be sent
+ * @param option sending option. controls the ACK behavior currently. please refer to 
+ *   the transceiver's driver interface. 
+ *      current settings: if bit 0 of option is 1, then this function will request ACK 
+ *   from the receiver. the ack is handled inside mac or transceiver object.
+ * 
+ * @return
+ *  if the frame can be accepted successfully, then this function will return positive
+ * value. however, theoretically speaking, the hardware may haven't really send the 
+ * frame out. you should guarantee to repeated call csma_evolve() to try to send the
+ * frame out if this occurs.
+ */
+intx csma_send( TiCsma * mac, uint16 shortaddrto, TiFrame * frame, uint8 option );
+
+/**
+ * \brief This function broadcast a frame out.
+ */
+intx csma_broadcast( TiCsma * mac, TiFrame * frame, uint8 option );
+
+/**
+ * \brief This function try to receive a frame and place it into parameter "frame".
+ * If there's no frame coming, then returns 0.
+ */
+intx csma_recv( TiCsma * mac, TiFrame * frame, uint8 option );
+
+inline void csma_setlistener( TiCsma * mac, TiFunEventHandler listener, void * lisowner )
+{
+	mac->listener = listener;
+	mac->lisowner = lisowner;
+} 
+
+
+/**
+ * \brief Evolve the state machine of csma protocol.
+ */
+void csma_evolve( void * macptr, TiEvent * e );
 
 inline void csma_setlocaladdress( TiCsma * mac, uint16 addr )
 {
@@ -232,21 +277,28 @@ inline void csma_setpanid( TiCsma * mac, uint16 pan )
 }
 
 inline void csma_setchannel( TiCsma * mac, uint8 chn )
-{
+{   
     mac->rxtx->setchannel( mac->rxtx->provider, chn );
 }
 
+// todo
 inline bool csma_ischannelclear( TiCsma * mac )
 {
     // return (mac->rxtx->ischnclear == NULL) ? true : mac->rxtx->ischnclear( mac->rxtx->provider );
     return true;
 }
 
-void csma_statistics( TiCsma * mac, uint16 * sendcount, uint16 * sendfailed );
+inline void csma_setsendprobability( TiCsma * mac , uint8 probability)
+{
+	mac->sendprob = probability;
+}
 
+
+void csma_statistics( TiCsma * mac, TiCsmaStatistics * stat );
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _SVC_NIO_CSMA_H_4829_ */
+

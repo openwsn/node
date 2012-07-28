@@ -422,7 +422,6 @@ void flood_rxhandler(TiFloodNetwork * net,TiFrame * frame, TiFrame *fwbuf)
         {
             if (cont)
             {  
-
                 if (flood_cache_visit( net->cache, (char*)frame_startptr(frame) ))
                 {   
                     frame_totalclear( net->rxbuf ); 

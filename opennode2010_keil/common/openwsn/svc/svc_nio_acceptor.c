@@ -306,6 +306,8 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
         hal_leave_critical();
 		#endif
 	}
+    
+    nac->rxtx->evolve( nac->rxtx, NULL );
 }
 
 /*
@@ -345,14 +347,14 @@ void _nac_tryrecv( TiNioAcceptor * nac )
     
 	if (!fmque_full(nac->rxque))
 	{   
-        if (fmque_applyback(nac->rxque, &idx))
+        if (fmque_applyback(nac->rxque, &idx))	  //JOE 从rxque中申请一个空间，idx为其id号
         {
-            buf = fmque_getbuf(nac->rxque, idx);
+            buf = fmque_getbuf(nac->rxque, idx);	  //将idx索引号的空间给buf
             svc_assert(buf != NULL);
             svc_assert(fmque_datasize(nac->rxque) == FRAMEQUEUE_ITEMSIZE);
             // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
-            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);
-            count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );
+            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						   //格式化buf到f
+            count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );	//接收到f	  
             if (count > 0)
             {
                 frame_setlength(f, count);
@@ -375,7 +377,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 }
             }
             else{
-                fmque_poprear(nac->rxque);
+                fmque_poprear(nac->rxque);		  //接收不成功 释放该区域
             }
         }
         

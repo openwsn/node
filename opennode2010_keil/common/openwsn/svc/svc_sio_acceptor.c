@@ -42,9 +42,9 @@
  *   http://www.keil.com/support/man/docs/armccref/armccref_CJAFJHJD.htm
  * - __attribute__((packed))
  *   http://www.keil.com/support/man/docs/armccref/armccref_Cacejdia.htm
- * - 解析#pragma指令
+ * - #pragma instruction
  *   http://blog.csdn.net/jamestaosh/article/details/5816009
- *   这篇文章讲到了#pragma pack(1)和__packed区别，值得阅读和思考
+ *   (This article mentioned the difference between #pragma pack(1) and __packed. Recommended!)
  */
 
 static void _sac_txbuf_to_device( TiSioAcceptor * sac );
@@ -78,9 +78,10 @@ void sac_free( TiSioAcceptor * sac )
 
 TiSioAcceptor * sac_construct( char * buf, uint16 size )//todo for testing
 {
-	return NULL;
+	hal_assert( sizeof(TiSioAcceptor) <= size );
+    memset( buf, 0x00, size );
+    return (TiSioAcceptor *)buf;
 }
-
 TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart )
 {
 	rtl_assert( memsize <= SIO_ACCEPTOR_MEMSIZE(0) );
@@ -139,7 +140,8 @@ TiIoResult sac_framesend( TiSioAcceptor * sac, TiFrame * buf, TiIoOption option 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
 	if (iobuf_empty(sac->txbuf))
 	{
-		count = iobuf_write(io->txbuf, frame_startptr(buf), frame_length(buf));
+		//count = iobuf_write(io->txbuf, frame_startptr(buf), frame_length(buf));	 //JOE????????	   sac->txbuf
+		count = iobuf_write(sac->txbuf, frame_startptr(buf), frame_length(buf));	 //JOE????????	   sac->txbuf
 	}
 	#endif
 
@@ -406,6 +408,22 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
 			sac->rx_accepted = 1;
 		}
 	}
+    
+	#ifdef SIO_ACCEPTOR_ADAPTER_TO_RXBUF_TEST
+	// test: this test will enable the rx filter. It will read frame from
+    // the rxfilter output, and send the frame throught the filter to the sender
+    // again. It's used to test the filter.
+
+    if (io->rx_accepted == 1)
+    {
+        assert(iobuf_length(io->rxbuf) > 0);
+        if (sac_iobufsend(io, io->rxbuf, 0x00) > 0)
+        {
+             iobuf_clear(io->rxbuf);
+             io->rx_accepted = 0;
+         }
+    }
+	#endif /* SIO_ACCEPTOR_ADAPTER_TO_RXBUF_TEST */
 	#endif
 
 	#ifndef SIO_ACCEPTOR_SLIP_ENABLE
@@ -416,7 +434,35 @@ void _sac_device_to_rxbuf( TiSioAcceptor * sac )
         count = uart_read( sac->device, iobuf_endptr(sac->rxbuf), iobuf_available(sac->rxbuf), 0x00);
 		iobuf_adjustlength( sac->rxbuf, count );
 	}
+	// ret = ((count < 0) ? -3 : iobuf_length(io->rxbuf));
+    
+	#ifdef SIO_ACCEPTOR_ADAPTER_TO_RXBUF_TEST
+	/* test 1: direct echo based on TiNioAdapter. This test will read data
+     * directly from the adapter and send them back immediately. There's no
+	 * filter processing in this test. Test passed in 2011.08
+     */
+	if (iobuf_length(io->rxbuf) > 0)
+	{
+		count = iobuf_append( io->txbuf, io->rxbuf );
+		iobuf_popfront( io->rxbuf, count );
+		count = uart_send( io->uart, iobuf_startptr(io->txbuf), iobuf_length(io->txbuf), 0x00 );
+		if (count > 0)
+		{
+            iobuf_popfront(io->txbuf, count);
+			//printf("_nio_adapter_to_rxbuf: send %d bytes.\n", count);
+		}
+        else{
+            // uart_send error, todo
+        }
+	}
+	#endif /* SIO_ACCEPTOR_ADAPTER_TO_RXBUF_TEST */    
 	#endif	
+    
+	// if (ret <0)
+    // {
+	//	  printf("_sac_adapter_to_rxbuf: %d \n", ret);
+	// }
+	// return ret;
 }
 
 

@@ -10,6 +10,8 @@
  * 
  * @modified by zhangwei on 2011.08.26
  * - revision: ieee802frame154_check_crc()
+ * @modified by Shi Zhirong on 2012.07.24
+ * - revision: ieee802frame154_set_ack_request()
  */
 
 #include "rtl_configall.h"
@@ -393,9 +395,9 @@ inline void ieee802frame154_set_ack_request( TiIEEE802Frame154Descriptor * desc,
 {
     uint16 fcf = ieee802frame154_control(desc);
     if (enabled)
-        fcf &= (~0x0020);
-    else
         fcf |= 0x0020;
+    else
+        fcf &= (~0x0020);
     ieee802frame154_set_control(desc, fcf);
 }
 

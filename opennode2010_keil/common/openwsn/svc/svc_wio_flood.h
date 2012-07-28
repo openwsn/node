@@ -43,7 +43,7 @@
  * to be effective in rtl_cache module. Or else the rtl_cache will use its internal
  * configurations.
  */
-#define CONFIG_FLOOD_CACHE_CAPACITY 1     //#define CONFIG_FLOOD_CACHE_CAPACITY 8
+#define CONFIG_FLOOD_CACHE_CAPACITY 8     //#define CONFIG_FLOOD_CACHE_CAPACITY 8
 
 #define CONFIG_FLOOD_CACHE_MAX_LIFETIME 8
 
@@ -60,8 +60,6 @@
 #include "../rtl/rtl_cache.h"
 #include "../rtl/rtl_framequeue.h"
 #include "../hal/hal_foundation.h"
-//#include "../hal/hal_cc2520.h"
-//#include "../hal/hal_cc2520.h"
 #include "../hal/hal_debugio.h"
 #include "svc_foundation.h"
 #include "svc_nio_aloha.h"

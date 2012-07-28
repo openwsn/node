@@ -35,6 +35,8 @@
  *	- first created. inspired by rtl_notifier. 
  * @modified by Zhang Wei in 2010
  * @modified by Jiang Ridong in 2011
+
+ * @modified by Shi Zhirong  2012.7.23
  */
 
 #include "svc_configall.h"
@@ -43,13 +45,11 @@
 #include "../rtl/rtl_configall.h"
 #include "../rtl/rtl_foundation.h"
 #include "../hal/hal_uart.h"
-//#include "../hal/hal_debugio.h"
-//#include "../hal/hal_configall.h"
-//#include "../hal/hal_foundation.h"
 #include "svc_foundation.h"
-#include "svc_nio_aloha.h"
-#include "svc_nio_dispatcher.h"
+#include "svc_nio_csma.h"
+#include "svc_nio_dispatcher - CSMA.h"
 #include "svc_nodebase.h"
+#include "../osx/osx_tlsche.h"
 
 #define NIO_DISPA_STATE_IDLE        0
 #define NIO_DISPA_STATE_SENDING     0
@@ -76,20 +76,22 @@ void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher)
     return;
 }
 
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac)
+//TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac)
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac,TiOsxTimeLineScheduler * scheduler)
 {
     // The memory block must be large enough to hold the dispatcher object.
     //svc_assert( sizeof(TiNioNetLayerDispatcher) <= dispatcher->memsize );//non memsize
-    
     dispatcher->state = NIO_DISPA_STATE_IDLE;
     dispatcher->nbase = database;
     dispatcher->rxbuf = frame_open((char*)(&dispatcher->rxbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
     dispatcher->txbuf = frame_open((char*)(&dispatcher->txbak_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
     dispatcher->fwbuf = frame_open((char*)(&dispatcher->fwbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
     dispatcher->mac = mac;
+	dispatcher->scheduler=scheduler;
     return dispatcher;
-
 }
+
+
 
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher)
 {
@@ -106,12 +108,12 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
     _TiNioNetLayerDispatcherItem * item;
     uint8 proto_id;
 
-    svc_assert(frame_length(f) > 0);
+    svc_assert(frame_length(f) > 0);	
     
     if (frame_empty(dispatcher->txbuf) && frame_empty(dispatcher->fwbuf))
     {
         // payload[0] is the protocol id
-       // proto_id = (frame_startptr(f)[0]);
+        // proto_id = (frame_startptr(f)[0]);
         //item = _nio_dispa_search(dispatcher, proto_id);
         item = &dispatcher->items[0];
         if (item != NULL)
@@ -146,13 +148,12 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
                     // the frame is still in its original buffer instead of the forward
                     // buffer, it should be placed into txbuf for later sending. We don't
                     // recommend call mac->send() directly here because the txhandler()
-                    // maybe unefficient and the aloha_send() may return false. So the 
-                    // upper layer must decide appropriate processing if the aloha
+                    // maybe unefficient and the csma_send() may return false. So the 
+                    // upper layer must decide appropriate processing if the csma
                     // is busy or failed.
                     //
                     // frame_movelower(f);
                     frame_totalcopyto(dispatcher->fwbuf, dispatcher->txbuf);
-                    dispatcher->txbuf->address = addr;
                     frame_totalclear( dispatcher->fwbuf);
                 }
                 else if (!frame_empty(f))
@@ -169,34 +170,33 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
     return count;
         
 /*    
-    count = aloha_send(dispacher->mac,addr,f,option);
+    count = csma_send(dispacher->mac,addr,f,option);
     return count;
 */    
 }
 
 uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
 {
-    uintx ioresult = 0;
+    intx ioresult = 0;
     uintx option;
     
     if (!frame_empty(dispatcher->txbuf))
     {
-        // aloha_send() returns
+        // csma_send() returns
         //  > 0: the frame is successfullly accepted by the mac
         //  = 0: mac is busy. should retry
         //  < 0: I/O failure.
-        // Even aloha_send() reports successful, the frame is still maybe lost in 
-        // the processing. aloha_send() > 0 only means the frame is successfully
+        // Even csma_send() reports successful, the frame is still maybe lost in 
+        // the processing. csma_send() > 0 only means the frame is successfully
         // accepted by MAC. it doesn't means the frame has already been successfully
         // sent by the PHY layer.
         option = dispatcher->txbuf->option;
-        ioresult = aloha_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
-        if (ioresult > 0)
-            frame_clear(dispatcher->txbuf);
-        else if (ioresult < 0)
-            frame_clear(dispatcher->txbuf); // frame lost
+        ioresult = csma_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
+        if ( CSMA_IORET_SUCCESS(ioresult) || CSMA_IORET_ERROR_NOACK || CSMA_IORET_ERROR_CHANNEL_BUSY )
+		{
+			frame_clear(dispatcher->txbuf);				
+		}
     }
-    
     return ioresult;
 }
 
@@ -236,16 +236,6 @@ uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFram
     }
     
     return count;
-/*
-    count =0;
-    frame_reset( f,3,20,0);
-    if ( !frame_empty( dispacher->rxbuf))
-    {
-       count = frame_totalcopyfrom( f,dispacher->rxbuf);
-       frame_clear( dispacher->rxbuf);
-    }
-    return count;
-*/    
 }
 
 uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * paddr, TiFrame * f, uint8 option )
@@ -259,7 +249,7 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 *
 
     // the following assert helps to detect developing mistake. actually the frame
     // buffer can be larger than NIO_DISPA_FRAME_MEMSIZE.
-    svc_assert(f->memsize == NIO_DISPA_FRAME_MEMSIZE);
+////////////////////////////////////////////    svc_assert(f->memsize == NIO_DISPA_FRAME_MEMSIZE);
     
     // if the dispatcher's internal rxbuf buffer is empty, then try to retrieve the
     // next frame from low level layer(the MAC layer) and process the frame using
@@ -267,7 +257,7 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 *
     if (frame_empty(f) )
     {
         // fwbuf here is uses as a temporary buffer only
-        ioresult = aloha_recv(dispatcher->mac,  f, 0x00);
+        ioresult = csma_recv(dispatcher->mac,  f, 0x00);
         if (ioresult > 0)
         {
             proto_id = frame_startptr(f)[0];
@@ -350,73 +340,11 @@ void nio_dispa_evolve(void* object, TiEvent * e)
     frame_clear(dispatcher->rxbuf);
     #endif
 
-/*    
-    switch (dispatcher->state)
-    {
-    case NIO_DISPA_STATE_IDLE:
-        send txbuf
-    
-        _nio_dispa_trysend(dispa);
-        if (!frame_empty(dispacher->rxbuf))
-        {
-            frame_totalcopyto(dispacher->rxbuf, f);
-            count = frame_length(dispacher->rxbuf);
-            frame_clear(dispacher->rxbuf);
-        }
-        break;
-
-    case NIO_DISPA_STATE_SENDING:
-    case NIO_DISPA_STATE_RECVING:
-    default:
-        dispatcher->state = NIO_DISPA_STATE_IDLE;
-        break;
-    }
-
-    count = 0;
-    
-    if ( frame_empty( dispatcher->rxbuf))
-    {
-        frame_reset( dispatcher->rxbuf,3,20,0);
-        count = aloha_recv(dispatcher->mac,dispatcher->rxbuf,0x00);
-        if (count > 0)
-        {
-            payload = frame_startptr(dispatcher->rxbuf);
-            proto_id = payload[0]&0x02;//if the second bit is set, then the protocal is the ndp.
-            for ( i=0;i< CONFIG_NIO_NETLAYER_DISP_CAPACITY;i++)
-            {
-                if ( (dispatcher->items[i].proto_id&0x02) == proto_id)
-                {
-                    break;
-                }
-            }
-
-            if ( i< CONFIG_NIO_NETLAYER_DISP_CAPACITY)
-            {
-                if ( dispatcher->items[i].rxhandler( dispatcher->items[i].object,dispatcher->rxbuf,dispatcher->rxbake,0x00)>0)
-                {
-                    if ( !frame_empty( dispatcher->rxbake))
-                    {
-                        frame_totalcopyfrom( dispatcher->rxbuf,dispatcher->rxbake);
-                        frame_clear( dispatcher->rxbake);
-                    }
-                }
-                else
-                {
-                    frame_clear( dispatcher->rxbuf);
-                    frame_clear( dispatcher->rxbake);
-                }
-            }
-               
-        }
-    }
-*/
-    for (i=0; i<CONFIG_NIO_NETLAYER_DISP_CAPACITY; i++)
-    {
-        if (dispatcher->items[i].state > 0)
-        {
-            dispatcher->items[i].evolve(dispatcher->items[i].object, NULL);
-        }
-    }
+	//JOE 0709
+	if(dispatcher->scheduler!=NULL)
+	{
+		osx_tlsche_taskspawn(dispatcher->scheduler, nio_dispa_evolve,dispatcher,1,0,0);
+	}
 }
 
 /**
@@ -450,6 +378,52 @@ bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, vo
     return found;
 }
 
+bool nio_dispa_register_default(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
+    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve)
+{
+    uint8 i;
+    bool found = false;
+	
+	if( dispatcher->items[0].state == 0)
+	{
+		dispatcher->items[0].state = 1;
+        dispatcher->items[0].proto_id = proto_id;
+        dispatcher->items[0].object = object;
+        dispatcher->items[0].rxhandler = rxhandler;
+        dispatcher->items[0].txhandler = txhandler;
+        dispatcher->items[0].evolve = evolve;
+		found = true;
+	}
+	else
+	{
+		for (i=0; i<CONFIG_NIO_NETLAYER_DISP_CAPACITY; i++)
+		{
+			if (dispatcher->items[i].state == 0)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (found)
+		{
+			dispatcher->items[i].state = 1;
+			dispatcher->items[i].proto_id = dispatcher->items[0].proto_id;
+			dispatcher->items[i].object = dispatcher->items[0].object;
+			dispatcher->items[i].rxhandler = dispatcher->items[0].rxhandler;
+			dispatcher->items[i].txhandler = dispatcher->items[0].txhandler;
+			dispatcher->items[i].evolve = dispatcher->items[0].evolve;
+			
+			dispatcher->items[0].proto_id = proto_id;
+			dispatcher->items[0].object = object;
+			dispatcher->items[0].rxhandler = rxhandler;
+			dispatcher->items[0].txhandler = txhandler;
+			dispatcher->items[0].evolve = evolve;
+		}
+	}
+	return found;
+}
+
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id)
 {
     _TiNioNetLayerDispatcherItem * item;
@@ -460,7 +434,6 @@ bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id)
         item->state = 0;
         item->proto_id = 0;
     }
-    
     return (item != NULL);
 }
 
@@ -477,255 +450,6 @@ _TiNioNetLayerDispatcherItem * _nio_dispa_search(TiNioNetLayerDispatcher * dispa
             break;
         }
     }
-    
     return item;
 }
-
-
-/*
-inline _TiDispatcherItem * _dispa_items( TiDispatcher * dispa );
-inline bool _dispa_search( _TiDispatcherItem * items, uint8 capacity, uint8 eid, uint8 * pidx );
-inline bool _dispa_apply( _TiDispatcherItem * items, uint8 capacity, uint8 * pidx );
-
-TiDispatcher * dispa_create( uint8 capacity )
-{
-	uint16 size = DISPA_HOPESIZE(capacity);
-	void * buf;
-	
-	buf = malloc( size  );
-	if (buf != NULL)
-	{
-		memset( buf, 0x00, size );
-		dispa_construct( buf, size, capacity );
-	}
-
-	return (TiDispatcher *)buf;
-}
-
-void dispa_free( TiDispatcher * dpa )
-{
-	dispa_destroy(dpa);
-}
-
-TiDispatcher * dispa_construct( char * buf, uint16 size, uint8 capacity )
-{
-	TiDispatcher * dpa = (TiDispatcher *)buf;
-	rtl_assert( capacity > 0 );
-	dpa->size = size;
-	dpa->capacity = capacity;
-	dpa->owner = NULL;
-	return dpa;
-}
-
-void dispa_destroy( TiDispatcher * dpa )
-{
-	return;
-}
-
-/**
- * attention
- * The "handler" paramter should NOT be NULL, or an assert() in dispa_send() will failed.
- * However, the "object" parameter can be NULL.
- */
-/*
-bool dispa_attach( TiDispatcher * dpa, uint8 id, TiFunEventHandler handler, void * object )
-{
-	_TiDispatcherItem * items = _dispa_items( dpa );
-	uint8 idx=0;
-	bool found = false;
-
-	idx = id % dpa->capacity;
-	if ((items[idx].id == id) || (items[idx].id == 0))
-	{
-		found = true;
-	}
-	else{
-		found = _dispa_search(items, dpa->capacity, id, &idx);
-		if (!found)
-		{
-			idx = id % (dpa->capacity) + 1;
-			found = _dispa_apply(items, dpa->capacity, &idx);
-		}
-	}
-
-	if (found)
-	{
-		items[idx].id = id;
-		items[idx].handler = handler;
-		items[idx].object = object;
-	}
-
-	return found;
-}
-
-void dispa_detach( TiDispatcher * dpa, uint8 id )
-{
-	_TiDispatcherItem * items = _dispa_items( dpa );
-	uint8 idx=0;
-
-	idx = id % (dpa->capacity);
-	if (items[idx].id == id)
-	{
-		items[idx].id = 0;
-		items[idx].handler = NULL;
-		items[idx].object = NULL;
-	}
-	else{
-		idx ++;
-		if (_dispa_search(items, dpa->capacity, id, &idx))
-		{
-			items[idx].id = 0;
-			items[idx].handler = NULL;
-			items[idx].object = NULL;
-		}
-	}
-}
-
-/* attention
- *	- dispa_send() can be the listener of other components. because it's a standard 
- *    TiFunEventHandler type.
- */
-/*
-void dispa_send( TiDispatcher * dpa, TiEvent * e )
-{
-	_TiDispatcherItem * items = _dispa_items( dpa );
-	uint8 idx=0;
-	bool found = false;
-
-	rtl_assert((e != NULL) && (e->id != 0));
-	if (e->id == 0)
-		return;
-	
-	idx = e->id % (dpa->capacity);
-	
-	if (items[idx].id == e->id)
-	{
-		found = true;
-	}
-	else{
-		idx ++;
-		found = _dispa_search(items, dpa->capacity, e->id, &idx);
-	}
-	if (found)
-	{	
-		/* attention
-		 * If this assert() failed, it often means the user gives wrong parameter 
-		 * values of "handler" to the dispa_attach() function. The "handler" parameter
-		 * shouldn't be NULL.
-		 */ 
-/*
-		rtl_assert( items[idx].handler != NULL );
-		items[idx].handler( items[idx].object, e );
-	}
-}
-
-inline _TiDispatcherItem * _dispa_items( TiDispatcher * dpa )
-{
-	return (_TiDispatcherItem *)( (char*)dpa + sizeof(TiDispatcher) );
-}
-
-/* search for specific items in the list
- * parameter
- *  pidx			     the final index after execution if found.
- */
-/*
-inline bool _dispa_search( _TiDispatcherItem * items, uint8 capacity, uint8 id, uint8 * pidx )
-{
-	bool found = false;
-	uint8 i=0, idx;
-
-	idx = id % capacity;
-	if (items[idx].id == id)
-	{
-		* pidx = idx;
-		return true;
-	}
-
-	for (i=idx+1; i<capacity; i++)
-	{
-		if (items[i].id == id)
-		{
-			found = true;
-			* pidx = i;
-		}
-	}
-	if (!found)
-	{
-		for (i=0; i<idx-1; i++)
-		{
-			if (items[i].id == id)
-			{
-				found = true;
-				* pidx = i;
-			}
-		}
-	}
-
-	return found;
-}
-
-/* allocate an empty item in the dispatcher item list
- * 
- * parameter
- *	pidx			(*pidx) is the initial start searching position
- *                  also the returned index if return true
- * 
- * return
- *  true when success, and false if failed. *pidx is the index if success.
- */
-/*
-inline bool _dispa_apply( _TiDispatcherItem * items, uint8 capacity, uint8 * pidx )
-{
-	bool found = false;
-	uint8 i=0, idx;
-
-	idx = *pidx;
-	for (i=*pidx; i<capacity; i++)
-	{
-		if ((items[i].id == 0) && (items[i].handler == NULL))
-		{
-			found = true;
-			*pidx = i;
-		}
-	}
-	if (!found)
-	{
-		for (i=0; i<(*pidx)-1; i++)
-		{
-			if ((items[i].id == 0) && (items[i].handler == NULL))
-			{
-				found = true;
-				*pidx = i;
-			}
-		}
-	}
-
-	return found;
-}
-
-/* release the item with specific id
- *
- * parameter
- *	idx             initial start search position
- */
-/*
-bool _dispa_release( _TiDispatcherItem * items, uint8 capacity, uint8 id, uint8 idx )
-{
-	bool found = false;
-	//uintx i=0, idx;
-/*
-	// to do in the future
-	rtl_assert( false );
-*/
-/*
-	return found;
-}
-
-*/
-
-
-
-
-
-
 

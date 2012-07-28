@@ -42,6 +42,7 @@
 #include "hal_foundation.h"
 #include "hal_clock.h"
 #include "hal_common.h"
+#include "hal_interrupt.h"
 
 
 /* TiRtcAdapterTime
@@ -117,20 +118,19 @@ typedef struct{
  */
 #pragma pack(1) 
 typedef struct{
-  TiCalTime curtime;
-  TiCalTime deadline;
-  uint32 currenttime;
-
-  TiFunEventHandler listener;
-  void * lisowner;
-
-  uint8 id;//the way of the interrupt for rtc. 1->second interrupt;2->overflow interrupt;3->alarm interrupt.
-  uint16 scale;
-  uint16 interval;
-  uint32 overflow_counter;
-  uint32 alarm_counter;
-  uint8 option;//whether use interrupt or not.
-  uint32 prescaler;
+	TiCalTime curtime;
+	TiCalTime deadline;
+	uint32 currenttime;
+	
+	TiFunEventHandler listener;
+	void * lisowner;
+	uint8 id;//the way of the interrupt for rtc. 1->second interrupt;2->overflow interrupt;3->alarm interrupt.
+	uint16 scale;
+	uint16 interval;
+	uint32 overflow_counter;
+	uint32 alarm_counter;
+	uint8 option;//whether use interrupt or not.
+	uint32 prescaler;
 }TiRtcAdapter;
 
 
@@ -143,6 +143,7 @@ void rtc_destroy( TiRtcAdapter * rtc );
 /**
  * Open an rtc component and do initializations.
  */
+//TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener,TiFunEventHandler irqhandler, void * object,uint8 id, uint8 option );
 TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * object,uint8 id, uint8 option );
 
 /**
@@ -181,7 +182,7 @@ void rtc_stop( TiRtcAdapter * rtc );
  * Restart the RTC using the last configuations. This function is often used after
  * checking the expired flag if you don't configure the RTC to repeat automatically.
  */
-void rtc_restart( TiRtcAdapter * rtc );
+void rtc_restart( TiRtcAdapter * rtc  );
 
 /**
  * Set current time inside the TiRtcAdapter component 
@@ -218,6 +219,10 @@ bool rtc_getclockinterface( TiClockInterface * clock );
 
 TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInterface * intf );
 TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInterface * intf );
+
+void _rtcalarm_interrupt_handler( void * object, TiEvent * e );//JOE
+void _rtcsec_interrupt_handler( void * object, TiEvent * e );//JOE
+void _rtcsec_interrupt_osx_handler( void * object, TiEvent * e );
 
 
 #ifdef __cplusplus

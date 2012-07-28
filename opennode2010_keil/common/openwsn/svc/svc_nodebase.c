@@ -9,6 +9,7 @@ static TiRelationDescriptor * _nbase_findemptyrelationptr( TiNodeBase * nbase, u
 
 TiNodeBase * nbase_construct( void * mem, uint16 memsize )
 {
+    memset( mem, 0x00, memsize );
     return (TiNodeBase*)mem;
 }
 
@@ -16,17 +17,17 @@ TiNodeBase * nbase_construct( void * mem, uint16 memsize )
 //{
 //    return;
 //}
-
-TiNodeBase * nbase_open( TiNodeBase * nbase )
+///////nodebase = nbase_open( nodebase,0x01,CONFIG_NODE_PANID,CONFIG_NODE_ADDRESS,CONFIG_NODE_CHANNEL,3); ???what is 0x01 and 3?
+TiNodeBase * nbase_open( TiNodeBase * nbase, uint16 pan,uint16 addr,uint8 channel)
 {
     int i;
 
     memset( (void* )nbase, 0x00,sizeof(TiNodeBase));
 
     nbase->state = NBASE_STATE_FREE; 
-    nbase->pan = 0x00; // todo
-    nbase->shortaddress = 0; // todo
-    nbase->nio_channel = 0; // todo;
+    nbase->pan = pan; // todo
+    nbase->shortaddress = addr; // todo
+    nbase->nio_channel = channel; // todo;
     nbase->capability = 0; //
 
     for (i=0; i<CONFIG_NBASE_NODE_CAPACITY; i++)
@@ -38,6 +39,7 @@ TiNodeBase * nbase_open( TiNodeBase * nbase )
     {
         nbase->relations[i].state=0;
     }
+	return 	nbase;
 }
 
 void nbase_close( TiNodeBase * nbase )

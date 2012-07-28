@@ -52,6 +52,7 @@
 #include "../rtl/rtl_ieee802frame154.h"
 #include "svc_nio_aloha.h"
 #include "svc_nodebase.h"
+#include "../osx/osx_tlsche.h"
 
 /******************************************************************************* 
  * attention
@@ -121,17 +122,19 @@ typedef struct{
     TiFrame * txbuf;
     TiFrame * fwbuf;
     TiNodeBase * nbase;
-    TiAloha * mac;
-    // TiNioMediumAccessInterface * mac;
+    TiCsma * mac;
     char rxbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char fwbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char txbak_memory[NIO_DISPA_FRAME_MEMSIZE];
     _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
+
+	TiOsxTimeLineScheduler * scheduler;	  //JOE 0709
 }TiNioNetLayerDispatcher;
 
 TiNioNetLayerDispatcher * nio_dispa_construct( void * mem, uint16 memsize );
 void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher);
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac);
+//TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac);
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac,TiOsxTimeLineScheduler * scheduler);
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher);
 uintx nio_dispa_send(TiNioNetLayerDispatcher * dispacher, uint16 addr, TiFrame * f, uint8 option);
 uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option);
@@ -144,143 +147,6 @@ bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, vo
     TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id);
 
-
-/*
-
-typedef (uint8)(* TiNioProcess)( void * object, TiNioSession * session );
-
-/* component id is used to map the index in the array */
-/*
-typedef struct{
-	TiNioSession session;
-	void * object;
-	TiFunEventHandler process;
-}_TiNioDispatcherItem;
-
-typedef struct{
-	uint8 parent;
-	uint8 child;
-	uint8 sibling; // actually sibling list
-	uint8 dataptr;
-	TiNioSession session;
-	void * object;
-	TiFunEventHandler process;
-}_TiNioDispatcherTreeItem;
-
-typedef struct{
-	uint16 size;
-	uint8 capacity;
-	void * owner;
-	uint8 current;
-	TiFun getdispatchid(TiFrame);
-	parent_session;
-}TiNioDispatcher;
-
-TiDispatcher *  nio_dispa_create( uint8 capacity );
-void            nio_dispa_free( TiDispatcher * dpa );
-TiDispatcher *  nio_dispa_construct( char * buf, uint16 size, uint8 capacity );
-void            nio_dispa_destroy( TiDispatcher * dpa );
-TiDispatcher *  nio_dispa_open( TiDispatcher * dpa, uint8 capacity );
-void            nio_dispa_close( TiDispatcher * dpa );
-
-id是唯一标识
-在dispatch的时候，id要match
-
-dispatch
-gather
-execute = dispatch + inversedispatch/aggregate
-inversedispatch
-
-2010.12.17
-rx_process() = dispatch
-{
-	f = rxque.front
-	while this frame is effective
-		get id
-		do dispatch by calling process functions
-	end
-	if this frame is still exists, then do nothing 
-}
-
-2010.12.17
-tx_process() = inversedispatch/aggregate
-{
-	get rear frame from txque
-	get id
-	get parend by id 
-	call parent to deal with this frame
-}
-
-nio_dispa_register( layer, index, id, component, rxhandler, txhandler )
-nio_dispa_layercount
-
-
-nio_dispatcher_attachroot
-nio_dispa_attachchild
-nio_dispa_attachsibling
-nio_dispa_attachhandler fmque based handler + non queue based handler
-nio_dispa_detach
-
-nio_dispa_root
-nio_dispa_current
-nio_dispa_goto( id )   moveto
-nio_dispa_goto_root  moveto_root
-nio_dispa_goto_first moveto_first
-nio_dispa_goto_next  moveto_next
-nio_dispa_goto_prev
-nio_dispa_goto_last
-
-
-nio_dispa_attach( dpa, id, TiNioProcess, object ) = nio_dispa_attachsibling
-nio_dispa_attachchild( dpa, id, TiNioProcess, object )
-nio_dispa_attachsibling( dpa, id, TiNioProcess, object )
-
-nio_dispa_detach()=NULL
-
-nio_dispa_current
-nio_dispa_root / parent / first / next / child
-nio_dispa_moveroot / moveparent / movefirst / movechild
-
-nio_dispa_curlayer
-nio_dispa_curorder
-
-nio_dispa_read(
-nio_dispa_write(
-
-bool            nio_dispa_attach( TiDispatcher * dpa, uint8 id, TiFunEventHandler handler, void * object );
-void            nio_dispa_detach( TiDispatcher * dpa, uint8 id );
-void            nio_dispa_send( TiDispatcher * dispa, TiEvent * e => TiFrame * frame );
-
-
-delete the following
-
-
-
-/* _TiDispatcherItem
- *	id			event id
- *	handler		handler, an function pointer with TiFunEventHandler type
- *	object      handler owner. = event.objectto
- */
-/*
-typedef struct{
-	uint8       id;
-	TiFunEventHandler handler;
-	void *      object;
-}_TiDispatcherItem;
-
-typedef struct{
-	uint16       size;
-	uint8       capacity;
-	void *      owner;
-}TiDispatcher;
-
-TiDispatcher *  nio_dispa_create( uint8 capacity );
-void            nio_dispa_free( TiDispatcher * dpa );
-TiDispatcher *  nio_dispa_construct( char * buf, uint16 size, uint8 capacity );
-void            nio_dispa_destroy( TiDispatcher * dpa );
-bool            nio_dispa_attach( TiDispatcher * dpa, uint8 id, TiFunEventHandler handler, void * object );
-void            nio_dispa_detach( TiDispatcher * dpa, uint8 id );
-void            nio_dispa_send( TiDispatcher * dispa, TiEvent * e => TiFrame * frame ); */
 
 #ifdef __cplusplus
 }

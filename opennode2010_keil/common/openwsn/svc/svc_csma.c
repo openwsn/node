@@ -488,14 +488,14 @@ uintx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
         else{
             mac->retry++;
             mac->backoff = _csma_get_backoff( mac );
-		    timer_restart( mac->timer, mac->backoff, 0 );
+		    vti_restart( mac->timer, mac->backoff, 0 );
             mac->state = CSMA_STATE_BACKOFF;
         }
     }
     else{
         // give up this sending try and restart the sending process after backoff duration.
         mac->backoff = _csma_get_backoff( mac );
-		timer_restart( mac->timer, mac->backoff, 0 );
+		vti_restart( mac->timer, mac->backoff, 0 );
         mac->state = CSMA_STATE_BACKOFF;
     }
 

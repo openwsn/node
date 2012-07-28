@@ -50,9 +50,6 @@
 //#define CONFIG_DYNA_MEMORY 1
 //#undef  CONFIG_DYNA_MEMORY 
 
-#undef  SIO_ACCEPTOR_SLIP_ENABLE
-#define SIO_ACCEPTOR_SLIP_ENABLE 1
-
 #ifndef CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 
 #define CONFIG_SIOACCEPTOR_TXBUF_CAPACITY 384
 #endif
@@ -66,6 +63,9 @@
 #endif
 
 #define SIO_ACCEPTOR_MEMSIZE(bufsize) sizeof(TiSioAcceptor)
+
+#undef  SIO_ACCEPTOR_SLIP_ENABLE
+#define SIO_ACCEPTOR_SLIP_ENABLE 1
 
 /**
  * This module defined the interface of librs232 dynamic link library
@@ -121,6 +121,7 @@ void sac_free( TiSioAcceptr * sac );
 #define sac_recv(sac,buf,option) sac_framerecv((sac),(buf),(option))
 
 TiSioAcceptor * sac_construct( char * buf, uint16 size );
+void sac_destroy( TiSioAcceptor * sac );
 
 TiSioAcceptor * sac_open( TiSioAcceptor * sac, uint16 memsize, TiUartAdapter * uart );
 void sac_close( TiSioAcceptor * sac );

@@ -53,6 +53,8 @@ void osx_tlsche_restart( TiOsxTimeLineScheduler * sche, uint8 id, int16 starttim
 #define osx_tlsche_stepbackward(sche,slicecount) osx_tlsche_stepforward((sche),(slicecount))
 void osx_tlsche_stepforward( TiOsxTimeLineScheduler * sche, uint16 slicecount );
 
+void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e);
+
 /*
 Future Scheduler:
 
