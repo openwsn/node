@@ -80,8 +80,6 @@ inline uint8 CC2520_SPI_TXRX(uint8 x)
 
 
 
-
-
 //------------------------------------------------------------------------------
 // the following should be re-organized
 

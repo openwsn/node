@@ -136,34 +136,46 @@ TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler
  */
 intx cc2520_send( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option )
 {
-	intx count;
 	uint8 status;
-    TiCpuState cpu_state;
+    //TiCpuState cpu_state;
 
 	hal_assert( len > 0 );
-
+    
+    /* @modified by zhangwei on 2012.07.24
+     * zhangwei comment the following modifications on option because the above 
+     * layer such as the MAC should prepare data well in the "buf". The frame to 
+     * be sent in the buf already has correct values. 
+     *
 	if (option)
 	{
-		buf[1] = buf[1]|0x20;
+		buf[1] = buf[1] | 0x20;
 	}
+	else
+	{
+		buf[1] = buf[1] & 0xdf;
+	}
+    */    
     
     // set the frame length according to 802.15.4 frame format. Attention we'd better
     // set buf[0] here, which is the frame length. This is because this byte may
     // not be set by the above layer.
     buf[0] = len-1;
-	
+
     // @todo
-    // Wait for the last sending finished. Delay isn't recommend here.
+    // Wait for the last sending finished. Delay isn't recommended here.
 	CC2520_SFLUSHTX();
-	hal_delayus(50); // todo
+    
+    // @todo: we should check the cc2520 status to decide whether the last sending
+    // is complete or not.
+	hal_delayus(50);
 				
 	// todo: check whether the last sending is complete
 	
     // @attention You should use critical area management here because the sending
     // process doesn't hope other interrupt to disturbe it.
 	hal_enter_critical();
+	// _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
     CC2520_TXBUF( len, buf);
-	//count = _cc2420_writetxfifo( cc, (char*)&(buf[0]), len, option );
 	hal_leave_critical();
   	
     hal_delayus(1);
@@ -177,8 +189,6 @@ intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option
 {
 	intx count;
 	
-	TiCpuState cpu_state;
-
 	hal_assert( len > 0 );
 
     // Set the frame control for broadcast. Bit 5 in frame control byte 0 is cleared.
@@ -196,8 +206,10 @@ intx cc2520_broadcast( TiCc2520Adapter * cc, char * buf, uintx len, uint8 option
 	hal_enter_critical();
 	CC2520_TXBUF( len,buf);
 	hal_leave_critical();
+    
+	hal_delayus(1);
 	CC2520_STXON();
-	hal_delayms(1);
+	hal_delayus(1);
 
 	count = len;
 	return count;
@@ -210,7 +222,7 @@ uint8 _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len )
 
 intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 {
-	intx ret = 0;
+	intx retval = 0;
     TiCpuState cpu_state=0;
 		
     // Read data out from the cc->rxbuf. Usually the FIFOP interrupt service routine
@@ -225,11 +237,11 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 		if (cc->rxlen <= size)
 		{
 			memmove( (void *)buf, (void *)(&(cc->rxbuf[0])), cc->rxlen );
-			ret = cc->rxlen;
+			retval = cc->rxlen;
 			cc->rxlen = 0;
 		}
 		else{
-			ret = 0;
+			retval = 0;
 			cc->rxlen = 0;
 		}
     }
@@ -239,21 +251,21 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
     // there's frame pending for reading.
     
     hal_enter_critical();
-    if (ret == 0)
+    if (retval == 0)
     {
-		ret = (intx)_cc2520_read_rxbuf(cc, buf, size);
+		retval = (intx)_cc2520_read_rxbuf(cc, buf, size);
     }
     hal_leave_critical();
 
-	return ret;
+	return retval;
 }
 
 uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 {
-	intx ret;
+	intx retval;
 	uint8 state;
 
-	ret = 0;
+	retval = 0;
 
     //if rxfifo overflow.
 	if (CC2520_REGRD8(CC2520_EXCFLAG0) & 0x40)
@@ -262,7 +274,7 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 		if (buf[0] > 0)
 		{
 			CC2520_RXBUF(buf[0], (uint8*)(buf+1));
-			ret = buf[0]+1;
+			retval = buf[0]+1;
 		}
 
 		CC2520_SFLUSHRX();
@@ -281,7 +293,7 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			if (buf[0] > 0)
 			{
 				CC2520_RXBUF(buf[0], (uint8 *)(buf+1));
-				ret = buf[0]+1;
+				retval = buf[0]+1;
 			}
 			else{
 				CC2520_SFLUSHRX();
@@ -292,7 +304,7 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			CC2520_REGWR8(CC2520_EXCFLAG1, 0x00);
 		}
 	}
-	return ret;
+	return retval;
 }
 
 TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterface * intf )
@@ -925,7 +937,7 @@ HAL_RF_STATUS halRfInit(void)
      ÁÙÊ±×¢ÊÍµô*/
     // Write tuning settings
     halRfWriteReg8(CC2520_TXPOWER, 0x32);  // Max TX output power
-    halRfWriteReg8(CC2520_CCACTRL0, 0xF8); // CCA treshold -80dBm
+    halRfWriteReg8(CC2520_CCACTRL0, 0xF8); // CCA treshold -80dBm		 
 
     // Recommended RX settings
     halRfWriteMem8(CC2520_MDMCTRL0, 0x85);//ÍÆ¼ö85
@@ -1409,7 +1421,8 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
     // todo  1ms is too long
 	//hal_delayms(1);
     hal_enter_critical();
-	cc->rxlen = _cc2520_read_rxbuf(cc, &cc->rxbuf[0], CC2520_RXBUF_SIZE);
+	cc->rxlen = _cc2520_read_rxbuf(cc, &cc->rxbuf[0], CC2520_RXBUF_SIZE); 
+	//todo  suggest check whether cc_rxbuf is empty or not//0511
 
     if (cc->listener != NULL)
     {

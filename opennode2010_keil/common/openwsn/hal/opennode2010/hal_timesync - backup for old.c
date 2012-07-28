@@ -45,27 +45,18 @@ intx hal_tsync_rxhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
 	//
     if (ptr[12] == TSYNC_PROTOCAL_ID)
     {
-// @todo
         // recommend rtc_curtime(tsync->rtc)
-        //recvtime = tsync->rtc->currenttime;
-		recvtime = RTC_GetCounter();
-        //sendtime = TSYNC_MAKE_DWORD( ptr[17], ptr[16],ptr[15],ptr[14]);
-        //tsync->rtc->currenttime = sendtime;
-		//RTC_SetCounter( sendtime);
+        recvtime = tsync->rtc->currenttime;//recvtime = RTC_GetCounter();
+        sendtime = TSYNC_MAKE_DWORD( ptr[17], ptr[16],ptr[15],ptr[14]);
+        tsync->rtc->currenttime = sendtime;//RTC_SetCounter( sendtime);
         
         // rtc_curtime(tsync->rtc, &sendtime);
         //time_read32( systimer, ptr+18 );
         
-        ptr[20] = (uint8)(recvtime);
-        ptr[21] = (uint8)(recvtime >> 8);
-        ptr[22] = (uint8)(recvtime >> 16);
-        ptr[23] = (uint8)(recvtime >> 24);
-
-//		ptr[18] = (uint8)(recvtime);
-//        ptr[19] = (uint8)(recvtime >> 8);
-//        ptr[20] = (uint8)(recvtime >> 16);
-//        ptr[21] = (uint8)(recvtime >> 24);
-
+        ptr[18] = (uint8)(recvtime);
+        ptr[19] = (uint8)(recvtime >> 8);
+        ptr[20] = (uint8)(recvtime >> 16);
+        ptr[21] = (uint8)(recvtime >> 24);
     }
 
     hal_assert( input == output );
@@ -83,19 +74,11 @@ intx hal_tsync_txhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
     if (ptr[0] == TSYNC_PROTOCAL_ID)
     {
         // recommend rtc_curtime(tsync->rtc)
-        //sendtime = tsync->rtc->currenttime;
-		
-		sendtime = RTC_GetCounter();
-        
-		ptr[4] = (uint8)(sendtime);
-        ptr[5] = (uint8)(sendtime>>8);
-        ptr[6] = (uint8)(sendtime>>16);
-        ptr[7] = (uint8)(sendtime>>24);
-//		ptr[2] = (uint8)(sendtime);
-//        ptr[3] = (uint8)(sendtime>>8);
-//        ptr[4] = (uint8)(sendtime>>16);
-//        ptr[5] = (uint8)(sendtime>>24);
-
+        sendtime = tsync->rtc->currenttime;//sendtime = RTC_GetCounter();
+        ptr[2] = (uint8)(sendtime);
+        ptr[3] = (uint8)(sendtime>>8);
+        ptr[4] = (uint8)(sendtime>>16);
+        ptr[5] = (uint8)(sendtime>>24);
     }
     
     hal_assert( input == output );

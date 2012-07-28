@@ -1,5 +1,3 @@
-
-
 #include "../hal_configall.h"
 #include "../hal_foundation.h"
 #include "hal_cc2520vx.h"
@@ -7,10 +5,10 @@
 #include "../hal_assert.h"
 #include "../hal_cpu.h"
 
-
 static uint8 GotException(uint8 index);
 static uint8 waitException(uint8 exc, uint16 timeOut);
 static void clearException(uint32 dwMap);
+
 static void CC2520_INS_RD_ARRAY(uint16 count, uint8  *pData);
 static uint8 CC2520_INS_MEMCP_COMMON(uint8 instr, uint8 pri, uint16 count, \
     uint16 src, uint16 dest);
@@ -257,6 +255,14 @@ uint8 CC2520_SRXON(void)
 {
     return CC2520_INS_STROBE(CC2520_INS_SRXON);
 }
+
+
+//JOE
+uint8 CC2520_CreateRand(void)
+{
+    return CC2520_INS_STROBE( CC2520_RAND_I);
+}
+
 
 
 /***********************************************************************************

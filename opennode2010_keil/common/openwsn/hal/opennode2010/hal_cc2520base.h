@@ -76,6 +76,12 @@
 
 // Address definitions
 
+
+//JOE
+#define CC2520_RAND_I 0x2E
+#define CC2520_RAND_Q 0x2F
+#define CC2520_RAND_XOR_I_Q 0x30
+
 // FREG definitions (BSET/BCLR supported)
 #define CC2520_FRMFILT0                0x000
 #define CC2520_FRMFILT1                0x001
@@ -438,6 +444,9 @@ typedef union {
 
 
 // Instruction prototypes
+//JOE
+uint8 CC2520_CreateRand(void);
+
 uint8 CC2520_SNOP(void);
 uint8 CC2520_SIBUFEX(void);
 uint8 CC2520_SSAMPLECCA(void);

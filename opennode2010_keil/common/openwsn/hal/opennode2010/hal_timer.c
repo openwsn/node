@@ -49,12 +49,11 @@ void timer_close( TiTimerAdapter * timer )
 	 timer_stop( timer);
 }
 
-
- 
-void timer_setinterval( TiTimerAdapter * timer, uint16 interval,uint8 repeat )
+// @todo 
+void timer_setinterval( TiTimerAdapter * timer, uint16 interval, uint8 repeat )
 {
 	timer->interval = interval;
-    timer->repeat= repeat;//没什么意义，timer一直跑
+    timer->repeat = repeat;//没什么意义，timer一直跑
 }
 
 void timer_setscale( TiTimerAdapter * timer, uint16 prescaler )

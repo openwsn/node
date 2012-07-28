@@ -27,6 +27,10 @@
 /*
  * @modified by zhangwei on 2010.11.25
  * - revision
+ *
+ * @modified by shizhirong on 2012.6.27
+ * - add irqhandler	and listener/owner
+ * - tested
  */ 
 
 #include "../hal_configall.h"
@@ -173,13 +177,13 @@ TiRtcAdapter * rtc_construct( char * buf, uint8 size )
 
 void rtc_destroy( TiRtcAdapter * rtc )
 {
-	
+	// @todo
+	rtc=rtc;
 }
 
 /* rtc_open.  option->whether use interrupt or not. 1->use. 0->not use
 * id->the way of the interrupt for rtc. 1->second interrupt;2->overflow interrupt;3->alarm interrupt.
 */
-
 TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * object,uint8 id, uint8 option )
 {
 	rtc->listener = listener;
@@ -188,6 +192,7 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
     rtc->id = id;
     rtc->currenttime = 0;
     rtc->prescaler = 32767;
+//	rtc->irqhandler=irqhandler; // @todo
 	return rtc;
 }
 
@@ -223,7 +228,7 @@ uint32 rtc_get_counter( uint32 count)
 
 void rtc_setlistener( TiRtcAdapter *rtc, TiFunEventHandler listener, void * object )
 {
-    rtc->lisowner = listener;
+    rtc->listener = listener;
     rtc->lisowner = object;
 }
 
@@ -253,7 +258,6 @@ void rtc_start( TiRtcAdapter * rtc )
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-    //RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
     
     if ( rtc->option)//use interrupt
     {
@@ -262,7 +266,7 @@ void rtc_start( TiRtcAdapter * rtc )
             //configuration for alarm interrupt
             EXTI_ClearITPendingBit(EXTI_Line17);
             EXTI_InitStructure.EXTI_Line = EXTI_Line17;
-            EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+            EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;		   
             EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
             EXTI_InitStructure.EXTI_LineCmd = ENABLE;
             EXTI_Init(&EXTI_InitStructure);
@@ -310,13 +314,18 @@ void rtc_start( TiRtcAdapter * rtc )
     {
         if ( rtc->id ==3)
         {
-            RTC_SetAlarm(RTC_GetCounter()+ 2);//RTC_SetAlarm(RTC_GetCounter()+ rtc->alarm_counter);
+			hal_attachhandler(INTNUM_RTCALARM,_rtcalarm_interrupt_handler,rtc);	  
         }
 
-        if ( rtc->id==2)
+        if ( rtc->id==2) 
         {
-            RTC_SetCounter( rtc->overflow_counter);
+			hal_attachhandler(INTNUM_RTC,_rtcsec_interrupt_handler,rtc);		
+	        RTC_SetCounter( rtc->overflow_counter);
         }
+		else if(rtc->id==1)
+		{	
+			hal_attachhandler(INTNUM_RTC,_rtcsec_interrupt_osx_handler,rtc);  
+		}
     }
     RTC_WaitForLastTask();
     /* Enable the RTC Alarm */
@@ -350,6 +359,12 @@ void rtc_stop( TiRtcAdapter * rtc )
 {
       RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, DISABLE);	
 }
+
+//void rtc_restart( TiRtcAdapter * rtc )
+//{
+//	rtc_start( rtc );
+//
+//}
 
 void rtc_restart( TiRtcAdapter * rtc )
 {
@@ -520,4 +535,62 @@ TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInte
     intf->expired = rtc_expired;
     return intf;
 }
+
+
+void _rtcalarm_interrupt_handler( void * object, TiEvent * e )
+{
+	TiRtcAdapter * rtc=	(TiRtcAdapter *) object;
+    EXTI_ClearITPendingBit(EXTI_Line17);
+    if (RTC_GetITStatus(RTC_IT_ALR) != RESET)
+    {
+        /* Clear the RTC Second interrupt */
+        RTC_ClearITPendingBit(RTC_IT_ALR);
+		led_toggle( LED_RED);//for testing
+
+		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		{
+			rtc->listener(rtc->lisowner,NULL);
+		}
+
+    }
+
+}
+
+void _rtcsec_interrupt_handler( void * object, TiEvent * e )
+{
+	TiRtcAdapter * rtc=	(TiRtcAdapter *) object;
+
+	if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
+	{
+		/* Clear the RTC Second interrupt */
+		RTC_ClearITPendingBit(RTC_IT_SEC);
+
+		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		{
+			rtc->listener(rtc->lisowner,NULL);
+		}
+
+	}
+}
+
+void _rtcsec_interrupt_osx_handler( void * object, TiEvent * e )
+{
+	TiRtcAdapter * rtc=	(TiRtcAdapter *) object;
+
+   if (RTC_GetITStatus(RTC_IT_SEC) != RESET)
+	{
+		/* Clear the RTC Second interrupt */
+		RTC_ClearITPendingBit(RTC_IT_SEC);
+		USART_Send( 0x00);					 //0705
+
+		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		{
+			rtc->listener(rtc->lisowner,NULL);
+		}
+		//led_toggle( LED_RED);//for testing
+	}
+}
+
+
+
 

@@ -259,7 +259,7 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
         break;
 
     case 1:
-        if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
+        if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) //JOE
         {
             *pc = (USART_ReceiveData(USART2) & 0xFF); 
             ret = 1;
@@ -619,8 +619,10 @@ uint8 USART_Get( uint8 ch)
 *
 * @return  none
 *
+*/
 void halUartInit(uint16 baudrate, uint8 options)
 {
+#ifdef CONFIG_UART2_ENABLED
 	USART_InitTypeDef USART_InitStructure;
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -645,14 +647,45 @@ void halUartInit(uint16 baudrate, uint8 options)
 
 	USART_Init( USART2,&USART_InitStructure);
 	USART_Cmd( USART2,ENABLE);
+#else
+	USART_InitTypeDef USART_InitStructure;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	USART_InitStructure.USART_BaudRate = baudrate;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+	USART_Init( USART1,&USART_InitStructure);
+	USART_Cmd( USART1,ENABLE);
+#endif
 }
 
 uint8 USART_Send( uint8 ch)
 {
+#ifdef CONFIG_UART2_ENABLED
 	USART_SendData( USART2,ch);
 	while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
 	{
 	}
+#else
+	USART_SendData( USART1,ch);
+	while ( USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)	   //USART2
+	{
+	}
+#endif
 }
 
 
@@ -665,7 +698,7 @@ uint8 USART_Get( uint8 ch)
 
     return ch;
 }
-*/
+
 
 /***********************************************************************************
 * @fn      halUartWrite
