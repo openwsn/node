@@ -65,7 +65,7 @@
 #include "openwsn/hal/hal_timer.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
 #include "openwsn/svc/svc_nio_aloha.h"
-#include "openwsn/svc/svc_nio_flood.h"
+#include "openwsn/svc/svc_wio_flood.h"
 
 #define PANID				0x0001
 #define BROADCAST_PAN       0xffff

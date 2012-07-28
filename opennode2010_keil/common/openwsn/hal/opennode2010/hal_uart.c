@@ -672,7 +672,7 @@ void halUartInit(uint16 baudrate, uint8 options)
 	USART_Cmd( USART1,ENABLE);
 #endif
 }
-
+*/
 uint8 USART_Send( uint8 ch)
 {
 #ifdef CONFIG_UART2_ENABLED

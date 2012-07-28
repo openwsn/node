@@ -60,26 +60,26 @@
 #define CONFIG_UART_INTERRUPT_DRIVEN
 #undef CONFIG_UART_INTERRUPT_DRIVEN
 
-#include "../../common/openwsn/hal/hal_configall.h"
+#include "../../../common/openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
 #include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ascii.h"
-#include "../../common/openwsn/rtl/rtl_assert.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_framequeue.h"
+#include "../../../common/openwsn/hal/hal_foundation.h"
+#include "../../../common/openwsn/hal/hal_cpu.h"
+#include "../../../common/openwsn/hal/hal_interrupt.h"
+#include "../../../common/openwsn/hal/hal_led.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/hal/hal_assert.h"
+#include "../../../common/openwsn/hal/hal_cc2420.h"
+#include "../../../common/openwsn/hal/hal_uart.h"
+#include "../../../common/openwsn/hal/hal_targetboard.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_ascii.h"
+#include "../../../common/openwsn/rtl/rtl_assert.h"
+#include "../../../common/openwsn/rtl/rtl_debugio.h"
+#include "../../../common/openwsn/rtl/rtl_frame.h"
+#include "../../../common/openwsn/rtl/rtl_framequeue.h"
 
 /**
  * This macro controls the apl_ieee802frame154_dump module to output

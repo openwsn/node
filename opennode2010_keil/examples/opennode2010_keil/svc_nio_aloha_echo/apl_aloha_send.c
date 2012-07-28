@@ -313,7 +313,7 @@ bool _match( uint16 addrfrom, uint16 addrto, uint8 seqid, TiFrame * response )
 	ret = false;
 	frame_moveouter( response );
 	desc = ieee802frame154_open( &(m_desc) );
-	if (ieee802frame154_parse( desc, frame_startptr(response), frame_capacity(response)))
+	if (ieee802frame154_parse( desc, frame_startptr(response), frame_length(response)))//if (ieee802frame154_parse( desc, frame_startptr(response), frame_capacity(response)))
 	{
 		if (ieee802frame154_shortaddrfrom(desc) != addrto) 
 		{

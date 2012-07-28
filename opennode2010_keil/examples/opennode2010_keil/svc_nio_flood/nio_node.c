@@ -69,8 +69,12 @@
 #include "openwsn/rtl/rtl_frame.h"
 #include "openwsn/svc/svc_nio_aloha.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
+<<<<<<< HEAD
 #include "openwsn/svc/svc_nio_flood.h"
 //#include "openwsn/svc/svc_wio_flood.h"
+=======
+#include "openwsn/svc/svc_wio_flood.h"
+>>>>>>> e4d2a0041f6894d7a2bd086b901b87721086cc6f
 
 //#define CONFIG_TEST_LISTENER  
 #define CONFIG_TEST_ADDRESSRECOGNITION
@@ -209,27 +213,39 @@ void floodnode(void)
 	{    
 		flood_evolve( net, NULL );
 
+<<<<<<< HEAD
 		frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 0 );		
 		//frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );		
+=======
+		frame = frame_open( (char*)(&m_rxbufmem), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );		
+		len = flood_recv( net, frame, 0x00 );
+>>>>>>> e4d2a0041f6894d7a2bd086b901b87721086cc6f
 
 		len = flood_recv( net, frame, 0x00 );
 /*
 		if (len > 0)
 		{ 
-		    frame_skipinner( frame,4,0);//todo 
+		    
+		    //frame_skipinner( frame,4,0);//todo 
 			pc = frame_startptr( frame);
+
+			for( i=0;i<len;i++)//todo for testing
+			{
+			   dbc_putchar(pc[i]);
+			}
+			/*
             len = len -4;
             for ( i=0;i<len;i++)
             {
-                USART_Send( pc[i]);
+                //USART_Send( pc[i]);
             }
-			
+			*/
 			if (pc[0])
 				led_on( LED_RED );
 
 			else
 				led_off( LED_RED );
-			frame_moveouter( frame );
+			//frame_moveouter( frame );
 			
 		}
 */

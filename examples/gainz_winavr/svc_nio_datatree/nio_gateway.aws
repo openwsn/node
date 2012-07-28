@@ -1,1 +1,1 @@
-<AVRWorkspace><IOSettings><CurrentRegisters/></IOSettings><part name="ATMEGA128"/><Files><File00000 Name="D:\dev\openwsn\source\node\gainz-winavr\svc_nio_datatree\nio_gateway.c" Position="268 99 891 381" LineCol="275 32"/></Files></AVRWorkspace>
+<AVRWorkspace><IOSettings><CurrentRegisters/></IOSettings><part name="ATMEGA128"/><Files><File00000 Name="D:\dev\openwsn\source\node\examples\gainz_winavr\svc_nio_datatree\nio_gateway.c" Position="258 67 1138 510" LineCol="38 15" State="Maximized"/></Files></AVRWorkspace>

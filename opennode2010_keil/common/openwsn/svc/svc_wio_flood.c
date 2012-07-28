@@ -88,6 +88,7 @@
 #define PACKET_CUR_SEQID(msdu) ((msdu)[2])
 #define PACKET_SET_CURSEQID(msdu,id) ((msdu)[2]=(id))
 
+
 /* switch the value of two pointer variables */
 
 static void _switch_ptr( TiFrame * __packed * ptr1, TiFrame * __packed * ptr2 );
@@ -206,13 +207,16 @@ uintx flood_recv( TiFloodNetwork * net, TiFrame * frame, uint8 option )
 /*
 	if (!frame_empty( net->rxque))
 	{
-		
+		i = frame_length(net->rxque);
 		count = frame_totalcopyfrom( frame, net->rxque );
+		frame_skipinner(frame, PACKET_HEADER_SIZE, 0);
+		i=i-PACKET_HEADER_SIZE;
 		//frame_bufferclear( net->rxque );
-		frame_totalclear( net->rxque ); // todo 2011.08.04 by zw
+		frame_totalclear( net->rxque ); // todo 2011.08.04 by zw //?
 	}
-    if ( count)
+    if (count > 0)
     {
+		frame_setlength( frame,i);
         ret = frame_length( frame);
     }
 */	
@@ -345,7 +349,6 @@ void flood_evolve( void * netptr, TiEvent * e )
 /*                    
 					if (flood_cache_visit( net->cache, (char*)frame_startptr(net->rxbuf) ))//todo 我将CONFIG_FLOOD_CACHE_CAPACITY改成了1原先为8，不改的话不再接收新的帧.
 					{   
-						
 						//frame_bufferclear( net->rxbuf );
 						frame_totalclear( net->rxbuf ); // todo 2011.08.04 by zw
 						cont = false;
