@@ -63,7 +63,7 @@
  * configurations.
  */
 #ifndef CONFIG_DTP_CACHE_CAPACITY
-  #define CONFIG_DTP_CACHE_CAPACITY 8
+  #define CONFIG_DTP_CACHE_CAPACITY 2
 #endif
 
 #define CONFIG_DTP_CACHE_MAX_LIFETIME 8
@@ -74,22 +74,27 @@
 
  
 
-#define TiDTP TiDataTreeNetwork
 
+#include "../hal/hal_mcu.h"
 #include "svc_configall.h"
 #include "../rtl/rtl_cache.h"
 #include "../hal/hal_foundation.h"
-#include "../hal/hal_target.h"
-#include "../hal/hal_cc2420.h"
+#include "../hal/hal_cc2520.h"
 #include "../hal/hal_uart.h"
 #include "../hal/hal_debugio.h"
 #include "svc_foundation.h"
-#include "svc_aloha.h"
+#include "svc_nio_acceptor.h"
+#include "svc_nio_aloha.h"
+#include "../osx/osx_tlsche.h"
+#include "svc_nodebase.h"
+#include "svc_nio_dispatcher.h"
 
 /* This macro only provides a default value to the max hopcount field in the frame.
  * Actually, the application layer program can freely assign values to the max hopcount
  * field in the packet.
  */
+
+/*
 #ifndef CONFIG_DTP_DEF_MAX_HOPCOUNT 
   #define CONFIG_DTP_DEF_MAX_HOPCOUNT 5
 #endif
@@ -99,7 +104,7 @@
 #endif
 
 #define CONFIG_DTP_CACHE_MAX_LIFETIME 16
-
+*/
 
 
 /* @attention
@@ -116,7 +121,7 @@
  * 
  * DTP Packet := [DTP Header 8B+mB] [DTP Payload nB]
  * 
- * DTP Header := [DTP Protocol Identifier 1B][Sequence Id 1B][Destination Address 2B][Source Address 2B][Command and Control 1B]
+ * DTP Header := [DTP Protocol Identifier 1B][Command and Control 1B][Sequence Id 1B][Destination Address 2B][Source Address 2B]
  *               [Hop Count 1B][Maximum Hop Count 1B] [Path Descriptor Count 1B] 
  *               [Path Description m byte]
  *               The length of path description = value of [Path Description Count] * 2
@@ -149,6 +154,10 @@
  */
 #define DTP_BROADCAST_ADDRESS           0xFFFF
 
+//#define DTP_DEFAULT_MAX_HOPCOUNT		0x05
+#define DTP_MAINTAIN_TIME				10
+//#define DTP_MAINTAIN_TIME				2000
+
 /* The transportation type of a frame is very important in the routing. They're 
  * saved as bit7 and bit6 in the packet control field. There're only the following
  * four kinds of transportation method in DTP.
@@ -171,33 +180,40 @@
 
 #define DTP_MAX_FRAME_SIZE 128
 
-#define DTP_MAX_TX_TRYTIME              0x1FF
+//todo #define DTP_MAX_TX_TRYTIME              0x1FF
 
-#define DTP_HEADER_SIZE(maxhopcount) (9+(maxhopcount-1)*2)
+#define DTP_MAX_TX_TRYTIME            0x04
+
+//#define DTP_HEADER_SIZE(maxhopcount) (9+(maxhopcount-1)*2)//(10+(maxhopcount-1)*2)//(9+(maxhopcount-1)*2)
+//JOE 0713
+#define DTP_HEADER_SIZE(maxhopcount) (10+(maxhopcount-1)*2)    
 #define DTP_MAKEWORD(high,low) (((uint16)high<<8) | ((uint8)low))
 
-#define DTP_PACKETCONTROL(pkt) ((pkt)[0])
-#define DTP_SEQUENCEID(pkt) ((pkt)[1])
-#define DTP_SHORTADDRTO(pkt) DTP_MAKEWORD((pkt)[3],(pkt)[2])
-#define DTP_SHORTADDRFROM(pkt) DTP_MAKEWORD((pkt)[5],(pkt)[4])
-#define DTP_HOPCOUNT(pkt) ((pkt)[6])
-#define DTP_MAX_HOPCOUNT(pkt) ((pkt)[7])
-#define DTP_PATHDESC_COUNT(pkt) ((pkt)[8])
+#define DTP_PACKETCONTROL(pkt) ((pkt)[1])
+#define DTP_SEQUENCEID(pkt) ((pkt)[2])
+#define DTP_SHORTADDRTO(pkt) DTP_MAKEWORD((pkt)[4],(pkt)[3])
+#define DTP_SHORTADDRFROM(pkt) DTP_MAKEWORD((pkt)[6],(pkt)[5])
+#define DTP_HOPCOUNT(pkt) ((pkt)[7])
+#define DTP_MAX_HOPCOUNT(pkt) ((pkt)[8])
+#define DTP_PATHDESC_COUNT(pkt) ((pkt)[9])
 #define DTP_PATHDESC_PTR(pkt) (&(pkt[9]))
 #define DTP_PAYLOAD_PTR(pkt) ((char*)(pkt)+DTP_HEADER_SIZE(DTP_MAX_HOPCOUNT((pkt))))
 
-#define DTP_SET_PACKETCONTROL(pkt,value) (pkt)[0]=(value)
-#define DTP_SET_SEQUENCEID(pkt,value) (pkt)[1]=(value)
-#define DTP_SET_SHORTADDRTO(pkt,addr) {(pkt)[2]=((uint8)(addr&0xFF)); (pkt)[3]=((uint8)(addr>>8));}
-#define DTP_SET_SHORTADDRFROM(pkt,addr) {(pkt)[4]=((uint8)(addr&0xFF)); (pkt)[5]=((uint8)(addr>>8));}
-#define DTP_SET_HOPCOUNT(pkt,value) (pkt)[6]=value
-#define DTP_SET_MAX_HOPCOUNT(pkt,value) (pkt)[7]=value
-#define DTP_SET_PATHDESC_COUNT(pkt,value) (pkt)[8]=value
+#define DTP_SET_PROTOCAL_IDENTIFIER(pkt,value) (pkt)[0]=(value)
+#define DTP_SET_PACKETCONTROL(pkt,value) (pkt)[1]=(value)//b1 b0  packet command type;b7 b6  transportation method.
+#define DTP_SET_SEQUENCEID(pkt,value) (pkt)[2]=(value)
+#define DTP_SET_SHORTADDRTO(pkt,addr) {(pkt)[3]=((uint8)(addr&0xFF)); (pkt)[4]=((uint8)(addr>>8));}
+#define DTP_SET_SHORTADDRFROM(pkt,addr) {(pkt)[5]=((uint8)(addr&0xFF)); (pkt)[6]=((uint8)(addr>>8));}
+#define DTP_SET_HOPCOUNT(pkt,value) (pkt)[7]=(value)
+#define DTP_SET_MAX_HOPCOUNT(pkt,value) (pkt)[8]=(value)
+#define DTP_SET_PATHDESC_COUNT(pkt,value) (pkt)[9]=(value)  // path descriptor count
 
-#define DTP_TRANTYPE(pkt) (pkt[0] & 0xC0)
-#define DTP_SET_TRANTYPE(pkt,newtype) (pkt[0] = (pkt[0] & 0x3F) | (newtype))
-#define DTP_CMDTYPE(pkt) (pkt[0] & 0x03)
-#define DTP_SET_CMDTYPE(pkt,newtype) (pkt[0] = (pkt[0] & 0xFC) | (newtype))
+//pkt[0]:protocal_identifier
+//pkt[1]:command type and transportation method.
+#define DTP_TRANTYPE(pkt) (pkt[1] & 0xC0)
+#define DTP_SET_TRANTYPE(pkt,newtype) (pkt[1] = (pkt[1] & 0x3F) | (newtype))
+#define DTP_CMDTYPE(pkt) (pkt[1] & 0x03)
+#define DTP_SET_CMDTYPE(pkt,newtype) (pkt[1] = (pkt[1] & 0xFC) | (newtype))
 
 /* DTP protocol state
  * STARTUP state: when the node first powered on, it's in STARTUP state. In this state, 
@@ -214,9 +230,9 @@
 #define DTP_STATE_SENDING 6
 
 #define TiDTP TiDataTreeNetwork
+#define DTP_PROTOCOL_IDENTIFER 0x33
 
 #define dtp_send(net,opf,option) dtp_unicast((net),(opf),(option))
-
 
 
 /**
@@ -241,6 +257,7 @@
 /* lifetime = 0 means this is an empty item in the cache. The bigger the lifetime, 
  * the newer the lifetime.
  */
+#pragma pack(1) 
 typedef struct{
 	uint16				lifetime;
 	uint16				panto;
@@ -296,110 +313,58 @@ typedef struct{
  *                      counter variable to simulate it. when txtrytime == 0, then the
  *                      frame inside txbuf will be cleared even though it's failed sending.
  */
+#pragma pack(1) 
 typedef struct{
 	uint8               state;
+	uint8               count;//todo for tesitng
 	uint8               option;
 	TiNioAcceptor *     nac;
 	uint16              pan;
 	uint16              root;
 	uint16		        parent;
-	uint16              localaddress;
+	uint8               rssi;		// rssi extracted from the parent frame
 	uint8		        depth;    
 	uint8				distance;
-//	uint16				panto;
-//	uint16				panfrom;
+
+	TiNodeBase * 		nbase;//JOE
+	TiOsxTimeLineScheduler * scheduler;
+    TiNioNetLayerDispatcher *dispatcher;
+
 	TiAloha *			mac;
-	uint16              txtrytime;
-	TiFrame * 			txque;
-	TiFrame *			rxque;
-	TiFrame *       	rxbuf;
+//	uint16              txtrytime;
 	uint8               request_id; 
 	uint8               response_id;
 	TiFunEventHandler   listener;
 	void *              lisowner;
-	char                txque_mem[ FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE) ];
-	char                rxque_mem[ FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE) ];
-	char                rxbuf_mem[ FRAME_HOPESIZE(DTP_MAX_FRAME_SIZE) ];
 	char                frame_feature[6];
 	_TiDtpCache *	    cache;
 	char                cache_mem[ DTP_CACHE_HOPESIZE ];
-}TiDataTreeNetwork;
+}TiDTP;
 
 TiDataTreeNetwork * dtp_construct( void * mem, uint16 size );
-void dtp_destroy( TiDataTreeNetwork * net );
 
-/**
- * dtp_open()
- *	option: to control whether the current node should be initialized as general 
- * sensor node or gateway node. The default settings is 0x00 which means the DTP
- * will be initialized as sensor mode.
- */
-TiDataTreeNetwork * dtp_open( TiDataTreeNetwork * net, TiNioAcceptor * nac, TiAloha * mac, uint16 localaddress, 
-	TiFunEventHandler listener, void * lisowner, uint8 option );
+TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+    TiNioNetLayerDispatcher *dispatcher, uint8 option );
+	
+TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+    TiNioNetLayerDispatcher *dispatcher, uint8 option );
+
+void dtp_setlistener( TiDataTreeNetwork * net, TiFunEventHandler listener, void * object );
+	
+void dtp_destroy( TiDataTreeNetwork * net );
 void dtp_close( TiDataTreeNetwork * net );
 
+void dtp_evolve( void * object, TiEvent * e );
+void dtp_maintain_evolve( void * object, TiEvent * e);
 
-/* dtp_fdsendto()
- * Send frames to a specific node by flooding. The frame will propagate in the network 
- * according to flood policy. This process is the same as dtp_broadcast(). However, 
- * only the receiver node will accept this frame. The other nodes will discard 
- * it because the destination address isn't match.
- */
-uint8 dtp_fdsendto( TiDataTreeNetwork * net, TiFrame * frame, uint8 option );
-
-
-/* dtp_broadcast()
- * Broadcast a frame across the whole network. The frame will flood in the whole
- * network. This is different to the MAC layer's 1-hop only broadcasting.
- * In most cases, the frame can reach every node in the network. But it doesn't 
- * guarantee this. 
- */
-uint8 dtp_broadcast( TiDataTreeNetwork * dtp, TiFrame * frame, uint8 option );
+intx nio_dtp_rxhandler_node( void * object, TiFrame * input, TiFrame * output, uint8 option );
+intx nio_dtp_rxhandler_sink( void * object, TiFrame * input, TiFrame * output, uint8 option );
+intx nio_dtp_txhandler_node( void * object, TiFrame * input, TiFrame * output, uint8 option );
+intx nio_dtp_txhandler_sink( void * object, TiFrame * input, TiFrame * output, uint8 option );
 
 
-/* dtp_multicast()
- * multicast a frame in a sub-tree. The root node of the sub-tree is the destination 
- * node specfied inside the frame. 
- * 
- * different to the broadcast(), the multicast() actually sends the frame to the 
- * multicast tree root along the tree edges. In most cases, the frame should be 
- * able to reach every node in the sub tree, but no guarantee about this.
- */
-uint8 dtp_multicast( TiDataTreeNetwork * dtp, TiFrame * frame, uint8 option );
+void dtp_test_recv_evolve( void * object, TiEvent * e);	 //for recv
 
 
-/* Send a frame to a specific node(unicast). The network will transmit frames along the edges
- * in the tree. No broadcast is used. It doesn't guarantee the frame reach its destination. 
- */
-uint8 dtp_unicast( TiDataTreeNetwork * net, TiFrame * frame, uint8 option );
-
-uint8 dtp_unicast_leaftoroot( TiDataTreeNetwork * net, TiFrame * frame, uint8 option );
-uint8 dtp_unicast_roottoleaf( TiDataTreeNetwork * net, TiFrame * frame, uint8 option );
-
-/* Check for arrived frames, no matter who send them. */
-uint8 dtp_recv( TiDataTreeNetwork * dtp, TiFrame * frame, uint8 option );
-
-/* Build the tree covering all the nodes in the network by flooding. 
- *
- * @attention
- * Only the sink node in the network can send maintain request in the network.
- * because the sender will be automatically regarded as the root node of the data
- * collection tree. 
- * 
- * Currently the DTP service doesn't support a new node to join the network. 
- * The new node should be powered on and must wait for the maintain request from 
- * the root node.
- *
- * In real applications, the sink node is usually as the root node. 
- */
-uint8 dtp_maintain( TiDataTreeNetwork * net, uint8 max_hopcount );
-
-
-/* This function receive event from other services/objects and drive the evolution 
- * of the TiDataTreeNetwork service. 
- */
-void dtp_evolve_node( void * dtptr, TiEvent * e );
-void dtp_evolve_sink( void * dtptr, TiEvent * e );
-void dtp_evolve( void * dtptr, TiEvent * e );
 
 #endif /* _SVC_DATATREE_H_4576_ */

@@ -30,7 +30,10 @@
 #include "svc_foundation.h"
 #include "svc_acceptor.h"
 
-
+/* wio_service
+ * @modified by zhangwei on 2012.07.28
+ * - Formerly known as svc_wlsservice
+ */
 
 
 TiNetworkAcceptor * nac_construct( void * mem, uint16 size )
