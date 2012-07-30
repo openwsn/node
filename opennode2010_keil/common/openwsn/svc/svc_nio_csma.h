@@ -41,7 +41,7 @@
  * you may need to add seqid management in MAC layer!
  * 
  * @status
- *	- in testing
+ *	- released.
  * 
  * @modified by zhangwei on 2010.05.10
  *  - the original csma module was divided into two branches: simple csma and 
@@ -50,7 +50,7 @@
  *    thus it's more reasonable and practical. 
  *  - simple csma and standard csma are designed to share the same interface.
  * @modified by zhangwei on 2010.08.23
- *	- revision
+ *  - revision
  * @modified by zhangwei on 2010.08.24
  *  - correct bug in csma_ischannelclear(). the return value should be bool type
  * @modified by Jiang Ridong in 2011.08
@@ -88,7 +88,7 @@
  */
 
 #ifndef CONFIG_CSMA_DEFAULT_PANID
-#define CONFIG_CSMA_DEFAULT_PANID				0x0001
+#define CONFIG_CSMA_DEFAULT_PANID              0x0001
 #endif
 
 #define CONFIG_CSMA_DEFAULT_CHANNEL            11
@@ -107,7 +107,7 @@
 #define CONFIG_CSMA_MAX_ACK_TIME               50
 
 #define CONFIG_CSMA_MAX_BACKOFF_TIME           100
-#define CONFIG_CSMA_MIN_BACKOFF_TIME           2    //¸Ãºê±ØÐë´óÓÚ0£¬·ñÔòtimer»á³öÏÖÒì³£
+#define CONFIG_CSMA_MIN_BACKOFF_TIME           2    //ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½timerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£
 
 /* Set the module work in standard CSMA behavior without any optimization */
 #define CONFIG_CSMA_STANDARD
