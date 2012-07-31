@@ -56,7 +56,7 @@
  * @modified by zhangwei on 2011.04.11
  *	- Revised.
  * @modified by zhangwei on 2011.04.11
- *	- The member variable rxtx is changed from "TiFrameTxRxInterface" to 
+ *	- The member variable rxtx is changed from "TiCc2420Adapter" to 
  *    "TiFrameTxRxInterface *".
  ******************************************************************************/ 
 
@@ -68,15 +68,15 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 #endif
 
+#define CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+
 #include "svc_configall.h"
-#include "../hal/hal_frame_transceiver.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
+#include "../rtl/rtl_ieee802frame154.h"
+#include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timesync.h"
 #include "svc_foundation.h"
-// #include "svc_nio_session.h"
-
-#define CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 
 /** 
  * NIOACCEPTOR_HOPESIZE(...)
@@ -85,7 +85,7 @@
  * @see rtl_framequeue.h, rtl_frame.h, rtl_ieee802frame154.h
  */
 #define NIOACCEPTOR_HOPESIZE(rxque_capacity,txque_capacity) \
-	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+(FRAMEQUEUE_ITEMSIZE))
+	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+(FRAMEQUEUE_ITEMSIZE)) + FRAME_HOPESIZE(I802F154_ACK_FRAME_SIZE)
 //	(sizeof(TiNioAcceptor)+FRAMEQUEUE_HOPESIZE((rxque_capacity))+FRAMEQUEUE_HOPESIZE((txque_capacity))+(FRAMEQUEUE_ITEMSIZE))
     
     
@@ -138,6 +138,7 @@ typedef struct{
 	TiFrameTxRxInterface * rxtx;
 	TiFrameQueue * rxque;
 	TiFrameQueue * txque;
+    TiFrame * ackbuf;
     TiTimeSyncAdapter * timesync;
 }TiNioAcceptor;
 
@@ -194,7 +195,7 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * frame, uint8 option );
  * Retrieve an frame received inside rxque into frame object. 
  * @return Frame length.
  */
-intx nac_recv( TiNioAcceptor * nac, TiFrame * frame ,uint8 option);
+intx nac_recv( TiNioAcceptor * nac, TiFrame * frame, uint8 option);
 
 /**
  * Drive the state machine in the TiNioAcceptor object to run.

@@ -1,8 +1,6 @@
 #ifndef _SVC_TINYMAC_H_4829_
 #define _SVC_TINYMAC_H_4829_
-
-/* 
- *******************************************************************************
+/*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
  * Copyright (C) 2005-2020 zhangwei(TongJi University)
@@ -25,7 +23,7 @@
  * For other questions, you can contact the author through email openwsn#gmail.com
  * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
  * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
- */
+ ******************************************************************************/
 
 /** 
  * svc_tinymac
@@ -33,18 +31,21 @@
  * the memory buffer based transceiver interface into a TiFrame based interface and
  * also support the Medium Access Control (MAC) interface.
  * 
+ * TiTinyMAC is used mainly for testing and demonstration purpose.
+ * 
  * @status
  *	- developing
  * 
  * @history
  * @author xu fuzhen and zhang wei on 2010.08.22
  *  - first developed.
- *  
+ * @modified by zhangwei on 2011.07.29
+ *  - revised.
  * @modified by zhangwei on 2012.07.28
  *  - revised.
  */
 
-#define CONFIG_TINYMAC_DEFAULT_PANID		0x0001
+#define CONFIG_TINYMAC_DEFAULT_PANID		    0x0001
 #define CONFIG_TINYMAC_DEFAULT_CHANNEL       	11
 #define CONFIG_TINYMAC_BROADCAST_ADDRESS     	0xFFFF
 
@@ -79,7 +80,8 @@
 extern "C"{
 #endif
 
-/* TiTinyMAC:
+/**
+ * TiTinyMAC:
  * Sending/receiving frames directly. It's just a simple encapsulation of the basic
  * transceiver interface into TiFrame based interface.
  * 

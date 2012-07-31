@@ -3,12 +3,24 @@
 
 #define CONFIG_CSMA_ENABLED
 
+/* TinyMAC
+ * which is an simple encapsulation of the low level transceiver interface and to
+ * provide MAC layer like interface. Mainly used for testing, demonstration and evaluation
+ * purpose.
+ */
 #ifdef CONFIG_TINYMAC_ENABLED
 #endif
 
+/* TiAloha
+ * Aloha protocol. Mainly used as an comparison standard. Can also be used in some
+ * simple applications.
+ */
 #ifdef CONFIG_ALOHA_ENABLED
 #endif
 
+/* TiCsma
+ * CSMA protocol. The default protocol recommended to use in real applications.
+ */
 #ifdef CONFIG_CSMA_ENABLED
 #define TiNioMac TiNioCsma
 #define mac_construct(buf,size) csma_construct((buf),(size)) 

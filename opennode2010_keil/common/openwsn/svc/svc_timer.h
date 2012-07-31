@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -38,11 +38,13 @@
  *  - Revised. 
  * @modified by Jiang Ridong(TongJi University) in 2011.04
  *  - Revised. Tested.
+ * @modified by ZhangWei(TongJi University) in 2012.07
+ *  - Revised. 
  ******************************************************************************/
 
-
-/* TiTimer
- * TiTimer enhances the hardware related TiTimerAdapter object by:
+/**
+ * TiTimer
+ * TiTimer enhances the low level hardware related TiTimerAdapter object by:
  *	- Multiplex one single hardware timer to multi software virtual timers. Thus
  * you can freely use these timers in the application. 
  *  - Support longer delay to maximum xxx seconds. While the maximum duration for
@@ -54,7 +56,7 @@
  *	- Doesn't support Capture/PWM functions of the hardware timer. 
  *  - The foundation timer must be always on. 
  *
- * Attention: The minimal duration is decided by the base hardware timer's tick. 
+ * @attention: The minimal duration is decided by the base hardware timer's tick. 
  * There's no best tick settings. The smaller tick settings will improve the response
  * of the application, however, it will also lead to heavy loads. 
  */
@@ -229,7 +231,7 @@ void vti_start( TiTimer * vti );
 void vti_stop( TiTimer * vti );
 
 //void vti_restart( TiTimer * vti, uint16 interval, uint8 option );
-void vti_restart( TiTimer * vti, uint16 interval,uint16 scale, uint8 option );//todo modified by Jiang Ridong on 2011.04.18
+void vti_restart( TiTimer * vti, uint16 interval, uint16 scale, uint8 option );//todo modified by Jiang Ridong on 2011.04.18
 
 
 void vti_forward( TiTimer * vti, uint16 steps );

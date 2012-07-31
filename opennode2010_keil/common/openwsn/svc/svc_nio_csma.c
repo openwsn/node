@@ -73,6 +73,8 @@
  *  - Revised and tested
  * @modified by Shi Zhirong on 2012.07.24
  *  - Revised and tested
+ * @modified by ZhangWei on 2012.07.30
+ *  - Using "nac->ackbuf" to replace "fmque_rear(nac->rxque)".
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -444,6 +446,7 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
             timer_setinterval(mac->timer, CONFIG_CSMA_MAX_ACK_TIME - CONFIG_CSMA_MIN_ACK_TIME, 0);
             timer_start(mac->timer);
             
+            /*            
             ack_success = false;
             while (!timer_expired(mac->timer)) 
             { 
@@ -461,8 +464,30 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
                             break;
                         }
                     }
+                    fmque_poprear(nac_rxque(mac->nac));
                 }            
             }
+            */
+            ack_success = false;
+            while (!timer_expired(mac->timer)) 
+            { 
+                nac_evolve(mac->nac, NULL);
+                rxf = nac->ackbuf;
+                if (!frame_empty(rxf))
+                {
+                    buf = frame_startptr(rxf);
+                    fcf = FRAME154_MAKEWORD( buf[2], buf[1] );
+                    if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
+                    {
+                        if (buf[3] == mac->seqid)
+                        {   
+                            ack_success = true;
+                            break;
+                        }
+                    }
+                    frame_clear(nac->ackbuf);
+                }            
+            }           
             
             retval = (ack_success) ? count : CSMA_IORET_ERROR_NOACK;
         } 
@@ -773,6 +798,3 @@ void csma_statistics( TiCsma * mac, TiCsmaStatistics * stat )
 	mac->stat.sendcount = 0;
 	mac->stat.recvcount = 0;
 }
-
-
-
