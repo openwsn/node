@@ -31,7 +31,7 @@
 #include "../rtl/rtl_lightqueue.h"
 #include "../rtl/rtl_debugio.h"
 #include "../hal/hal_cpu.h"
-#include "../hal/hal_cc2520.h" 
+//#include "../hal/hal_cc2520.h" 
 #include "../hal/hal_led.h"
 #include "../hal/hal_debugio.h"
 #include "../hal/hal_assert.h"
@@ -45,6 +45,8 @@
 #endif
 
 static void _nac_tryrecv( TiNioAcceptor * nac );
+static int _nac_isack( TiFrame * f );
+
 
 #ifdef CONFIG_DYNA_MEMORY
 TiNioAcceptor * nac_create( void * mem, TiFrameTxRxInterface * rxtx, uint8 rxque_capacity, 
@@ -94,6 +96,9 @@ void nac_detroy( TiNioAcceptor * nac )
  * @warning: You must guarantee the memory block size is large enough to hold rxque
  *      and txque! Or else the application will access inviolate memory space and 
  *      the whole device may probably rebooted when accessing the TiNioAcceptor object.
+ * 
+ * @modified by JiangRidong in 2011.07
+ *  - The acceptor object give up txque because it's useless.
  */
 TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx, 
 	uint8 rxque_capacity, uint8 txque_capacity )
@@ -110,12 +115,14 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	
 	buf = (char*)nac + sizeof(TiNioAcceptor);
 	nac->rxque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(rxque_capacity) );
-	//buf += FRAMEQUEUE_HOPESIZE(rxque_capacity);
+	buf += FRAMEQUEUE_HOPESIZE(rxque_capacity);
+    
     nac->txque = NULL;
 	// nac->txque = fmque_construct( buf, FRAMEQUEUE_HOPESIZE(txque_capacity) );
 	// buf += FRAMEQUEUE_HOPESIZE(txque_capacity);
     
-    //nac->rxframe = frame_open( buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0 ); 
+    nac->ackbuf = frame_open( buf, FRAME_HOPESIZE(I802F154_ACK_FRAME_SIZE), 0, 0, 0 ); 
+    nac->timesync = NULL; // @todo
 
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
     //nac->rxtx->setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
@@ -127,11 +134,14 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 
 void nac_close( TiNioAcceptor * nac )
 {
-    //nac->rxtx->setlistener( rxtx, NULL );
-    cc2520_setlistener( nac->rxtx->provider, NULL, NULL );
-    
-	fmque_destroy( nac->rxque );
-	// fmque_destroy( nac->txque );
+    if (nac != NULL)
+    {
+        //cc2520_setlistener( nac->rxtx->provider, NULL, NULL );
+        nac->rxtx->setlistener( rxtx, NULL );
+        fmque_destroy( nac->rxque );
+        // fmque_destroy( nac->txque );
+        frame_close( nac->ackbuf );
+    }
 }
 
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
@@ -202,7 +212,6 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
     //   in the txque should be sent immediately without any delay, we simply call
     //   the transceiver's send() method to send the frame out.
     //
-	// frame_movelowest(item);
 	return rxtx->send( rxtx->provider, frame_startptr(item), frame_length(item), item->option );
 }
 
@@ -213,7 +222,7 @@ intx nac_send( TiNioAcceptor * nac, TiFrame * item, uint8 option )
 intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 {
 	TiFrame * front;
-    intx ret = 0;
+    intx retval = 0;
 
 	nac_evolve(nac, NULL);
 
@@ -221,21 +230,29 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
     hal_enter_critical();
 #endif
 
-    front = fmque_front( nac->rxque );
-	if (front != NULL)
-	{
-        frame_totalcopyto(front, item);
-		fmque_popfront( nac->rxque );
-        ret = frame_length(item);
-	}
-	else
-		ret = 0;
-        
+    if (!frame_empty(nac->ackbuf))
+    {
+        frame_totalcopyto(nac->ackbuf, item);
+        retval = frame_length(nac->ackbuf);
+        frame_clear(nac->ackbuf);
+    }
+    else{
+        front = fmque_front( nac->rxque );
+        if (front != NULL)
+        {
+            frame_totalcopyto(front, item);
+            fmque_popfront( nac->rxque );
+            retval = frame_length(item);
+        }
+        else
+            retval = 0;
+    }
+    
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
     hal_leave_critical();
 #endif
 
-    return ret;
+    return retval;
 }
 
 /** 
@@ -358,7 +375,17 @@ void _nac_tryrecv( TiNioAcceptor * nac )
             if (count > 0)
             {
                 frame_setlength(f, count);
-                if (nac->timesync != NULL)
+
+                // If this frame is the ACK frame, then move it to a independent 
+                // buffer for ACK frame only. And then release the current queue item.
+                //
+                if (_frame_isack(f))
+                {
+                    frame_clear(f);
+                    frame_moveto(f, nac->ackbuf);
+                    fmque_popback(nac->rxque);
+                }
+                else if (nac->timesync != NULL)
                 {
                     // Since currently there's only one layer in the TiFrame object, we 
                     // cannot use frame_movehigher() to change the current layer index
@@ -382,6 +409,27 @@ void _nac_tryrecv( TiNioAcceptor * nac )
         }
         
     }
+}
+
+int _nac_isack( TiFrame * f )
+{
+    int retval = 0;
+    
+    ptr = frame_startptr(frame);
+    if (ptr != NULL)
+    {
+        // get the pointer to the frame control field according to 802.15.4 frame format
+        // we need to check whether the current frame is a DATA type frame.
+		// only the DATA type frame will be transfered to upper layers. The other types, 
+        // such as COMMAND, BEACON and ACK will be ignored here.
+		// buf[0] is the length byte. buf[1] and buf[2] are frame control bytes.
+        //
+		fcf = I802F154_MAKEWORD(ptr[2], ptr[1]);
+        if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
+            retval = 1;
+    }
+    
+    return retval;
 }
 
 //------------------------------------------------------------------------------
