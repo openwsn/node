@@ -1,7 +1,7 @@
 #ifndef _SVC_NIO_MAC_H_5738_
 #define _SVC_NIO_MAC_H_5738_
 
-#define CONFIG_CSMA_ENABLED
+#define CONFIG_ALOHA_ENABLED
 
 /* TinyMAC
  * which is an simple encapsulation of the low level transceiver interface and to
@@ -16,71 +16,44 @@
  * simple applications.
  */
 #ifdef CONFIG_ALOHA_ENABLED
+	#define TiNioMac TiAloha
+	#define mac_construct(buf,size) aloha_construct((buf),(size)) 
+	#define mac_open(mac,rxtx,nac,chn,panid,address,timer,option) aloha_open((mac),(rxtx),(nac),(chn),(panid),(address),(timer),(option))
+	#define mac_destroy(mac) aloha_destroy((mac))
+	#define mac_close(mac) aloha_close((mac))
+	#define mac_send(mac,addr,frame,option)  aloha_send((mac),(addr),(frame),(option))
+	#define mac_broadcast(mac,frame,option)  aloha_broadcast((mac),(frame),(option))
+	#define mac_recv(mac,frame,option)  aloha_recv((mac),(frame),(option))
+	#define mac_evolve(mac,e)  aloha_evolve((mac),(e))
+	#define mac_setlocaladdress(mac,addr)  aloha_setlocaladdress((mac),(addr))
+	#define mac_setremoteaddress(mac,addr)  aloha_setremoteaddress((mac),(addr))
+	#define mac_setpanid(mac,pan)  aloha_setpanid((mac),(pan))
+	#define mac_setchannel(mac,chn)  aloha_setchannel((mac),(chn))
+	#define mac_ischannelclear(mac)  aloha_ischannelclear(mac)
+	#define mac_setprobability(mac,prob)  aloha_setsendprobability((mac),(prob))
+	#define mac_statistics(mac,stat)  aloha_statistics((mac),(stat))
 #endif
 
 /* TiCsma
  * CSMA protocol. The default protocol recommended to use in real applications.
  */
 #ifdef CONFIG_CSMA_ENABLED
-#define TiNioMac TiNioCsma
-#define mac_construct(buf,size) csma_construct((buf),(size)) 
-#define mac_destroy(mac) csma_destroy((mac))
-#define mac_open(mac,rxtx,nac,chn,panid,address,timer,option) csma_open((mac),(rxtx),(nac),(chn),(panid),(address),(timer),(option))
-#define 
-void csma_close( TiCsma * mac );
-
-
-intx csma_send( TiCsma * mac, uint16 shortaddrto, TiFrame * frame, uint8 option );
-
-/**
- * \brief This function broadcast a frame out.
- */
-intx csma_broadcast( TiCsma * mac, TiFrame * frame, uint8 option );
-
-/**
- * \brief This function try to receive a frame and place it into parameter "frame".
- * If there's no frame coming, then returns 0.
- */
-intx csma_recv( TiCsma * mac, TiFrame * frame, uint8 option );
-
-
-/**
- * \brief Evolve the state machine of csma protocol.
- */
-void csma_evolve( void * macptr, TiEvent * e );
-
-inline void csma_setlocaladdress( TiCsma * mac, uint16 addr )
-{
-    mac->rxtx->setshortaddress( mac->rxtx->provider, addr );
-}
-
-inline void csma_setremoteaddress( TiCsma * mac, uint16 addr )
-{
-	mac->shortaddrto = addr;
-}
-
-inline void csma_setpanid( TiCsma * mac, uint16 pan )
-{
-    mac->rxtx->setpanid( mac->rxtx->provider, pan );
-    mac->panto = pan;
-	mac->panfrom = pan;
-}
-
-inline void csma_setchannel( TiCsma * mac, uint8 chn )
-{
-    mac->rxtx->setchannel( mac->rxtx->provider, chn );
-}
-
-// todo
-inline bool csma_ischannelclear( TiCsma * mac )
-{
-    // return (mac->rxtx->ischnclear == NULL) ? true : mac->rxtx->ischnclear( mac->rxtx->provider );
-    return true;
-}
-
-void csma_statistics( TiCsma * mac, uint16 * sendcount, uint16 * sendfailed );
-
-
+	#define TiNioMac TiCsma
+	#define mac_construct(buf,size) csma_construct((buf),(size)) 
+	#define mac_open(mac,rxtx,nac,chn,panid,address,timer,option) csma_open((mac),(rxtx),(nac),(chn),(panid),(address),(timer),(option))
+	#define mac_destroy(mac) csma_destroy((mac))
+	#define mac_close(mac) csma_close((mac))
+	#define mac_send(mac,addr,frame,option)  csma_send((mac),(addr),(frame),(option))
+	#define mac_broadcast(mac,frame,option)  csma_broadcast((mac),(frame),(option))
+	#define mac_recv(mac,frame,option)  csma_recv((mac),(frame),(option))
+	#define mac_evolve(mac,e)  csma_evolve((mac),(e))
+	#define mac_setlocaladdress(mac,addr)  csma_setlocaladdress((mac),(addr))
+	#define mac_setremoteaddress(mac,addr)  csma_setremoteaddress((mac),(addr))
+	#define mac_setpanid(mac,pan)  csma_setpanid((mac),(pan))
+	#define mac_setchannel(mac,chn)  csma_setchannel((mac),(chn))
+	#define mac_ischannelclear(mac)  csma_ischannelclear(mac)
+	#define mac_setprobability(mac,prob)  csma_setsendprobability((mac),(prob))
+	#define mac_statistics(mac,stat)  csma_statistics((mac),(stat))
 #endif /* CONFIG_CSMA_ENABLED */
 
 #ifdef CONFIG_MACA_ENABLED

@@ -93,6 +93,7 @@
 //#include "svc_timer.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_csma.h"
+#include "svc_nio_mac.h"
 
 static intx _csma_wait_channelclear( TiCsma * mac, int interval );
 static intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option );
@@ -141,7 +142,7 @@ TiCsma * csma_open( TiCsma * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * n
     mac->shortaddrto = FRAME154_BROADCAST_ADDRESS;
     mac->panfrom = panid;
     mac->shortaddrfrom = address;
-    mac->seqid = 0;
+    mac->seqid = 0;	
     mac->sendprob = CSMA_P_INSIST_INDICATOR;
     
     memset( &mac->stat, 0x00, sizeof(TiCsmaStatistics) );
@@ -212,8 +213,8 @@ void csma_close( TiCsma * mac )
 intx csma_send( TiCsma * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option )
 {   
 	TiIEEE802Frame154Descriptor * desc;
-    uintx count=0;
-    uintx retval=0;
+    intx count=0;
+    intx retval=0;
 
 	bool failed = true;
    
@@ -381,7 +382,7 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
 {   
 	uintx count=0, len;
 	char * buf;
-	bool ack_success=false;
+	bool ack_success = false;
 	uint16 fcf; 
     TiFrame * rxf;
     intx retval = CSMA_IORET_NOACTION;
@@ -461,8 +462,13 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
                         if (buf[3] == mac->seqid)
                         {   
                             ack_success = true;
+							fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
                             break;
                         }
+						else//todo : is this operation safe? //JOE 0726 bug
+						{
+							fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
+						}
                     }
                     fmque_poprear(nac_rxque(mac->nac));
                 }            
@@ -502,7 +508,8 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
             mac->retry = 0;
             mac->state = CSMA_STATE_IDLE;
         }
-        else{
+        else
+		{
             if (mac->retry >= CONFIG_CSMA_MAX_RETRY)		
             {    
                 mac->retry = 0;
@@ -528,12 +535,16 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
             count = nac_send(mac->nac, frame, option);
             if (count > 0)
                 retval = count;
-            else if (count == CSMA_IORET_
-            retval = (count >= 0) ? count : CSMA_IORET_ERROR_UNKNOWN;
+            //else if (count == CSMA_IORET_
+            retval = (count >= 0) ? count : CSMA_IORET_ERROR_UNKNOWN;  
+			if(CSMA_IORET_SUCCESS(retval))
+			{
+				mac->seqid ++;	//JOE 0725
+			}
         }
         else
             retval = CSMA_IORET_ERROR_ACCEPTED_AND_BUSY;
-    }
+	}
      
     return retval; 
 }
@@ -552,9 +563,9 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
  */
 intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
 {
-	uintx count;
+	uintx retval;
 	uint16 fcf;
-    char * ptr=NULL;
+    char * ptr = NULL;
     uint8 cur;
 
 	// @modified by zhangwei on 2011.03.14
@@ -569,8 +580,8 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
 	
     // assert: the skipouter must be success
 	// attention the network acceptor requirement of the frame layer
-	count = _csma_tryrecv( mac, frame, option );
-	if (count > 0)
+	retval = _csma_tryrecv( mac, frame, option );
+	if (retval > 0)
 	{
         // the first byte in the frame buffer is the length byte. it represents the 
         // MPDU length. after received the frame, we first check whether this is an
@@ -578,7 +589,7 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
         //
         ptr = frame_startptr(frame);
 
-        if (*ptr == count-1)
+        if (*ptr == retval-1)
         {
             // get the pointer to the frame control field according to 802.15.4 frame format
             // we need to check whether the current frame is a DATA type frame.
@@ -590,15 +601,15 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
 			switch (FCF_FRAMETYPE(fcf))
             {
             case FCF_FRAMETYPE_DATA:
-                frame_setlength(frame, count);
-                //frame_setcapacity(frame, count);   
+                frame_setlength(frame, retval);
+                //frame_setcapacity(frame, retval);   
                 break;
                 
             case FCF_FRAMETYPE_ACK:
             case FCF_FRAMETYPE_COMMAND:
             case FCF_FRAMETYPE_BEACON:
             default:
-				count = CSMA_IORET_NOACTION;
+				retval = CSMA_IORET_NOACTION;
                 break;
 			}
         }
@@ -613,25 +624,25 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
 	// the current layer setting of the frame.
     // frame_moveinner( frame );
 
-    // The value of count equal to the total data length, which equals to framelength+1.
-    if (count > 0)
+    // The value of retval equal to the total data length, which equals to framelength+1.
+    if (retval > 0)
 	{
         cur = frame_curlayer(frame);
-        svc_assert(frame->layercapacity[cur] >= (CSMA_HEADER_SIZE + 1 + CSMA_TAIL_SIZE));
+        svc_assert(frame->layercapacity[cur] >= (CSMA_HEADER_SIZE  + CSMA_TAIL_SIZE));
         if (frame_skipinner(frame, CSMA_HEADER_SIZE+1, CSMA_TAIL_SIZE))
         {
             // substract 1 byte occupied by the frame length
-            count --;    
-            count -= CSMA_HEADER_SIZE;
-            count -= CSMA_TAIL_SIZE;
-            frame_setlength(frame, count);
+            retval --;    
+            retval -= CSMA_HEADER_SIZE;
+            retval -= CSMA_TAIL_SIZE;
+            frame_setlength(frame, retval);
         }
         else
-            count = 0;
+            retval = 0;
 		
 		// - bug fix: since frame_skipinner can calculate correct layer capacity, 
 		// the following line is unecessary now
-        // frame_setcapacity( frame, count - HEADER_SIZE - TAIL_SIZE-1 );
+        // frame_setcapacity( frame, retval - HEADER_SIZE - TAIL_SIZE-1 );
     }
     else
 	{
@@ -639,7 +650,7 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
     }
 
 	csma_evolve( mac, NULL );
-	return count;
+	return retval;
 }
 
 /**
@@ -652,15 +663,15 @@ intx  csma_recv( TiCsma * mac, TiFrame * frame, uint8 option )
 intx _csma_tryrecv( TiCsma * mac, TiFrame * frame, uint8 option )
 {   
 	//TiFrameTxRxInterface  * rxtx = mac->rxtx;
-	intx count;
+	intx retval;
 
 	// @attention: According to CSMA protocol, the program should send ACK/NAK after 
 	// receiving a data frame. however, this is done by the low level transceiver's
 	// adapter component (TiCc2420Adapter), so we needn't to send ACK manually here.
 
-	// count = rxtx->recv( rxtx->provider, frame_startptr(frame), frame_capacity(frame), option );
-	count = nac_recv( mac->nac, frame, option);
-	return count;
+	// retval = rxtx->recv( rxtx->provider, frame_startptr(frame), frame_capacity(frame), option );
+	retval = nac_recv( mac->nac, frame, option);
+	return retval;
 }
 
 /**
@@ -692,7 +703,8 @@ void csma_evolve( void * macptr, TiEvent * e )
 	uintx retval;
     TiEvent tmpe;
 
-    nac_evolve( mac->nac );
+
+	mac->rxtx->evolve( mac->rxtx, NULL );
 
     switch (mac->state)
     {
@@ -724,15 +736,16 @@ void csma_evolve( void * macptr, TiEvent * e )
 			
 
 			retval = _csma_trysend(  mac, mac->txbuf, mac->txbuf->option );
-			if (retval > 0)
+			if (CSMA_IORET_SUCCESS(retval) )
 			{                
 				mac->state = CSMA_STATE_IDLE;
-                if (mac->listener != NULL)
-                {
-                    memset(&tmpe, 0x00, sizeof(TiEvent));
-                    e.id = EVENT_SEND_COMPLETE;
-                    mac->listener( mac->lisowner, e );
-                }
+				mac->retry = 0;//JOE 0726
+//                if (mac->listener != NULL)
+//                {
+//                    memset(&tmpe, 0x00, sizeof(TiEvent));
+//                    e.id = EVENT_SEND_COMPLETE;
+//                    mac->listener( mac->lisowner, e );
+//                }
 			}
 			mac->success = retval;
 		}

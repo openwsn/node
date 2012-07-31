@@ -107,6 +107,7 @@ void recvnode1(void)
 	cc2520_enable_addrdecode( cc );					// enable address
 	cc2520_setpanid( cc, PANID );					// network identifier 
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// node identifier in sub-network
+		cc2520_enable_autoack( cc );
 
 	rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 

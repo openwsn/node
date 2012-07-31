@@ -51,6 +51,7 @@
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_ieee802frame154.h"
 #include "svc_nio_aloha.h"
+#include "svc_nio_csma.h"
 #include "svc_nodebase.h"
 #include "../osx/osx_tlsche.h"
 
@@ -122,8 +123,8 @@ typedef struct{
     TiFrame * txbuf;
     TiFrame * fwbuf;
     TiNodeBase * nbase;
-    TiCsma * mac;
-    char rxbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
+    TiNioMac * mac;    
+	char rxbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char fwbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char txbak_memory[NIO_DISPA_FRAME_MEMSIZE];
     _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
@@ -134,7 +135,7 @@ typedef struct{
 TiNioNetLayerDispatcher * nio_dispa_construct( void * mem, uint16 memsize );
 void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher);
 //TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac);
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac,TiOsxTimeLineScheduler * scheduler);
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler);
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher);
 uintx nio_dispa_send(TiNioNetLayerDispatcher * dispacher, uint16 addr, TiFrame * f, uint8 option);
 uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option);

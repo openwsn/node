@@ -84,7 +84,7 @@
 #include "../hal/hal_debugio.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
-#include "svc_nio_aloha.h"
+#include "svc_nio_mac.h"
 #include "../osx/osx_tlsche.h"
 #include "svc_nodebase.h"
 #include "svc_nio_dispatcher.h"
@@ -343,10 +343,10 @@ typedef struct{
 
 TiDataTreeNetwork * dtp_construct( void * mem, uint16 size );
 
-TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
     TiNioNetLayerDispatcher *dispatcher, uint8 option );
 	
-TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
     TiNioNetLayerDispatcher *dispatcher, uint8 option );
 
 void dtp_setlistener( TiDataTreeNetwork * net, TiFunEventHandler listener, void * object );

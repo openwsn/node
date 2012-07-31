@@ -10,7 +10,7 @@
 #include "../hal/hal_assert.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
-#include "svc_nio_aloha.h"
+#include "svc_nio_mac.h"
 #include "../osx/osx_tlsche.h"
 #include "svc_nodebase.h"
 #include "svc_nio_dispatcher.h"
@@ -77,7 +77,7 @@ void dtp_destroy( TiDataTreeNetwork * net )
 	dtp_close( net );
 }
 
-TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
     TiNioNetLayerDispatcher *dispatcher, uint8 option )
 {
 	//net->state = DTP_STATE_STARTUP;
@@ -106,7 +106,7 @@ TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiAloha * mac, TiNod
 	net->response_id = net->request_id;
 	return net;
 }
-TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiAloha * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
     TiNioNetLayerDispatcher *dispatcher, uint8 option )
 {
 	net->state = DTP_STATE_IDLE;
@@ -200,7 +200,7 @@ void dtp_maintain_evolve( void * object, TiEvent * e)
     while (count < 0x04)
     {   
 		//len=aloha_send(net->mac,0xFFFF,maintain_frame,0x00);
-		len = aloha_broadcast( net->mac, maintain_frame, 0x00 );
+		len = mac_broadcast( net->mac, maintain_frame, 0x00 );
 		if (len > 0)
 		{  
 			net->request_id ++;
@@ -280,7 +280,7 @@ intx nio_dtp_rxhandler_node( void * object, TiFrame * input, TiFrame * output, u
 			}
 		}
 		break;
-													 dds
+													
 	case DTP_STATE_IDLE:
 		if(!frame_empty(input))
 		{

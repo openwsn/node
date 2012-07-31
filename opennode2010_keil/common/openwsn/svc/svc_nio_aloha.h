@@ -184,7 +184,7 @@ void aloha_destroy( TiAloha * mac );
  * Open the TiNioAloha object for sending and receiving. 
  */
 TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac, uint8 chn, uint16 panid, 
-	uint16 address, TiTimerAdapter * timer, TiFunEventHandler listener, void * lisowner, uint8 option );
+	uint16 address, TiTimerAdapter * timer, uint8 option );
 
 /**
  * Close the TiNioAloha object. The closing process will release resource applied by 

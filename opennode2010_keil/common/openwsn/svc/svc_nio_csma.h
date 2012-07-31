@@ -74,6 +74,7 @@
 #include "../hal/hal_timer.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
+#include "svc_nio_mac.h"
  
 /**
  * CONFIG_CSMA_MAX_BACKOFF
@@ -107,8 +108,7 @@
 #define CONFIG_CSMA_MAX_ACK_TIME               50
 
 #define CONFIG_CSMA_MAX_BACKOFF_TIME           100
-#define CONFIG_CSMA_MIN_BACKOFF_TIME           2    //�ú���������0������timer�������쳣
-
+#define CONFIG_CSMA_MIN_BACKOFF_TIME           2   
 /* Set the module work in standard CSMA behavior without any optimization */
 #define CONFIG_CSMA_STANDARD
 
