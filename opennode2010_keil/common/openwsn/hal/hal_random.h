@@ -34,6 +34,7 @@
 uint8 hal_random_uint8(void);
 uint16 hal_random_uint16(void);
 uint8 hal_rand_uint8(uint8 n);
+uint32 hal_random_uint32(void);
 
 #endif
 

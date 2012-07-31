@@ -92,6 +92,9 @@
 //#include "svc_timer.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_aloha.h"
+#include "svc_nio_mac.h"
+
+
 
 #define MAC_HEADER_LENGTH 12
 #define MAC_TAIL_LENGTH 2
@@ -121,7 +124,7 @@ void aloha_destroy( TiAloha * mac )
  * @pre network acceptor is opened successfully
  */
 TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * nac, uint8 chn, uint16 panid, 
-	uint16 address, TiTimerAdapter * timer, TiFunEventHandler listener, void * lisowner, uint8 option )
+	uint16 address, TiTimerAdapter * timer,  uint8 option )
 {
     void * provider;
     
@@ -135,8 +138,8 @@ TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor 
     mac->rxtx = rxtx;
 	mac->nac = nac;
 	mac->timer = timer;
-	mac->listener = listener;
-	mac->lisowner = lisowner;
+	mac->listener = NULL;
+	mac->lisowner = NULL;
 	mac->retry = 0;
 	mac->backoff = CONFIG_ALOHA_MIN_BACKOFF;
     mac->panto = panid;
@@ -357,6 +360,8 @@ intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 
         // standard aloha protocol behavior
         #ifdef CONFIG_ALOHA_STANDARD
+		
+		mac->retry = 0;//JOE 0725
 		failed = true;
         if (true)//if (mac->rxtx->ischnclear(mac))//todo for testing
         {  
@@ -506,9 +511,22 @@ intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 						if (*(buf+3) == mac->seqid)
 						{   
 							ack_success = true;
+//							fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
+
 							break;
 						}
-					}
+//
+//						else//todo : is this operation safe? //JOE 0726 bug
+//						{
+//							fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
+//						}
+                    }
+//					//JOE 0726 bug
+//					if( FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_BEACON ||FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_COMMAND )
+//					{
+//						fmque_poprear(nac_rxque(mac->nac));
+//					}
+					
                 }
                 
 /*            
@@ -771,32 +789,6 @@ void aloha_evolve( void * macptr, TiEvent * e )
 			mac->success = ret;
 		}
 		
-		/*Ô­´úÂë
-        if (vti_expired(mac->timer))
-        {
-            // if _aloha_trysend() returns positive value, then it means the frame
-            // has been sent successfully. if it returns negative value, then it means
-            // the frame has reached its maximum retry count. 
-            // 
-            // in the above two cases, the state should transfer to IDLE state. 
-            // if the frame is failed sending and need retry, then _alohs_trysend() will 
-            // return 0;
-            
-            // @modified by zhangwei on 2010.08.20
-            // there're three cases for the result of _aloha_trysend(). if it return 
-            // positive value, then it means the frame has been sent successfully. 
-            // if it return 0, then means it sends nothing and you should retry the
-            // sending again. if it returns negtive value, then it means this frame
-            // has reached its maximum number retry count and should report sending
-            // failure.
-            //
-			ret = _aloha_trysend(  mac, mac->txbuf, mac->txbuf->option );
-
-			if ( ret)//todo addded by Jiang Ridong on 2011.04.16
-			{
-				mac->state = ALOHA_STATE_IDLE;
-			}
-        }*/
         break;
     
     case ALOHA_STATE_SLEEPING:

@@ -57,8 +57,8 @@
 
 
 #define PANID				0x0001
-#define LOCAL_ADDRESS		0x06  
-#define REMOTE_ADDRESS		0x07
+#define LOCAL_ADDRESS		0x01  
+#define REMOTE_ADDRESS		0x02
 #define DEFAULT_CHANNEL     11
 
 static TiUartAdapter        m_uart;      
@@ -109,8 +109,8 @@ void sendnode1(void)
     cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
     cc2520_setpanid( cc, PANID );					// set network identifier 
     cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
-    //cc2520_enable_autoack( cc );
-	cc2520_disable_autoack( cc );
+    cc2520_enable_autoack( cc );
+	//cc2520_disable_autoack( cc );
 
     desc = ieee802frame154_open( &m_desc );
     option = 0x00;
@@ -150,6 +150,7 @@ void sendnode1(void)
         frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
         first = frame_firstlayer(txbuf);
 
+		option=1;
         //len = cc2420_write(cc, frame_layerstartptr(txbuf,first), frame_layercapacity(txbuf,first), option);
         len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length(txbuf), option);
 

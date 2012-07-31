@@ -106,7 +106,7 @@ uint16 rand_uint16( uint16 n )
 uint32 rand_uint32( uint32 n )
 {
 	uint32 val;
-	val = (((uint32)rand_read())<<16) || ((uint32)rand_read());
+	val = (((uint32)rand_read())<<16) | ((uint32)rand_read());
 	return (val % n);
 }
 

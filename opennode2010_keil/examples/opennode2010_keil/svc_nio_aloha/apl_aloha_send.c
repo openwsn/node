@@ -169,7 +169,7 @@ void aloha_sendnode(void)
     hal_assert( rxtx != NULL );
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 	aloha_open(mac, rxtx, nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, CONFIG_ALOHA_LOCAL_ADDRESS, 
-        timer , NULL, NULL, 0x00 );
+        timer , 0x00 );
     
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
     hal_enable_interrupts();
