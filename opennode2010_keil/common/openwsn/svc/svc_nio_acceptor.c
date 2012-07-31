@@ -350,28 +350,42 @@ void _nac_tryrecv( TiNioAcceptor * nac )
 	TiFrame * f;
 	uint8 idx = 0;
 	intx count;
-    char *pc;
+    char * pc;
 
+    // @modified by Shi Zhirong on 2012.07.28
     // @attention
     // if the RX queue is full, then we had to lost the incoming frame or drop an 
     // frame in the RX queue. Currently, we prefer keep the existing frames and 
     // let the low level software to drop the frame if this really happens.
     //
-    // if (fmque_full(nac->rxque))
-    // {
-    //     frmque_popfront(nac->rxque);
-    // }
+    // Let's image the following scenario: 
+    // - The sender sends the frame quickly. It doesn't do any receiving actions.
+    // - The RX queue maybe full. 
+    // - Since the sender doesn't perform receiving from RX que, the sender will
+    //   not have the chance to got the ACK. So the sender will be "always" failed.
+    //
+    if (fmque_full(nac->rxque))
+    {
+        frmque_popfront(nac->rxque);
+    }
     
-	if (!fmque_full(nac->rxque))
+	//if (!fmque_full(nac->rxque))
 	{   
-        if (fmque_applyback(nac->rxque, &idx))	  //JOE 从rxque中申请一个空间，idx为其id号
+        // Apply an queue item from the rxque. The item index is "idx". The applying
+        // operation should always be success.
+        if (fmque_applyback(nac->rxque, &idx))	  
         {
-            buf = fmque_getbuf(nac->rxque, idx);	  //将idx索引号的空间给buf
+            // Get the pointer to the memory block inside the item.
+            buf = fmque_getbuf(nac->rxque, idx);	 
             svc_assert(buf != NULL);
             svc_assert(fmque_datasize(nac->rxque) == FRAMEQUEUE_ITEMSIZE);
+            
+            // Initialize the memory buffer as an TiFrame object.
             // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
-            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						   //格式化buf到f
-            count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option );	//接收到f	  
+            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						  
+            
+            // Receive a frame from the transceiver and place it into the TiFrame buffer.
+            count = rxtx->recv( rxtx->provider, frame_startptr(f), frame_capacity(f), f->option ); 
             if (count > 0)
             {
                 frame_setlength(f, count);
@@ -404,13 +418,18 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 }
             }
             else{
-                fmque_poprear(nac->rxque);		  //接收不成功 释放该区域
+                fmque_popback(nac->rxque);		  //接收不成功 释放该区域
             }
         }
         
     }
 }
 
+/**
+ * Judge whether an input frame object containing an ACK frame or not.
+ * @param f TiFrame
+ * @return 1 if the input is ACK frame and 0 for others.
+ */
 int _nac_isack( TiFrame * f )
 {
     int retval = 0;
