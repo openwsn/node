@@ -230,14 +230,14 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
     hal_enter_critical();
 #endif
 
-    if (!frame_empty(nac->ackbuf))		//@todo JOE 0801	I don't think the ack frame will be received by upper layer.
-										//					it just will be received into the ackbuf in the _nac_tryrecv. 
-    {
-        frame_totalcopyto(nac->ackbuf, item);
-        retval = frame_length(nac->ackbuf);
-        frame_clear(nac->ackbuf);
-    }
-    else{
+    // if (!frame_empty(nac->ackbuf))		//@todo JOE 0801	I don't think the ack frame will be received by upper layer.
+	// 										//					it just will be received into the ackbuf in the _nac_tryrecv. 
+    // {
+        // frame_totalcopyto(nac->ackbuf, item);
+        // retval = frame_length(nac->ackbuf);
+        // frame_clear(nac->ackbuf);
+    // }
+    // else{
         front = fmque_front( nac->rxque );
         if (front != NULL)
         {
@@ -247,7 +247,7 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
         }
         else
             retval = 0;
-    }
+    // }
     
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
     hal_leave_critical();
