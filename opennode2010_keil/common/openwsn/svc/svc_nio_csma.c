@@ -482,16 +482,17 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
                 if (!frame_empty(rxf))
                 {
                     buf = frame_startptr(rxf);
-                    fcf = FRAME154_MAKEWORD( buf[2], buf[1] );
-                    if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
-                    {
+                    // fcf = FRAME154_MAKEWORD( buf[2], buf[1] );		//JOE  0801
+                    // if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
+                    // {
                         if (buf[3] == mac->seqid)
                         {   
                             ack_success = true;
                             break;
                         }
-                    }
-                    frame_clear(nac->ackbuf);
+                    // }
+                    //frame_clear(nac->ackbuf);		//JOE 0801
+					frame_totalclear(nac->ackbuf);
                 }            
             }           
             

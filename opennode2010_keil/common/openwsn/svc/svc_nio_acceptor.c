@@ -230,7 +230,8 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
     hal_enter_critical();
 #endif
 
-    if (!frame_empty(nac->ackbuf))
+    if (!frame_empty(nac->ackbuf))		//@todo JOE 0801	I don't think the ack frame will be received by upper layer.
+										//					it just will be received into the ackbuf in the _nac_tryrecv. 
     {
         frame_totalcopyto(nac->ackbuf, item);
         retval = frame_length(nac->ackbuf);
@@ -311,8 +312,8 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	}
 */    
 		
-	if (!fmque_full(nac->rxque))
-	{   
+	// if (!fmque_full(nac->rxque))		//@todo JOE 0801
+	// {   
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
         hal_enter_critical();
 		#endif
@@ -322,7 +323,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
         hal_leave_critical();
 		#endif
-	}
+	// }
     
     nac->rxtx->evolve( nac->rxtx, NULL );
 }
@@ -393,9 +394,9 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 // If this frame is the ACK frame, then move it to a independent 
                 // buffer for ACK frame only. And then release the current queue item.
                 //
-                if (_frame_isack(f))
+                if (_nac_isack(f))
                 {
-                    frame_clear(f);
+                    frame_clear(f);		//@todo JOE 0801 ??? miss understanding
                     frame_moveto(f, nac->ackbuf);
                     fmque_popback(nac->rxque);
                 }
