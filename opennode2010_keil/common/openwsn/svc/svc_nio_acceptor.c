@@ -45,6 +45,7 @@
 #endif
 
 static void _nac_tryrecv( TiNioAcceptor * nac );
+static int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option); 
 static int _nac_isack( TiFrame * f );
 
 
@@ -129,6 +130,10 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
     cc2520_setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
 #endif
 
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+    cc2520_setrxfilter( rxtx->provider, (TiFunIoFilter)(_nac_rxfilter), nac );
+#endif
+
 	return nac;
 }
 
@@ -136,8 +141,14 @@ void nac_close( TiNioAcceptor * nac )
 {
     if (nac != NULL)
     {
-        //cc2520_setlistener( nac->rxtx->provider, NULL, NULL );
-        nac->rxtx->setlistener( rxtx, NULL );
+#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+        nac->rxtx->setlistener( nac->rxtx->provider, NULL, NULL );
+#endif
+
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+        cc2520_setrxfilter( nac->rxtx->provider, NULL, NULL );
+#endif
+
         fmque_destroy( nac->rxque );
         // fmque_destroy( nac->txque );
         frame_close( nac->ackbuf );
@@ -229,6 +240,9 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
     hal_enter_critical();
 #endif
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+    hal_enter_critical();
+#endif
 
     // if (!frame_empty(nac->ackbuf))		//@todo JOE 0801	I don't think the ack frame will be received by upper layer.
 	// 										//					it just will be received into the ackbuf in the _nac_tryrecv. 
@@ -250,6 +264,9 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
     // }
     
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+    hal_leave_critical();
+#endif
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
     hal_leave_critical();
 #endif
 
@@ -396,7 +413,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 //
                 if (_nac_isack(f))
                 {
-                    frame_clear(f);		//@todo JOE 0801 ??? miss understanding
+                    frame_clear(nac->ackbuf);
                     frame_moveto(f, nac->ackbuf);
                     fmque_popback(nac->rxque);
                 }
@@ -419,12 +436,104 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 }
             }
             else{
-                fmque_popback(nac->rxque);		  //接收不成功 释放该区域
+                // if apply failed, then pop an item from the queue
+                fmque_popback(nac->rxque);		  
             }
         }
         
     }
 }
+
+/** 
+ * This is an static function used inside the NIO acceptor module only. It should 
+ * be registered to the transceiver module and then be called by the transceiver
+ * automatically when a new frame arrived. 
+ * 
+ * @attention The transceiver module may call this filter function inside the interrupt
+ * service routine, so you should be careful for the shared resource protection problem
+ * due to concurrent accessing.  
+ */ 
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option)
+{
+	TiFrameRxTxInterface * rxtx = nac->rxtx;
+    char * buf;
+	TiFrame * f;
+	uint8 idx = 0;
+	intx count;
+    char * pc;
+
+    // @modified by Shi Zhirong on 2012.07.28
+    // @attention
+    // if the RX queue is full, then we had to lost the incoming frame or drop an 
+    // frame in the RX queue. Currently, we prefer keep the existing frames and 
+    // let the low level software to drop the frame if this really happens.
+    //
+    // Let's image the following scenario: 
+    // - The sender sends the frame quickly. It doesn't do any receiving actions.
+    // - The RX queue maybe full. 
+    // - Since the sender doesn't perform receiving from RX que, the sender will
+    //   not have the chance to got the ACK. So the sender will be "always" failed.
+    //
+    if (fmque_full(nac->rxque))
+    {
+        frmque_popfront(nac->rxque);
+    }
+    
+	//if (!fmque_full(nac->rxque))
+	{   
+        hal_enter_critical();
+        
+        // Apply an queue item from the rxque. The item index is "idx". The applying
+        // operation should always be success.
+        if (fmque_applyback(nac->rxque, &idx))	  
+        {
+            // Get the pointer to the memory block inside the item.
+            buf = fmque_getbuf(nac->rxque, idx);	 
+            svc_assert(buf != NULL);
+            svc_assert(fmque_datasize(nac->rxque) == FRAMEQUEUE_ITEMSIZE);
+            svc_assert((len > 0) && (len < FRAMEQUEUE_ITEMSIZE));
+            
+            // Initialize the memory buffer as an TiFrame object.
+            // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
+            f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						  
+            memmove(frame_startptr(f), inputbuf, len);
+            frame_setlength(f, count);
+
+            // If this frame is the ACK frame, then move it to a independent 
+            // buffer for ACK frame only. And then release the current queue item.
+            //
+            if (_nac_isack(f))
+            {
+                frame_clear(nac->ackbuf);
+                frame_moveto(f, nac->ackbuf);
+                fmque_popback(nac->rxque);
+            }
+            else if (nac->timesync != NULL)
+            {
+                // Since currently there's only one layer in the TiFrame object, we 
+                // cannot use frame_movehigher() to change the current layer index
+                // to the higher one. We had no better choice but use "+12" to skip 
+                // the 802.15.4 header only. 
+                // 
+                // @warning: The 802.15.4 header not always occupy 12 bytes! So you 
+                // must adapte the following code to your own system.
+                //
+                buf = frame_startptr(f) + 12;
+                    
+                if (buf[0] == TSYNC_PROTOCAL_ID)
+                {
+                    hal_tsync_rxhandler(nac->timesync, f, f, 0x00);
+                }
+            }
+        }        
+        
+        hal_leave_critical();
+    }
+    
+    return 0;
+}
+#endif
 
 /**
  * Judge whether an input frame object containing an ACK frame or not.

@@ -41,13 +41,19 @@
 //#include "../rtl/rtl_iobuf.h"
 //#include "../rtl/rtl_ieee802frame154.h"
 
-/* In "hal_cc2520base.h", we implement the most fundamental cc2420 operating functions.
+/* In "hal_cc2520base.h", we implement the most fundamental cc2520 operating functions.
  * If you want to port hal_cc2520 to other platforms, you can simply revise the 
  * hal_cc2520vx.h. The other part inside hal_cc2520.h can keep unchanged.
  */
 #include "hal_cc2520vx.h"
 #include "hal_cc2520base.h"
 #include "../hal_cc2520.h"
+
+/* @history
+ * @modified by zhangwei on 2012.08.02
+ *  - add support to rxfilter mechanism. The filter will be invoked automatically
+ *    when a new frame arrived. 
+ */
 
 static void _cc2520_fifop_handler(void * object, TiEvent * e);
 static uint8 _cc2520_write_txbuf( TiCc2520Adapter *cc, char * buf, uintx len );
@@ -71,15 +77,16 @@ void cc2520_destroy( TiCc2520Adapter * cc )
  * @param id Require always 0 now. (Because currently we have only one cc2520 in 
  *           the board)
  */
-TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, 
-	void * lisowner, uint8 option )
+TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, uint8 option )
 {
     cc->id = 0;
     cc->state = 0; //CC2420_STATE_RECVING;
-    cc->listener = listener;
-    cc->lisowner = lisowner;
+    cc->listener = NULL;
+    cc->lisowner = NULL;
     cc->option = option;
-	//cc->rssi = 0;
+    cc->rxfilter = NULL;
+    cc->rxfilterowner = NULL;
+ 	//cc->rssi = 0;
 	//cc->lqi = 0;
 	//cc->spistatus = 0;
 	cc->rxlen = 0;
@@ -260,12 +267,13 @@ intx cc2520_recv( TiCc2520Adapter * cc, char * buf, uintx size, uint8 option )
 	return retval;
 }
 
+/* @modified by zhangwei on 2012.08.02
+ *  - add support to filter mechanism when new frame arrived.
+ */
 uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 {
-	intx retval;
+	intx retval = 0;
 	uint8 state;
-
-	retval = 0;
 
     //if rxfifo overflow.
 	if (CC2520_REGRD8(CC2520_EXCFLAG0) & 0x40)
@@ -304,6 +312,15 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			CC2520_REGWR8(CC2520_EXCFLAG1, 0x00);
 		}
 	}
+    
+    if (retval > 0)
+    {
+        if (cc->rxfilter != NULL)
+        {
+            retval = cc->rxfilter(cc->rxfilterowner, buf, retval, buf, capacity, 0x00);
+        }
+    }
+    
 	return retval;
 }
 
@@ -421,6 +438,12 @@ void cc2520_setlistener(TiCc2520Adapter * cc, TiFunEventHandler listener, void *
 {
     cc->listener = listener;
     cc->lisowner = lisowner;
+}
+
+void cc2520_setrxfilter(TiCc2520Adapter * cc, TiFunIoFilter filter, void * filterowner )
+{
+    cc->rxfilter = filter;
+    cc->rxfilterowner = filterowner;
 }
 
 void cc2520_close( TiCc2520Adapter * cc )//LPM2

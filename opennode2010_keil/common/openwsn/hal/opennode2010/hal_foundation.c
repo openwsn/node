@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -56,9 +56,10 @@
  * #include "../hal_assert.h"
  */
  
-uint8 g_atomic_level = 0;
-TiFunEventHandler m_listener = NULL;
-void * m_listener_owner = NULL;
+static TiFunEventHandler m_listener = NULL;
+static void * m_listener_owner = NULL;
+
+uint8 g_hal_atomic_level = 0;
 
 #ifdef CONFIG_INT2HANDLER_ENABLE
 _TiIntHandlerItem m_int2handler[CONFIG_INT2HANDLER_CAPACITY];
@@ -70,7 +71,7 @@ _TiIntHandlerItem m_int2handler[CONFIG_INT2HANDLER_CAPACITY];
 
 void hal_init( TiFunEventHandler listener, void * object )
 {
-	g_atomic_level = 0;
+	g_hal_atomic_level = 0;
 	m_listener = listener;
 	m_listener_owner = object;
 	memset( &(m_int2handler[0]), 0x00, sizeof(m_int2handler) );
@@ -80,22 +81,19 @@ void hal_init( TiFunEventHandler listener, void * object )
  * interaction with upper layer using listener mechanism
  *****************************************************************************/
 
-//inline void hal_setlistener( TiFunEventHandler listener, void * listener_owner )
 void hal_setlistener( TiFunEventHandler listener, void * listener_owner )
 {
 	m_listener = listener;
 	m_listener_owner = listener_owner;
 }
 
-//inline void hal_notifylistener( TiEvent * e )
-void hal_notifylistener( TiEvent * e )
+void hal_invokelistener( TiEvent * e )
 {
 	if (m_listener != NULL)
 		m_listener( m_listener_owner, e );
 }
 
-//inline void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto )
-void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto )
+void hal_triggerevent( TiEventId eid, void * objectfrom, void * objectto )
 {
 	TiEvent e;
 

@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -34,10 +34,13 @@
  * @status 
  * - Released. Tested ok.
  *
- * @modified by zhangwei on 20060906
+ * @modified by zhangwei on 2006.09.06
  * add "signed" in the typedef of int8
  * this is because some compile will assume char as unsigned type, while here
  * we need a signed char.
+ * 
+ * @modified by zhangwei on 2012.08.02
+ * - add function type TiFunIoFilter()
  ******************************************************************************/
 
 /**
@@ -69,21 +72,7 @@
 #include <stdint.h>
 #include "../rtl/rtl_foundation.h"
 
-extern uint8 g_atomic_level ;
-
-/* System wide event identifier */
-
-#define EVENT_RESET                     1
-#define EVENT_RESTART                   2
-#define EVENT_WAKEUP                    3
-#define EVENT_SLEEP                     4
-#define EVENT_TIMER_EXPIRED             5
-#define EVENT_UART_DATA_ARRIVAL         7
-#define EVENT_DATA_ARRIVAL              7
-#define EVENT_DATA_COMPLETE             8
-#define EVENT_REQUEST                   9
-#define EVENT_REPLY                     10
-#define EVENT_ACTION_DONE               11
+extern uint8    g_hal_atomic_level;
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,6 +83,11 @@ extern "C" {
  * by hardware directly if attached to some interrupt.
  */
 typedef void (* TiFunInterruptHandler)(void);
+
+/**
+ * Function typedef for I/O filter 
+ */
+typedef int (* TiFunIoFilter)(void * object, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option); 
 
 
 /**
@@ -138,8 +132,9 @@ void hal_init( TiFunEventHandler listener, void * object );
  ******************************************************************************/
 
 void hal_setlistener( TiFunEventHandler listener, void * listener_owner );
-void hal_notifylistener( TiEvent * e );
-void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto );
+void hal_invokelistener( TiEvent * e );
+void hal_triggerevent( TiEventId eid, void * objectfrom, void * objectto );
+
 
 
 

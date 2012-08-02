@@ -80,22 +80,19 @@ void hal_init( TiFunEventHandler listener, void * object )
  * interaction with upper layer using listener mechanism
  *****************************************************************************/
 
-//inline void hal_setlistener( TiFunEventHandler listener, void * listener_owner )
 void hal_setlistener( TiFunEventHandler listener, void * listener_owner )
 {
 	m_listener = listener;
 	m_listener_owner = listener_owner;
 }
 
-//inline void hal_notifylistener( TiEvent * e )
-void hal_notifylistener( TiEvent * e )
+void hal_invokelistener( TiEvent * e )
 {
 	if (m_listener != NULL)
 		m_listener( m_listener_owner, e );
 }
 
-//inline void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto )
-void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto )
+void hal_triggerevent( TiEventId eid, void * objectfrom, void * objectto )
 {
 	TiEvent e;
 

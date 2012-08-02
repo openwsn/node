@@ -45,6 +45,9 @@
  *  - Finished and tested Ok.
  * @modified by Zhang Wei on 2011.08.14
  *  - Revision
+ * @modified by Zhang Wei on 2012.08.02
+ *  - add support to rxfilter mechanism.
+ *  - simplied the cc2520_open() function parameters.
  ******************************************************************************/
 
 #include "hal_configall.h"
@@ -91,6 +94,8 @@ typedef struct{
 	TiFunEventHandler listener;
 	void * lisowner;
     uint8 option;
+    TiFunIoFilter rxfilter;
+    void * rxfilterowner;
 	volatile uint8 rxlen;
 	volatile uint8 rxbuf[CC2520_RXBUF_SIZE];
 	//char ackbuf[CC2520_ACKBUFFER_SIZE];
@@ -122,8 +127,12 @@ void cc2520_destroy( TiCc2520Adapter * cc );
  * 
  * @return 
  * 	The pointer to the TiCc2520Adapter object if opened successfully. 
+ * 
+ * @modified by zhangwei on 2012.08.02
+ *  - changed the function prototype. The old function type is as the following:
+ *    TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, void * lisowner, uint8 option );
  ******************************************************************************/
-TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, TiFunEventHandler listener, void * lisowner, uint8 option );
+TiCc2520Adapter * cc2520_open( TiCc2520Adapter * cc, uint8 id, uint8 option );
 
 /*******************************************************************************
  * cc2520_close
@@ -222,7 +231,7 @@ uint8 cc2520_settxpower( TiCc2520Adapter * cc, uint8 power );
 uint8 cc2520_rssi( TiCc2520Adapter * cc );
 
 void cc2520_setlistener(TiCc2520Adapter * cc, TiFunEventHandler listener, void * lisowner );
-
+void cc2520_setrxfilter(TiCc2520Adapter * cc, TiFunIoFilter filter, void * filterowner );
 
 
 TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterface * intf );

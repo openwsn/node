@@ -86,13 +86,13 @@ inline void hal_setlistener( TiFunEventHandler listener, void * listener_owner )
 	m_listener_owner = listener_owner;
 }
 
-inline void hal_notifylistener( TiEvent * e )
+inline void hal_invokelistener( TiEvent * e )
 {
 	if (m_listener != NULL)
 		m_listener( m_listener_owner, e );
 }
 
-inline void hal_notify_ex( TiEventId eid, void * objectfrom, void * objectto )
+inline void hal_triggerevent( TiEventId eid, void * objectfrom, void * objectto )
 {
 	TiEvent e;
 

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -83,6 +83,7 @@
 #include "../hal_cc2420.h"
 #include "../hal_debugio.h"
 #include "../hal_cc2420inc.h"
+#include "../hal_event.h"
 
 /* @attention
  * If you want to disable all the assertions in this macro, you should undef CONFIG_DEBUG.
@@ -2141,7 +2142,7 @@ inline void cc2420_disable_sfd( TiCc2420Adapter * cc )
 void cc2420_default_listener( void * ccptr, TiEvent * e )
 {
 	TiCc2420Adapter * cc = (TiCc2420Adapter *)ccptr;
-	hal_notify_ex( EVENT_DATA_ARRIVAL, ccptr, cc->lisowner );
+	hal_triggerevent( EVENT_DATA_ARRIVAL, ccptr, cc->lisowner );
 }
 
 

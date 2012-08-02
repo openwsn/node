@@ -68,7 +68,15 @@
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 #endif
 
-#define CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+/**
+ * @attention 
+ * Both the listener and rxfilter mechanism can be used to retrieve incoming frame 
+ * from the low level transceiver adapter. But generally you'd better to use only 
+ * one of them to avoid potential confliction unless you know the transceiver adapter
+ * well.
+ */
+#undef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
+#define CONFIG_NIOACCEPTOR_RXFILTER_ENABLE 
 
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
