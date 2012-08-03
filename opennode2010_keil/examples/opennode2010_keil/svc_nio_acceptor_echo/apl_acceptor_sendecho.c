@@ -101,8 +101,6 @@ void sendnode1(void)
 
     seqid = 0;
 
-
-
 	target_init();
 	led_open();
 	led_on( LED_ALL );
@@ -142,8 +140,6 @@ void sendnode1(void)
 
     hal_enable_interrupts();
 
-
-
     while( 1 )  
     {
         // @attention
@@ -175,8 +171,7 @@ void sendnode1(void)
         frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
         first = frame_firstlayer(txbuf);
 
-		option=0;
-		txbuf->option=0x00;
+		option=1;
 		len = nac_send(nac,txbuf,option);
 
         if (len > 0)
@@ -185,20 +180,19 @@ void sendnode1(void)
 			hal_delayus(5);
 			seqid++;
 			
-//			while( !timer_expired(timer) )
-//			{
-//				len1=nac_recv(nac,rxbuf,0x00);
-//				if(len1>0)
-//				{
-//					frame_setlength(rxbuf,len1);
-//					uart_putchar(uart,len1);
-//					uart_putchar(uart,0xff);
-//					uart_write(uart,frame_startptr( rxbuf ), len1,0x00);
-//					led_toggle(LED_RED);
-//					break;
-//				}
-//			}
-			hal_delayms(1000);
+			while( !timer_expired(timer) )
+			{
+				len1=nac_recv(nac,rxbuf,0x00);
+				if(len1>0)
+				{
+					frame_setlength(rxbuf,len1);
+					uart_putchar(uart,len1);
+					uart_putchar(uart,0xff);
+					uart_write(uart,frame_startptr( rxbuf ), len1,0x00);
+					led_toggle(LED_RED);
+					break;
+				}
+			}
         }
     }
 }

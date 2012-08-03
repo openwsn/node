@@ -31,7 +31,7 @@
  *   Revised and tested ok.
  ******************************************************************************/
 
-#include "apl_foundation.h"
+#include "apl_foundation_tx.h"
 #include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
@@ -45,14 +45,17 @@
 #include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/hal/hal_interrupt.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
-#include "openwsn/hal/hal_timer.h"
 
 #ifdef CONFIG_DEBUG
 #define GDEBUG
 #endif
+//#define TEST_ACK_REQUEST
+
+#define UART_ID 1
 
 // The following macro is acutally an constant 128. You cannot change its value.
 #define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
+
 
 #define PANID				0x0001
 #define LOCAL_ADDRESS		0x01  
@@ -62,18 +65,18 @@
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
 
-static TiUartAdapter        	m_uart;      
-static char                 	m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                 	m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-
+static TiUartAdapter        m_uart;      
+static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiIEEE802Frame154Descriptor m_desc;
-static TiCc2520Adapter     		m_cc;
-static char                	 	m_nac[NAC_SIZE];
-static TiFrameRxTxInterface		m_rxtx;
-static TiTimerAdapter			m_timer;
+static TiCc2520Adapter      m_cc;
+static char                 m_nac[NAC_SIZE];
+static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static TiFrameRxTxInterface                     m_rxtx;
+
 
 
 void sendnode1(void);
+//void sendnode2(void);
 
 int main(void)
 {
@@ -85,23 +88,20 @@ void sendnode1(void)
 	char * msg = "welcome to sendnode...";
     TiCc2520Adapter * cc;
     TiUartAdapter * uart;
+    TiFrame * txbuf;
     TiIEEE802Frame154Descriptor * desc;
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
-    TiFrame * txbuf;
 	TiFrame * rxbuf;
-	TiTimerAdapter * timer;
     uint8 initlayer;
     uint8 initlayerstart;
     uint8 initlayersize;
     uint8 tmp=0;
 
-    uint8 i, first, seqid, option, len,len1;
+    uint8 i, first, seqid, option, len;
     char * ptr;
 
     seqid = 0;
-
-
 
 	target_init();
 	led_open();
@@ -110,17 +110,14 @@ void sendnode1(void)
 	led_off( LED_ALL );
 
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, 0, 9600, 8, 1, 0);
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
 	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
 	dbc_mem( msg, strlen(msg) );
     
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nac[0], NAC_SIZE );
-	timer = timer_construct( (void *)(&m_timer), sizeof( TiTimerAdapter) );
     rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
-	timer = timer_open( timer, 3, NULL, NULL, 0x00 );
-    timer_setinterval( timer,1000,0);
-	timer_start( timer );
+    
 
 	cc2520_open( cc, 0, 0x00 );
     cc2520_setchannel( cc, DEFAULT_CHANNEL );
@@ -129,12 +126,12 @@ void sendnode1(void)
     cc2520_setpanid( cc, PANID );					// set network identifier 
     cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
     cc2520_enable_autoack( cc );
+	//cc2520_disable_autoack( cc );
     rxtx = cc2520_interface( cc, &m_rxtx );
 
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 
 	txbuf = frame_open((char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
- 	rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 
 
     desc = ieee802frame154_open( &m_desc );
@@ -142,10 +139,10 @@ void sendnode1(void)
 
     hal_enable_interrupts();
 
-
-
-    while( 1 )  
+    while(1)  
     {
+        //led_off(LED_RED);
+
         // @attention
         // - When you open the frame, you must guarantee there're at least two empty
         //   byte space for later frame_skipouter(), or else you'll encounter assertion
@@ -175,30 +172,15 @@ void sendnode1(void)
         frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
         first = frame_firstlayer(txbuf);
 
-		option=0;
-		txbuf->option=0x00;
+		option=1;
 		len = nac_send(nac,txbuf,option);
 
         if (len > 0)
         {
             led_toggle(LED_RED);
 			hal_delayus(5);
-			seqid++;
-			
-//			while( !timer_expired(timer) )
-//			{
-//				len1=nac_recv(nac,rxbuf,0x00);
-//				if(len1>0)
-//				{
-//					frame_setlength(rxbuf,len1);
-//					uart_putchar(uart,len1);
-//					uart_putchar(uart,0xff);
-//					uart_write(uart,frame_startptr( rxbuf ), len1,0x00);
-//					led_toggle(LED_RED);
-//					break;
-//				}
-//			}
-			hal_delayms(1000);
         }
+        else{
+       }
     }
 }

@@ -78,10 +78,10 @@ TiNioTimeSync * timesync_recvhandler( TiNioTimeSync * sync, TiFrame *input )
 					sync->state=TSYNC_STATE_IDLE;
 					timer_stop(sync->timer);
 
-					t1=TSYNC_MAKE_TIMWE( pc[15], pc[14],pc[13],pc[12]);
-					t2=TSYNC_MAKE_TIMWE( pc[19], pc[18],pc[17],pc[16]);
-					t3=TSYNC_MAKE_TIMWE( pc[7], pc[6],pc[5],pc[4]);
-					t4=TSYNC_MAKE_TIMWE( pc[11], pc[10],pc[9],pc[8]);
+					t1=TSYNC_MAKE_TIME( pc[15], pc[14],pc[13],pc[12]);
+					t2=TSYNC_MAKE_TIME( pc[19], pc[18],pc[17],pc[16]);
+					t3=TSYNC_MAKE_TIME( pc[7], pc[6],pc[5],pc[4]);
+					t4=TSYNC_MAKE_TIME( pc[11], pc[10],pc[9],pc[8]);
 
 					tdelta=((t2-t1)-(t4-t3))/2;
 					RTC_SetCounter(RTC_GetCounter()+tdelta);

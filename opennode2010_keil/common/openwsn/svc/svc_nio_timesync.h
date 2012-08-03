@@ -1,7 +1,11 @@
+#ifndef _SVC_TIMESYNC_H_2543_
+#ifndef _SVC_TIMESYNC_H_2543_
+
 /*******************************************************************************
  * @author Shi Zhirong on 2012.08.02
  * 	- revision today.
  ******************************************************************************/
+
  
 #include "svc_configall.h"
 #include "svc_foundation.h"
@@ -10,7 +14,7 @@
 
 #define CONFIG_NIOSYNC_IDENTIFIER 4
 
-#define TSYNC_MAKE_TIMWE(highest,high,lowe,lowest) (((uint32)highest<<24) | ((uint32)high<<16)|((uint16)lowe<<8)|((uint8)lowest))
+#define TSYNC_MAKE_TIME(highest,high,lowe,lowest) (((uint32)highest<<24) | ((uint32)high<<16)|((uint16)lowe<<8)|((uint8)lowest))
 
 #define TSYNC_MASTER 1
 #define TSYNC_SLAVE 2
@@ -45,6 +49,13 @@ TiNioTimeSync * timesync_open( 	TiNioTimeSync * sync,TiAloha *mac,	TiRtcAdapter 
 TiNioTimeSync * timesync_sendhandler( TiNioTimeSync * sync, TiFrame *frame );
 TiNioTimeSync * timesync_recvhandler( TiNioTimeSync * sync, TiFrame *input );
 TiNioTimeSync * timesync_evolve( TiNioTimeSync * sync );
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _SVC_TIMESYNC_H_2543_ */
 
 //old version
 // #include "svc_configall.h"

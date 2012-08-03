@@ -314,10 +314,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>92</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>277</TopLine>
-      <CurrentLine>284</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\osxtask.c</PathWithFileName>
       <FilenameWithoutPath>osxtask.c</FilenameWithoutPath>
@@ -1008,13 +1008,13 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>2</ActiveTab>
       <Documents>
         <Doc>
-          <Name>.\osxtask.c</Name>
-          <ColumnNumber>21</ColumnNumber>
-          <TopLine>277</TopLine>
-          <CurrentLine>284</CurrentLine>
+          <Name>.\appsvc1.c</Name>
+          <ColumnNumber>36</ColumnNumber>
+          <TopLine>32</TopLine>
+          <CurrentLine>32</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\osx\osx_tlsche.c</Name>
@@ -1023,10 +1023,10 @@
           <CurrentLine>48</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\appsvc1.c</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>32</TopLine>
-          <CurrentLine>32</CurrentLine>
+          <Name>.\osxtask.c</Name>
+          <ColumnNumber>92</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
