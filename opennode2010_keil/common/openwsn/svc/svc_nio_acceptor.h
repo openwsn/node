@@ -144,6 +144,8 @@ typedef struct{
 	uint16 memsize;
 	uint8 state;
 	TiFrameTxRxInterface * rxtx;
+    TiFunRxHandler rxhandler;
+    void * rxhandlerowner;
 	TiFrameQueue * rxque;
 	TiFrameQueue * txque;
     TiFrame * ackbuf;
@@ -165,6 +167,7 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 	uint8 rxque_capacity, uint8 txque_capacity );
 void nac_close( TiNioAcceptor * nac );
 
+void nac_setrxhandler( TiNioAcceptor * nac, TiFunRxHandler rxhandler, void * rxhandlerowner );
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync );
 
 TiFrameTxRxInterface * nac_rxtx_interface( TiNioAcceptor * nac );
@@ -182,6 +185,8 @@ TiFrameQueue * nac_txque( TiNioAcceptor * nac );
  * Recommend to use nac_recv() instead.
  */
 TiFrameQueue * nac_rxque( TiNioAcceptor * nac );
+TiFrame * nac_rxquefront( TiNioAcceptor * nac );
+void nac_rxquepopfront( TiNioAcceptor * nac );
 
 /** 
  * Push the frame object into the sending queue(txque) and wait for the acceptor

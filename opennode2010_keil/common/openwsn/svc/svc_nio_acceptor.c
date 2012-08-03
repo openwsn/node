@@ -112,6 +112,8 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 #endif	
 
 	nac->state = 0;
+    nac->rxhandler = NULL;
+    nac->rxhandlerowner = NULL;
     nac->rxtx = rxtx;
 	
 	buf = (char*)nac + sizeof(TiNioAcceptor);
@@ -155,6 +157,12 @@ void nac_close( TiNioAcceptor * nac )
     }
 }
 
+void nac_setrxhandler( TiNioAcceptor * nac, TiFunRxHandler rxhandler, void * rxhandlerowner )
+{
+    nac->rxhandler = rxhandler;
+    nac->rxhandlerowner = rxhandlerowner;
+}
+
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
 {
     nac->timesync = tsync;
@@ -183,6 +191,22 @@ TiFrameQueue * nac_txque( TiNioAcceptor * nac )
 TiFrameQueue * nac_rxque( TiNioAcceptor * nac )
 {
 	return nac->rxque;
+}
+
+TiFrame * nac_rxquefront( TiNioAcceptor * nac )
+{
+    if (frame_empty(nac->ackbuf))
+        return fmque_front(nac->rxque);
+    else
+        return nac->ackbuf;
+}
+
+void nac_rxquepopfront( TiNioAcceptor * nac )
+{
+    if (frame_empty(nac->ackbuf))
+        return fmque_popfront(nac->rxque);
+    else
+        return frame_clear(nac->ackbuf);
 }
 
 /** 
@@ -244,14 +268,13 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
     hal_enter_critical();
 #endif
 
-    // if (!frame_empty(nac->ackbuf))		//@todo JOE 0801	I don't think the ack frame will be received by upper layer.
-	// 										//					it just will be received into the ackbuf in the _nac_tryrecv. 
-    // {
-        // frame_totalcopyto(nac->ackbuf, item);
-        // retval = frame_length(nac->ackbuf);
-        // frame_clear(nac->ackbuf);
-    // }
-    // else{
+    if (!frame_empty(nac->ackbuf))
+    {
+        frame_totalcopyto(nac->ackbuf, item);
+        retval = frame_length(nac->ackbuf);
+        frame_clear(nac->ackbuf);
+    }
+    else{
         front = fmque_front( nac->rxque );
         if (front != NULL)
         {
@@ -261,7 +284,7 @@ intx nac_recv( TiNioAcceptor * nac, TiFrame * item , uint8 option )
         }
         else
             retval = 0;
-    // }
+    }
     
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
     hal_leave_critical();
@@ -329,6 +352,15 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	}
 */    
 		
+    #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+    if (nac->rxhandler != NULL)
+    {
+        nac->rxhandler(nac->rxhandlerowner, (TiFrame *)fmque_front(nac->rxque), NULL, 0x00);
+        fmque_popfront(nac->rxque);
+    }
+    #endif
+    
+    #ifndef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
 	// if (!fmque_full(nac->rxque))		//@todo JOE 0801
 	// {   
 		#ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
@@ -341,6 +373,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
         hal_leave_critical();
 		#endif
 	// }
+    #endif
     
     nac->rxtx->evolve( nac->rxtx, NULL );
 }
@@ -449,40 +482,39 @@ void _nac_tryrecv( TiNioAcceptor * nac )
  * be registered to the transceiver module and then be called by the transceiver
  * automatically when a new frame arrived. 
  * 
+ * @return The data length in the output buffer. 
+ * 
  * @attention The transceiver module may call this filter function inside the interrupt
  * service routine, so you should be careful for the shared resource protection problem
  * due to concurrent accessing.  
  */ 
 #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
-int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option)
+int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, uint16 len, char * outputbuf, uint16 capacity, uint8 option)
 {
 	TiFrameRxTxInterface * rxtx = nac->rxtx;
+    uint16 fcf;
     char * buf;
 	TiFrame * f;
 	uint8 idx = 0;
 	intx count;
     char * pc;
 
-    // @modified by Shi Zhirong on 2012.07.28
-    // @attention
-    // if the RX queue is full, then we had to lost the incoming frame or drop an 
-    // frame in the RX queue. Currently, we prefer keep the existing frames and 
-    // let the low level software to drop the frame if this really happens.
-    //
-    // Let's image the following scenario: 
-    // - The sender sends the frame quickly. It doesn't do any receiving actions.
-    // - The RX queue maybe full. 
-    // - Since the sender doesn't perform receiving from RX que, the sender will
-    //   not have the chance to got the ACK. So the sender will be "always" failed.
-    //
-    if (fmque_full(nac->rxque))
-    {
-        frmque_popfront(nac->rxque);
-    }
+    hal_enter_critical();
     
-	//if (!fmque_full(nac->rxque))
-	{   
-        hal_enter_critical();
+    fcf = I802F154_MAKEWORD(inputbuf[2], inputbuf[1]);
+    if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
+    {
+        f = frame_open(nac->ackbuf, 0, 0, 0);						  
+        memmove(frame_startptr(f), inputbuf, len);
+        frame_setlength(f, count);
+    }
+    else{
+        // If the rxque is full, then delete the first item (the oldest one) from 
+        // the queue. 
+        if (fmque_full(nac->rxque))
+        {
+            fmque_popfront(nac->rxque);
+        }
         
         // Apply an queue item from the rxque. The item index is "idx". The applying
         // operation should always be success.
@@ -500,16 +532,7 @@ int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbu
             memmove(frame_startptr(f), inputbuf, len);
             frame_setlength(f, count);
 
-            // If this frame is the ACK frame, then move it to a independent 
-            // buffer for ACK frame only. And then release the current queue item.
-            //
-            if (_nac_isack(f))
-            {
-                frame_clear(nac->ackbuf);
-                frame_moveto(f, nac->ackbuf);
-                fmque_popback(nac->rxque);
-            }
-            else if (nac->timesync != NULL)
+            if (nac->timesync != NULL)
             {
                 // Since currently there's only one layer in the TiFrame object, we 
                 // cannot use frame_movehigher() to change the current layer index
@@ -526,10 +549,10 @@ int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbu
                     hal_tsync_rxhandler(nac->timesync, f, f, 0x00);
                 }
             }
-        }        
+        }
+    }        
         
-        hal_leave_critical();
-    }
+    hal_leave_critical();
     
     return 0;
 }

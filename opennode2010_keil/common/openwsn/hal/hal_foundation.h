@@ -87,7 +87,7 @@ typedef void (* TiFunInterruptHandler)(void);
 /**
  * Function typedef for I/O filter 
  */
-typedef int (* TiFunIoFilter)(void * object, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option); 
+typedef int (* TiFunIoFilter)(void * object, char * inputbuf, uint16 len, char * outputbuf, uint16 capacity, uint8 option); 
 
 
 /**

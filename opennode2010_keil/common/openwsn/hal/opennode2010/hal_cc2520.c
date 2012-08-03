@@ -317,7 +317,7 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
     {
         if (cc->rxfilter != NULL)
         {
-            retval = cc->rxfilter(cc->rxfilterowner, buf, retval, buf, capacity, 0x00);
+            retval = cc->rxfilter(cc->rxfilterowner, buf, (uint16)retval, buf, (uint16)capacity, 0x00);
         }
     }
     
