@@ -17,7 +17,8 @@
  *    to their functions.
  * @modified by zhangwei on 2010.05.10
  *  - revision. 
- *
+ * @modified by zhangwei on 2012.08.03
+ *  - add TiFunIoFilter setrxfilter;
  ******************************************************************************/
 
 #include "hal_configall.h"
@@ -46,7 +47,7 @@ typedef uint8  (* TiFunFtrxEnableAutoAck)( void * trx );
 typedef uint8  (* TiFunFtrxDisableAutoAck)( void * trx );
 typedef uint8  (* TiFunFtrxEnableAddrDecode)( void * trx );
 typedef uint8  (* TiFunFtrxDisableAddrDecode)( void * trx );
-typedef void   (* TiFunFtrxSetlistener)( void * trx, TiFunEventHandler listener,void * lisowner );//todo for testing
+typedef void   (* TiFunFtrxSetListener)( void * trx, TiFunEventHandler listener, void * lisowner );
 
 typedef uint8  (* TiFunFtrxSetChannel)( void * trx, uint8 chn );
 typedef uint8  (* TiFunFtrxSetPanId)( void * trx, uint8 panid );
@@ -78,7 +79,8 @@ struct _TiFrameTxRxInterface{
     TiFunFtrxGetShortAddress getshortaddress;
     TiFunFtrxSetTxPower settxpower;
     TiFunFtrxGetRssi getrssi;
-    TiFunFtrxSetlistener setlistener;//todo for testing
+    TiFunFtrxSetListener setlistener;
+    TiFunIoFilter setrxfilter;
     //TiFunFtrxGetLqi getlqi;
     //TiFunFtrxSetListener;
 };

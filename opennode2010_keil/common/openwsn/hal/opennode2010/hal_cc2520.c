@@ -345,7 +345,8 @@ TiFrameTxRxInterface * cc2520_interface( TiCc2520Adapter * cc, TiFrameTxRxInterf
 	intf->getshortaddress = (TiFunFtrxGetShortAddress)cc2520_getshortaddress;
 	intf->settxpower = (TiFunFtrxSetTxPower)cc2520_settxpower;
 	intf->getrssi = (TiFunFtrxGetRssi)cc2520_rssi;
-    intf->setlistener = ( TiFunFtrxSetlistener)cc2520_setlistener;//todo for testing
+    intf->setlistener = ( TiFunFtrxSetListener)cc2520_setlistener; //@todo for testing
+    intf->setlistener = ( TiFunFtrxSetRxFilter)cc2520_setrxfilter; //@todo for testing
 	return intf;
 }
 
