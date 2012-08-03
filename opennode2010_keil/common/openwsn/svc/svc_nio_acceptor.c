@@ -132,7 +132,7 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
 #endif
 
 #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
-    cc2520_setrxfilter( rxtx->provider, (TiFunIoFilter)(_nac_rxfilter), nac );
+    cc2520_setrxfilter( rxtx->provider, (TiFunIoFilter)(nac_rxfilter_for_transceiver), nac );
 #endif
 
 	return nac;
@@ -203,9 +203,9 @@ TiFrame * nac_rxquefront( TiNioAcceptor * nac )
 void nac_rxquepopfront( TiNioAcceptor * nac )
 {
     if (frame_empty(nac->ackbuf))
-        return fmque_popfront(nac->rxque);
+        fmque_popfront(nac->rxque);
     else
-        return frame_clear(nac->ackbuf);
+        frame_clear(nac->ackbuf);
 }
 
 /** 
@@ -354,9 +354,14 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
     #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
     if (nac->rxhandler != NULL)
     {
-        nac->rxhandler(nac->rxhandlerowner, (TiFrame *)fmque_front(nac->rxque), NULL, 0x00);
-        fmque_popfront(nac->rxque);
-    }
+//        nac->rxhandler(nac->rxhandlerowner, (TiFrame *)fmque_front(nac->rxque), NULL, 0x00);
+//        fmque_popfront(nac->rxque);
+	   	if( fmque_front(nac->rxque)!=NULL )
+	   	{
+       		nac->rxhandler(nac->rxhandlerowner, fmque_front(nac->rxque), NULL, 0x00); //JOE 0803
+       		fmque_popfront(nac->rxque);
+    	}
+	}
     #endif
     
     #ifndef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
@@ -416,7 +421,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
     //
     if (fmque_full(nac->rxque))
     {
-        frmque_popfront(nac->rxque);
+        fmque_popfront(nac->rxque);
     }
     
 	//if (!fmque_full(nac->rxque))
@@ -447,7 +452,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
                 {
                     frame_clear(nac->ackbuf);
                     frame_moveto(f, nac->ackbuf);
-                    fmque_popback(nac->rxque);
+                    fmque_poprear(nac->rxque);
                 }
                 else if (nac->timesync != NULL)
                 {
@@ -469,7 +474,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
             }
             else{
                 // if apply failed, then pop an item from the queue
-                fmque_popback(nac->rxque);		  
+                fmque_poprear(nac->rxque);		  
             }
         }
         
@@ -503,10 +508,12 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
     fcf = I802F154_MAKEWORD(inputbuf[2], inputbuf[1]);
     if (FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_ACK)
     {
-        f = frame_open(nac->ackbuf, 0, 0, 0);						  
+        f = frame_open((char *)nac->ackbuf,FRAME_HOPESIZE(I802F154_ACK_FRAME_SIZE) , 0, 0, 0);						  
         memmove(frame_startptr(f), inputbuf, len);
-        frame_setlength(f, count);
-    }
+        frame_setlength(f, count);	 //@todo JOE 0803
+//		frame_setlength(f,len);
+
+	}
     else{
         // If the rxque is full, then delete the first item (the oldest one) from 
         // the queue. 
@@ -529,8 +536,8 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
             // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
             f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						  
             memmove(frame_startptr(f), inputbuf, len);
-            frame_setlength(f, count);
-
+            frame_setlength(f, count);				    //@todo JOE 0803
+			//frame_setlength(f,len);
             if (nac->timesync != NULL)
             {
                 // Since currently there's only one layer in the TiFrame object, we 
@@ -552,7 +559,7 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
     }        
         
     hal_leave_critical();
-    
+    USART_Send(0xAA);
     return 0;
 }
 #endif
@@ -565,8 +572,9 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
 int _nac_isack( TiFrame * f )
 {
     int retval = 0;
-    
-    ptr = frame_startptr(frame);
+    char * ptr;
+	uint16 fcf;
+    ptr = frame_startptr(f);
     if (ptr != NULL)
     {
         // get the pointer to the frame control field according to 802.15.4 frame format

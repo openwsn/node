@@ -312,7 +312,9 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 			CC2520_REGWR8(CC2520_EXCFLAG1, 0x00);
 		}
 	}
-    
+	
+    USART_Send(0x11);
+
     if (retval > 0)
     {
         if (cc->rxfilter != NULL)

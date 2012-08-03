@@ -160,7 +160,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -387,9 +387,9 @@
           <GroupName>main</GroupName>
           <Files>
             <File>
-              <FileName>apl_acceptor_sendecho.c</FileName>
+              <FileName>apl_nio_acceptor_send.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\apl_acceptor_sendecho.c</FilePath>
+              <FilePath>.\apl_nio_acceptor_send.c</FilePath>
             </File>
           </Files>
         </Group>

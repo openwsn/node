@@ -1,242 +1,204 @@
 /*******************************************************************************
- * csma_send
- * This project implements a frame sending node based on TiCsma component. This
- * component is in module "svc_csma". 
- * 
- * @state
- *  - compile passed. tested. released.
+ * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * @modified by openwsn on 2010.10.12
- *  - complied successfully. The sniffer have recv the data successfully
- * 
- * @modified by Xu-Fuzhen in TongJi University(xufz0726@126.com) in 2010.10
- *  - tested ok.
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
+ *
+ * OpenWSN is a free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 or (at your option) any later version.
+ *
+ * OpenWSN is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * For non-opensource or commercial applications, please choose commercial license.
+ * Refer to OpenWSN site http://code.google.com/p/openwsn/ for more detail.
+ *
+ * For other questions, you can contact the author through email openwsn#gmail.com
+ * or the mailing address: Dr. Wei Zhang, Dept. of Control, Dianxin Hall, TongJi
+ * University, 4800 Caoan Road, Shanghai, China. Zip: 201804
+ *
  ******************************************************************************/
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 2
-#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 2
+/*******************************************************************************
+ * @history
+ * - modified by zhangwei on 2011.09.23
+ *   add hal_enable_interrupts() before while loop. This is mandatory.
+ *   Revised and tested ok.
+ ******************************************************************************/
 
-#include "../../common/openwsn/hal/hal_configall.h"
+#include "apl_foundation.h"
+#include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
-#include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_ieee802frame154.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-//#include "../../common/openwsn/svc/svc_nio_csma.h"
-#include "../../common/openwsn/svc/svc_nio_aloha.h"
-#include "../../common/openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/hal/hal_debugio.h"
+#include "openwsn/rtl/rtl_ieee802frame154.h"
+#include "openwsn/hal/hal_interrupt.h"
+#include "openwsn/svc/svc_nio_acceptor.h"
+#include "openwsn/hal/hal_timer.h"
 
-#define CONFIG_DEBUG
-
-#ifdef CONFIG_DEBUG   
-    #define GDEBUG
+#ifdef CONFIG_DEBUG
+#define GDEBUG
 #endif
 
-#define CONFIG_CSMA_PANID				        0x0001
-#define CONFIG_CSMA_LOCAL_ADDRESS		        0x01
-#define CONFIG_CSMA_REMOTE_ADDRESS		        0x02
-#define CONFIG_CSMA_CHANNEL                     11
+// The following macro is acutally an constant 128. You cannot change its value.
+#define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
 
-#define MAX_IEEE802FRAME154_SIZE                128
+#define PANID				0x0001
+#define LOCAL_ADDRESS		0x01  
+#define REMOTE_ADDRESS		0x02
+#define DEFAULT_CHANNEL     11
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
-static TiCc2420Adapter		                    m_cc;
-static TiFrameRxTxInterface                     m_rxtx;
-static char m_nacmem[NAC_SIZE];
-//static TiCsma                                   m_csma;
-static TiAloha                                  m_aloha;
-static TiTimerAdapter                           m_timer;
-static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                                     m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
-void csma_sendnode(void);
+static TiUartAdapter        	m_uart;      
+static char                 	m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char                 	m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+
+static TiIEEE802Frame154Descriptor m_desc;
+static TiCc2520Adapter     		m_cc;
+static char                	 	m_nac[NAC_SIZE];
+static TiFrameRxTxInterface		m_rxtx;
+static TiTimerAdapter			m_timer;
+
+
+void sendnode1(void);
 
 int main(void)
 {
-	csma_sendnode();
-    return 0;
+    sendnode1();
 }
 
-void csma_sendnode(void)
-{   
-    TiCc2420Adapter * cc;
-    TiFrameRxTxInterface * rxtx;;
-    //TiCsma * mac;
-	TiAloha * mac;
+void sendnode1(void)
+{
+	char * msg = "welcome to sendnode...";
+    TiCc2520Adapter * cc;
+    TiUartAdapter * uart;
+    TiIEEE802Frame154Descriptor * desc;
+	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
-	TiTimerAdapter   *timer;
-	TiFrame * txbuf;
+    TiFrame * txbuf;
 	TiFrame * rxbuf;
-	char * pc;
+	TiTimerAdapter * timer;
+    uint8 initlayer;
+    uint8 initlayerstart;
+    uint8 initlayersize;
+    uint8 tmp=0;
 
-	char * msg = "welcome to csma sendnode...";
-	uint8 i,j, seqid=0, option;
+    uint8 i, first, seqid, option, len,len1;
+    char * ptr;
+
+    seqid = 0;
+
+
 
 	target_init();
-
 	led_open();
 	led_on( LED_ALL );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
-	led_on( LED_RED );
-    dbo_open( 38400 );
 
-    rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-    dbc_mem( msg, strlen(msg) );
-
-	cc = cc2420_construct( (char *)(&m_cc), sizeof(TiCc2420Adapter) );
-	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
-	mac = csma_construct( (char *)(&m_aloha), sizeof(TiAloha) );//mac = csma_construct( (char *)(&m_csma), sizeof(TiCsma) );
-    timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
-    	
-	cc2420_open(cc, 0, NULL, NULL, 0x00 );
-    rxtx = cc2420_interface( cc, &m_rxtx );
-
-    hal_assert( rxtx != NULL );
-    // attention: since timer0 is used for the osx kernel, we propose the next 16bit 
-    // timer to be used in this module. If you port this example to other hardware
-    // platform, you may need to adjust the timer_open parameters.
-    //
-    // Q: is the second parameter be 2 or 3 for atmega's 16 bit timer?
-    timer = timer_open( timer, 2, NULL, NULL, 0x00 ); 
-
-    // initialize the standard aloha component for sending/recving
-    hal_assert( (rxtx != NULL) && (timer != NULL) );
-
-    nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-
-    //csma_open( mac, rxtx, nac,CONFIG_CSMA_CHANNEL, CONFIG_CSMA_PANID, CONFIG_CSMA_LOCAL_ADDRESS, 
-      //  timer, NULL, NULL );
-
-	aloha_open( mac,rxtx,nac, CONFIG_CSMA_CHANNEL, CONFIG_CSMA_PANID,
-		CONFIG_CSMA_LOCAL_ADDRESS,timer, NULL, NULL, 0x00 );
-
-    txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );
-	rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );
-
-	cc2420_setchannel( cc, CONFIG_CSMA_CHANNEL );
-	cc2420_setrxmode( cc );							            // enable RX mode
-	cc2420_setpanid( cc, CONFIG_CSMA_PANID );					// network identifier, seems no use in sniffer mode
-	cc2420_setshortaddress( cc, CONFIG_CSMA_LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
-	cc2420_enable_autoack( cc );
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, 0, 9600, 8, 1, 0);
+	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
     
-	hal_enable_interrupts();
+    cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
+	nac = nac_construct( &m_nac[0], NAC_SIZE );
+	timer = timer_construct( (void *)(&m_timer), sizeof( TiTimerAdapter) );
+    rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
+	timer = timer_open( timer, 3, NULL, NULL, 0x00 );
+    timer_setinterval( timer,1000,0);
+	timer_start( timer );
 
-	dbc_putchar(0x01);
+	cc2520_open( cc, 0, 0x00 );
+    cc2520_setchannel( cc, DEFAULT_CHANNEL );
+    cc2520_rxon( cc );							    // Enable RX
+    cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
+    cc2520_setpanid( cc, PANID );					// set network identifier 
+    cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
+    cc2520_enable_autoack( cc );
+    rxtx = cc2520_interface( cc, &m_rxtx );
 
-	while(1) 
-	{   
-		j = 0;
-		//csma_setremoteaddress( mac, CONFIG_CSMA_REMOTE_ADDRESS );
-        frame_reset(txbuf, 3, 20, 25);
+	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 
-		dbc_putchar(0x02);
-
-
-	    #define TEST1
-
-        #ifdef TEST1
-        pc = frame_startptr( txbuf );
-        for (i=0; i<frame_capacity(txbuf); i++)
-            pc[i] = i;
-		//frame_setlength(txbuf, i-1);
-        #endif
-
-        #ifdef TEST2
-        frame_pushback( txbuf, "01234567890123456789", 20 ); 
-        #endif
+	txbuf = frame_open((char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
+ 	rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 
 
-        // if option is 0x00, then aloha send will not require ACK from the receiver. 
-        // if you want to debugging this program alone without receiver node, then
-        // suggest you use option 0x00.
-        // the default setting is 0x01, which means ACK is required.
-        //
-		//option = 0x00;
-		option = 0x01;//todo
+    desc = ieee802frame154_open( &m_desc );
+    option = 0x00;
 
-		txbuf->option = option;//决定是否用ACK
+    hal_enable_interrupts();
 
-        while (1)
-        {   
-            if (aloha_send(mac,CONFIG_CSMA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)//if (csma_send(mac,CONFIG_CSMA_REMOTE_ADDRESS, txbuf, txbuf->option) > 0)
-            {
-			    dbc_putchar(0x22);		
-                led_toggle( LED_YELLOW );
-                dbo_putchar( 0x11);
-                dbo_putchar( seqid );
-                break;
-            }
-			else{
-				dbo_putchar(0x22);
-                dbo_putchar( seqid );
-                nac_evolve( mac->nac,NULL);
-			}
-            hal_delay(1000);
+
+
+    while( 1 )  
+    {
+        // @attention
+        // - When you open the frame, you must guarantee there're at least two empty
+        //   byte space for later frame_skipouter(), or else you'll encounter assertion
+        //   failure in the rtl_frame module.
+        initlayer = 3;
+        initlayerstart = 13;
+        initlayersize = 6;
+
+        txbuf = frame_open((char*)(&m_txbuf), sizeof(m_txbuf), initlayer, initlayerstart, initlayersize );
+
+        // assign some random data into the frame. for demostration only.        
+        ptr = frame_startptr(txbuf);
+        for (i = 0; i< 6; i++)
+            ptr[i] = '0' + i;
+
+        // create the 802.15.4 protocol header. attention it requires at least 12 bytes 
+        // for the header and 2 bytes for the tail(CRC checdum).
+        frame_skipouter(txbuf, initlayerstart-1, 2);
+        desc = ieee802frame154_format(desc, frame_startptr(txbuf), frame_capacity(txbuf), 
+            FRAME154_DEF_FRAMECONTROL_DATA); 
+        rtl_assert( desc != NULL );
+        ieee802frame154_set_sequence( desc, seqid); 
+        ieee802frame154_set_panto( desc, PANID );
+        ieee802frame154_set_shortaddrto( desc, REMOTE_ADDRESS );
+        ieee802frame154_set_panfrom( desc, PANID );
+        ieee802frame154_set_shortaddrfrom( desc, LOCAL_ADDRESS );
+        frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
+        first = frame_firstlayer(txbuf);
+
+		option=0;
+		txbuf->option=0x00;
+		len = nac_send(nac,txbuf,option);
+
+        if (len > 0)
+        {
+            led_toggle(LED_RED);
+			hal_delayus(5);
+			seqid++;
+			
+//			while( !timer_expired(timer) )
+//			{
+//				len1=nac_recv(nac,rxbuf,0x00);
+//				if(len1>0)
+//				{
+//					frame_setlength(rxbuf,len1);
+//					uart_putchar(uart,len1);
+//					uart_putchar(uart,0xff);
+//					uart_write(uart,frame_startptr( rxbuf ), len1,0x00);
+//					led_toggle(LED_RED);
+//					break;
+//				}
+//			}
+			hal_delayms(1000);
         }
-		
-		// for simple aloha, you needn't to call aloha_evolve(). it's necessary for 
-        // standard aloha.
-   
-       // csma_evolve( mac, NULL );
-		 aloha_evolve( mac, NULL );
-
-        // controls the sending rate. if you want to test the RXFIFO overflow processing
-        // you can decrease this value. 
-        // attention: this long delay will occupy the CPU and it may lead to frame lossing.
-
-		while ( j<0xff)
-		{
-              frame_reset( rxbuf, 3, 20, 0 );
-		      //len = csma_recv( mac, rxbuf, 0x00 );        
-		      if (aloha_recv( mac, rxbuf, 0x01 )>0)//if (csma_recv( mac, rxbuf, 0x01 )>0)
-		      {   
-			      dbc_putchar( 0xF3 );
-
-
-                 frame_moveouter( rxbuf );
-                 //_output_frame( rxbuf, NULL );
-				 ieee802frame154_dump( rxbuf);
-                 frame_moveinner( rxbuf );
-
-			      // led_off( LED_RED );
-
-			     /* warning: You shouldn't wait too long in the while loop, or else 
-			      * you may encounter frame loss. However, the program should still 
-			      * work properly even the delay time is an arbitrary value. No error 
-			      * are allowed in this case. 
-			      */
-			      // hal_delay( 500 );
-			      led_toggle( LED_RED );
-			      //hal_delay( 500 
-			      break;
-			  }
-			  j++;
-		    		
-	  }
-        
-		hal_delay(1000);
-
-		//break;
-	}
-
-    frame_close( txbuf );
-    //csma_close( mac );
-	aloha_close( mac );
-    cc2420_close( cc );
+    }
 }
-
-
-
