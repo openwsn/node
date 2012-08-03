@@ -229,7 +229,11 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event );
  * because it's generally designed to be executed in non-interurpt mode.
  */
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e );
+void nac_listener_for_transceiver( TiNioAcceptor * nac, TiEvent * e );
+#endif
+
+#ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 len, char * outputbuf, uint16 capacity, uint8 option);
 #endif
 
 //------------------------------------------------------------------------------

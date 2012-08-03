@@ -45,7 +45,6 @@
 #endif
 
 static void _nac_tryrecv( TiNioAcceptor * nac );
-static int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, int len, char * outputbuf, int capacity, uint8 option); 
 static int _nac_isack( TiFrame * f );
 
 
@@ -128,8 +127,8 @@ TiNioAcceptor * nac_open( TiNioAcceptor * nac, TiFrameTxRxInterface * rxtx,
     nac->timesync = NULL; // @todo
 
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-    //nac->rxtx->setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
-    cc2520_setlistener( rxtx->provider, nac_on_frame_arrived_listener, nac );
+    //nac->rxtx->setlistener( rxtx->provider, nac_listener_for_transceiver, nac );
+    cc2520_setlistener( rxtx->provider, nac_listener_for_transceiver, nac );
 #endif
 
 #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
@@ -383,12 +382,12 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
  * So you can move the frame received by transceiver into the rxque inside TiNioAcceptor.
  * 
  * @attention: This function isn't mandatory. You can also call nac_evolve() to 
- * do this. The only difference between nac_evolve() and nac_on_frame_arrived_listener()
+ * do this. The only difference between nac_evolve() and nac_listener_for_transceiver()
  * is that: the listener can be executed in interrupt mode, while the evolve()
  * cannot do this.
  */
 #ifdef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
-void nac_on_frame_arrived_listener( TiNioAcceptor * nac, TiEvent * e )
+void nac_listener_for_transceiver( TiNioAcceptor * nac, TiEvent * e )
 {
     _nac_tryrecv(nac);
 }
@@ -489,7 +488,7 @@ void _nac_tryrecv( TiNioAcceptor * nac )
  * due to concurrent accessing.  
  */ 
 #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
-int _nac_rxfilter(TiNioAcceptor * nac, char * inputbuf, uint16 len, char * outputbuf, uint16 capacity, uint8 option)
+int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 len, char * outputbuf, uint16 capacity, uint8 option)
 {
 	TiFrameRxTxInterface * rxtx = nac->rxtx;
     uint16 fcf;
