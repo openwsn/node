@@ -103,8 +103,7 @@ extern "C" {
  *      = 0: Successful, but nothing was changed. (This function does nothing)
  *      < 0: Failed. 
  */
-typedef uintx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
-typedef uintx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+
 
 //#pragma pack(1) 
 typedef struct{
@@ -128,7 +127,6 @@ typedef struct{
     char fwbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char txbak_memory[NIO_DISPA_FRAME_MEMSIZE];
     _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
-
 	TiOsxTimeLineScheduler * scheduler;	  //JOE 0709
 }TiNioNetLayerDispatcher;
 
@@ -146,6 +144,8 @@ void nio_dispa_evolve(void* object, TiEvent * e);
  */
 bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
     TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
+bool nio_dispa_register_default(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
+    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve)
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id);
 
 

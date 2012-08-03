@@ -167,10 +167,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>142</TopLine>
-      <CurrentLine>154</CurrentLine>
+      <TopLine>123</TopLine>
+      <CurrentLine>133</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_cc2520tx.c</PathWithFileName>
       <FilenameWithoutPath>apl_cc2520tx.c</FilenameWithoutPath>
@@ -922,25 +922,25 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>2</ActiveTab>
       <Documents>
-        <Doc>
-          <Name>.\apl_cc2520tx.c</Name>
-          <ColumnNumber>21</ColumnNumber>
-          <TopLine>142</TopLine>
-          <CurrentLine>154</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn/hal/hal_cc2520.h</Name>
-          <ColumnNumber>8</ColumnNumber>
-          <TopLine>134</TopLine>
-          <CurrentLine>146</CurrentLine>
-        </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>
           <ColumnNumber>5</ColumnNumber>
           <TopLine>122</TopLine>
           <CurrentLine>140</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_cc2520.h</Name>
+          <ColumnNumber>8</ColumnNumber>
+          <TopLine>134</TopLine>
+          <CurrentLine>146</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\apl_cc2520tx.c</Name>
+          <ColumnNumber>17</ColumnNumber>
+          <TopLine>123</TopLine>
+          <CurrentLine>133</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

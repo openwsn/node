@@ -47,7 +47,7 @@
 #include "../hal/hal_uart.h"
 #include "svc_foundation.h"
 #include "svc_nio_csma.h"
-#include "svc_nio_dispatcher - CSMA.h"
+#include "svc_nio_dispatcher"
 #include "svc_nodebase.h"
 #include "../osx/osx_tlsche.h"
 

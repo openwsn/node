@@ -115,10 +115,10 @@
 #endif
 
 /**
- * global variable: g_atomic_level
+ * global variable: g_hal_atomic_level
  * to keep the atmic nested level. defined in this module. 
  */
-//extern uint8 g_atomic_level;//hal_foundation中已定义
+//extern uint8 g_hal_atomic_level;//hal_foundation中已定义
 #if (CONFIG_CRITICAL_METHOD == 3)
 extern uint8 g_atomic_flag;
 #endif
@@ -240,19 +240,19 @@ __inline void cpu_atomic_end(TiCpuState state)
  */
 __inline void cpu_atomic_begin( void )
 {
-	if (g_atomic_level == 0)
+	if (g_hal_atomic_level == 0)
 	{
 		cpu_disable_interrupts();
 	}
-	g_atomic_level ++;
+	g_hal_atomic_level ++;
 }
 #endif
 
 #if (CONFIG_CRITICAL_METHOD == 2)
 __inline void cpu_atomic_end( void )
 {
-	g_atomic_level --;
-	if (g_atomic_level == 0)
+	g_hal_atomic_level --;
+	if (g_hal_atomic_level == 0)
 	{
 		cpu_enable_interrupts();
 	}
@@ -265,20 +265,20 @@ __inline void cpu_atomic_end( void )
 #if (CONFIG_CRITICAL_METHOD == 3)
 __inline void cpu_atomic_begin( void )
 {
-	if (g_atomic_level == 0)
+	if (g_hal_atomic_level == 0)
 	{
 		g_atomic_flag = __get_PRIMASK();
 		cpu_disable_interrupts();
 	}
-	g_atomic_level ++;
+	g_hal_atomic_level ++;
 }
 #endif
 
 #if (CONFIG_CRITICAL_METHOD == 3) 
 __inline void cpu_atomic_end( void )
 {
-	g_atomic_level --;
-	if (g_atomic_level == 0)
+	g_hal_atomic_level --;
+	if (g_hal_atomic_level == 0)
 	{
         __set_PRIMASK(g_atomic_flag);
 	}
