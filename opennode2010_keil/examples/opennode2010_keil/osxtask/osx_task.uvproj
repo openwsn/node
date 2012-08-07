@@ -160,7 +160,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -636,11 +636,6 @@
         <Group>
           <GroupName>osx</GroupName>
           <Files>
-            <File>
-              <FileName>osx_kernel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\osx\osx_kernel.c</FilePath>
-            </File>
             <File>
               <FileName>osx_taskheap.c</FileName>
               <FileType>1</FileType>

@@ -500,7 +500,7 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
     char * buf;
 	TiFrame * f;
 	uint8 idx = 0;
-	intx count;
+	//intx count;
     char * pc;
 
     hal_enter_critical();
@@ -510,9 +510,7 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
     {
         f = frame_open((char *)nac->ackbuf,FRAME_HOPESIZE(I802F154_ACK_FRAME_SIZE) , 0, 0, 0);						  
         memmove(frame_startptr(f), inputbuf, len);
-        frame_setlength(f, count);	 //@todo JOE 0803
-//		frame_setlength(f,len);
-
+		frame_setlength(f,len);
 	}
     else{
         // If the rxque is full, then delete the first item (the oldest one) from 
@@ -536,8 +534,7 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
             // f = frame_open(buf, fmque_datasize(nac->rxque), 0, 0, 0);
             f = frame_open(buf, FRAMEQUEUE_ITEMSIZE, 0, 0, 0);						  
             memmove(frame_startptr(f), inputbuf, len);
-            frame_setlength(f, count);				    //@todo JOE 0803
-			//frame_setlength(f,len);
+			frame_setlength(f,len);
             if (nac->timesync != NULL)
             {
                 // Since currently there's only one layer in the TiFrame object, we 
@@ -559,7 +556,6 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
     }        
         
     hal_leave_critical();
-    USART_Send(0xAA);
     return 0;
 }
 #endif

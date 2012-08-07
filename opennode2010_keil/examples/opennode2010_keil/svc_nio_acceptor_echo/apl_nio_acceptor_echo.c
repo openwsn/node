@@ -334,9 +334,10 @@ int _apl_rxhandler_for_acceptor(void * owner, TiFrame * input, TiFrame * output,
  
  	USART_Send( 0xF2 );    
     desc = ieee802frame154_open( &m_desc );
-    if (ieee802frame154_parse(desc, frame_startptr(input), frame_capacity(input)))		  //input+1
+    if (ieee802frame154_parse(desc, frame_startptr(input), frame_length(input)))		  //input+1
+																						//frame_capacity(input)
     {
-        dbc_putchar( 0xF3 );
+        USART_Send( 0xF3 );
         ieee802frame154_swapaddress(desc);
 
 //        vti_setscale( vti, 1 );

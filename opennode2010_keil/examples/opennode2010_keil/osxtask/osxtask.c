@@ -118,11 +118,11 @@ void osx_task_stop_mode( void)
     led_open();
     halUartInit(9600,0);
     led_on( LED_RED);
-    hal_delay( 500);
+    hal_delayms( 500);
     led_off( LED_RED);
     USART_Send( 0xf1);//todo for testing
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
-    rtc = rtc_open(rtc,NULL,_RTCAlarm_IRQHandler,NULL,3,1);
+    rtc = rtc_open(rtc,NULL,NULL,3,1);
     rtc_setalrm_count(rtc,0,0);
     rtc_setprscaler( rtc,32767);//基本单位秒
     rtc_start( rtc);
@@ -153,7 +153,7 @@ void osx_task_second_interrupt_rtc( void)
     int8 idx;
     TiOsxTaskHeapItem item;
     
-	target_init();
+
     halUartInit(9600,0);    
 	led_open();
 	led_on( LED_ALL );
@@ -186,7 +186,7 @@ void osx_task_second_interrupt_rtc( void)
 
     USART_Send( 0xf1);
     rtc = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
-    rtc = rtc_open(rtc,NULL,_RTC_IRQHandler,NULL,1,1);
+    rtc = rtc_open(rtc,NULL,NULL,1,1);
     rtc_setprscaler( rtc,32767);
     rtc_start( rtc);
     USART_Send( 0xf2);
