@@ -870,12 +870,38 @@
     </File>
   </Group>
 
+  <AlienFiles>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\svc\svc_foundation.h</PathWithFilename>
+    <TopLine>29</TopLine>
+    <CurrentLine>46</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
   <MDIGroups>
     <Orientation>1</Orientation>
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>6</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\apl_snifferbase.c</Name>
@@ -884,22 +910,10 @@
           <CurrentLine>280</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\rtl\rtl_iobuf.c</Name>
-          <ColumnNumber>6</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn\svc\svc_sio_acceptor.c</Name>
-          <ColumnNumber>25</ColumnNumber>
-          <TopLine>61</TopLine>
-          <CurrentLine>61</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>apl_foundation.h</Name>
-          <ColumnNumber>22</ColumnNumber>
-          <TopLine>12</TopLine>
-          <CurrentLine>21</CurrentLine>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cpu.c</Name>
+          <ColumnNumber>62</ColumnNumber>
+          <TopLine>111</TopLine>
+          <CurrentLine>111</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\rtl\rtl_frame.c</Name>
@@ -908,10 +922,28 @@
           <CurrentLine>168</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cpu.c</Name>
-          <ColumnNumber>62</ColumnNumber>
-          <TopLine>111</TopLine>
-          <CurrentLine>111</CurrentLine>
+          <Name>apl_foundation.h</Name>
+          <ColumnNumber>22</ColumnNumber>
+          <TopLine>12</TopLine>
+          <CurrentLine>21</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\svc\svc_sio_acceptor.c</Name>
+          <ColumnNumber>25</ColumnNumber>
+          <TopLine>61</TopLine>
+          <CurrentLine>61</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\rtl\rtl_iobuf.c</Name>
+          <ColumnNumber>6</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn/svc/svc_foundation.h</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>29</TopLine>
+          <CurrentLine>46</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

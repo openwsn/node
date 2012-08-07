@@ -35,7 +35,6 @@
  *	- first created. inspired by rtl_notifier. 
  * @modified by Zhang Wei in 2010
  * @modified by Jiang Ridong in 2011
-
  * @modified by Shi Zhirong  2012.7.23
  */
 
@@ -83,9 +82,9 @@ TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, 
     //svc_assert( sizeof(TiNioNetLayerDispatcher) <= dispatcher->memsize );//non memsize
     dispatcher->state = NIO_DISPA_STATE_IDLE;
     dispatcher->nbase = database;
-    dispatcher->rxbuf = frame_open((char*)(&dispatcher->rxbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
-    dispatcher->txbuf = frame_open((char*)(&dispatcher->txbak_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
-    dispatcher->fwbuf = frame_open((char*)(&dispatcher->fwbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );  // todo ?
+    dispatcher->rxbuf = frame_open((char*)(&dispatcher->rxbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
+    dispatcher->txbuf = frame_open((char*)(&dispatcher->txbak_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
+    dispatcher->fwbuf = frame_open((char*)(&dispatcher->fwbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
     dispatcher->mac = mac;
 	dispatcher->scheduler=scheduler;
     return dispatcher;
@@ -192,7 +191,7 @@ uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
         // sent by the PHY layer.
         option = dispatcher->txbuf->option;
         ioresult = csma_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
-        if ( CSMA_IORET_SUCCESS(ioresult) || CSMA_IORET_ERROR_NOACK || CSMA_IORET_ERROR_CHANNEL_BUSY )
+        if ( CSMA_IORET_SUCCESS(ioresult) || CSMA_IORET_ERROR_NOACK || CSMA_IORET_ERROR_ACCEPTED_AND_BUSY )
 		{
 			frame_clear(dispatcher->txbuf);				
 		}
