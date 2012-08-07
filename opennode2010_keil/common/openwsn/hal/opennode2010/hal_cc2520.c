@@ -275,6 +275,9 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
 	intx retval = 0;
 	uint8 state;
 
+	//USART_Send(0x01);
+
+
     //if rxfifo overflow.
 	if (CC2520_REGRD8(CC2520_EXCFLAG0) & 0x40)
 	{
@@ -318,6 +321,7 @@ uint8 _cc2520_read_rxbuf( TiCc2520Adapter *cc, char * buf, uintx capacity )
         if (cc->rxfilter != NULL)
         {
             retval = cc->rxfilter(cc->rxfilterowner, buf, (uint16)retval, buf, (uint16)capacity, 0x00);
+
         }
     }
     
@@ -1445,6 +1449,10 @@ void _cc2520_fifop_handler(void * object, TiEvent * e)
 	//hal_delayms(1);
     hal_enter_critical();
 	cc->rxlen = _cc2520_read_rxbuf(cc, &cc->rxbuf[0], CC2520_RXBUF_SIZE); 
+	if(cc->rxlen == 0)
+	{
+		cc->rxlen = _cc2520_read_rxbuf(cc, &cc->rxbuf[0], CC2520_RXBUF_SIZE); 
+	}
 	//todo  suggest check whether cc_rxbuf is empty or not//0511
 
     if (cc->listener != NULL)

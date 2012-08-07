@@ -36,6 +36,7 @@
 #include "svc_configall.h"
 #include "../rtl/rtl_foundation.h"
 #include "../hal/hal_assert.h"
+#include "../rtl/rtl_frame.h"
 
 /*
 #ifdef CONFIG_WINDOWS

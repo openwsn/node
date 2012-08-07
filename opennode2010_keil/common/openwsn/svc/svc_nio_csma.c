@@ -75,6 +75,8 @@
  *  - Revised and tested
  * @modified by ZhangWei on 2012.07.30
  *  - Using "nac->ackbuf" to replace "fmque_rear(nac->rxque)".
+ * @modified by Shi Zhirong on 2012.0807
+ *	_ Add csma_rxhandler_for_acceptor, temporarily not used.
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -144,6 +146,11 @@ TiCsma * csma_open( TiCsma * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor * n
     mac->shortaddrfrom = address;
     mac->seqid = 0;	
     mac->sendprob = CSMA_P_INSIST_INDICATOR;
+	
+	#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+	mac->rxhandler = NULL;
+    mac->rxhandlerowner = NULL;
+	#endif
     
     memset( &mac->stat, 0x00, sizeof(TiCsmaStatistics) );
 
@@ -230,7 +237,7 @@ intx csma_send( TiCsma * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option
         // header 11 B = 
         //  + 2B frame control + 1B sequence number + 2B destination pan + 2B destination address
         //  + 2B source pan + 2B source address
-        // however, we should leave 12 bytes in the front becacuse there's an 
+        // however, we should leave 12 bytes in the front because there's an 
         // additional frame length occupied 1B.
         
         //frame_dump(mac->txbuf);
@@ -380,6 +387,7 @@ intx _csma_wait_channelclear( TiCsma * mac, int interval )
  */
 intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
 {   
+	TiFunRxHandler temphandler;//JOE 0807  add
 	uintx count=0, len;
 	char * buf;
 	bool ack_success = false;
@@ -428,7 +436,11 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
         if (mac->rxtx->ischnclear(mac) && (hal_random_uint8() < mac->sendprob))
         {
             count = nac_send(mac->nac, frame, option);
-            
+			
+			#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+			temphandler = mac->nac->rxhandler;
+			mac->nac->rxhandler = NULL;
+            #endif
             if (CONFIG_CSMA_MIN_ACK_TIME > 0)
             {
                 timer_stop(mac->timer);
@@ -503,7 +515,7 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
             while (!timer_expired(mac->timer)) 
             { 
                 nac_evolve(mac->nac, NULL);
-                rxf = nac_rxquefront(nac);
+                rxf = nac_rxquefront(mac->nac);
                 if ((rxf != NULL) && (!frame_empty(rxf)))
                 {
                     buf = frame_startptr(rxf);
@@ -515,12 +527,14 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
                             ack_success = true;
                             break;
                         }
-                        nac_rxquepopfront(nac);
+                        nac_rxquepopfront(mac->nac);
                     }
                 }            
             }           
-
-            retval = (ack_success) ? count : CSMA_IORET_ERROR_NOACK;
+			#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+			mac->nac->rxhandler = temphandler;
+            #endif
+			retval = (ack_success) ? count : CSMA_IORET_ERROR_NOACK;
         } 
         else
 		{
@@ -797,13 +811,14 @@ void csma_evolve( void * macptr, TiEvent * e )
 	{
 		switch (e->id)
 		{
+		/*
 		case EVENT_DATA_ARRIVAL:
 			if (mac->listener != NULL)
-			{
+			{								
 				mac->listener( mac->lisowner, e );
 			}
             break;
-        /*
+        
         case ADTCSMA_EVENT_SHUTDOWN_REQUEST:
             // no matter what the current state is, then you can do shutdown
             vti_stop(); 
@@ -825,6 +840,61 @@ void csma_evolve( void * macptr, TiEvent * e )
 
 	return;
 }
+
+
+#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+intx csma_rxhandler_for_acceptor( void * object, TiFrame * input, TiFrame * output, uint8 option )
+{
+	TiCsma * mac = (TiCsma *)object;
+	uintx retval;
+	uint16 fcf;
+    char * ptr = NULL;
+    uint8 cur;
+
+	ptr = frame_startptr(input);
+	retval = *ptr + 1;
+
+	fcf = I802F154_MAKEWORD(ptr[2], ptr[1]);
+	switch (FCF_FRAMETYPE(fcf))
+	{
+	case FCF_FRAMETYPE_DATA:
+		frame_setlength(input,retval);
+		break;
+		
+	case FCF_FRAMETYPE_ACK:
+	case FCF_FRAMETYPE_COMMAND:
+	case FCF_FRAMETYPE_BEACON:
+	default:
+		retval = CSMA_IORET_NOACTION;
+		break;
+	}
+
+    if (retval > 0)
+	{
+        cur = frame_curlayer(input);
+        svc_assert(input->layercapacity[cur] >= (CSMA_HEADER_SIZE  + CSMA_TAIL_SIZE));
+        if (frame_skipinner(input, CSMA_HEADER_SIZE+1, CSMA_TAIL_SIZE))
+        {
+            retval --;    
+            retval -= CSMA_HEADER_SIZE;
+            retval -= CSMA_TAIL_SIZE;
+            frame_setlength(input, retval);
+        }
+        else
+            retval = 0;
+    }
+    else
+	{
+        frame_setlength(input, 0);
+    }
+	
+	if(mac->rxhandler!=NULL)
+	{
+		mac->rxhandler( mac->rxhandlerowner, input, NULL, 0x00 );
+	}
+	return retval;
+}
+#endif
 
 void csma_statistics( TiCsma * mac, TiCsmaStatistics * stat )
 {

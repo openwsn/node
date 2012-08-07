@@ -184,6 +184,10 @@ typedef struct{
     TiFunEventHandler listener;
     void * lisowner;
 	uint8 option;
+	#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+	TiFunRxHandler rxhandler;
+    void * rxhandlerowner;
+	#endif
     char txbuf_memory[FRAME_HOPESIZE(CONFIG_CSMA_MAX_FRAME_SIZE+1)];
 	uintx success;
 }TiCsma;
@@ -293,6 +297,15 @@ inline void csma_setsendprobability( TiCsma * mac , uint8 probability)
 	mac->sendprob = probability;
 }
 
+intx csma_rxhandler_for_acceptor( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
+#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+inline void csma_setrxhandler( TiCsma * mac, TiFunRxHandler rxhandler, void * rxhandlerowner )
+{
+    mac->rxhandler = rxhandler;
+    mac->rxhandlerowner = rxhandlerowner;
+}
+#endif
 
 void csma_statistics( TiCsma * mac, TiCsmaStatistics * stat );
 

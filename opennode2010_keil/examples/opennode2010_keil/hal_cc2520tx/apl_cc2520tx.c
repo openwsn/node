@@ -63,6 +63,8 @@
 
 static TiUartAdapter        m_uart;      
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
+
 static TiIEEE802Frame154Descriptor m_desc;
 static TiCc2520Adapter      m_cc;
 
@@ -80,14 +82,17 @@ void sendnode1(void)
     TiCc2520Adapter * cc;
     TiUartAdapter * uart;
     TiFrame * txbuf;
+	TiFrame * rxbuf;
+
     TiIEEE802Frame154Descriptor * desc;
     uint8 initlayer;
     uint8 initlayerstart;
     uint8 initlayersize;
     uint8 tmp=0;
 
-    uint8 i, first, seqid, option, len;
+    uint8 i, first, seqid, option, len,seqid_ack,len_ack;
     char * ptr;
+	char * ptr_ack;
 
     seqid = 0;
 
@@ -97,13 +102,15 @@ void sendnode1(void)
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
+	halUartInit(9600,0);
+
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
 	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
 	dbc_mem( msg, strlen(msg) );
     
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
-    cc2520_open( cc, 0, NULL, NULL, 0x00 );
+    cc2520_open( cc, 0, 0x00 );
     cc2520_setchannel( cc, DEFAULT_CHANNEL );
     cc2520_rxon( cc );							    // Enable RX
     cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
@@ -130,6 +137,7 @@ void sendnode1(void)
         initlayersize = 6;
 
         txbuf = frame_open((char*)(&m_txbuf), sizeof(m_txbuf), initlayer, initlayerstart, initlayersize );
+		rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 
         // assign some random data into the frame. for demostration only.        
         ptr = frame_startptr(txbuf);
@@ -151,16 +159,24 @@ void sendnode1(void)
         first = frame_firstlayer(txbuf);
 
 		option=1;
-        //len = cc2420_write(cc, frame_layerstartptr(txbuf,first), frame_layercapacity(txbuf,first), option);
         len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length(txbuf), option);
-
+		USART_Send(seqid);
         if (len > 0)
         {
+			frame_reset(rxbuf, 0, 0, 0);
             led_toggle(LED_RED);
             //led_on(LED_RED);
             //hal_delayms(500);
 
             seqid++;
+
+//			len_ack = cc2520_read(cc, frame_startptr(rxbuf), frame_capacity(rxbuf), 0x00);
+//        	if (len_ack > 0)
+//        	{
+//				ptr_ack = frame_startptr(rxbuf);
+//				USART_Send(ptr_ack[3]);
+//			}
+				
 /*
             tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
             dbc_uint8(tmp);                     // size of the TiFrame object

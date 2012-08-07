@@ -237,7 +237,7 @@ uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFram
     return count;
 }
 
-uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * paddr, TiFrame * f, uint8 option )
+uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, uint16 * paddr, TiFrame * f, uint8 option )
 {
     
     _TiNioNetLayerDispatcherItem * item;
@@ -275,6 +275,8 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 *
                 // - in fwbuf, which means it should be process by other services in the 
                 //   same layer. (usually forwarding)
                 
+				
+				//@todo 0807 JOE when dispacher->txbuf is empty
                 ioresult = item->rxhandler(item->object, f, dispatcher->txbuf, option);
                 if (ioresult <= 0)
                 {

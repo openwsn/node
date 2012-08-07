@@ -358,10 +358,13 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 //        fmque_popfront(nac->rxque);
 	   	if( fmque_front(nac->rxque)!=NULL )
 	   	{
-       		nac->rxhandler(nac->rxhandlerowner, fmque_front(nac->rxque), NULL, 0x00); //JOE 0803
+       		nac->rxhandler(nac->rxhandlerowner, fmque_front(nac->rxque), NULL, 0x00); 
        		fmque_popfront(nac->rxque);
     	}
 	}
+//	hal_enter_critical();	
+//	_nac_tryrecv(nac);
+//	hal_leave_critical();
     #endif
     
     #ifndef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE

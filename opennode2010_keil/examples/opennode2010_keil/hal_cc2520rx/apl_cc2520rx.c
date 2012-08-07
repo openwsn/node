@@ -58,6 +58,7 @@
 static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiCc2520Adapter     	m_cc;
 static TiUartAdapter        m_uart;
+static TiIEEE802Frame154Descriptor m_desc; 
 
 #if (TEST_CHOICE == 1)
 static void recvnode1(void);
@@ -85,11 +86,18 @@ void recvnode1(void)
 	char * msg = "welcome to recvnode...";
     TiCc2520Adapter * cc;
     TiUartAdapter * uart;
+	uint8 seqid = 0;
+	uint8 seqid_old = 0;
+
+	TiIEEE802Frame154Descriptor * desc;//JOE 0807
+   
+
 	TiFrame * rxbuf;
 	uint8 len;
+	char * p;
     
 	target_init();
-
+	halUartInit(9600,0);
 	led_open();
 	led_on( LED_RED );
 	hal_delayms( 500 );
@@ -101,13 +109,13 @@ void recvnode1(void)
 	dbc_mem( msg, strlen(msg) );
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
-	cc2520_open( cc, 0, NULL, NULL, 0x00 );
+	cc2520_open( cc, 0, 0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
 	cc2520_rxon( cc );							    // enable RX
 	cc2520_enable_addrdecode( cc );					// enable address
 	cc2520_setpanid( cc, PANID );					// network identifier 
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// node identifier in sub-network
-		cc2520_enable_autoack( cc );
+	cc2520_enable_autoack( cc );
 
 	rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
 
@@ -129,12 +137,28 @@ void recvnode1(void)
         if (len > 0)
         {
 			frame_setlength(rxbuf, len);
-            dbc_putchar(len);
-			dbc_write(frame_startptr( rxbuf), len);
-            dbc_putchar(0xff);
-            dbc_putchar(0xff);
-            dbc_putchar(0xff);
-			led_toggle( LED_RED);
+			desc = ieee802frame154_open( &m_desc );
+			//desc = ieee802frame154_format( desc, frame_startptr(rxbuf), frame_capacity(rxbuf ), FRAME154_DEF_FRAMECONTROL_DATA );
+
+			p=frame_startptr(rxbuf);
+			p[0]=p[0];
+			if(ieee802frame154_parse(desc, frame_startptr(rxbuf), frame_length(rxbuf)))
+//			{
+				seqid_old = seqid;
+				seqid = ieee802frame154_sequence(desc);
+	            //dbc_putchar(len);
+				//dbc_write(frame_startptr( rxbuf), len);
+	            //dbc_putchar(0xff);
+	            //dbc_putchar(0xff);
+	            //dbc_putchar(0xff);
+				//led_toggle( LED_RED);
+				USART_Send(seqid);
+				p = frame_startptr( rxbuf );
+				if(seqid-seqid_old>2 && seqid-seqid_old<0xFC)
+				{
+					led_toggle(LED_RED);
+				}
+//			}
         }
 	}
 }
