@@ -578,7 +578,7 @@ intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
             retval = (count >= 0) ? count : CSMA_IORET_ERROR_UNKNOWN;  
 			if(CSMA_IORET_SUCCESS(retval))
 			{
-				mac->seqid ++;	//JOE 0725
+				mac->seqid ++;
 			}
         }
         else
@@ -772,13 +772,12 @@ void csma_evolve( void * macptr, TiEvent * e )
 			// retry failed and not exceed the maximum sending limitation, then 
 			// the state will still in CSMA_STATE_BACKOFF state. The backoff timer
 			// will also be started by _csma_trysend() function.
-			
 
 			retval = _csma_trysend(  mac, mac->txbuf, mac->txbuf->option );
 			if (CSMA_IORET_SUCCESS(retval) )
 			{                
 				mac->state = CSMA_STATE_IDLE;
-				mac->retry = 0;//JOE 0726
+				mac->retry = 0;
 //                if (mac->listener != NULL)
 //                {
 //                    memset(&tmpe, 0x00, sizeof(TiEvent));
@@ -888,7 +887,7 @@ intx csma_rxhandler_for_acceptor( void * object, TiFrame * input, TiFrame * outp
         frame_setlength(input, 0);
     }
 	
-	if(mac->rxhandler!=NULL)
+	if( mac->rxhandler != NULL )
 	{
 		mac->rxhandler( mac->rxhandlerowner, input, NULL, 0x00 );
 	}

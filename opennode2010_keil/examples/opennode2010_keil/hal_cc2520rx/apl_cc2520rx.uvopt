@@ -266,10 +266,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>32</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>139</TopLine>
-      <CurrentLine>154</CurrentLine>
+      <TopLine>100</TopLine>
+      <CurrentLine>100</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_cc2520rx.c</PathWithFileName>
       <FilenameWithoutPath>apl_cc2520rx.c</FilenameWithoutPath>
@@ -891,9 +891,9 @@
         </Doc>
         <Doc>
           <Name>.\apl_cc2520rx.c</Name>
-          <ColumnNumber>32</ColumnNumber>
-          <TopLine>139</TopLine>
-          <CurrentLine>154</CurrentLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>100</TopLine>
+          <CurrentLine>100</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn/rtl/rtl_ieee802frame154.h</Name>

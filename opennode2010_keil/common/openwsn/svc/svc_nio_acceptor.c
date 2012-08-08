@@ -156,11 +156,13 @@ void nac_close( TiNioAcceptor * nac )
     }
 }
 
+#ifdef CONFIG_NIOACCEPTOR_RXHANDLE_ENABLE
 void nac_setrxhandler( TiNioAcceptor * nac, TiFunRxHandler rxhandler, void * rxhandlerowner )
 {
     nac->rxhandler = rxhandler;
     nac->rxhandlerowner = rxhandlerowner;
 }
+#endif
 
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
 {
@@ -351,7 +353,7 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	}
 */    
 		
-    #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+    #ifdef CONFIG_NIOACCEPTOR_RXHANDLE_ENABLE
     if (nac->rxhandler != NULL)
     {
 //        nac->rxhandler(nac->rxhandlerowner, (TiFrame *)fmque_front(nac->rxque), NULL, 0x00);

@@ -137,7 +137,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U805306163 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000</Name>
+          <Name>-U805306163 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -199,10 +199,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>4</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>153</TopLine>
-      <CurrentLine>178</CurrentLine>
+      <TopLine>43</TopLine>
+      <CurrentLine>43</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_cc2520tx.c</PathWithFileName>
       <FilenameWithoutPath>apl_cc2520tx.c</FilenameWithoutPath>
@@ -1016,9 +1016,9 @@
         </Doc>
         <Doc>
           <Name>.\apl_cc2520tx.c</Name>
-          <ColumnNumber>4</ColumnNumber>
-          <TopLine>153</TopLine>
-          <CurrentLine>178</CurrentLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>43</TopLine>
+          <CurrentLine>43</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>

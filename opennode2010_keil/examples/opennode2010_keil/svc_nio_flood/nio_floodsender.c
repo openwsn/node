@@ -120,10 +120,10 @@ void ledflood( uint16 ontime, uint16 offtime )
 	 
 	target_init();
 
-	led_open();
-	led_on(LED_ALL);
+	led_open(LED_RED);
+	led_on(LED_RED);
 	hal_delayms( 1000 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
 	dbc_mem(msg, strlen(msg));
 
@@ -142,7 +142,7 @@ void ledflood( uint16 ontime, uint16 offtime )
 
 	// open the transceiver driver. we use TiCc2420Adapter in this example.
 	
-	cc2520_open( cc, 0, NULL, NULL, 0x00 );
+	cc2520_open( cc, 0, 0x00 );
     // cc2420_settxpower( cc, CC2420_POWER_2 );
 	rxtx = cc2520_interface( cc, &m_rxtx );
 	hal_assert( rxtx != NULL );
@@ -154,12 +154,12 @@ void ledflood( uint16 ontime, uint16 offtime )
 	// delay results.
 	
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
-	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 
-		NULL, NULL, 0x00);
+	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 0x00);
 	//flood_open( net, (TiNioNetLayerDispatcher *) mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	net = flood_open( net, mac, NULL, NULL, PANID, LOCAL_ADDRESS );
 	hal_assert( (timer2 != NULL) && (mac != NULL) );
 	state = 0;
+
 	while(1) 
 	{
 		txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 25, 6 );
@@ -182,7 +182,6 @@ void ledflood( uint16 ontime, uint16 offtime )
                 led_toggle( LED_RED);
                 break;
             }
-			
 			// delay some time before retry in order to avoid occupy the wireless 
 			// channel all the time.
             hal_delayms(50);                       

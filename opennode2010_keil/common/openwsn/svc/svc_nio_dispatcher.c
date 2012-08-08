@@ -274,15 +274,18 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, uint16 * paddr, T
                 //   level protocols
                 // - in fwbuf, which means it should be process by other services in the 
                 //   same layer. (usually forwarding)
-                
-				
+                				
 				//@todo 0807 JOE when dispacher->txbuf is empty
-                ioresult = item->rxhandler(item->object, f, dispatcher->txbuf, option);
-                if (ioresult <= 0)
-                {
-                    frame_clear(f);
-                    ioresult = 0;
-                }
+				
+				//if(frame_empty( dispacher->txbuf ))	//@todo
+				//{
+					ioresult = item->rxhandler(item->object, f, dispatcher->txbuf, option);
+					if (ioresult <= 0)
+					{
+						frame_clear(f);
+						ioresult = 0;
+					}
+				//}
             }
         }
         else{

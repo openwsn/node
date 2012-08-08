@@ -33,6 +33,7 @@
 #include "../hal_debugio.h"
 
 #ifdef CONFIG_DEBUG
+#define CONFIG_DBO_UART1
 
 static bool g_dbio_init = false;
 TiDebugIoAdapter g_dbio;
@@ -51,6 +52,27 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate )
 	memset( &g_dbio, 0x00, sizeof(TiDebugIoAdapter) );
 
 	#ifdef CONFIG_DBO_UART1
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	USART_InitStructure.USART_BaudRate = bandrate;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+	USART_Init( USART1,&USART_InitStructure);
+	USART_Cmd( USART1,ENABLE);
 	#endif
 
 	#ifdef CONFIG_DBO_UART2
@@ -59,11 +81,9 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate )
     
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    // Configure USART2 Rx (PA.3) as input floating 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -96,20 +116,15 @@ void dbio_close( TiDebugIoAdapter * dbio )
 char dbio_getchar( TiDebugIoAdapter * dbio )
 {
     // Loop until the USARTz Receive Data Register is not empty 
+	#ifdef CONFIG_DBO_UART1
+	while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {};
+    return (USART_ReceiveData(USART1) & 0xFF); 
+	#endif
+	
+	#ifdef CONFIG_DBO_UART2
     while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET) {};
     return (USART_ReceiveData(USART2) & 0xFF); 
-    //return (USART_ReceiveData(USART2) & 0x7F); 
-    
-//	#ifdef CONFIG_DBO_UART0
-//	while (!(UCSR0A & (1<<RXC0))) {};
-//	return UDR0;
-//	#endif
-//
-//	#ifdef CONFIG_DBO_UART1
-//	while (!(UCSR1A & (1<<RXC1))) {};
-//	return UDR1;
-//	#endif
-	//return 0;
+    #endif
 }
 
 /* _dbio_putchar()
@@ -122,19 +137,15 @@ char dbio_getchar( TiDebugIoAdapter * dbio )
 intx dbio_putchar( TiDebugIoAdapter * dbio, char ch )
 {
     /* Loop until USARTy DR register is empty */
+	#ifdef CONFIG_DBO_UART1
+    while ( USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET) {};
+    USART_SendData( USART1,ch);
+	#endif
+		
+	#ifdef CONFIG_DBO_UART2
     while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
     USART_SendData( USART2,ch);
-
-//	/* wait for the transmit buffer empty */
-//	#ifdef CONFIG_DBO_UART0
-//	while (!(UCSR0A & (1<<UDRE0))) {};
-//	UDR0 = ch;
-//	#endif
-//
-//	#ifdef CONFIG_DBO_UART1
-//	while (!(UCSR1A & (1<<UDRE1))) {};
-//	UDR1 = ch;
-//	#endif
+	#endif
 
 	return 1;
 }

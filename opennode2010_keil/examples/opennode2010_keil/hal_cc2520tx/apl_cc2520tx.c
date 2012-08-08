@@ -195,17 +195,8 @@ void sendnode1(void)
             //dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
             //dbc_uint8(len);                     // data length actually sent
 			hal_delayus(5);
-
-			// The output is as the following:
-            // 0xBC = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE) 
-            // 0x3C = sizeof(TiFrame) (occupies 60 bytes in STM32F103, 0x3C+0x80=0xBC. Ok)
-            // 0x14 = frame_capacity(txbuf) 
-            // 0x14 = frame_length(txbuf) 
-            // 0x14 = actually sent (equal to frame_length(txbuf). Ok).
         }
         else{
-            //led_on(LED_RED);
-            //hal_delayms(100);
         }
     }
 }

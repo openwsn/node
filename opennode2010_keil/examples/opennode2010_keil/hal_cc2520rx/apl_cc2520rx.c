@@ -111,7 +111,7 @@ void recvnode1(void)
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	cc2520_open( cc, 0, 0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
-	cc2520_rxon( cc );							    // enable RX
+	//cc2520_rxon( cc );							    // enable RX
 	cc2520_enable_addrdecode( cc );					// enable address
 	cc2520_setpanid( cc, PANID );					// network identifier 
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// node identifier in sub-network
@@ -138,8 +138,6 @@ void recvnode1(void)
         {
 			frame_setlength(rxbuf, len);
 			desc = ieee802frame154_open( &m_desc );
-			//desc = ieee802frame154_format( desc, frame_startptr(rxbuf), frame_capacity(rxbuf ), FRAME154_DEF_FRAMECONTROL_DATA );
-
 			p=frame_startptr(rxbuf);
 			p[0]=p[0];
 			if(ieee802frame154_parse(desc, frame_startptr(rxbuf), frame_length(rxbuf)))
@@ -152,7 +150,7 @@ void recvnode1(void)
 	            //dbc_putchar(0xff);
 	            //dbc_putchar(0xff);
 				//led_toggle( LED_RED);
-				USART_Send(seqid);
+//				USART_Send(seqid);
 				p = frame_startptr( rxbuf );
 				if(seqid-seqid_old>2 && seqid-seqid_old<0xFC)
 				{

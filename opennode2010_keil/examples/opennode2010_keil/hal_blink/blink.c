@@ -1,5 +1,3 @@
-#ifndef _LED_H_5785_
-#define _LED_H_5785_
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
@@ -26,14 +24,52 @@
  *
  ******************************************************************************/
 
-/*****************************************************************************
- * @author zhangwei on 2007.06.29
- *  - first created
- * @modified by zhangwei on 2010.05.15
- *  - ported from winavr 2008 to winavr 2009 version. i use portable winavr 2009
- *    and avr studio 4.15
- ****************************************************************************/
+/******************************************************************************
+ * degio.c
+ * @author Shi Zhirong on 20120808
+ *	- first created
+******************************************************************************/
+ 
+#ifdef CONFIG_DEBUG   
+    #define GDEBUG
+#endif 
 
-void led_test( void ); 
+#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
+#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
-#endif
+#include "apl_foundation.h"
+#include "openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_mcu.h"
+#include <stdlib.h>
+#include <string.h>
+#include "openwsn/rtl/rtl_configall.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+
+
+void debugio(void);
+
+int main(void)
+{
+	debugio();
+}
+
+void debugio()
+{
+	uint16 count = 0;
+	led_open(LED_ALL);
+	led_on(LED_ALL);
+	hal_delayms( 1000 );
+	led_off( LED_ALL );
+	while(1)
+	{
+		led_toggle(count);
+		hal_delayms(100);
+		count++;
+	}
+}

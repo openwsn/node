@@ -121,6 +121,8 @@
 #define ALOHA_HEADER_SIZE   11
 #define ALOHA_TAIL_SIZE     2
 
+#define EVENT_DATA_ARRIVAL 	1	
+
 
 #define ALOHA_OPTION_ACK                    0x00
 #define ALOHA_DEF_OPTION                    0x00
