@@ -31,18 +31,10 @@
 #include "../hal_led.h"
 #include "../hal_mcu.h"
 
-static uint8 m_ledstate = 0x00;
-
 void led_open(uint16 id)
 {
-	m_ledstate = 0x00;
-
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-//	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	if (id & LED_RED)
 	{
 		GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
@@ -71,7 +63,7 @@ void led_open(uint16 id)
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_Init(GPIOA, &GPIO_InitStructure);	
 	}
-    led_off( LED_ALL );
+    led_off( id );
 }
 
 void led_close()

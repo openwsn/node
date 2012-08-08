@@ -33,6 +33,7 @@
 #include "../hal_debugio.h"
 
 #ifdef CONFIG_DEBUG
+#undef	CONFIG_DBO_UART2
 #define CONFIG_DBO_UART1
 
 static bool g_dbio_init = false;

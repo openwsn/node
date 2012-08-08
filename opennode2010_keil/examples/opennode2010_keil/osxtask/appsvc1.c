@@ -12,92 +12,30 @@
 #include "asv_foundation.h"
 #include "appsvc1.h"
 
-//#define USART_Send(int)
- //TiAdcAdapter  g_adc;
- //TiLightSensor g_light;
- //TiUartAdapter g_uart;
- uint16 lightvalue;
+TiAppService1 g_task1data;
 
-TiAppService1 * asv1_open( TiAppService1 * svc, uint16 interval )
+TiAppService1 * asv1_open( TiAppService1 * taskdata, uint16 interval ,void *sche)
 {
-	memset( (void*)svc, 0x00, sizeof(TiAppService1) );
-	svc->state = 0;
-	svc->interval = interval;
-    return svc;
+	memset( (void*)taskdata, 0x00, sizeof(TiAppService1) );
+	taskdata->state = 0;
+	taskdata->interval = interval;
+	taskdata->sche=sche;
+    return taskdata;
 }
 
-void asv1_close( TiAppService1 * svc )
+void asv1_close( TiAppService1 * taskdata )
 {
 	return;
 }
 
-uint16 getlightvalue(void)
-{
-	//TiAdcAdapter * adc;
-	//TiLightSensor * light;
-	TiUartAdapter * uart;
-	char * welcome = "sensor adc_light";
-	uint16 val;
 
-	//adc = adc_construct( (void *)&g_adc, sizeof(TiAdcAdapter) );
-	//light = light_construct( (void *)&g_light, sizeof(TiLightSensor) );
-	//uart = uart_construct( (void *)&g_uart, sizeof(TiUartAdapter) );
-
-	// xiao-yuezhang changed the second parameter from 5 to 0
-	//adc_open( adc, 0, NULL, NULL, 0 );
-	//adc_open( adc, 0, NULL, NULL, 0 );
-	//light_open( light, 0, adc );
-	//uart_open( uart, 2, 9600, 8, 1, 0 );
-	//uart_write( uart, welcome, strlen(welcome), 0x00 );
-
-    dbo_putchar( '>' );
-	//val = light_value( light );
-	dbo_n16toa( val );
-
-	//light_close( light );
-	//adc_close( adc );
-	uart_close( uart );
-
-
-	return val;
+void asv1_evolve( TiAppService1 * taskdata, TiEvent * e )
+{  
+	 USART_Send(0xA1);
+	 osx_tlsche_taskspawn( (TiOsxTimeLineScheduler *)(g_task1data.sche), (TiOsxTask)asv1_evolve, &g_task1data, 3, 0, 0x00 );
+	 osx_tlsche_taskspawn( (TiOsxTimeLineScheduler *)(g_task2data.sche), (TiOsxTask)asv2_evolve, &g_task2data, 2, 0, 0x00 );
 }
+	 
 
-void createtask(int8 id,TiOsxTaskHeap *heap,int16 timeline)
-{
-	int8 idx;
-	TiOsxTaskHeapItem item;
-	switch(id)
-	{
-	case 1:{	
-		memset( &item, 0x00, sizeof(item) );
-		item.taskfunction =(TiFunEventHandler)asv1_evolve;
-		item.taskdata = NULL;
-		item.timeline = timeline;
-		item.priority = 1;
-		break;}
-	case 2:{	
-		memset( &item, 0x00, sizeof(item) );
-		item.taskfunction =(TiFunEventHandler)asv2_evolve;
-		item.taskdata = NULL;
-		item.timeline = timeline;
-		item.priority = 1;
-		break;}
-	default:return;
-	}
-
-
-	idx = osx_taskheap_insert( heap, &item );
-}
-
-void asv1_evolve( void * svcptr, TiOsxTaskHeapItem *item )
- {  
-	 USART_Send(0xA1);//led_toggle(LED_RED);
-
-	 createtask(1,heap,3);
-	 createtask(2,heap,2);
-	
-	//lightvalue=getlightvalue();
-
-}
 
 

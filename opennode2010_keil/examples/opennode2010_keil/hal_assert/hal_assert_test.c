@@ -26,12 +26,17 @@
 
 #include "../../common/openwsn/hal/hal_assert.h"
 
+#ifdef CONFIG_DEBUG   
+    #define GDEBUG
+#endif 
+
 /* testing hal_assert() function
  * if the assertion failed, the LED will be blink. it depends on hal_delay() and 
  * led initialization 
  */
 int main()
 {
+	target_init();
     hal_assert(0);
     return 0;
 }

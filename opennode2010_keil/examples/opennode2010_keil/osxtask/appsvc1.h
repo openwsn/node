@@ -9,21 +9,21 @@
 #include "asv_foundation.h"
 #include "../../../common/openwsn/osx/osx_taskpool.h"
 #include "../../../common/openwsn/osx/osx_taskheap.h"
+#include "../../../common/openwsn/osx/osx_tlsche.h"
 #include "appsvc2.h"
-
-extern TiOsxTaskHeap * heap;
 
 typedef struct{
 	uint8 state;
 	uint16 interval;
     TiFunEventHandler listener;
     void * lisowner;
+	void * sche;
 }TiAppService1;
 
-TiAppService1 * asv1_open( TiAppService1 * svc, uint16 interval );
-void asv1_close( TiAppService1 * svc );
-void asv1_evolve( void * svcptr, TiOsxTaskHeapItem *item );
-uint16 getlightvalue(void);
-void createtask(int8 id,TiOsxTaskHeap *heap,int16 timeline);
+extern TiAppService1 g_task1data;
+
+TiAppService1 * asv1_open( TiAppService1 * taskdata, uint16 interval, void *sche);
+void asv1_close( TiAppService1 * taskdata );
+void asv1_evolve( TiAppService1 * taskdata, TiEvent * e );
 
 #endif

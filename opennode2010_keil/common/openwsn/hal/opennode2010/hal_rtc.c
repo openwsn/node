@@ -581,13 +581,10 @@ void _rtcsec_interrupt_osx_handler( void * object, TiEvent * e )
 	{
 		/* Clear the RTC Second interrupt */
 		RTC_ClearITPendingBit(RTC_IT_SEC);
-		USART_Send( 0x00);					 //0705
-
 		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
 		{
 			rtc->listener(rtc->lisowner,NULL);
 		}
-		//led_toggle( LED_RED);//for testing
 	}
 }
 

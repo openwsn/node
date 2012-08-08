@@ -291,9 +291,9 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>36</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>32</TopLine>
+      <TopLine>19</TopLine>
       <CurrentLine>32</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\appsvc1.c</PathWithFileName>
@@ -319,10 +319,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>1</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>144</TopLine>
-      <CurrentLine>157</CurrentLine>
+      <TopLine>81</TopLine>
+      <CurrentLine>93</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\osxtask.c</PathWithFileName>
       <FilenameWithoutPath>osxtask.c</FilenameWithoutPath>
@@ -830,10 +830,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>23</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>238</TopLine>
-      <CurrentLine>238</CurrentLine>
+      <TopLine>569</TopLine>
+      <CurrentLine>584</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_rtc.c</PathWithFileName>
       <FilenameWithoutPath>hal_rtc.c</FilenameWithoutPath>
@@ -870,7 +870,7 @@
       <GroupNumber>4</GroupNumber>
       <FileNumber>41</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>20</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -952,11 +952,11 @@
     <cbSel>0</cbSel>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>47</FileNumber>
+      <FileNumber>46</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>5</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -966,11 +966,11 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>48</FileNumber>
+      <FileNumber>47</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>77</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>0</TopLine>
       <CurrentLine>0</CurrentLine>
@@ -980,14 +980,14 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>49</FileNumber>
+      <FileNumber>48</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>13</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>44</TopLine>
-      <CurrentLine>48</CurrentLine>
+      <TopLine>120</TopLine>
+      <CurrentLine>135</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\osx\osx_tlsche.c</PathWithFileName>
       <FilenameWithoutPath>osx_tlsche.c</FilenameWithoutPath>
@@ -995,9 +995,9 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\osx\osx_kernel.c</PathWithFilename>
-    <TopLine>325</TopLine>
-    <CurrentLine>342</CurrentLine>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\osx\osx_kernel.h</PathWithFilename>
+    <TopLine>187</TopLine>
+    <CurrentLine>195</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1021,9 +1021,9 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\osx\osx_kernel.h</PathWithFilename>
-    <TopLine>187</TopLine>
-    <CurrentLine>195</CurrentLine>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\osx\osx_kernel.c</PathWithFilename>
+    <TopLine>327</TopLine>
+    <CurrentLine>342</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1055,26 +1055,26 @@
       <Documents>
         <Doc>
           <Name>.\appsvc1.c</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>32</TopLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>19</TopLine>
           <CurrentLine>32</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\osx\osx_tlsche.c</Name>
-          <ColumnNumber>13</ColumnNumber>
-          <TopLine>44</TopLine>
-          <CurrentLine>48</CurrentLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>120</TopLine>
+          <CurrentLine>135</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\osxtask.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>144</TopLine>
-          <CurrentLine>157</CurrentLine>
+          <ColumnNumber>1</ColumnNumber>
+          <TopLine>81</TopLine>
+          <CurrentLine>93</CurrentLine>
         </Doc>
         <Doc>
           <Name>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\osx\osx_kernel.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>325</TopLine>
+          <TopLine>327</TopLine>
           <CurrentLine>342</CurrentLine>
         </Doc>
         <Doc>
@@ -1082,6 +1082,12 @@
           <ColumnNumber>0</ColumnNumber>
           <TopLine>187</TopLine>
           <CurrentLine>195</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_rtc.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>569</TopLine>
+          <CurrentLine>584</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

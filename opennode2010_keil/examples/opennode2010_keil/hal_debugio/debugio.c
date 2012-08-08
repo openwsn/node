@@ -34,8 +34,6 @@
     #define GDEBUG
 #endif 
 
-#define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
-#define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
 #include "apl_foundation.h"
 #include "openwsn/hal/hal_configall.h"
@@ -66,7 +64,7 @@ void debugio()
 
 	target_init();
 
-	led_open();
+	led_open(LED_ALL);
 	led_on(LED_ALL);
 	hal_delayms( 1000 );
 	led_off( LED_ALL );
