@@ -95,31 +95,30 @@
 
 static TiFrameRxTxInterface                     m_rxtx;
 static char                                     m_nac[NAC_SIZE];
-static TiCsma                               	m_aloha;
+static TiNioMac                               	m_mac;
 static TiTimerAdapter                           m_timer;
 static char                                     m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                                     m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-
 static TiCc2520Adapter                          m_cc;
 
-static void aloha_sendnode(void);
+static void csma_sendnode(void);
 
 
 int main(void)
 {
-	aloha_sendnode();
+	csma_sendnode();
     return 0;
 }
 
 
-void aloha_sendnode(void)
+void csma_sendnode(void)
 { 
 	intx retval=0;
 
     TiCc2520Adapter * cc;
     TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
-    TiCsma * mac;
+    TiNioMac * mac;
 	TiTimerAdapter * timer;
 	TiFrame * txbuf;
 	TiFrame * rxbuf;
@@ -128,14 +127,14 @@ void aloha_sendnode(void)
 
     target_init();
 
-	led_open();
+	led_open(LED_RED);
 	led_on( LED_ALL );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
 	cc = cc2520_construct( (char *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nac[0], NAC_SIZE );
-	mac = csma_construct( (char *)(&m_aloha), sizeof(TiCsma) );
+	mac = mac_construct( (char *)(&m_mac), sizeof(TiNioMac) );
     timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
     
 	cc2520_open(cc, 0, 0x00 );
@@ -146,8 +145,8 @@ void aloha_sendnode(void)
     rxtx = cc2520_interface( cc, &m_rxtx );
     hal_assert( rxtx != NULL );
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-	csma_open(mac, rxtx, nac, CONFIG_CSMA_CHANNEL, CONFIG_CSMA_PANID, CONFIG_CSMA_LOCAL_ADDRESS, timer , 0x00 );
-	csma_setsendprobability	 (mac,0xFF);
+	mac_open(mac, rxtx, nac, CONFIG_CSMA_CHANNEL, CONFIG_CSMA_PANID, CONFIG_CSMA_LOCAL_ADDRESS, timer , 0x00 );
+	mac_setsendprobability(mac,0xFF);
     
     txbuf = frame_open( (char*)(&m_txbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 ); 
 	rxbuf = frame_open( (char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 3, 20, 25 );    
@@ -155,7 +154,7 @@ void aloha_sendnode(void)
     hal_enable_interrupts();
 	while(1) 
 	{
-		csma_setremoteaddress( mac, CONFIG_CSMA_REMOTE_ADDRESS );
+		mac_setremoteaddress( mac, CONFIG_CSMA_REMOTE_ADDRESS );
         frame_reset(txbuf, 3, 20, 25);
       
 	    pc = frame_startptr(txbuf);
@@ -167,17 +166,14 @@ void aloha_sendnode(void)
 
         while (1)
         {  
-            retval = csma_send(mac, CONFIG_CSMA_REMOTE_ADDRESS, txbuf, 0); 
-			if( retval == CSMA_IORET_ERROR_NOACK || CSMA_IORET_ERROR_ACCEPTED_AND_BUSY || CSMA_IORET_SUCCESS(retval) )
+            retval = mac_send(mac, CONFIG_CSMA_REMOTE_ADDRESS, txbuf, 1); 
+			if( retval == MAC_IORET_ERROR_NOACK || MAC_IORET_ERROR_ACCEPTED_AND_BUSY || MAC_IORET_SUCCESS(retval) )
             {	
                 led_toggle( LED_RED );
                 break;
             }
         }
-		
-		// for simple aloha, you needn't to call aloha_evolve(). it's necessary for 
-        // standard aloha.
-   
+
         csma_evolve( mac, NULL );
         nac_evolve( mac->nac, NULL);
        

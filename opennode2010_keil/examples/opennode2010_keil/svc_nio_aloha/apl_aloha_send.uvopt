@@ -203,10 +203,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>18</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>103</TopLine>
-      <CurrentLine>115</CurrentLine>
+      <TopLine>134</TopLine>
+      <CurrentLine>163</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_aloha_send.c</PathWithFileName>
       <FilenameWithoutPath>apl_aloha_send.c</FilenameWithoutPath>
@@ -736,6 +736,20 @@
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</PathWithFileName>
       <FilenameWithoutPath>hal_targetboard.c</FilenameWithoutPath>
     </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>0</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_random.c</PathWithFileName>
+      <FilenameWithoutPath>hal_random.c</FilenameWithoutPath>
+    </File>
   </Group>
 
   <Group>
@@ -901,9 +915,9 @@
       <Documents>
         <Doc>
           <Name>.\apl_aloha_send.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>103</TopLine>
-          <CurrentLine>115</CurrentLine>
+          <ColumnNumber>18</ColumnNumber>
+          <TopLine>134</TopLine>
+          <CurrentLine>163</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

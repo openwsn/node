@@ -54,6 +54,7 @@
 #define CONFIG_TEST_ACCEPTOR_RXHANDLER
 
 #define CONFIG_DEBUG
+#undef  CONFIG_DEBUG
 
 #define CONFIG_TEST_ADDRESSRECOGNITION
 #define CONFIG_TEST_ACK
@@ -66,7 +67,7 @@
 #define BROADCAST_ADDRESS			0xFFFF
 
 /* The value is 128 */
-#define MAX_IEEE802FRAME154_SIZE    I802F154_PSDU_SIZE
+#define MAX_IEEE802FRAME154_SIZE    128
 
 #define NAC_SIZE NIOACCEPTOR_HOPESIZE(CONFIG_NIOACCEPTOR_RXQUE_CAPACITY,CONFIG_NIOACCEPTOR_TXQUE_CAPACITY)
 
@@ -85,7 +86,7 @@ static TiTimerAdapter           m_timer2;
 static char                     m_rxbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                     m_txbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char 					m_nacmem[NAC_SIZE];
-static TiCsma                               	m_aloha;
+static TiNioMac                 m_mac;
 
 
 static void echonode(void);
@@ -102,47 +103,49 @@ void echonode(void)
 	TiNioAcceptor * nac;
 	TiTimerAdapter   *timer;
 	TiTimerAdapter   *timer2;
-	TiCsma * mac;	
+	TiNioMac * mac;	
 	TiFrame * rxbuf;
 	TiFrame * txbuf;
 	char * msg = "welcome to nioacceptor based echo test...";
 	int len=0;
 	int count;
+	char * ptr;
 	uint8 state;
-    halUartInit(9600,0);
 
     target_init();
+    halUartInit(9600,0);
 
-	led_open();
-	led_on( LED_ALL );
+	led_open(LED_RED);
+	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
-	mac = csma_construct( (char *)(&m_aloha), sizeof(TiCsma) );
+	mac = mac_construct( (char *)(&m_mac), sizeof(TiNioMac) );
     timer = timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
 	timer2 = timer_construct(( char *)(&m_timer2),sizeof(TiTimerAdapter));
 	
 	cc = cc2520_open( cc, 0, 0x00 );
 	rxtx = cc2520_interface( cc, &m_rxtx );
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-	csma_open(mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer , 0x00 );
+	mac_open(mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer , 0x00 );
 
 	#ifdef CONFIG_TEST_ACCEPTOR_RXHANDLER
 	timer2 = timer_open( timer2, 0, NULL, NULL, 0x01 ); 
     cc = cc2520_open( cc, 0, 0x00 );
     rxtx = cc2520_interface( cc, &m_rxtx );
 	nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
-
-
+ 
 	cc2520_setrxfilter(cc,nac_rxfilter_for_transceiver,nac);
-    nac_setrxhandler(nac, csma_rxhandler_for_acceptor, mac); 
+  		#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+		nac_setrxhandler(nac, csma_rxhandler_for_acceptor, mac); 
+		#endif
 	#endif
  
     cc2520_setchannel( cc, DEFAULT_CHANNEL );
     cc2520_rxon( cc );							    // Enable RX
-    //cc2520_enable_addrdecode( cc );				// enable address decoding and filtering
+    cc2520_enable_addrdecode( cc );				// enable address decoding and filtering
     cc2520_setpanid( cc, PANID );					// set network identifier 
     cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
     cc2520_enable_autoack( cc );
@@ -162,10 +165,26 @@ void echonode(void)
 	 * object when a frame accepted into the rxque. */
 
 	#ifdef CONFIG_TEST_ACCEPTOR_RXHANDLER
-	USART_Send(0xFF);
+	//USART_Send(0xFF);
 	while (1) 
     {
+		#ifndef CSMA_RXHANDLER_FOR_ACCEPTOR
+		count = mac_recv(mac,rxbuf,0x00);
+		if(count>0)
+		{
+			led_toggle(LED_RED);	  
+			//for testing seqid
+			frame_moveouter(rxbuf);	   
+			ptr=frame_startptr(rxbuf);
+			USART_Send(ptr[3]);
+		}
+		mac_evolve(mac,NULL);
         nac_evolve(nac,NULL);
+		#endif
+
+		#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+        nac_evolve(nac,NULL);	
+		#endif
     }
 	#endif
 }

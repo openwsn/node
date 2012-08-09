@@ -44,7 +44,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\</OutputDirectory>
-          <OutputName>nio_aloha_recv</OutputName>
+          <OutputName>nio_aloha_send</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -160,7 +160,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -214,7 +214,7 @@
             <RoSelD>3</RoSelD>
             <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
-            <OptFeed>1</OptFeed>
+            <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
             <NoZi2>0</NoZi2>
             <NoZi3>0</NoZi3>
@@ -319,7 +319,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x5000</Size>
+                <Size>0x40000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -392,9 +392,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>apl_aloha_recv.c</FileName>
+              <FileName>apl_csma_send.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\apl_aloha_recv.c</FilePath>
+              <FilePath>.\apl_csma_send.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -437,6 +437,21 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\misc.c</FilePath>
             </File>
             <File>
+              <FileName>stm32f10x_bkp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_bkp.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_dbgmcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dbgmcu.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_dma.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f10x_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_exti.c</FilePath>
@@ -447,19 +462,14 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_flash.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_fsmc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f10x_i2c.c</FileName>
+              <FileName>stm32f10x_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_i2c.c</FilePath>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_iwdg.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_pwr.c</FileName>
@@ -490,6 +500,11 @@
               <FileName>stm32f10x_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_wwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\stm32f10x\std\src\stm32f10x_wwdg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -616,6 +631,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_lightqueue.c</FilePath>
             </File>
+            <File>
+              <FileName>rtl_random.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_random.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtl_dumpframe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_dumpframe.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -627,9 +652,9 @@
               <FilePath>..\..\..\common\openwsn\svc\svc_nio_acceptor.c</FilePath>
             </File>
             <File>
-              <FileName>svc_nio_aloha.c</FileName>
+              <FileName>svc_nio_csma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\svc\svc_nio_aloha.c</FilePath>
+              <FilePath>..\..\..\common\openwsn\svc\svc_nio_csma.c</FilePath>
             </File>
           </Files>
         </Group>

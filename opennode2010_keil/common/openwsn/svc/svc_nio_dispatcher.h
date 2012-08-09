@@ -145,7 +145,7 @@ void nio_dispa_evolve(void* object, TiEvent * e);
 bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
     TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
 bool nio_dispa_register_default(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
-    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve)
+    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id);
 
 

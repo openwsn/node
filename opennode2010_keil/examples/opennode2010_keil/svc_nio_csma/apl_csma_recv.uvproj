@@ -392,9 +392,9 @@
               <FilePath>.\apl_foundation.h</FilePath>
             </File>
             <File>
-              <FileName>apl_aloha_recv.c</FileName>
+              <FileName>apl_csma_recv.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\apl_aloha_recv.c</FilePath>
+              <FilePath>.\apl_csma_recv.c</FilePath>
             </File>
           </Files>
         </Group>

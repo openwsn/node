@@ -386,8 +386,10 @@ intx _csma_wait_channelclear( TiCsma * mac, int interval )
  *  CSMA_IORET_ERROR_ACCEPTED_AND_BUSY: when the channel is busy.
  */
 intx _csma_trysend( TiCsma * mac, TiFrame * frame, uint8 option )
-{   
-	TiFunRxHandler temphandler;//JOE 0807  add
+{
+	#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR   
+	TiFunRxHandler temphandler;
+	#endif
 	uintx count=0, len;
 	char * buf;
 	bool ack_success = false;

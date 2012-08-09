@@ -45,8 +45,8 @@
 #include "../rtl/rtl_foundation.h"
 #include "../hal/hal_uart.h"
 #include "svc_foundation.h"
-#include "svc_nio_csma.h"
-#include "svc_nio_dispatcher"
+#include "svc_nio_mac.h"
+#include "svc_nio_dispatcher.h"
 #include "svc_nodebase.h"
 #include "../osx/osx_tlsche.h"
 
@@ -55,7 +55,7 @@
 #define NIO_DISPA_STATE_RECVING     0
 
 static uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispacher );
-static uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher, __packed uint16 * paddr, TiFrame * f, uint8 option );
+static uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher,__packed uint16 * paddr, TiFrame * f, uint8 option );
 static intx _nio_dispa_invoke_txhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
     TiFrame * frame, TiFrame * fwbuf, uint8 option);
 static intx _nio_dispa_invoke_rxhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
@@ -76,7 +76,7 @@ void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher)
 }
 
 //TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac)
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac,TiOsxTimeLineScheduler * scheduler)
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler)
 {
     // The memory block must be large enough to hold the dispatcher object.
     //svc_assert( sizeof(TiNioNetLayerDispatcher) <= dispatcher->memsize );//non memsize
@@ -190,8 +190,8 @@ uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
         // accepted by MAC. it doesn't means the frame has already been successfully
         // sent by the PHY layer.
         option = dispatcher->txbuf->option;
-        ioresult = csma_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
-        if ( CSMA_IORET_SUCCESS(ioresult) || CSMA_IORET_ERROR_NOACK || CSMA_IORET_ERROR_ACCEPTED_AND_BUSY )
+        ioresult = mac_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
+        if ( MAC_IORET_SUCCESS(ioresult) || ioresult == MAC_IORET_ERROR_NOACK || ioresult == MAC_IORET_ERROR_ACCEPTED_AND_BUSY )
 		{
 			frame_clear(dispatcher->txbuf);				
 		}
@@ -237,7 +237,7 @@ uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFram
     return count;
 }
 
-uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, uint16 * paddr, TiFrame * f, uint8 option )
+uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * paddr, TiFrame * f, uint8 option )
 {
     
     _TiNioNetLayerDispatcherItem * item;
@@ -256,7 +256,7 @@ uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, uint16 * paddr, T
     if (frame_empty(f) )
     {
         // fwbuf here is uses as a temporary buffer only
-        ioresult = csma_recv(dispatcher->mac,  f, 0x00);
+        ioresult = mac_recv(dispatcher->mac,  f, 0x00);
         if (ioresult > 0)
         {
             proto_id = frame_startptr(f)[0];

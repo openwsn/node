@@ -137,17 +137,17 @@ void recvnode(void)
     target_init();
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
-    led_open();
-    led_on( LED_ALL );
+    led_open(LED_RED);
+    led_on( LED_RED );
     hal_delayms( 500 );
-    led_off( LED_ALL );
+    led_off( LED_RED );
 
     cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));
     nac = nac_construct(&m_nac[0], NAC_SIZE);
     mac = aloha_construct((char *)(&m_aloha), sizeof(TiAloha));
     timer2= timer_construct((char *)(&m_timer2), sizeof(TiTimerAdapter));
 
-    cc2520_open(cc, 0, NULL, NULL, 0x00 );
+    cc2520_open(cc, 0, 0x00 );
 
     timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 ); 
     timer_setinterval( timer2, 1000, 0 );
@@ -159,7 +159,7 @@ void recvnode(void)
     hal_assert( rxtx != NULL );
     nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
     aloha_open( mac,rxtx,nac, CONFIG_ALOHA_CHANNEL, CONFIG_ALOHA_PANID, 
-        CONFIG_ALOHA_LOCAL_ADDRESS, timer2 , NULL, NULL, 0x00 );
+        CONFIG_ALOHA_LOCAL_ADDRESS, timer2, 0x00 );
  
 	cc2520_setchannel( cc, CONFIG_ALOHA_CHANNEL );
 	cc2520_rxon( cc );							                // enable RX mode

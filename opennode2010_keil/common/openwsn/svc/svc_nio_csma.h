@@ -297,9 +297,9 @@ inline void csma_setsendprobability( TiCsma * mac , uint8 probability)
 	mac->sendprob = probability;
 }
 
+#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
 intx csma_rxhandler_for_acceptor( void * object, TiFrame * input, TiFrame * output, uint8 option );
 
-#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
 inline void csma_setrxhandler( TiCsma * mac, TiFunRxHandler rxhandler, void * rxhandlerowner )
 {
     mac->rxhandler = rxhandler;
