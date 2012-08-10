@@ -208,10 +208,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>36</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>154</TopLine>
-      <CurrentLine>166</CurrentLine>
+      <TopLine>135</TopLine>
+      <CurrentLine>143</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\nio_diap_floodsender.c</PathWithFileName>
       <FilenameWithoutPath>nio_diap_floodsender.c</FilenameWithoutPath>
@@ -486,7 +486,7 @@
 
   <Group>
     <GroupName>hal</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -705,10 +705,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>42</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>192</TopLine>
-      <CurrentLine>196</CurrentLine>
+      <TopLine>91</TopLine>
+      <CurrentLine>99</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\svc\svc_nio_dispatcher.c</PathWithFileName>
       <FilenameWithoutPath>svc_nio_dispatcher.c</FilenameWithoutPath>
@@ -857,7 +857,7 @@
       <GroupNumber>6</GroupNumber>
       <FileNumber>46</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>56</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -949,6 +949,58 @@
     </WindowPosition>
   </AlienFiles>
 
+  <AlienFiles>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\svc\svc_nio_mac.h</PathWithFilename>
+    <TopLine>11</TopLine>
+    <CurrentLine>18</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\svc\svc_nio_aloha.h</PathWithFilename>
+    <TopLine>82</TopLine>
+    <CurrentLine>90</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
   <MDIGroups>
     <Orientation>1</Orientation>
     <ActiveMDIGroup>0</ActiveMDIGroup>
@@ -958,27 +1010,15 @@
       <Documents>
         <Doc>
           <Name>.\nio_diap_floodsender.c</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>154</TopLine>
-          <CurrentLine>166</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn\svc\svc_nio_dispatcher.c</Name>
           <ColumnNumber>0</ColumnNumber>
-          <TopLine>192</TopLine>
-          <CurrentLine>196</CurrentLine>
+          <TopLine>135</TopLine>
+          <CurrentLine>143</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\svc\svc_nio_flood.c</Name>
-          <ColumnNumber>31</ColumnNumber>
-          <TopLine>403</TopLine>
-          <CurrentLine>415</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn/svc/svc_nio_dispatcher.h</Name>
-          <ColumnNumber>11</ColumnNumber>
-          <TopLine>117</TopLine>
-          <CurrentLine>121</CurrentLine>
+          <Name>..\..\..\common\openwsn/rtl/rtl_frame.h</Name>
+          <ColumnNumber>18</ColumnNumber>
+          <TopLine>101</TopLine>
+          <CurrentLine>108</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\svc\svc_nio_aloha.c</Name>
@@ -987,10 +1027,34 @@
           <CurrentLine>196</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn/rtl/rtl_frame.h</Name>
-          <ColumnNumber>18</ColumnNumber>
-          <TopLine>101</TopLine>
-          <CurrentLine>108</CurrentLine>
+          <Name>..\..\..\common\openwsn/svc/svc_nio_dispatcher.h</Name>
+          <ColumnNumber>11</ColumnNumber>
+          <TopLine>117</TopLine>
+          <CurrentLine>121</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\svc\svc_nio_flood.c</Name>
+          <ColumnNumber>31</ColumnNumber>
+          <TopLine>403</TopLine>
+          <CurrentLine>415</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\svc\svc_nio_dispatcher.c</Name>
+          <ColumnNumber>42</ColumnNumber>
+          <TopLine>91</TopLine>
+          <CurrentLine>99</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn/svc/svc_nio_mac.h</Name>
+          <ColumnNumber>27</ColumnNumber>
+          <TopLine>11</TopLine>
+          <CurrentLine>18</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn/svc/svc_nio_aloha.h</Name>
+          <ColumnNumber>8</ColumnNumber>
+          <TopLine>82</TopLine>
+          <CurrentLine>90</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

@@ -72,9 +72,6 @@
   #define CONFIG_DTP_MAX_COUNT 5
 #endif
 
- 
-
-
 #include "../hal/hal_mcu.h"
 #include "svc_configall.h"
 #include "../rtl/rtl_cache.h"
@@ -326,11 +323,11 @@ typedef struct{
 	uint8		        depth;    
 	uint8				distance;
 
-	TiNodeBase * 		nbase;//JOE
+	TiNodeBase * 		nbase;
 	TiOsxTimeLineScheduler * scheduler;
     TiNioNetLayerDispatcher *dispatcher;
 
-	TiAloha *			mac;
+	TiNioMac *			mac;
 //	uint16              txtrytime;
 	uint8               request_id; 
 	uint8               response_id;

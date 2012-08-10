@@ -44,8 +44,8 @@
   #include <windows.h>
 #endif
 */
-typedef uintx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
-typedef uintx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef intx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef intx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
 
 
 #define svc_assert(cond) hal_assert(cond)

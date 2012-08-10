@@ -86,7 +86,6 @@
  * These two macros defines the range for ACK waiting. You should tune it according
  * to the transceiver parameters.
  */
-
 #ifndef CONFIG_ALOHA_DEFAULT_PANID
 #define CONFIG_ALOHA_DEFAULT_PANID				0x0001
 #endif

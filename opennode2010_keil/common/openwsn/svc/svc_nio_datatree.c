@@ -14,7 +14,7 @@
 #include "../osx/osx_tlsche.h"
 #include "svc_nodebase.h"
 #include "svc_nio_dispatcher.h"
-#include "svc_nio_datatree_dispatcher.h"
+#include "svc_nio_datatree.h"
 
 /*******************************************************************************
  * @author Shi Zhirong in 2012.07.12
@@ -77,7 +77,7 @@ void dtp_destroy( TiDataTreeNetwork * net )
 	dtp_close( net );
 }
 
-TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
+TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, TiOsxTimeLineScheduler * scheduler,
     TiNioNetLayerDispatcher *dispatcher, uint8 option )
 {
 	//net->state = DTP_STATE_STARTUP;

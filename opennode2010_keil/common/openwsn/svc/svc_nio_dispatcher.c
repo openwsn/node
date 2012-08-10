@@ -24,19 +24,17 @@
  *
  ******************************************************************************/
 
-/*
+ /*******************************************************************************
  * rtl_dispatcher.c
  * event dispatcher object. usually dispatch one event to one object. 
  *
- * @state
- *	tested
- *
  * @author zhangwei on 200903
- *	- first created. inspired by rtl_notifier. 
+ * - first created. inspired by rtl_notifier.
  * @modified by Zhang Wei in 2010
  * @modified by Jiang Ridong in 2011
  * @modified by Shi Zhirong  2012.7.23
- */
+ ******************************************************************************/
+
 
 #include "svc_configall.h"
 #include <stdlib.h>
@@ -54,8 +52,8 @@
 #define NIO_DISPA_STATE_SENDING     0
 #define NIO_DISPA_STATE_RECVING     0
 
-static uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispacher );
-static uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher,__packed uint16 * paddr, TiFrame * f, uint8 option );
+static intx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispacher );
+static intx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispacher,__packed uint16 * paddr, TiFrame * f, uint8 option );
 static intx _nio_dispa_invoke_txhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
     TiFrame * frame, TiFrame * fwbuf, uint8 option);
 static intx _nio_dispa_invoke_rxhandler(TiNioNetLayerDispatcher * dispacher, uint8 proto_id, 
@@ -75,11 +73,8 @@ void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher)
     return;
 }
 
-//TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiCsma *mac)
 TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler)
 {
-    // The memory block must be large enough to hold the dispatcher object.
-    //svc_assert( sizeof(TiNioNetLayerDispatcher) <= dispatcher->memsize );//non memsize
     dispatcher->state = NIO_DISPA_STATE_IDLE;
     dispatcher->nbase = database;
     dispatcher->rxbuf = frame_open((char*)(&dispatcher->rxbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
@@ -90,8 +85,6 @@ TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, 
     return dispatcher;
 }
 
-
-
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher)
 {
     return;
@@ -101,9 +94,10 @@ void nio_dispa_close(TiNioNetLayerDispatcher * dispacher)
  * @return 
  *  - Postive value if the dispatcher object accept the frame. 
  */
-uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame * f, uint8 option) 
+intx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame * f, uint8 option) 
 {
-    uintx count = 0, ioresult;
+    intx retval = NIO_DISPA_IORET_NOACTION;
+	intx ioresult;
     _TiNioNetLayerDispatcherItem * item;
     uint8 proto_id;
 
@@ -112,24 +106,19 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
     if (frame_empty(dispatcher->txbuf) && frame_empty(dispatcher->fwbuf))
     {
         // payload[0] is the protocol id
-        // proto_id = (frame_startptr(f)[0]);
+		// use the first dispacher->item as the default item
         //item = _nio_dispa_search(dispatcher, proto_id);
         item = &dispatcher->items[0];
         if (item != NULL)
         {
-            count = frame_length(f);
+            retval = frame_length(f);
             f->address = addr;
             
-            // txhandler should check whether dispatcher->txbuf and dispatcher->fwbuf
-            // is empty and make appropriate processings. It cannot simply assume these 
-            // buffer are always available for use.
-            //
             // the result frame after processing has two directions:
             // - still in input buffer. which means it should be transfer to low
             //   level protocols
             // - in fwbuf, which means it should be process by other services in the 
-            //   same layer.
-            
+            //   same layer.         
             ioresult = item->txhandler(item->object, f, dispatcher->fwbuf, option);
             
             // if ioresult > 0, then the input frame is processed successfully
@@ -139,9 +128,10 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
             
             if (ioresult <= 0)
             {
-                count = ioresult;
+                retval = ioresult;
             }
-            else{
+            else
+			{
                 if (!frame_empty(dispatcher->fwbuf))
                 {
                     // the frame is still in its original buffer instead of the forward
@@ -150,8 +140,6 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
                     // maybe unefficient and the csma_send() may return false. So the 
                     // upper layer must decide appropriate processing if the csma
                     // is busy or failed.
-                    //
-                    // frame_movelower(f);
                     frame_totalcopyto(dispatcher->fwbuf, dispatcher->txbuf);
                     frame_totalclear( dispatcher->fwbuf);
                 }
@@ -166,17 +154,12 @@ uintx nio_dispa_send(TiNioNetLayerDispatcher * dispatcher, uint16 addr, TiFrame 
     
     _nio_dispa_trysend(dispatcher);
     
-    return count;
-        
-/*    
-    count = csma_send(dispacher->mac,addr,f,option);
-    return count;
-*/    
+    return retval;
 }
 
-uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
+intx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
 {
-    intx ioresult = 0;
+    intx retval = NIO_DISPA_IORET_NOACTION;
     uintx option;
     
     if (!frame_empty(dispatcher->txbuf))
@@ -190,13 +173,14 @@ uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
         // accepted by MAC. it doesn't means the frame has already been successfully
         // sent by the PHY layer.
         option = dispatcher->txbuf->option;
-        ioresult = mac_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
-        if ( MAC_IORET_SUCCESS(ioresult) || ioresult == MAC_IORET_ERROR_NOACK || ioresult == MAC_IORET_ERROR_ACCEPTED_AND_BUSY )
+        retval = mac_send(dispatcher->mac,dispatcher->txbuf->address, dispatcher->txbuf, option);
+		// dispacher->txbuf has been accepted by the mac layer
+        if ( MAC_IORET_SUCCESS(retval) || retval == MAC_IORET_ERROR_NOACK || retval == MAC_IORET_ERROR_ACCEPTED_AND_BUSY )
 		{
 			frame_clear(dispatcher->txbuf);				
 		}
     }
-    return ioresult;
+    return retval;
 }
 
 
@@ -205,9 +189,9 @@ uintx _nio_dispa_trysend(TiNioNetLayerDispatcher * dispatcher)
  *      should be opended or constructed some where. But this recv() function doesn't
  *      use its internal structure. It will override the buffer space.
  */
-uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option)
+intx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option)
 {
-    uint8 count = 0, ioresult;
+    intx retval = NIO_DISPA_IORET_NOACTION, ioresult;
     _TiNioNetLayerDispatcherItem * item;
     uint8 proto_id;
     uint16 addr;
@@ -220,8 +204,8 @@ uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFram
     // next frame from low level layer(the MAC layer) and process the frame using
     // rxhandler.
     
-    count = _nio_dispa_tryrecv(dispacher, &addr, dispacher->rxbuf, option);
-    if (count > 0)
+    retval = _nio_dispa_tryrecv(dispacher, &addr, dispacher->rxbuf, option);
+    if (retval > 0)
     {
         // received something and rxhandle process successfully
     }
@@ -229,104 +213,98 @@ uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFram
     if (!frame_empty(dispacher->rxbuf))
     {
         frame_totalcopyto(dispacher->rxbuf, f);
-        count = frame_length(dispacher->rxbuf);
+        retval = frame_length(dispacher->rxbuf);
         *paddr = f->address;
         frame_clear(dispacher->rxbuf);
     }
     
-    return count;
+    return retval;
 }
 
-uintx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * paddr, TiFrame * f, uint8 option )
+intx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * paddr, TiFrame * f, uint8 option )
 {
-    
     _TiNioNetLayerDispatcherItem * item;
     uint8 proto_id;
     uint16 addr;
-    uint8 count = 0;
-    uint8 ioresult=0;
+    uintx count = 0;
+    intx retval = NIO_DISPA_IORET_NOACTION;
 
     // the following assert helps to detect developing mistake. actually the frame
     // buffer can be larger than NIO_DISPA_FRAME_MEMSIZE.
-////////////////////////////////////////////    svc_assert(f->memsize == NIO_DISPA_FRAME_MEMSIZE);
+    //svc_assert(f->memsize >= NIO_DISPA_FRAME_MEMSIZE);
     
     // if the dispatcher's internal rxbuf buffer is empty, then try to retrieve the
     // next frame from low level layer(the MAC layer) and process the frame using
     // rxhandler.
-    if (frame_empty(f) )
-    {
-        // fwbuf here is uses as a temporary buffer only
-        ioresult = mac_recv(dispatcher->mac,  f, 0x00);
-        if (ioresult > 0)
-        {
-            proto_id = frame_startptr(f)[0];
-            item = _nio_dispa_search(dispatcher, proto_id);
-            if (item != NULL)
-            {
-                count = frame_length(f);
-            
-                // rxhandler should check whether dispatcher->txbuf and dispatcher->fwbuf
-                // is empty and make appropriate processings. It cannot simply assume these 
-                // buffer are always available for use.
-                //
-                // the result frame after processing has two directions:
-                // - still in input buffer. which means it should be transfer to high
-                //   level protocols
-                // - in fwbuf, which means it should be process by other services in the 
-                //   same layer. (usually forwarding)
-                				
-				//@todo 0807 JOE when dispacher->txbuf is empty
+    if ( frame_empty(f) && frame_empty(dispatcher->txbuf))	//JOE 0810 according the following comments
+	{
+		// fwbuf here is uses as a temporary buffer only
+		retval = mac_recv(dispatcher->mac, f, 0x00);
+		if ( NIO_DISPA_IORET_SUCCESS(retval)) 
+		{
+			proto_id = frame_startptr(f)[0];
+			item = _nio_dispa_search(dispatcher, proto_id);
+			if (item != NULL)
+			{
+				count = frame_length(f);
+			
+				// rxhandler should check whether dispatcher->txbuf and dispatcher->fwbuf
+				// is empty and make appropriate processings. It cannot simply assume these 
+				// buffer are always available for use.
+				//
+				// the result frame after processing has two directions:
+				// - still in input buffer. which means it should be transfer to high
+				//   level protocols
+				// - in fwbuf, which means it should be process by other services in the 
+				//   same layer. (usually forwarding)               				
+
+				retval = item->rxhandler(item->object, f, dispatcher->txbuf, option);
+				if (retval <= 0)
+				{
+					frame_clear(f);
+				}
 				
-				//if(frame_empty( dispacher->txbuf ))	//@todo
-				//{
-					ioresult = item->rxhandler(item->object, f, dispatcher->txbuf, option);
-					if (ioresult <= 0)
-					{
-						frame_clear(f);
-						ioresult = 0;
-					}
-				//}
-            }
-        }
-        else{
-            // If we cannot find an component reponsible to processing the frame
-            // then we had to give up it as if we had never receive it.
-            frame_clear(f);
-            ioresult = 0;
-        }
-    }
-    
-    return ioresult;
+			}
+		}
+		else
+		{
+			// If we cannot find an component reponsible to processing the frame
+			// then we had to give up it as if we had never receive it.
+			frame_clear(f);
+		}
+	}
+	//return the state of the rxhandler
+    return retval;
 }
 
 intx _nio_dispa_invoke_txhandler(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, 
     TiFrame * frame, TiFrame * fwbuf, uint8 option)
 {
     _TiNioNetLayerDispatcherItem * item;
-    intx ioresult = 0;
+    intx retval = 0;
     
     item = _nio_dispa_search(dispatcher, proto_id);
     if (item != NULL)
     {
-        ioresult = item->txhandler(item->object, frame, dispatcher->fwbuf, option);
+        retval = item->txhandler(item->object, frame, dispatcher->fwbuf, option);
         item->evolve(item->object, NULL);
     }
-    return ioresult; 
+    return retval; 
 }
 
 intx _nio_dispa_invoke_rxhandler(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, 
     TiFrame * frame, TiFrame * fwbuf, uint8 option)
 {
     _TiNioNetLayerDispatcherItem * item;
-    intx ioresult = 0;
+    intx retval = 0;
     
     item = _nio_dispa_search(dispatcher, proto_id);
     if (item != NULL)
     {
-        ioresult = item->rxhandler(item->object, frame, dispatcher->fwbuf, option);
+        retval = item->rxhandler(item->object, frame, dispatcher->fwbuf, option);
         item->evolve(item->object, NULL);
     }
-    return ioresult; 
+    return retval; 
 }
 
 void nio_dispa_evolve(void* object, TiEvent * e)
@@ -344,7 +322,6 @@ void nio_dispa_evolve(void* object, TiEvent * e)
     frame_clear(dispatcher->rxbuf);
     #endif
 
-	//JOE 0709
 	if(dispatcher->scheduler!=NULL)
 	{
 		osx_tlsche_taskspawn(dispatcher->scheduler, nio_dispa_evolve,dispatcher,1,0,0);

@@ -88,6 +88,8 @@
  * to the transceiver parameters.
  */
 
+
+
 #ifndef CONFIG_CSMA_DEFAULT_PANID
 #define CONFIG_CSMA_DEFAULT_PANID              0x0001
 #endif

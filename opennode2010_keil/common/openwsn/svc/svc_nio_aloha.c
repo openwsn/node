@@ -71,9 +71,8 @@
  *	- Revised and tested.
  * @modified by Jiang Ridong and Zhang Wei in 2011.08
  *  - Revised and tested
-
- * @modified by Shi Zhirong in 2012.07.18
- *  - add retval in aloha_send
+ * @modified by Shi Zhirong in 2012.08.09
+ *  - Revised and tested
  ******************************************************************************/
  
 #include "svc_configall.h"
