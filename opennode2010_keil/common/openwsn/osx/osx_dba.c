@@ -28,10 +28,10 @@
 #include <string.h>
 #include <assert.h>
 #include "osx_foundation.h"
-#include "../hal/opennode2010/hal_cpu.h"
-#include "../hal/opennode2010/hal_interrupt.h"
-#include "../hal/opennode2010/hal_assert.h"
-#include "../hal/opennode2010/hal_uart.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_interrupt.h"
+#include "../hal/hal_assert.h"
+#include "../hal/hal_uart.h"
 #include "osx_dba.h"
 
 /*****************************************************************************
@@ -152,9 +152,10 @@ void _dba_hardwrite( TiDebugAgent * dba )
 {
 	uint16 count;
 	char * buf;
-	cpu_atomic_t atom;
-
-	atom = _cpu_atomic_begin();
+	//cpu_atomic_t atom;		//@todo JOE 0813
+	
+	//atom = _cpu_atomic_begin();	   //JOE
+	cpu_atomic_begin();
 	count = uart_write( dba->uart, &(dba->txbuf[0]), dba->txlen, 0 );
 	if (dba->txlen >= count)
 		dba->txlen -= count;
@@ -166,16 +167,18 @@ void _dba_hardwrite( TiDebugAgent * dba )
 		buf = (char *)(&(dba->txbuf[0]));
 		memmove( buf, buf+count, dba->txlen );
 	}
-	_cpu_atomic_end(atom);
+	//_cpu_atomic_end(atom);	 //JOE
+	cpu_atomic_end();
 }
 
 uint16 dba_write( TiDebugAgent * dba, char * buf, uint16 size )
 {
 	uint16 copied;
 	uint16 i;
-	cpu_atomic_t atom;
+	//cpu_atomic_t atom;	 //@todo JOE 0813
 
-	atom = _cpu_atomic_begin();
+	//atom = _cpu_atomic_begin();	 //JOE
+	cpu_atomic_begin();
 	i = CONFIG_DBA_TXBUF_SIZE - dba->txlen;
 	// assert( i <= CONFIG_DBA_TXBUF_SIZE );
 
@@ -188,7 +191,8 @@ uint16 dba_write( TiDebugAgent * dba, char * buf, uint16 size )
 		}
 		dba->txlen += copied;
 	}
-	_cpu_atomic_end( atom );
+	//_cpu_atomic_end( atom );	 //JOE
+	cpu_atomic_end();
 
 	return copied;
 }

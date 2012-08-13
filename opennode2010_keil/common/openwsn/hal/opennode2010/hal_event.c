@@ -39,9 +39,9 @@
 
 TiEvent g_hal_event;
 
-TiEvent * hal_initevent( TiEventId id, void * objectfrom, void * objectto, TiEventHandler handler )
+TiEvent * hal_initevent( TiEventId id, void * objectfrom, void * objectto, TiFunEventHandler handler )
 {
-    g_hal_event.eid = id;
+    g_hal_event.id = id;
     g_hal_event.objectfrom = objectfrom;
     g_hal_event.objectto = objectto;
     g_hal_event.handler = handler;

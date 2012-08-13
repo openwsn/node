@@ -54,6 +54,8 @@
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
 
+#include "../hal/hal_event.h"//@todo why is hal_layer's stuff?
+
 
 #define OSX_STATE_INITIAL		0x00
 #define OSX_STATE_RUNNING_BIT   0x01
@@ -206,6 +208,8 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 {
 	bool pop = false;
     TiOSX * osx = (TiOSX *)osxptr;
+
+	//dbc_putchar(0xf6);
 
 	if (e == NULL)
 	{
