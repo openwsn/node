@@ -61,7 +61,7 @@ void uartecho1()
 	static int seq_id=1;
 
     target_init();
-    led_open();
+    led_open(LED_ALL);
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
@@ -95,7 +95,7 @@ void uartecho2()
     count = 0;
 
     //target_init();
-    led_open();
+    led_open(LED_ALL);
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
@@ -128,7 +128,7 @@ void uart_active_send1()
     count = 0;
 
     target_init();
-    led_open();
+    led_open(LED_ALL);
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
@@ -154,7 +154,7 @@ void uart_active_send2()
     count = 0;
 
     target_init();
-    led_open();
+    led_open(LED_ALL);
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );

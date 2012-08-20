@@ -125,7 +125,7 @@ inline void osx_atomic_end()
  * Osx Timer Adapter
  ******************************************************************************/
 
-#define TiOsxTimer2 TiRtcAdapter
+#define TiOsxTimer TiRtcAdapter
 
 
 

@@ -96,6 +96,7 @@ typedef struct{
 #endif
 }TiUartAdapter;
 
+
 TiUartAdapter * uart_construct( char * buf, uint16 size );
 void uart_destroy( TiUartAdapter * uart );
 TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option );
