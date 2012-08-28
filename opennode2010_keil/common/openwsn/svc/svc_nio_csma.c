@@ -77,6 +77,8 @@
  *  - Using "nac->ackbuf" to replace "fmque_rear(nac->rxque)".
  * @modified by Shi Zhirong on 2012.0807
  *	_ Add csma_rxhandler_for_acceptor, temporarily not used.
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add CSMA_OSX_ENABLE
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -787,8 +789,20 @@ void csma_evolve( void * macptr, TiEvent * e )
 //                    mac->listener( mac->lisowner, e );
 //                }
 			}
+			#ifdef CSMA_OSX_ENABLE
+			else
+			{
+				osx_postx( NULL, csma_evolve, mac, mac);
+			}
+			#endif
 			mac->success = retval;
 		}
+		#ifdef CSMA_OSX_ENABLE
+		else
+		{
+			osx_postx( NULL, csma_evolve, mac, mac);
+		}
+		#endif
 		break;
     
     case CSMA_STATE_SLEEPING:

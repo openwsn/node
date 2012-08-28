@@ -557,6 +557,10 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
                     hal_tsync_rxhandler(nac->timesync, f, f, 0x00);
                 }
             }
+			
+			#ifdef NIOACCEPTOR_OSX_ENABLE
+				hal_triggerevent( EVENT_DATA_ARRIVAL, nac, NULL );
+			#endif
         }
     }        
         

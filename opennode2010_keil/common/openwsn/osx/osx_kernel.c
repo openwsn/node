@@ -42,6 +42,13 @@
  * and TiUartAdapter
  */
 
+/************************************************************
+ * Q:
+ * how to deal with the timer(rtc)
+ * Shi Zhirong 
+***********************************************************/
+
+
 #include "osx_configall.h"
 #include <string.h>
 #ifdef CONFIG_OSX_DYNAMIC_MEMORY
@@ -54,7 +61,7 @@
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
 
-#include "../hal/hal_event.h"//@todo why is hal_layer's stuff?
+#include "../hal/hal_event.h"
 
 
 #define OSX_STATE_INITIAL		0x00
@@ -97,6 +104,10 @@ void _osx_free( TiOSX * osx )
 TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 {
 	char * ptr;
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	char * ptrtimer;
+	#endif
+	
 	TiOSX * osx = (TiOSX *)buf;
     uint16 blksize;
 	memset( buf, 0x00, size );
@@ -107,11 +118,21 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 	osx->eventqueue = osx_queue_open((char*)buf+sizeof(TiOSX), blksize, sizeof(TiEvent));
 	osx->listener = NULL;
 	osx->listenowner = NULL;
-
 	
 	ptr = (char *)buf + sizeof(TiOSX) + blksize;
 	osx->dispatcher = dispa_construct( ptr, DISPA_HOPESIZE(dpasize), dpasize );
 
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	ptr += DISPA_HOPESIZE(dpasize);
+	ptrtimer = ptr + sizeof(TiOsxTimeLineScheduler);	
+
+	osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 
+	osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );
+		
+	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);//@todo
+
+	rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 
+	#endif
 	return osx;
 }
 
@@ -120,6 +141,9 @@ void _osx_close( TiOSX * osx )
     hal_disable_interrupts();
 	osx_queue_close( osx->eventqueue );
 	dispa_destroy( osx->dispatcher );
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	osx_tlsche_close( osx->scheduler );
+	#endif
 	return;
 }
 
@@ -133,6 +157,7 @@ void _osx_close( TiOSX * osx )
  * 
  * @attention
  *	this function can also be the event listener of hal layer or other components.
+ *  reference: hal/hal/hal_foundation.c
  */
 void _osx_post( TiOSX * osx, TiEvent * e )
 {
@@ -221,7 +246,6 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 		{	
 			hal_assert(e->id != 0);
 			dispa_send( osx->dispatcher, e );
-			dbc_putchar(0xA2);
 		}
 		else
 		{
@@ -230,7 +254,7 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 	}
 
 	if (pop)
-		osx_queue_popfront(osx->eventqueue);
+		osx_queue_popfront(osx->eventqueue);	
 }
 
 void _osx_execute( TiOSX * osx )
@@ -247,9 +271,17 @@ void _osx_execute( TiOSX * osx )
     hal_assert( g_osx != NULL );
 
 	hal_enable_interrupts();
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	rtc_setprscaler( osx->timer, 32767 );
+	rtc_start( osx->timer);
+	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
+	#endif																			//we should also modify the osx_tlsche.c line 90
 	while (1)
 	{
 		_osx_evolve( osx, NULL );
+		#ifdef CONFIG_OSX_TLSCHE_ENABLE
+		osx_tlsche_evolve( osx->scheduler, NULL );	  //way 2 to deal with the osx_tlsche_evolve 
+		#endif
 	}
 	_osx_close( g_osx );
 }

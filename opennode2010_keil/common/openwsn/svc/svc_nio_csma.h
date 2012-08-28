@@ -56,7 +56,8 @@
  * @modified by Jiang Ridong in 2011.08
  *  - tested Ok.
  * @modified by zhangwei on 2012.07.20
- *
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add CSMA_OSX_ENABLE
  ******************************************************************************/  
 
 /**
@@ -72,6 +73,7 @@
 #include "../hal/hal_debugio.h"
 #include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timer.h"
+#include "../osx/osx_kernel.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_mac.h"
@@ -158,6 +160,8 @@
 #define CSMA_STATE_IDLE                    1
 #define CSMA_STATE_BACKOFF                 2
 #define CSMA_STATE_SLEEPING                3
+
+#define CSMA_OSX_ENABLE
 
 typedef struct{
     uint16 sendcount;

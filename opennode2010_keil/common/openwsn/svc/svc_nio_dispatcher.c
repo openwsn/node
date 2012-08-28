@@ -24,18 +24,6 @@
  *
  ******************************************************************************/
 
- /*******************************************************************************
- * rtl_dispatcher.c
- * event dispatcher object. usually dispatch one event to one object. 
- *
- * @author zhangwei on 200903
- * - first created. inspired by rtl_notifier.
- * @modified by Zhang Wei in 2010
- * @modified by Jiang Ridong in 2011
- * @modified by Shi Zhirong  2012.7.23
- ******************************************************************************/
-
-
 #include "svc_configall.h"
 #include <stdlib.h>
 #include <string.h>
@@ -46,7 +34,7 @@
 #include "svc_nio_mac.h"
 #include "svc_nio_dispatcher.h"
 #include "svc_nodebase.h"
-#include "../osx/osx_tlsche.h"
+#include "../osx/osx_kernel.h"
 
 #define NIO_DISPA_STATE_IDLE        0
 #define NIO_DISPA_STATE_SENDING     0
@@ -73,7 +61,7 @@ void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher)
     return;
 }
 
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler)
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac)
 {
     dispatcher->state = NIO_DISPA_STATE_IDLE;
     dispatcher->nbase = database;
@@ -81,7 +69,6 @@ TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, 
     dispatcher->txbuf = frame_open((char*)(&dispatcher->txbak_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
     dispatcher->fwbuf = frame_open((char*)(&dispatcher->fwbuf_memory), NIO_DISPA_FRAME_MEMSIZE, 3, 30, 92 );
     dispatcher->mac = mac;
-	dispatcher->scheduler=scheduler;
     return dispatcher;
 }
 
@@ -256,7 +243,7 @@ intx _nio_dispa_tryrecv(TiNioNetLayerDispatcher * dispatcher, __packed uint16 * 
 				// - still in input buffer. which means it should be transfer to high
 				//   level protocols
 				// - in fwbuf, which means it should be process by other services in the 
-				//   same layer. (usually forwarding)               				
+				//   same layer. (usually forwarding) //@todo JOE fwbuf or txbuf?              				
 
 				retval = item->rxhandler(item->object, f, dispatcher->txbuf, option);
 				if (retval <= 0)
@@ -321,11 +308,15 @@ void nio_dispa_evolve(void* object, TiEvent * e)
     #ifdef NIO_DISPA_EVOLVE_DEBUG_WITHOUT_RXTX
     frame_clear(dispatcher->rxbuf);
     #endif
-
-	if(dispatcher->scheduler!=NULL)
+	
+	#ifdef NIO_DISPA_OSX_ENABLE
+	if( !frame_empty( dispacher->txbuf ))
 	{
-		osx_tlsche_taskspawn(dispatcher->scheduler, nio_dispa_evolve,dispatcher,1,0,0);
+		osx_postx( NULL, nio_dispa_evolve,dispatcher,dispatcher);
 	}
+	#endif
+	
+	//@todo JOE if dispacher->rxbuf is not empty, should postx the high layer's evolve
 }
 
 /**

@@ -58,6 +58,8 @@
  * @modified by zhangwei on 2011.04.11
  *	- The member variable rxtx is changed from "TiCc2420Adapter" to 
  *    "TiFrameTxRxInterface *".
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add NIOACCEPTOR_OSX_ENABLE
  ******************************************************************************/ 
 
 #ifndef CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 
@@ -78,6 +80,8 @@
 #undef CONFIG_NIOACCEPTOR_LISTENER_ENABLE
 #define CONFIG_NIOACCEPTOR_RXFILTER_ENABLE 
 
+#define NIOACCEPTOR_OSX_ENABLE
+
 #include "svc_configall.h"
 #include "../rtl/rtl_frame.h"
 #include "../rtl/rtl_framequeue.h"
@@ -85,6 +89,7 @@
 #include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timesync.h"
 #include "svc_foundation.h"
+#include "../hal/hal_event.h"
 
 /** 
  * NIOACCEPTOR_HOPESIZE(...)
