@@ -42,6 +42,6 @@ void asv1_evolve( void * svcptr, TiEvent * e )
 	dbc_putchar(0xa1);
 //	led_toggle(LED_RED);
 
-	osx_postx(1,asv1_evolve,svc,svc);	//JOE
+	//osx_postx(1,asv1_evolve,svc,svc);	//JOE
 }
 

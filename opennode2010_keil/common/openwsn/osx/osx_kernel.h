@@ -168,8 +168,8 @@ extern TiOSX *              g_osx;
 //#define osx_execute()                       _osx_execute(g_osx)
 #define osx_hardevolve(e)                   _osx_hardevolve(g_osx,e)
 #define osx_hardexecute()                   _osx_hardexecute(g_osx)
-#define osx_sleep()                         _osx_sleep(g_osx)
-#define osx_wakeup()                        _osx_wakeup(g_osx)
+#define osx_sleep()                         _osx_sleep_request(g_osx)
+#define osx_wakeup()                        _osx_on_wakeup(g_osx)
 
 
 /******************************************************************************

@@ -24,7 +24,8 @@
 #include "../../../common/openwsn/hal/hal_assert.h"
 #include "../../../common/openwsn/hal/hal_timer.h"
 #include "../../../common/openwsn/hal/hal_debugio.h"
-#include "../../../common/openwsn/osx/osx_kernel_new.h"
+#include "../../../common/openwsn/osx/osx_kernel_new.h"	
+#include "../../../common/openwsn/hal/hal_event.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"
 #include "appsvc2.h"
@@ -55,7 +56,7 @@
 #define CONFIG_DISPATCHER_TEST_ENABLE
 
 #define CONFIG_UART_ID              0
-#define CONFIG_TIMER_ID             1
+#define CONFIG_TIMER_ID             2
 
 TiAppService1                       m_svcmem1;
 TiAppService2                       m_svcmem2;
@@ -80,6 +81,7 @@ int main()
 	char * msg = "welcome to osxdemo...";
 
 	target_init();
+	//dbc_write( msg, strlen(msg) );	
 	timer = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
 
 	led_open(LED_RED);
@@ -87,11 +89,7 @@ int main()
 	hal_delayms( 1000 );
 	led_off( LED_RED );
 
-	//dbo_open( CONFIG_UART_ID, 38400 );
 	rtl_init( (void *)dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
-	dbio_putchar(NULL,0xF4);
-
-	//dbc_write( msg, strlen(msg) );
 
 	g_count = 0;
 
@@ -123,13 +121,12 @@ int main()
 	 * these services. the services only run when it receives an event, namely, the 
 	 * events drives the service to forward according to the state machine.  */
 	
-	osx_attach( 1, asv1_evolve, asv1 );
-	osx_attach( 2, asv2_evolve, asv2 );
+	osx_attach( EVENT_WAKEUP, asv1_evolve, asv1 );
+	//osx_attach( EVENT_WAKEUP, asv2_evolve, asv2 );
 
-	//osx_postx(1,asv1_evolve,asv1,asv1);	//JOE
-	osx_postx(2,asv2_evolve,asv2,asv2);
+//	osx_postx(2,asv2_evolve,asv2,asv2);
 
-	osx_taskspawn(asv1_evolve, asv1, 1, 0, 0 );
+	//osx_taskspawn(asv1_evolve, asv1, 1, 0, 0 );
 
 
 	/* configure the listener relation between service 2 and service 3.
@@ -165,65 +162,73 @@ int main()
  */
 void on_timer_expired( void * object, TiEvent * e )
 {
-	TiEvent newe;
+//	TiEvent newe;
+//	
+//	dbio_putchar(NULL,0xEE);
+//	
+//	g_count ++;
+//	if ((g_count % 15) == 0)
+//	{
+//	    //led_toggle( LED_RED );
+//		memset( &newe, 0x00, sizeof(TiEvent) );
+//        newe.id = ((g_count/15) % 3);
+//		if (newe.id == 0)
+//			newe.id = 3;
+//
+//		#ifndef CONFIG_DISPATCHER_TEST_ENABLE
+//        if (g_count % 2 == 0)
+//        {
+//		    newe.handler = asv1_evolve;
+//		    newe.objectfrom = object;
+//		    newe.objectto = &m_svcmem1;
+//        }
+//        else{
+//		    newe.handler = asv2_evolve;
+//		    newe.objectfrom = object;
+//		    newe.objectto = &m_svcmem2;
+//        }
+//		#endif
+//
+//		/* If the event's handler is NULL, then osx kernel will had to search for
+//		 * appropriate handler in the dispatcher table to process it. 
+//		 * 
+//		 * Since the event generator often doesn't know which object will process 
+//		 * the event, so the event dispatcher in the kernel is mandatory.
+//		 */
+//		#ifdef CONFIG_DISPATCHER_TEST_ENABLE
+//        if (g_count % 2 == 0)
+//        {
+//		    newe.handler = NULL;
+//		    newe.objectfrom = object;
+//		    newe.objectto = NULL;
+//        }
+//        else{
+//		    newe.handler = NULL;
+//		    newe.objectfrom = object;
+//		    newe.objectto = NULL;
+//        }
+//		#endif
+//
+//		osx_post( (TiEvent *)(&newe) );
+//	}
+//	
+//	#ifdef CONFIG_AUTO_STOP
+//	if (g_count == 61)
+//    {
+//        timer_close( &m_timer );
+//        timer_destroy( &m_timer );
+//		g_count = 0;
+//		led_off(LED_RED);
+//    } 
+//	#endif
 
-	//led_on( LED2 );
-	//while (1) {};
-
-	g_count ++;
-	if ((g_count % 15) == 0)
+	if(g_count%50 == 0 && g_count<600)
 	{
-	    //led_toggle( LED_RED );
-		memset( &newe, 0x00, sizeof(TiEvent) );
-        newe.id = ((g_count/15) % 3);
-		if (newe.id == 0)
-			newe.id = 3;
-
-		#ifndef CONFIG_DISPATCHER_TEST_ENABLE
-        if (g_count % 2 == 0)
-        {
-		    newe.handler = asv1_evolve;
-		    newe.objectfrom = object;
-		    newe.objectto = &m_svcmem1;
-        }
-        else{
-		    newe.handler = asv2_evolve;
-		    newe.objectfrom = object;
-		    newe.objectto = &m_svcmem2;
-        }
-		#endif
-
-		/* If the event's handler is NULL, then osx kernel will had to search for
-		 * appropriate handler in the dispatcher table to process it. 
-		 * 
-		 * Since the event generator often doesn't know which object will process 
-		 * the event, so the event dispatcher in the kernel is mandatory.
-		 */
-		#ifdef CONFIG_DISPATCHER_TEST_ENABLE
-        if (g_count % 2 == 0)
-        {
-		    newe.handler = NULL;
-		    newe.objectfrom = object;
-		    newe.objectto = NULL;
-        }
-        else{
-		    newe.handler = NULL;
-		    newe.objectfrom = object;
-		    newe.objectto = NULL;
-        }
-		#endif
-
-		osx_post( (TiEvent *)(&newe) );
+		osx_wakeup();
+		led_toggle(LED_RED);
+	 	dbc_putchar(g_count/10);
 	}
-	
-	#ifdef CONFIG_AUTO_STOP
-	if (g_count == 61)
-    {
-        timer_close( &m_timer );
-        timer_destroy( &m_timer );
-		g_count = 0;
-		led_off(LED_RED);
-    } 
-	#endif
+	g_count++;
+	TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 }
 

@@ -173,8 +173,8 @@ extern TiOSX *              g_osx;
 //#define osx_execute()                       _osx_execute(g_osx)
 #define osx_hardevolve(e)                   _osx_hardevolve(g_osx,e)
 #define osx_hardexecute()                   _osx_hardexecute(g_osx)
-#define osx_sleep()                         _osx_sleep(g_osx)
-#define osx_wakeup()                        _osx_wakeup(g_osx)
+#define osx_sleep()                         _osx_sleep_request(g_osx)
+#define osx_wakeup()                        _osx_on_wakeup(g_osx)
 
 #define osx_taskspawn(taskfunction, taskdata, starttime, priority, option )		osx_tlsche_taskspawn(g_osx->scheduler,(taskfunction),(taskdata),(starttime),(priority),(option))
 #define osx_taskdelete(id)					osx_tlsche_kill( g_osx->scheduler,id )
@@ -207,6 +207,9 @@ void _osx_close();
  * osx_post(e)
  * post an event into the default system queue. this funcation can be called
  * in interrupt service routines
+	* @attention
+	*	this function can also be the event listener of hal layer or other components.
+	*  reference: hal/hal/hal_foundation.c
  *
  * osx_rtpost(e,deadline)
  * post an event into the default system queue. the event will be processed as

@@ -61,6 +61,8 @@
  * @modified by Jiang Ridong in 2011.08
  *  - Port to stm32f103 and tested ok
  * 
+ * @modified by Shi Zhirong on 2012.08.22
+ *  - modified the uart baudrate from uint16 to uint32
  *****************************************************************************/
  
 #include "hal_configall.h"
@@ -81,7 +83,7 @@ extern "C" {
 #pragma pack(1) 
 typedef struct{
   uint8 id;
-  uint16 baudrate;
+  uint32 baudrate;
   uint8 databits;
   uint8 stopbits;
   uint8 option;
@@ -99,7 +101,7 @@ typedef struct{
 
 TiUartAdapter * uart_construct( char * buf, uint16 size );
 void uart_destroy( TiUartAdapter * uart );
-TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option );
+TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 option );
 void uart_close( TiUartAdapter * uart );
 
 /******************************************************************************
@@ -166,8 +168,9 @@ TiBlockDeviceInterface * uart_getblockinterface( TiUartAdapter * uart, TiBlockDe
     //TiBlockDeviceInterface * uart_get_blockinterface( TiUartAdapter * uart, TiBlockDeviceInterface * intf );
     //以下三个函数临时保留
 //    void   halUartInit(uint16 baudrate, uint8 options);//uart_open( TiUartAdapter * uart,2, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option );
-    uint8 USART_Send( uint8 ch);//intx uart_putchar( TiUartAdapter * uart, char ch );
-    uint8 USART_Get( uint8 ch); //uint8 uart_getchar( TiUartAdapter * uart, char * pc );
+void halUartInit(uint32 baudrate, uint8 options);
+uint8 USART_Send( uint8 ch);//intx uart_putchar( TiUartAdapter * uart, char ch );
+uint8 USART_Get( uint8 ch); //uint8 uart_getchar( TiUartAdapter * uart, char * pc );
 
 
 #ifdef __cplusplus

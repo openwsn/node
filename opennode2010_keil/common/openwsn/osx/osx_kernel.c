@@ -209,8 +209,6 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 	bool pop = false;
     TiOSX * osx = (TiOSX *)osxptr;
 
-	//dbc_putchar(0xf6);
-
 	if (e == NULL)
 	{
 		e = osx_queue_front( osx->eventqueue );
@@ -223,8 +221,10 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 		{	
 			hal_assert(e->id != 0);
 			dispa_send( osx->dispatcher, e );
+			dbc_putchar(0xA2);
 		}
-		else{
+		else
+		{
 			e->handler( e->objectto, e );
 		}
 	}

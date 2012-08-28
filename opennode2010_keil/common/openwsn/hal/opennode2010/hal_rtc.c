@@ -198,7 +198,18 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
 
 void rtc_close( TiRtcAdapter * rtc )
 {
-	//hal_detachhandler( INTNUM_TIMER0_OVF );
+    if ( rtc->id ==3)
+    {
+		hal_detachhandler(INTNUM_RTCALARM);	  
+    }
+    if ( rtc->id==2) 
+    {
+		hal_detachhandler(INTNUM_RTC);		
+    }
+	else if(rtc->id==1)
+	{	
+		hal_detachhandler(INTNUM_RTC);  
+	}
 }
 
 void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler)
@@ -547,7 +558,7 @@ void _rtcalarm_interrupt_handler( void * object, TiEvent * e )
         RTC_ClearITPendingBit(RTC_IT_ALR);
 		led_toggle( LED_RED);//for testing
 
-		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		if(rtc->listener!=NULL)
 		{
 			rtc->listener(rtc->lisowner,NULL);
 		}
@@ -565,7 +576,7 @@ void _rtcsec_interrupt_handler( void * object, TiEvent * e )
 		/* Clear the RTC Second interrupt */
 		RTC_ClearITPendingBit(RTC_IT_SEC);
 
-		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		if(rtc->listener!=NULL)
 		{
 			rtc->listener(rtc->lisowner,NULL);
 		}
@@ -581,7 +592,7 @@ void _rtcsec_interrupt_osx_handler( void * object, TiEvent * e )
 	{
 		/* Clear the RTC Second interrupt */
 		RTC_ClearITPendingBit(RTC_IT_SEC);
-		if((rtc->listener!=NULL)&&(rtc->lisowner!=NULL))
+		if(rtc->listener!=NULL)
 		{
 			rtc->listener(rtc->lisowner,NULL);
 		}

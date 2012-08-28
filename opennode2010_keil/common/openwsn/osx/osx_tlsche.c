@@ -86,7 +86,6 @@ void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
     }while (true);
 
     //osx_tlsche_stepforward( sche, CONFIG_OSX_TIMER_INTERVAL );
-
 //	osx_postx(1,osx_tlsche_evolve,sche,sche);//for testing 
 }
 

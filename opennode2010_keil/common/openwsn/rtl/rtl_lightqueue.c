@@ -52,6 +52,7 @@
 #include "rtl_foundation.h"
 #include "rtl_assert.h"
 #include "rtl_lightqueue.h"
+#include "rtl_debugio.h"
 
 TiLightQueue * lwque_construct( void * buf, uint16 size, uint16 datasize )
 {
@@ -175,8 +176,9 @@ bool lwque_pushback( TiLightQueue * que, void * item )
 		ret = true;
 	}
 	else
+	{
 		ret = false;
-
+	}
 	return ret;
 }
 

@@ -143,7 +143,6 @@ void rtc_destroy( TiRtcAdapter * rtc );
 /**
  * Open an rtc component and do initializations.
  */
-//TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener,TiFunEventHandler irqhandler, void * object,uint8 id, uint8 option );
 TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * object,uint8 id, uint8 option );
 
 /**

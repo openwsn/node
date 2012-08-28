@@ -9,10 +9,13 @@
 #include "../hal_led.h"
 #include "../hal_debugio.h"
 #include "../hal_common.h"
+#include "../hal_interrupt.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+static void _timer_irqhandler( void * object, TiEvent * e );
 
 //目前使用较为简单的通用定时器TIMx( x=2、3、4、5)
 
@@ -77,8 +80,9 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
                 NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = timer->priority;
                 NVIC_InitStructure.NVIC_IRQChannelSubPriority = timer->subpriority; 
                 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-                NVIC_Init(&NVIC_InitStructure);
-            }
+                NVIC_Init(&NVIC_InitStructure);	 
+            	hal_attachhandler(INTNUM_TIMER2,_timer_irqhandler,timer); //JOE 0822
+			}
 
             TIM_TimeBaseStructure.TIM_Period = timer->interval; 
             TIM_TimeBaseStructure.TIM_Prescaler = timer->prescale_factor;
@@ -89,6 +93,7 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
             TIM_ARRPreloadConfig(TIM2, DISABLE);/*预装载寄存器的内容被立即传送到影子寄存器 */
             TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);   
             TIM_Cmd(TIM2, ENABLE);
+
             break;
         case 3:
             RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
@@ -100,6 +105,8 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
                 NVIC_InitStructure.NVIC_IRQChannelSubPriority = timer->subpriority; 
                 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
                 NVIC_Init(&NVIC_InitStructure);
+				//hal_attachhandler( INTNUM_TIMER3, timer->listener, timer->listenowner );  //JOE 0822
+            	hal_attachhandler(INTNUM_TIMER3,_timer_irqhandler,timer); //JOE 0822
             }
 
             TIM_TimeBaseStructure.TIM_Period = timer->interval; 
@@ -122,6 +129,8 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
                 NVIC_InitStructure.NVIC_IRQChannelSubPriority = timer->subpriority; 
                 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
                 NVIC_Init(&NVIC_InitStructure);
+				//hal_attachhandler( INTNUM_TIMER4, timer->listener, timer->listenowner );  //JOE 0822
+            	hal_attachhandler(INTNUM_TIMER4,_timer_irqhandler,timer); //JOE 0822
             }
 
             TIM_TimeBaseStructure.TIM_Period = timer->interval; 
@@ -144,6 +153,8 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
                 NVIC_InitStructure.NVIC_IRQChannelSubPriority = timer->subpriority; 
                 NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
                 NVIC_Init(&NVIC_InitStructure);
+				//hal_attachhandler( INTNUM_TIMER5, timer->listener, timer->listenowner );  //JOE 0822
+            	hal_attachhandler(INTNUM_TIMER5,timer_irqhandler,timer); //JOE 0822
             }
 
             TIM_TimeBaseStructure.TIM_Period = timer->interval; 
@@ -165,6 +176,8 @@ void timer_start( TiTimerAdapter * timer )//中断临时先采用0级
 void timer_stop( TiTimerAdapter * timer )//这里面还应该加上关终端的函数
 {
     NVIC_InitTypeDef NVIC_InitStructure;
+
+	hal_assert( timer->id==2 || timer->id==3 || timer->id==4 );
 
 	switch( timer->id)
     {
@@ -233,56 +246,56 @@ void timer_setlistener( TiTimerAdapter * timer, TiFunEventHandler listener, void
 
 uint8 timer_expired( TiTimerAdapter *timer)//1 time interrupt occur,0 not occur.
 {
-    uint8 ret;
+    uint8 retval;
 
     switch ( timer->id)
     {
         case 2:
             if ( TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
             {
-                ret = 0x01;
+                retval = 0x01;
             }
             else
             {
-                ret = 0x00;
+                retval = 0x00;
             }
             break;
         case 3:
             if ( TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
             {
-                ret = 0x01;
+                retval = 0x01;
             }
             else
             {
-                ret = 0x00;
+                retval = 0x00;
             }
             break;
         case 4:
             if ( TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
             {
-                ret = 0x01;
+                retval = 0x01;
             }
             else
             {
-                ret = 0x00;
+                retval = 0x00;
             }
             break;
         default:
             if ( TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
             {
-                ret = 0x01;
+                retval = 0x01;
             }
             else
             {
-                ret = 0x00;
+                retval = 0x00;
             }
             break;
     }
 
-    if (ret > 0)
+    if (retval > 0)
         timer_CLR_IT(timer);
 
-    return ret;
+    return retval;
 }
 
 void timer_CLR_IT( TiTimerAdapter *timer)//clear the interrupt bit
@@ -348,5 +361,21 @@ TiPowerTimerInterface * timer_powerinterface( TiTimerAdapter * timer, TiPowerTim
     return NULL;
 }
 
+void _timer_irqhandler( void * object, TiEvent * e )
+{
+	TiTimerAdapter * timer = (TiTimerAdapter *)object;
+	// timer_CLR_IT( timer );
+	if(timer_expired(timer))
+	{
+		if(timer->listener != NULL)
+		{
+			timer->listener( timer->listenowner,NULL );
+		}
+	}
+}
 
+
+#ifdef __cplusplus
+}
+#endif
 

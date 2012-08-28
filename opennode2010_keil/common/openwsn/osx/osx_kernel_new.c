@@ -61,7 +61,7 @@
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel_new.h"
 
-#include "../hal/hal_event.h"//@todo JOE why is hal_layer's stuff?
+#include "../hal/hal_event.h"
 
 
 #define OSX_STATE_INITIAL		0x00
@@ -151,6 +151,7 @@ void _osx_close( TiOSX * osx )
  * 
  * @attention
  *	this function can also be the event listener of hal layer or other components.
+ *  reference: hal/hal/hal_foundation.c
  */
 void _osx_post( TiOSX * osx, TiEvent * e )
 {
@@ -267,8 +268,8 @@ void _osx_execute( TiOSX * osx )
 	rtc_setprscaler( osx->timer, 32767 );
 	rtc_start( osx->timer);
 
-//	osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
-																		//we should also modify the osx_tlsche.c line 90
+	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
+																			//we should also modify the osx_tlsche.c line 90
 	while (1)
 	{
 		_osx_evolve( osx, NULL );
