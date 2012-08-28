@@ -118,7 +118,7 @@ inline bool osx_queue_empty( TiLightQueue * que )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_empty(que);
-	//hal_atomic_end();
+	hal_atomic_end();	  //@todo JOE 0820  and all below
 	return ret;
 }
 
@@ -127,7 +127,7 @@ inline bool osx_queue_full( TiLightQueue * que )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_full(que);
-	//hal_atomic_end();
+	hal_atomic_end();
 	return ret;
 }
 
@@ -136,7 +136,7 @@ inline void * osx_queue_front( TiLightQueue * que )
 	void * item;
 	hal_atomic_begin();
 	item = lwque_front( que );
-	//hal_atomic_end();
+	hal_atomic_end();		
 	return item;
 }
 
@@ -145,7 +145,7 @@ inline void * osx_queue_rear( TiLightQueue * que )
 	void * item;
 	hal_atomic_begin();
 	item = lwque_rear( que );
-	//hal_atomic_end();
+	hal_atomic_end();
 	return item;
 }
 
@@ -154,7 +154,7 @@ inline bool osx_queue_pushback( TiLightQueue * que, void * item )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_pushback( que, item );
-	//hal_atomic_end();
+	hal_atomic_end();
 	return ret;
 }
 
@@ -163,7 +163,7 @@ inline bool osx_queue_pushfront( TiLightQueue * que, void * item )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_pushfront( que, item );
-	//hal_atomic_end();
+	hal_atomic_end();
 	return ret;
 }
 
@@ -172,7 +172,7 @@ inline bool osx_queue_popfront( TiLightQueue * que )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_popfront( que );
-	//hal_atomic_end();
+	hal_atomic_end();
 	return ret;
 }
 
@@ -181,7 +181,7 @@ inline bool osx_queue_poprear( TiLightQueue * que )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_poprear( que );
-	//hal_atomic_end();
+	hal_atomic_end();
 	return ret;
 }
 

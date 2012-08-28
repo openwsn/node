@@ -66,7 +66,8 @@
  *	- ported to atmega128 MCU and GAINZ platform.
  * @modified by Jiang Ridong in 2011.07
  *  - Ported to OpenNode 2010 platform (based on stm32f103)
- *
+ * @modified by Shi Zhirong in 2012.08
+ *  - Add timer_irqhandler
  *****************************************************************************/
  
 #include "hal_configall.h"

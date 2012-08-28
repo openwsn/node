@@ -143,10 +143,10 @@ void aloha_sendnode(void)
 
     target_init();
 
-	led_open();
-	led_on( LED_ALL );
+	led_open(LED_RED);
+	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
 	 		//JOE	
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
@@ -160,7 +160,7 @@ void aloha_sendnode(void)
 	mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
     timer= timer_construct(( char *)(&m_timer),sizeof(TiTimerAdapter));
     
-	cc2520_open(cc, 0, NULL, NULL, 0x00 );
+	cc2520_open(cc, 0, 0x00 );
     timer = timer_open(timer, 2, NULL, NULL, 0x00); 
     timer_setinterval(timer, 1000, 0);
     timer_setscale(timer,7999);

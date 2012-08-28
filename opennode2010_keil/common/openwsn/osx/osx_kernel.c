@@ -54,6 +54,8 @@
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
 
+#include "../hal/hal_event.h"//@todo why is hal_layer's stuff?
+
 
 #define OSX_STATE_INITIAL		0x00
 #define OSX_STATE_RUNNING_BIT   0x01
@@ -219,8 +221,10 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 		{	
 			hal_assert(e->id != 0);
 			dispa_send( osx->dispatcher, e );
+			dbc_putchar(0xA2);
 		}
-		else{
+		else
+		{
 			e->handler( e->objectto, e );
 		}
 	}

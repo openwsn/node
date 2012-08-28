@@ -69,6 +69,9 @@
 
 #define NIO_DISPA_HOPESIZE(capacity) (sizeof(TiNioDispatcher) + sizeof(_TiNioDispatcherItem)*capacity)
 
+#define NIO_DISPA_IORET_SUCCESS(ret)             ((ret)>0)
+#define NIO_DISPA_IORET_NOACTION				  0
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -135,8 +138,8 @@ void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher);
 //TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac);
 TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler);
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher);
-uintx nio_dispa_send(TiNioNetLayerDispatcher * dispacher, uint16 addr, TiFrame * f, uint8 option);
-uintx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option);
+intx nio_dispa_send(TiNioNetLayerDispatcher * dispacher, uint16 addr, TiFrame * f, uint8 option);
+intx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option);
 void nio_dispa_evolve(void* object, TiEvent * e);
 
 /**
@@ -145,7 +148,7 @@ void nio_dispa_evolve(void* object, TiEvent * e);
 bool nio_dispa_register(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
     TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
 bool nio_dispa_register_default(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id, void * object, 
-    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve)
+    TiFunRxHandler rxhandler, TiFunTxHandler txhandler, TiFunEventHandler evolve);
 bool nio_disp_unregister(TiNioNetLayerDispatcher * dispatcher, uint8 proto_id);
 
 

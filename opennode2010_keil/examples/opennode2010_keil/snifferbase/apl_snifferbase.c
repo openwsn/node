@@ -159,10 +159,10 @@ void _nss_execute(void)
     target_init();
     rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
-    led_open();
-    led_on( LED_ALL );
+    led_open(LED_RED);
+    led_on( LED_RED );
     hal_delayms( 500 );
-    led_off( LED_ALL );
+    led_off( LED_RED );
     dbc_write( msg, strlen(msg) );
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
@@ -171,7 +171,7 @@ void _nss_execute(void)
     hal_assert( uart != NULL );
 
     cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));
-    cc2520_open(cc, 0, NULL, NULL, 0x00 );
+    cc2520_open(cc, 0,  0x00 );
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
 	cc2520_rxon( cc );								// enable RX mode
 	cc2520_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
@@ -305,10 +305,10 @@ void _active_send_test()
     TiSioAcceptor * sio;
 
 	target_init();
-	led_open();
+	led_open(LED_RED);
 	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
 	// #ifndef CONFIG_UART_INTERRUPT_DRIVEN
 	// rtl_init(dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report);

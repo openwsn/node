@@ -87,7 +87,7 @@ void uart_destroy( TiUartAdapter * uart )
  * @assume: the global interrupt should be disabled before calling this function.
  * @todo stop bits input is actually no use now.
  *****************************************************************************/
-TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint8 databits, uint8 stopbits, uint8 option )
+TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint32 baudrate, uint8 databits, uint8 stopbits, uint8 option )
 {
     USART_InitTypeDef USART_InitStructure;
 
@@ -125,7 +125,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-            USART_InitStructure.USART_BaudRate = uart->baudrate;//baudrate;
+            USART_InitStructure.USART_BaudRate = uart->baudrate;
             USART_InitStructure.USART_WordLength = USART_WordLength_8b;
             USART_InitStructure.USART_StopBits = USART_StopBits_1;
             USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -149,7 +149,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-            USART_InitStructure.USART_BaudRate = uart->baudrate;//baudrate;
+            USART_InitStructure.USART_BaudRate = uart->baudrate;
             USART_InitStructure.USART_WordLength = USART_WordLength_8b;
             USART_InitStructure.USART_StopBits = USART_StopBits_1;
             USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -173,7 +173,7 @@ TiUartAdapter * uart_open( TiUartAdapter * uart, uint8 id, uint16 baudrate, uint
             GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
             GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-            USART_InitStructure.USART_BaudRate = uart->baudrate;//baudrate;
+            USART_InitStructure.USART_BaudRate = uart->baudrate;
             USART_InitStructure.USART_WordLength = USART_WordLength_8b;
             USART_InitStructure.USART_StopBits = USART_StopBits_1;
             USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -259,7 +259,7 @@ intx uart_getchar( TiUartAdapter * uart, char * pc )
         break;
 
     case 1:
-        if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) //JOE
+        if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET)
         {
             *pc = (USART_ReceiveData(USART2) & 0xFF); 
             ret = 1;
@@ -620,7 +620,7 @@ uint8 USART_Get( uint8 ch)
 * @return  none
 *
 */
-void halUartInit(uint16 baudrate, uint8 options)
+void halUartInit(uint32 baudrate, uint8 options)
 {
 #ifdef CONFIG_UART2_ENABLED
 	USART_InitTypeDef USART_InitStructure;

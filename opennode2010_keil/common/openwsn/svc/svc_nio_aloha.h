@@ -86,7 +86,6 @@
  * These two macros defines the range for ACK waiting. You should tune it according
  * to the transceiver parameters.
  */
-
 #ifndef CONFIG_ALOHA_DEFAULT_PANID
 #define CONFIG_ALOHA_DEFAULT_PANID				0x0001
 #endif
@@ -97,16 +96,18 @@
 #define CONFIG_ALOHA_MAX_RETRY                  3
 #define CONFIG_ALOHA_ACK_RESPONSE_TIME          10
 
-#define CONFIG_ALOHA_MAX_FRAME_SIZE             128
+#define CONFIG_ALOHA_MAX_FRAME_SIZE             127
 
 
 #define CONFIG_ALOHA_MIN_ACK_TIME               1
 #define CONFIG_ALOHA_MAX_ACK_TIME               50
 
 #define CONFIG_ALOHA_MAX_BACKOFF                100
-#define CONFIG_ALOHA_MIN_BACKOFF                2    //该宏必须大于0，否则timer会出现异常
+#define CONFIG_ALOHA_MIN_BACKOFF                2
 
 #define CONFIG_ALOHA_STANDARD
+
+#undef	ALOHA_RXHANDLER_FOR_ACCEPTOR
 
 /* The aloha header here includes: 
  *  - 2B for frame control
@@ -121,9 +122,19 @@
 #define ALOHA_HEADER_SIZE   11
 #define ALOHA_TAIL_SIZE     2
 
+#define EVENT_DATA_ARRIVAL 	1	
 
-#define ALOHA_OPTION_ACK                    0x00
-#define ALOHA_DEF_OPTION                    0x00
+
+#define ALOHA_OPTION_ACK                    0x01
+#define ALOHA_OPTION_NOACK                  0x00
+#define ALOHA_DEF_OPTION                    ALOHA_OPTION_NOACK
+
+#define ALOHA_IORET_SUCCESS(ret)             ((ret)>0)
+#define ALOHA_IORET_NOACTION                 0
+#define ALOHA_IORET_ERROR_NOACK              -1
+#define ALOHA_IORET_ERROR_ACCEPTED_AND_BUSY  -2
+#define ALOHA_IORET_ERROR_BUSY               -3
+#define ALOHA_IORET_ERROR_UNKNOWN            -4
 
 /* standard aloha protocol state:
  * - IDLE: wait for sending and receiving. since the receiving is a fast process
@@ -154,13 +165,16 @@ typedef struct{
     uint16 panfrom;
     uint16 shortaddrfrom;
     uint8 seqid;
-    uint8 sendoption;
     uint8 sendfailed;
     TiIEEE802Frame154Descriptor desc;
     TiFunEventHandler listener;
     void * lisowner;
 	uint8 option;
-    char txbuf_memory[FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE)];
+	#ifdef CSMA_RXHANDLER_FOR_ACCEPTOR
+	TiFunRxHandler rxhandler;
+    void * rxhandlerowner;
+	#endif
+    char txbuf_memory[FRAME_HOPESIZE(CONFIG_ALOHA_MAX_FRAME_SIZE+1)];
 	char rxbuf_ack[FRAME154_ACK_FRAME_SIZE];
 	uintx success;//todo
 }TiAloha;
@@ -257,6 +271,17 @@ inline bool aloha_ischannelclear( TiAloha * mac )
     // return (mac->rxtx->ischnclear == NULL) ? true : mac->rxtx->ischnclear( mac->rxtx->provider );
     return true;
 }
+
+#ifdef ALOHA_RXHANDLER_FOR_ACCEPTOR
+intx aloha_rxhandler_for_acceptor( void * object, TiFrame * input, TiFrame * output, uint8 option );
+
+inline void aloha_setrxhandler( TiCsma * mac, TiFunRxHandler rxhandler, void * rxhandlerowner )
+{
+    mac->rxhandler = rxhandler;
+    mac->rxhandlerowner = rxhandlerowner;
+}
+#endif
+
 
 void aloha_statistics( TiAloha * mac, uint16 * sendcount, uint16 * sendfailed );
 

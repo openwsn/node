@@ -67,7 +67,7 @@
 #include "openwsn/hal/hal_debugio.h"
 #include "openwsn/hal/hal_timer.h"
 #include "openwsn/rtl/rtl_frame.h"
-#include "openwsn/svc/svc_nio_aloha.h"
+#include "openwsn/svc/svc_nio_mac.h"
 #include "openwsn/svc/svc_nio_acceptor.h"
 #include "openwsn/svc/svc_nio_flood.h"
 #include "openwsn/svc/svc_nio_dispatcher.h"
@@ -76,7 +76,7 @@
 #define CONFIG_TEST_ADDRESSRECOGNITION
 
 //since I think there is no need to calling for an ACK 
-//in aloha_bradocast ACK requeest bit has been cleared. 
+//in mac_bradocast ACK requeest bit has been cleared. 
 //#define CONFIG_TEST_ACK
  
 #define PANID						0x0001
@@ -84,7 +84,7 @@
 #define REMOTE_ADDRESS				0xffff
 #define DEFAULT_CHANNEL				11
 
-#define MAX_IEEE802FRAME154_SIZE                128
+#define MAX_IEEE802FRAME154_SIZE    128
 
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 1
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
@@ -93,14 +93,15 @@
 
 static TiFrameRxTxInterface         m_rxtx;
 static char                         m_nacmem[NAC_SIZE];
-static TiAloha						m_aloha;
+static TiNioMac						m_mac;
 static TiTimerAdapter               m_timer2;
 static char                         m_rxbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                         m_macbufmem[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiFloodNetwork			    m_net;
-TiCc2520Adapter                     m_cc;
-TiNioNetLayerDispatcher     m_disp;
-TiUartAdapter m_uart;
+static TiCc2520Adapter              m_cc;
+static TiNodeBase					m_nodebase;
+static TiNioNetLayerDispatcher      m_disp;
+static TiUartAdapter 				m_uart;
 
 
 #ifdef CONFIG_TEST_LISTENER
@@ -128,8 +129,9 @@ void floodnode(void)
 	TiFrameRxTxInterface * rxtx;
 	TiNioAcceptor * nac;
 	TiTimerAdapter   *timer2;
-    TiAloha * mac;
+    TiNioMac * mac;
 	TiFloodNetwork * net;
+	TiNodeBase * nodebase;
     TiNioNetLayerDispatcher * disp;
 	TiFrame * frame;
     TiFrame * mactxbuf;
@@ -143,11 +145,10 @@ void floodnode(void)
 	 * Device Startup and Initialization 
      **************************************************************************/
 	 
-	led_open();
-	
-	led_on(LED_ALL);
+	led_open(LED_RED);
+	led_on(LED_RED);
 	hal_delayms( 1000 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, 0, 9600, 8, 1, 0);
@@ -158,15 +159,14 @@ void floodnode(void)
 
 	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
 	nac = nac_construct( &m_nacmem[0], NAC_SIZE );
-    mac = aloha_construct( (char *)(&m_aloha), sizeof(TiAloha) );
+    mac = mac_construct( (char *)(&m_mac), sizeof(TiNioMac) );
     timer2 = timer_construct( (char *)(&m_timer2),sizeof(TiTimerAdapter) );
     disp = nio_dispa_construct( (void *)( &m_disp), sizeof( m_disp) );
 	net = flood_construct( (void *)(&m_net), sizeof(TiFloodNetwork) );
+    nodebase = nbase_construct( (void *)&m_nodebase,sizeof(m_nodebase));
 
 	// open the transceiver driver. we use TiCc2420Adapter in this example.
-	
-	cc2520_open( cc, 0, NULL, NULL, 0x00 );
-    // cc2420_settxpower( cc, CC2420_POWER_2 );
+	cc2520_open( cc, 0, 0x00 );
 	rxtx = cc2520_interface( cc, &m_rxtx );
 	hal_assert( rxtx != NULL );
 	nac = nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
@@ -179,20 +179,20 @@ void floodnode(void)
 
     
 	#ifdef CONFIG_TEST_LISTENER
-	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer2, _aloha_listener, NULL, 0x00);
+	mac = mac_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer2, _aloha_listener, NULL, 0x00);
 	#else
-	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer2, NULL, NULL, 0x00);
+	mac = mac_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID, LOCAL_ADDRESS, timer2, 0x00);
 	#endif
 
-    disp = nio_dispa_open( disp, NULL,mac);
-
     net = flood_open( net, disp, NULL, NULL, PANID, LOCAL_ADDRESS );
-    nio_dispa_register(disp, FLOOD_PROTOCAL_IDENTIFIER, net, 
-        flood_rxhandler, flood_txhandler,flood_evolve);
+    nodebase = nbase_open( nodebase,PANID,LOCAL_ADDRESS,DEFAULT_CHANNEL);
+	disp = nio_dispa_open( disp,nodebase,mac,NULL );
+
+    nio_dispa_register(disp, FLOOD_PROTOCAL_IDENTIFIER, net, flood_rxhandler, flood_txhandler,flood_evolve);
 
 	//todo 
 	cc2520_setchannel( cc, DEFAULT_CHANNEL );
-	cc2520_rxon( cc );							            // enable RX mode
+	cc2520_rxon( cc );							    // enable RX mode
 	cc2520_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
 	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	
@@ -223,7 +223,7 @@ void floodnode(void)
 			
 		}
 
-        aloha_evolve( mac, NULL );
+        mac_evolve( mac, NULL );
         flood_evolve( net, NULL );
         nio_dispa_evolve(net->disp, NULL);
 	}

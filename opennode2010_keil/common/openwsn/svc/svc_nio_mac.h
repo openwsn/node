@@ -1,7 +1,7 @@
 #ifndef _SVC_NIO_MAC_H_5738_
 #define _SVC_NIO_MAC_H_5738_
 
-#define CONFIG_ALOHA_ENABLED
+#define CONFIG_CSMA_ENABLED
 
 /* TinyMAC
  * which is an simple encapsulation of the low level transceiver interface and to
@@ -32,6 +32,10 @@
 	#define mac_ischannelclear(mac)  aloha_ischannelclear(mac)
 	#define mac_setprobability(mac,prob)  aloha_setsendprobability((mac),(prob))
 	#define mac_statistics(mac,stat)  aloha_statistics((mac),(stat))
+	#define MAC_IORET_ERROR_NOACK 	ALOHA_IORET_ERROR_NOACK
+	//#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY ALOHA_IORET_ERROR_ACCEPTED_AND_BUSY
+	#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY 0
+	#define MAC_IORET_SUCCESS(retval)  ALOHA_IORET_SUCCESS((retval))
 #endif
 
 /* TiCsma
@@ -54,6 +58,10 @@
 	#define mac_ischannelclear(mac)  csma_ischannelclear(mac)
 	#define mac_setprobability(mac,prob)  csma_setsendprobability((mac),(prob))
 	#define mac_statistics(mac,stat)  csma_statistics((mac),(stat))
+	#define mac_setsendprobability(mac,prob) csma_setsendprobability((mac),(prob))
+	#define MAC_IORET_ERROR_NOACK 	CSMA_IORET_ERROR_NOACK
+	#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY CSMA_IORET_ERROR_ACCEPTED_AND_BUSY
+	#define MAC_IORET_SUCCESS(retval)  CSMA_IORET_SUCCESS((retval))
 #endif /* CONFIG_CSMA_ENABLED */
 
 #ifdef CONFIG_MACA_ENABLED

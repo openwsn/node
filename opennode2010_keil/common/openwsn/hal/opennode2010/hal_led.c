@@ -31,23 +31,39 @@
 #include "../hal_led.h"
 #include "../hal_mcu.h"
 
-static uint8 m_ledstate = 0x00;
-
-void led_open()
+void led_open(uint16 id)
 {
-	m_ledstate = 0x00;
-
-	// @attention: You should avoid conflictions if you call the following PORTA initialization 
-	// multiple times.
-	//  
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    led_off( LED_ALL );
+	if (id & LED_RED)
+	{
+		GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_8;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);	
+	}
+	if(id & LED_GREEN)
+	{
+		GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);	
+	}
+	if(id & LED_YELLOW)
+	{	
+		GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_2;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+	}
+	if(id & LED_BLUE)
+	{	
+		GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_3;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);	
+	}
+    led_off( id );
 }
 
 void led_close()
@@ -55,7 +71,7 @@ void led_close()
     led_off( LED_ALL );
 }
 
-void led( uint8 id, bool state )
+void led( uint16 id, bool state )
 {
 	if (state)
 		led_off( id );
@@ -63,86 +79,67 @@ void led( uint8 id, bool state )
 		led_on( id );
 }
 
-void led_off( uint8 id )
+void led_off( uint16 id )
 {
 	if (id & LED_RED)
 	{
 		GPIO_SetBits( GPIOA, GPIO_Pin_8);
 	}
-
-//	if (id & LED_RED)
-//	{
-//     	PORTA|=_BV(PA2);
-//		m_ledstate |= LED_RED;		
-//	}
-//	if (id & LED_GREEN)
-//	{
-//     	PORTA|=_BV(PA1);
-//		m_ledstate |= LED_GREEN;		
-//	}
-//	if (id & LED_YELLOW)
-//	{
-//        PORTA|=_BV(PA0);
-//		m_ledstate |= LED_YELLOW;		
-//	}
+	if(id & LED_GREEN)
+	{
+		GPIO_ResetBits( GPIOA, GPIO_Pin_1);
+	}
+	if(id & LED_YELLOW)
+	{	
+		GPIO_ResetBits( GPIOA, GPIO_Pin_2);
+	}
+	if(id & LED_BLUE)
+	{	
+		GPIO_ResetBits( GPIOA, GPIO_Pin_3);
+	}
 }
 
-void led_on( uint8 id )
+void led_on( uint16 id )
 {
 	if (id & LED_RED)
 	{
 		GPIO_ResetBits( GPIOA, GPIO_Pin_8);
 	}
-//	if (id & LED_RED)
-//	{
-//      	PORTA&=~_BV(PA2);
-//		m_ledstate &= ~LED_RED;		
-//	}
-//	if (id & LED_GREEN)
-//	{
-//      	PORTA&=~_BV(PA1);
-//		m_ledstate &= ~LED_GREEN;		
-//	}
-//	if (id & LED_YELLOW)
-//	{
-//      	PORTA&=~_BV(PA0);
-//		m_ledstate &= ~LED_YELLOW;		
-//	}
+	if(id & LED_GREEN)
+	{
+		GPIO_SetBits( GPIOA, GPIO_Pin_1);
+	}
+	if(id & LED_YELLOW)
+	{	
+		GPIO_SetBits( GPIOA, GPIO_Pin_2);
+	}
+	if(id & LED_BLUE)
+	{	
+		GPIO_SetBits( GPIOA, GPIO_Pin_3);
+	}
 }
 
-void led_toggle( uint8 id )
+void led_toggle( uint16 id )
 {
 	if (id & LED_RED)
 	{
 		GPIO_WriteBit(GPIOA, GPIO_Pin_8, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_8)));
 	}
-//	if (id & LED_GREEN)
-//	{
-//		if (m_ledstate & LED_GREEN)
-//		{
-//      		PORTA&=~_BV(PA1);
-//			m_ledstate &= ~LED_GREEN;		
-//		}
-//		else{
-//      		PORTA|=_BV(PA1);
-//			m_ledstate |= LED_GREEN;		
-//		}
-//	}
-//	if (id & LED_YELLOW)
-//	{
-//		if (m_ledstate & LED_YELLOW)
-//		{
-//      		PORTA&=~_BV(PA0);
-//			m_ledstate &= ~LED_YELLOW;		
-//		}
-//		else{
-//      		PORTA|=_BV(PA0);
-//			m_ledstate |= LED_YELLOW;		
-//		}
-//	}
+	if(id & LED_GREEN)
+	{
+		GPIO_WriteBit(GPIOA, GPIO_Pin_1, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_1)));
+	}
+	if(id & LED_YELLOW)
+	{	
+		GPIO_WriteBit(GPIOA, GPIO_Pin_2, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_2)));
+	}
+	if(id & LED_BLUE)
+	{	
+		GPIO_WriteBit(GPIOA, GPIO_Pin_3, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_3)));
+	}
 }
 
-void led_twinkle( uint8 id , uint16 interval, uintx count )
+void led_twinkle( uint16 id , uint16 interval, uintx count )
 {
     if (count == 0)
         count = ~count;
@@ -156,7 +153,7 @@ void led_twinkle( uint8 id , uint16 interval, uintx count )
 	}
 }
 
-void led_showstate( uint8 state )
+void led_showstate( uint16 state )
 {
 	(state & 0x04) ? led_on(LED1) : led_off(LED1);
 	(state & 0x02) ? led_on(LED2) : led_off(LED2);

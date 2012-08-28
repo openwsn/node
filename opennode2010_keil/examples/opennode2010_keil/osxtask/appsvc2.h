@@ -23,12 +23,13 @@ typedef struct{
 	uint16 interval;
     TiFunEventHandler listener;
     void * lisowner;
+	void * sche;
 }TiAppService2;
 
-TiAppService2 * asv2_open( TiAppService2 * svc, uint16 interval );
-void asv2_close( TiAppService2 * svc );
-void asv2_setlistener( TiAppService2 * svc, TiFunEventHandler listener, void * lisowner );
-void asv2_evolve( void * svcptr, TiOsxTaskHeapItem *item );
-void send(void);
+extern TiAppService2 g_task2data;
+
+TiAppService2 * asv2_open( TiAppService2 * taskdata, uint16 interval, void *sche );
+void asv2_close( TiAppService2 * taskdata );
+void asv2_evolve( TiAppService2 * taskdata, TiEvent * e );
 
 #endif

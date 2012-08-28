@@ -24,36 +24,52 @@
  *
  ******************************************************************************/
 
+/******************************************************************************
+ * degio.c
+ * @author Shi Zhirong on 20120808
+ *	- first created
+******************************************************************************/
+ 
+#ifdef CONFIG_DEBUG   
+    #define GDEBUG
+#endif 
+
+
+#include "apl_foundation.h"
+#include "openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_mcu.h"
+#include <stdlib.h>
 #include <string.h>
-#include "../common/hal/hal_configall.h"
-#include "../common/hal/hal_foundation.h"
-#include "../common/hal/hal_target.h"
-#include "../common/hal/hal_cpu.h"
-#include "../common/hal/hal_debugio.h"
-#include "../common/hal/hal_led.h"
-#include "../common/hal/hal_assert.h"
+#include "openwsn/rtl/rtl_configall.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/hal/hal_foundation.h"
+#include "openwsn/hal/hal_cpu.h"
+#include "openwsn/hal/hal_led.h"
+#include "openwsn/hal/hal_assert.h"
+#include "openwsn/hal/hal_uart.h"
+#include "openwsn/hal/hal_cc2520.h"
+#include "openwsn/hal/hal_debugio.h"
 
-
-static void debugio_test( void );
+void debugio(void);
 
 int main(void)
 {
-    debugio_test();
-    return 0;
+	debugio();
 }
 
-void debugio_test( void )
+void debugio()
 {
-	char * msg = "debugio_test output! \r\n";
+	char * msg = "welcome to debug world";
 
 	target_init();
 
-	led_open();
-	led_on( LED_ALL );
-	hal_delay( 500 );
+	led_open(LED_ALL);
+	led_on(LED_ALL);
+	hal_delayms( 1000 );
 	led_off( LED_ALL );
-
-	dbo_open(0, 38400);
-	dbo_write( msg, strlen(msg) );
-    while (1) {};
+	while(1)
+	{
+		dbc_mem(msg, strlen(msg));
+	}
 }

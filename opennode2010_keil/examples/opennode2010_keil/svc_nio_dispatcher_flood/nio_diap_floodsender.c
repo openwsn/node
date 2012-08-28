@@ -117,10 +117,10 @@ void ledflood( uint16 ontime, uint16 offtime )
      **************************************************************************/
 	rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
 
-    led_open();
-    led_on(LED_ALL);
+    led_open(LED_RED);
+    led_on(LED_RED);
     hal_delayms( 1000 );
-    led_off( LED_ALL );
+    led_off( LED_RED );
     /***************************************************************************
 	 * Flood Startup
      **************************************************************************/
@@ -132,15 +132,14 @@ void ledflood( uint16 ontime, uint16 offtime )
     timer2= timer_construct( (char *)(&m_timer), sizeof(TiTimerAdapter));
     disp = nio_dispa_construct( (void *)( &m_disp), sizeof( m_disp) );
 
-	cc2520_open( cc, 0, NULL, NULL, 0x00 );
+	cc2520_open( cc, 0, 0x00 );
 	rxtx = cc2520_interface( cc, &m_rxtx );
 	hal_assert( rxtx != NULL );
 	nac = nac_open( nac, rxtx, CONFIG_NIOACCEPTOR_RXQUE_CAPACITY, CONFIG_NIOACCEPTOR_TXQUE_CAPACITY);
 	hal_assert( nac != NULL ); 
 	
 	timer2 = timer_open( timer2, 2, NULL, NULL, 0x00 );
-	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 
-		NULL, NULL, 0x00);
+	mac = aloha_open( mac, rxtx, nac, DEFAULT_CHANNEL, PANID,LOCAL_ADDRESS, timer2, 0x00);
     disp = nio_dispa_open( disp, NULL,mac);
 	net = flood_open( net, disp, NULL, NULL, PANID, LOCAL_ADDRESS );
     nio_dispa_register(disp, FLOOD_PROTOCAL_IDENTIFIER, net, 

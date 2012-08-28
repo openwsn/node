@@ -28,7 +28,7 @@
 #include "osx_foundation.h"
 #include "osx_taskpool.h"
 
-#define CONFIG_OSX_FIFOSCHE_CAPACITY
+#define CONFIG_OSX_FIFOSCHE_CAPACITY  8
 
 #define TiOsxFifoSchedulerItem TiOsxTaskPoolItem
 
@@ -48,11 +48,11 @@ void osx_fifosche_destroy( TiOsxFifoScheduler * sche )
 
 }
 
-TiOsxFifoScheduler * osx_fifosche_open( TiOsxFifoScheduler * heap, TiOsxTaskPool * tpl );
+TiOsxFifoScheduler * osx_fifosche_open( TiOsxFifoScheduler * heap, TiOsxTaskPool * tpl )
 {
 }
 
-void osx_fifosche_close( TiOsxFifoScheduler * heap );
+void osx_fifosche_close( TiOsxFifoScheduler * heap )
 {
 }
 

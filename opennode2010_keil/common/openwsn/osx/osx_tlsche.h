@@ -39,10 +39,10 @@
 typedef struct{
     TiOsxTaskHeap taskheap;
     TiOsxTaskPool taskpool;
-    TiOsxTimer2 * timer;
+    TiOsxTimer * timer;
 }TiOsxTimeLineScheduler;
 
-TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer2 * timer );
+TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer * timer );
 void osx_tlsche_close( TiOsxTimeLineScheduler * sche );
 int8 osx_tlsche_taskspawn( TiOsxTimeLineScheduler * sche, TiOsxTask taskfunction, 
     void * taskdata, int16 starttime, uint8 priority, uint8 option );

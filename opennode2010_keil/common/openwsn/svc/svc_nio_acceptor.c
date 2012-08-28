@@ -156,11 +156,13 @@ void nac_close( TiNioAcceptor * nac )
     }
 }
 
+#ifdef CONFIG_NIOACCEPTOR_RXHANDLE_ENABLE
 void nac_setrxhandler( TiNioAcceptor * nac, TiFunRxHandler rxhandler, void * rxhandlerowner )
 {
     nac->rxhandler = rxhandler;
     nac->rxhandlerowner = rxhandlerowner;
 }
+#endif
 
 void nac_set_timesync_adapter( TiNioAcceptor * nac, TiTimeSyncAdapter * tsync )
 {
@@ -351,17 +353,20 @@ void nac_evolve ( TiNioAcceptor * nac, TiEvent * event )
 	}
 */    
 		
-    #ifdef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE
+    #ifdef CONFIG_NIOACCEPTOR_RXHANDLE_ENABLE
     if (nac->rxhandler != NULL)
     {
 //        nac->rxhandler(nac->rxhandlerowner, (TiFrame *)fmque_front(nac->rxque), NULL, 0x00);
 //        fmque_popfront(nac->rxque);
 	   	if( fmque_front(nac->rxque)!=NULL )
 	   	{
-       		nac->rxhandler(nac->rxhandlerowner, fmque_front(nac->rxque), NULL, 0x00); //JOE 0803
+       		nac->rxhandler(nac->rxhandlerowner, fmque_front(nac->rxque), NULL, 0x00); 
        		fmque_popfront(nac->rxque);
     	}
 	}
+//	hal_enter_critical();	
+//	_nac_tryrecv(nac);
+//	hal_leave_critical();
     #endif
     
     #ifndef CONFIG_NIOACCEPTOR_RXFILTER_ENABLE

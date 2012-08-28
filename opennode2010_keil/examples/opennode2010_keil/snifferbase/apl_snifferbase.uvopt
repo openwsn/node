@@ -235,12 +235,12 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>2</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>40</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>274</TopLine>
-      <CurrentLine>280</CurrentLine>
+      <TopLine>296</TopLine>
+      <CurrentLine>311</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_snifferbase.c</PathWithFileName>
       <FilenameWithoutPath>apl_snifferbase.c</FilenameWithoutPath>
@@ -901,13 +901,19 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>6</ActiveTab>
+      <ActiveTab>1</ActiveTab>
       <Documents>
         <Doc>
+          <Name>..\..\..\common\openwsn/svc/svc_foundation.h</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>29</TopLine>
+          <CurrentLine>46</CurrentLine>
+        </Doc>
+        <Doc>
           <Name>.\apl_snifferbase.c</Name>
-          <ColumnNumber>40</ColumnNumber>
-          <TopLine>274</TopLine>
-          <CurrentLine>280</CurrentLine>
+          <ColumnNumber>17</ColumnNumber>
+          <TopLine>296</TopLine>
+          <CurrentLine>311</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cpu.c</Name>
@@ -938,12 +944,6 @@
           <ColumnNumber>6</ColumnNumber>
           <TopLine>1</TopLine>
           <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn/svc/svc_foundation.h</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>29</TopLine>
-          <CurrentLine>46</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

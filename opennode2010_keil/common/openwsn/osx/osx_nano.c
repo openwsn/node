@@ -40,10 +40,13 @@
  * @modified by openwsn on 2010.11.26
  *  - revision. 
  *
+ * @modified by Shi Zhirong on 2012.08.13
+ *  - update the atomic_t according hal_cpu.h
  ******************************************************************************/
 
 
 #include "../hal/hal_foundation.h"
+#include "../hal/hal_cpu.h"
 #include "osx_nano.h"  
 
 #define NOS_TASK_BITMASK (CONFIG_NOS_MAX_TASKS-1)
@@ -63,32 +66,36 @@ static void _nos_wait(void);
 void _nos_listener( void * object, TiEvent * e);
 #endif
 
-inline void nos_atomic_end(nos_atomic_t state)
-{
-	* (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x3F + 0x20) = state;
-}
-
 inline nos_atomic_t nos_atomic_start(void )
 {
-	nos_atomic_t result = * (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x3F + 0x20);
-	__asm volatile ("cli");
-	return result;
+//	nos_atomic_t result = * (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x3F + 0x20);
+//	__asm volatile ("cli");
+//	return result;
+	hal_atomic_begin();		 //@todo
+}
+
+inline void nos_atomic_end(nos_atomic_t state)
+{
+//	* (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x3F + 0x20) = state;
+	hal_atomic_end();
 }
 
 inline void nos_atomic_enable_interrupt(void)
 {
-	__asm volatile ("sei");
+//	__asm volatile ("sei");
+	hal_enable_interrupts();
 }
 
 inline void _nos_wait(void)
 {
-   __asm volatile ("nop");
-   __asm volatile ("nop");}
+//   __asm volatile ("nop");
+//   __asm volatile ("nop");
+}
 
  inline void nos_sleep(void)
 {
-	* (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x35 + 0x20) |= 1 << 5;
-	__asm volatile ("sleep");
+//	* (volatile unsigned char *)(unsigned int )& * (volatile unsigned char *)(0x35 + 0x20) |= 1 << 5;
+//	__asm volatile ("sleep");
 }
    
 inline void nos_init(void )

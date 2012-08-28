@@ -576,6 +576,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_random.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_random.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -610,11 +615,6 @@
               <FileName>rtl_lightqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_lightqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>rtl_random.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\rtl\rtl_random.c</FilePath>
             </File>
           </Files>
         </Group>

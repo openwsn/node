@@ -61,7 +61,7 @@ extern "C" {
 /**
  * Initialize an temperal event variable.
  */
-TiEvent * hal_initevent( TiEventId id, void * objectfrom, void * objectto, TiEventHandler handler );
+TiEvent * hal_initevent( TiEventId id, void * objectfrom, void * objectto, TiFunEventHandler handler );
 
 #ifdef __cplusplus
 }

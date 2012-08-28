@@ -30,12 +30,15 @@
 #include "osx_tlsche.h"
 #include "osx_taskheap.h"
 #include "osx_taskpool.h"
+#include "osx_kernel.h"
+#include "../../../common/openwsn/hal/hal_debugio.h"
 
-void _osx_taskheap_item_dump( TiOsxTaskHeap * heap, int8 idx );//jiade
-void _osx_taskheap_dump( TiOsxTaskHeap * heap );//jiade
+
+void _osx_taskheap_item_dump( TiOsxTaskHeap * heap, int8 idx );
+void _osx_taskheap_dump( TiOsxTaskHeap * heap );
 
 
-TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer2 * timer )
+TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer * timer )
 {
     osx_taskpool_construct( (char *)(&sche->taskpool), sizeof(TiOsxTaskPool) );
     osx_taskheap_open( &(sche->taskheap), &(sche->taskpool) );
@@ -67,7 +70,6 @@ int8 osx_tlsche_taskspawn( TiOsxTimeLineScheduler * sche, TiOsxTask taskfunction
 void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
 {    
     TiOsxTaskHeapItem * desc;
-	
 
     do{
         desc = osx_taskheap_root( &(sche->taskheap) );
@@ -84,6 +86,7 @@ void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
     }while (true);
 
     //osx_tlsche_stepforward( sche, CONFIG_OSX_TIMER_INTERVAL );
+//	osx_postx(1,osx_tlsche_evolve,sche,sche);//for testing 
 }
 
 void osx_tlsche_execute( TiOsxTimeLineScheduler * sche )
@@ -130,7 +133,7 @@ void osx_tlsche_stepforward( TiOsxTimeLineScheduler * sche, uint16 slicecount )
     }
 }
 
-void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e )  //0705
+void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e )
 {
 	hal_enter_critical();
 	osx_tlsche_stepforward( sche, 1 );

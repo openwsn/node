@@ -43,11 +43,13 @@
 #define LED1        0x01
 #define LED2        0x02
 #define LED3        0x04
+#define LED4		0x08
 #define LED_RED		LED1
 #define LED_GREEN 	LED2
 #define LED_YELLOW 	LED3
+#define LED_BLUE	LED4
 
-#define LED_ALL     (LED1 + LED2 + LED3)
+#define LED_ALL     (LED4 + LED1 + LED2 + LED3)
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,9 +64,9 @@ extern "C" {
  *	lead to quite a long delay.
  ****************************************************************************/ 
 
-void led_open( void );
+void led_open( uint16 id );
 void led_close( void );
-void led( uint8 id, bool state );
+void led( uint16 id, bool state );
 
 /** 
  * Turn the specific LED on 
@@ -72,7 +74,7 @@ void led( uint8 id, bool state );
  *		id	= { LED_GREEN, LED_YELLOW, LED_RED } 
  * @return None
  */
-void led_on( uint8 id );
+void led_on( uint16 id );
 
 /** 
  * Turn the specific LED off
@@ -80,10 +82,10 @@ void led_on( uint8 id );
  *		id	= { LED_GREEN, LED_YELLOW, LED_RED } 
  * @return None
  */
-void led_off( uint8 id );
-void led_toggle( uint8 id );
-void led_twinkle( uint8 id, uint16 interval, uintx count );
-void led_show( uint8 state );
+void led_off( uint16 id );
+void led_toggle( uint16 id );
+void led_twinkle( uint16 id, uint16 interval, uintx count );
+void led_show( uint16 state );
 
  
 #ifdef __cplusplus

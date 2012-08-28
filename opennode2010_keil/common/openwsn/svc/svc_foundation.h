@@ -36,6 +36,7 @@
 #include "svc_configall.h"
 #include "../rtl/rtl_foundation.h"
 #include "../hal/hal_assert.h"
+#include "../rtl/rtl_frame.h"
 
 /*
 #ifdef CONFIG_WINDOWS
@@ -43,8 +44,8 @@
   #include <windows.h>
 #endif
 */
-typedef uintx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
-typedef uintx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef intx (* TiFunRxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
+typedef intx (* TiFunTxHandler)( void * object, TiFrame * frame, TiFrame * forward, uint8 option );
 
 
 #define svc_assert(cond) hal_assert(cond)
