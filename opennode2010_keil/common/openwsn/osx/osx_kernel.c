@@ -129,7 +129,7 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 	osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 
 	osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );
 		
-	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);//@todo
+	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);
 
 	rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 
 	#endif
