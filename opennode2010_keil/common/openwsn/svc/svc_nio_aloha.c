@@ -73,6 +73,8 @@
  *  - Revised and tested
  * @modified by Shi Zhirong in 2012.08.09
  *  - Revised and tested
+  * @modified by ShiZhirong on 2012.08.28
+ *  - Add ALOHA_OSX_ENABLE, Replace CONFIG_ALOHA_STANDARD with ALOHA_OPTION_AUTODELAY 
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -230,54 +232,57 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
         mac->txbuf->option = option;
         frame_setlength(mac->txbuf, (count + ALOHA_HEADER_SIZE + 1 + ALOHA_TAIL_SIZE));
         
-		// standard aloha protocol behavior
-		// You should define macro CONFIG_ALOHA_STANDARD before this module to choose
-		// this branch.
-		#ifdef CONFIG_ALOHA_STANDARD
-		failed = true;
-		
-        // if (mac->rxtx->ischnclear(mac))
-        // {   
-		retval = _aloha_trysend( mac, mac->txbuf, option );
-		if (ALOHA_IORET_SUCCESS(retval))
-			failed = false;
-        // }
-		
-		// If the channel currently is busy or the sending is failed, then we should
-		// backoff and start the retry sending process.
-		if (failed)
-		{
-            mac->backoff =CONFIG_ALOHA_MIN_BACKOFF+ (uint16)hal_rand_uint8( CONFIG_ALOHA_MAX_BACKOFF );
-            mac->retry = 0;
+		if( option & 0x02 == ALOHA_OPTION_ACK )
+		{ 
+			// standard aloha protocol behavior
+			// You should define macro CONFIG_ALOHA_STANDARD before this module to choose
+			// this branch.
+			//#ifdef CONFIG_ALOHA_STANDARD
+			failed = true;
+			// if (mac->rxtx->ischnclear(mac))
+			// {   
+			retval = _aloha_trysend( mac, mac->txbuf, option );
+			if (ALOHA_IORET_SUCCESS(retval))
+				failed = false;
+			// }
 			
-			// @todo: should check whether the interval value is really support
-            // by the low level timer hardware. Some hardware timer may not support 
-            // long interval time due to hardware restrictions.
-            // 
-            // @todo: Recommend to use an time-indepedent timer such as the timer component
-            // in the service layer, because the interval may depends on the system
-            // frequency if you use hardware timer directly. 
-            //
-            timer_setinterval( mac->timer, mac->backoff, 0 );
-            timer_start( mac->timer );
-            mac->state = ALOHA_STATE_BACKOFF;
-        }
-        #endif
-
-        // Optimized aloha protocol behavior. it will insert a random delay before
-        // sending to decrease the probability of conflictions.
-        // wait for a random period before really start the transmission
-		//
-		// You should undef macro CONFIG_ALOHA_STANDARD before this module to choose
-		// this branch.
-		
-        #ifndef CONFIG_ALOHA_STANDARD
-        mac->backoff =CONFIG_ALOHA_MIN_BACKOFF+ (uint16)hal_rand_uint8( CONFIG_ALOHA_MAX_BACKOFF );
-        mac->retry = 0;
-        timer_setinterval( mac->timer, mac->backoff, 0 );
-        timer_start( mac->timer );
-        mac->state = ALOHA_STATE_BACKOFF;
-        #endif
+			// If the channel currently is busy or the sending is failed, then we should
+			// backoff and start the retry sending process.
+			if (failed)
+			{
+				mac->backoff =CONFIG_ALOHA_MIN_BACKOFF+ (uint16)hal_rand_uint8( CONFIG_ALOHA_MAX_BACKOFF );
+				mac->retry = 0;
+				
+				// @todo: should check whether the interval value is really support
+				// by the low level timer hardware. Some hardware timer may not support 
+				// long interval time due to hardware restrictions.
+				// 
+				// @todo: Recommend to use an time-indepedent timer such as the timer component
+				// in the service layer, because the interval may depends on the system
+				// frequency if you use hardware timer directly. 
+				//
+				timer_setinterval( mac->timer, mac->backoff, 0 );
+				timer_start( mac->timer );
+				mac->state = ALOHA_STATE_BACKOFF;
+			}
+			//#endif
+		}
+		else
+		{
+			// Optimized aloha protocol behavior. it will insert a random delay before
+			// sending to decrease the probability of conflictions.
+			// wait for a random period before really start the transmission
+			//
+			// You should undef macro CONFIG_ALOHA_STANDARD before this module to choose
+			// this branch.
+			//#ifndef CONFIG_ALOHA_STANDARD
+			mac->backoff =CONFIG_ALOHA_MIN_BACKOFF+ (uint16)hal_rand_uint8( CONFIG_ALOHA_MAX_BACKOFF );
+			mac->retry = 0;
+			timer_setinterval( mac->timer, mac->backoff, 0 );
+			timer_start( mac->timer );
+			mac->state = ALOHA_STATE_BACKOFF;
+			//#endif
+		}
 
         /* @modified by openwsn on 2010.08.30
          * - bug fix. you should place the frame_length() call before aloha_evolve() 
@@ -289,7 +294,7 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
          */
         //ret = frame_capacity( mac->txbuf );
 		mac->success = ALOHA_IORET_NOACTION;
-        aloha_evolve( mac, NULL );	   //JOE 这里重启发送？ retval受到影响
+        aloha_evolve( mac, NULL );
 		//如果没有下面这一句，即使在evolve中发送成功，send的返回值还是不为真，同一个帧可能被连续发送多次。
 		if ( failed)//todo added by Jiang Ridong on 2011.04
 		{
@@ -317,7 +322,7 @@ intx aloha_send( TiAloha * mac,  uint16 shortaddrto, TiFrame * frame, uint8 opti
     }
 	return retval;
 }
-//JOE  add retval
+
 intx aloha_broadcast( TiAloha * mac, TiFrame * frame, uint8 option )
 {
  	// clear the ACK REQUEST bit
@@ -414,15 +419,14 @@ intx _aloha_trysend( TiAloha * mac, TiFrame * frame, uint8 option )
 						if (*(buf+3) == mac->seqid)
 						{   
 							ack_success = true;
-							//fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
+							//fmque_poprear(nac_rxque(mac->nac));
 							break;
 						}
-						//else//todo : is this operation safe? //JOE 0726 bug
+						//else//todo : is this operation safe? 
 						//{
-							//fmque_poprear(nac_rxque(mac->nac));//JOE 0726 bug
+							//fmque_poprear(nac_rxque(mac->nac));
 						//}
                     }
-					//JOE 0726 bug
 					//if( FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_BEACON ||FCF_FRAMETYPE(fcf) == FCF_FRAMETYPE_COMMAND )
 					//{
 						//fmque_poprear(nac_rxque(mac->nac));
@@ -681,9 +685,21 @@ void aloha_evolve( void * macptr, TiEvent * e )
 				mac->state = ALOHA_STATE_IDLE;
 				mac->retry = 0;
 			}
+			mac->success = retval;		
+			#ifdef CSMA_OSX_ENABLE
+			else
+			{
+				osx_postx( NULL, csma_evolve, mac, mac);
+			}
+			#endif
 			mac->success = retval;
 		}
-		
+		#ifdef CSMA_OSX_ENABLE
+		else
+		{
+			osx_postx( NULL, csma_evolve, mac, mac);
+		}
+		#endif
         break;
     
     case ALOHA_STATE_SLEEPING:
