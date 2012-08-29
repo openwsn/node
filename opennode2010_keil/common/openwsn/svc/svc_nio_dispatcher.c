@@ -310,7 +310,7 @@ void nio_dispa_evolve(void* object, TiEvent * e)
     #endif
 	
 	#ifdef NIO_DISPA_OSX_ENABLE
-	if( !frame_empty( dispacher->txbuf ))
+	if( !frame_empty( dispatcher->txbuf ))
 	{
 		osx_postx( NULL, nio_dispa_evolve,dispatcher,dispatcher);
 	}

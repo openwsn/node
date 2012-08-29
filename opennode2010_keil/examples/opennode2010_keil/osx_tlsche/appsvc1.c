@@ -10,7 +10,7 @@
 #include "../../../common/openwsn/hal/hal_debugio.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"
-#include "../../../common/openwsn/osx/osx_kernel_new.h"
+#include "../../../common/openwsn/osx/osx_kernel.h"
 
 TiAppService1 * asv1_open( TiAppService1 * svc, uint16 interval )
 {
