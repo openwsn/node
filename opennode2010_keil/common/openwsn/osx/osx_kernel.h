@@ -50,6 +50,8 @@
  *  - revision. upgraded from Portable WinAVR 2008 to 2009 version
  * @modified by openwsn on 2010.12.12
  *	- revision
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add tlsche
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
@@ -71,6 +73,8 @@
 #define CONFIG_OSX_DYNAMIC_MEMORY
 #undef  CONFIG_OSX_DYNAMIC_MEMORY
 
+#define CONFIG_OSX_TLSCHE_ENABLE
+
 #define CONFIG_OSX_DBA_ENABLE
 #define CONFIG_OSX_FIFOSCHE_ENABLE
 #undef  CONFIG_OSX_RTSCHE_ENABLE
@@ -82,14 +86,19 @@
 #include "../rtl/rtl_dispatcher.h"
 //#include "osx_ticker.h"
 #include "osx_queue.h"
+#include "osx_tlsche.h"
 
 #ifdef CONFIG_OSX_DBA_ENABLE
 #include "osx_dba.h"
 #endif
 
+#ifdef CONFIG_OSX_TLSCHE_ENABLE
+#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTimer))			//todo
+#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
+#else
 #define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize))
 #define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
-
+#endif
 /*
 typedef void (* TiFunScheEvolve)(void * sche, TiEvent * e);
 typedef void (* TiFunSchePost)(void * sche, TiEvent * e);
@@ -128,16 +137,22 @@ extern "C" {
 #endif
 
 typedef struct{
-	uint8                   state;
-	TiOsxQueue *            eventqueue;
-	TiFunEventHandler       listener;
-	void *                  listenowner;
-	TiDispatcher *          dispatcher;
+	uint8                   	state;
+	TiOsxQueue *           	 	eventqueue;
+	TiFunEventHandler   	    listener;
+	void *                  	listenowner;
+	TiDispatcher *  	        dispatcher;
 	#ifdef CONFIG_OSX_DBA_ENABLE
-	TiDebugAgent *          dba;
+	TiDebugAgent *	        	dba;
 	#endif
 	#ifdef CONFIG_OSX_TIMER_ENABLE
-	TiOsxTicker *            ticker;
+	TiOsxTicker *       		ticker;
+	#endif
+		
+	TiOsxTimer	*				timer;
+	
+    #ifdef CONFIG_OSX_TLSCHE_ENABLE
+	TiOsxTimeLineScheduler *	scheduler;
 	#endif
 }TiOSX;
 
@@ -151,6 +166,7 @@ extern TiOSX *              g_osx;
 #endif   
 
 #define osx_open(buf,size,quesize,dpasize)  _osx_open((buf),(size),(quesize),(dpasize))
+#define osx_open(buf,size,quesize,dpasize,timer)  _osx_open((buf),(size),(quesize),(dpasize),(timer))
 #define osx_close()                         _osx_close(g_osx);
 
 #define osx_post(e)                         _osx_post((g_osx),(e))
@@ -171,6 +187,10 @@ extern TiOSX *              g_osx;
 #define osx_sleep()                         _osx_sleep_request(g_osx)
 #define osx_wakeup()                        _osx_on_wakeup(g_osx)
 
+#ifdef CONFIG_OSX_TLSCHE_ENABLE
+#define osx_taskspawn(taskfunction, taskdata, starttime, priority, option )		osx_tlsche_taskspawn(g_osx->scheduler,(taskfunction),(taskdata),(starttime),(priority),(option))
+#define osx_taskdelete(id)					osx_tlsche_kill( g_osx->scheduler,id )
+#endif
 
 /******************************************************************************
  * construct() and destroy()
@@ -191,7 +211,7 @@ TiOSX * _osx_create( uint16 quesize, uint16 dpasize );
 void _osx_free( TiOSX * osx );
 #endif
 
-TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize );
+TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize);
 void _osx_close();
 
 
@@ -199,6 +219,9 @@ void _osx_close();
  * osx_post(e)
  * post an event into the default system queue. this funcation can be called
  * in interrupt service routines
+	* @attention
+	*	this function can also be the event listener of hal layer or other components.
+	*  reference: hal/hal/hal_foundation.c
  *
  * osx_rtpost(e,deadline)
  * post an event into the default system queue. the event will be processed as

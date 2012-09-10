@@ -77,6 +77,8 @@
  *  - Using "nac->ackbuf" to replace "fmque_rear(nac->rxque)".
  * @modified by Shi Zhirong on 2012.0807
  *	_ Add csma_rxhandler_for_acceptor, temporarily not used.
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add CSMA_OSX_ENABLE, Replace CONFIG_CSMA_STANDARD with CSMA_OPTION_AUTODELAY 
  ******************************************************************************/
  
 #include "svc_configall.h"
@@ -262,53 +264,55 @@ intx csma_send( TiCsma * mac,  uint16 shortaddrto, TiFrame * frame, uint8 option
         mac->txbuf->option = option;
         frame_setlength(mac->txbuf, (CSMA_HEADER_SIZE + 1 + count + CSMA_TAIL_SIZE));
 
-        // standard csma protocol behavior
-		// You should define macro CONFIG_CSMA_STANDARD before this module to choose
-		// this branch.
 
-        #ifdef CONFIG_CSMA_STANDARD
-		failed = true;
- 
-		retval = _csma_trysend( mac, mac->txbuf, option );
-		if (CSMA_IORET_SUCCESS(retval))
-			failed = false;
-		
-		// If the channel currently is busy or the sending is failed, then we should
-		// backoff and start the retry sending process.
-		if (failed)
+		if( option & 0x02 == CSMA_OPTION_ACK )
+		{        
+			// standard csma protocol behavior
+			// You should define macro CONFIG_CSMA_STANDARD before this module to choose
+			// this branch.	
+			//#ifdef CONFIG_CSMA_STANDARD
+			failed = true;
+
+			retval = _csma_trysend( mac, mac->txbuf, option );
+			if (CSMA_IORET_SUCCESS(retval))
+				failed = false;
+			
+			// If the channel currently is busy or the sending is failed, then we should
+			// backoff and start the retry sending process.
+			if (failed)
+			{
+				mac->backoff = CONFIG_CSMA_MIN_BACKOFF_TIME + (uint16)hal_rand_uint8( CONFIG_CSMA_MAX_BACKOFF_TIME );	
+				mac->retry = 0;
+				// @todo: should check whether the interval value is really support
+				// by the low level timer hardware. Some hardware timer may not support 
+				// long interval time due to hardware restrictions.
+				// 
+				// @todo: Recommend to use an time-indepedent timer such as the timer component
+				// in the service layer, because the interval may depends on the system
+				// frequency if you use hardware timer directly. 
+				//
+				timer_setinterval( mac->timer, mac->backoff, 0 );
+				timer_start( mac->timer );
+				mac->state = CSMA_STATE_BACKOFF;
+			}
+			//#endif
+		}
+		else
 		{
-            mac->backoff = CONFIG_CSMA_MIN_BACKOFF_TIME + (uint16)hal_rand_uint8(CONFIG_CSMA_MAX_BACKOFF_TIME);	
-            mac->retry = 0;
-            
-            // @todo: should check whether the interval value is really support
-            // by the low level timer hardware. Some hardware timer may not support 
-            // long interval time due to hardware restrictions.
-            // 
-            // @todo: Recommend to use an time-indepedent timer such as the timer component
-            // in the service layer, because the interval may depends on the system
-            // frequency if you use hardware timer directly. 
-            //
-            timer_setinterval( mac->timer, mac->backoff, 0 );
-            timer_start( mac->timer );
-            mac->state = CSMA_STATE_BACKOFF;
-        }
-        #endif
-
-        // Optimized csma protocol behavior. it will insert a random delay before
-        // sending to decrease the probability of conflictions.
-        // wait for a random period before really start the transmission
-		//
-		// You should undef macro CONFIG_CSMA_STANDARD before this module to choose
-		// this branch.
-		
-        #ifndef CONFIG_CSMA_STANDARD
-        mac->backoff = CONFIG_CSMA_MIN_BACKOFF_TIME + (uint16)hal_rand_uint8( CONFIG_CSMA_MAX_BACKOFF_TIME );	
-        mac->retry = 0;
-        timer_setinterval( mac->timer, mac->backoff, 0 );
-        timer_start( mac->timer );
-        mac->state = CSMA_STATE_BACKOFF;
-        #endif
-
+			// Optimized csma protocol behavior. it will insert a random delay before
+			// sending to decrease the probability of conflictions.
+			// wait for a random period before really start the transmission
+			//
+			// You should undef macro CONFIG_CSMA_STANDARD before this module to choose
+			// this branch.	
+			//#ifndef CONFIG_CSMA_STANDARD
+			mac->backoff = CONFIG_CSMA_MIN_BACKOFF_TIME + (uint16)hal_rand_uint8( CONFIG_CSMA_MAX_BACKOFF_TIME );	
+			mac->retry = 0;
+			timer_setinterval( mac->timer, mac->backoff, 0 );
+			timer_start( mac->timer );
+			mac->state = CSMA_STATE_BACKOFF;
+			//#endif
+		}
         /* @modified by openwsn on 2010.08.30
          * - bug fix. you should place the frame_length() call before csma_evolve() 
          * because csma_evolve() may send mac->txbuf and clear it. this will cause
@@ -787,8 +791,20 @@ void csma_evolve( void * macptr, TiEvent * e )
 //                    mac->listener( mac->lisowner, e );
 //                }
 			}
+			#ifdef CSMA_OSX_ENABLE
+			else
+			{
+				osx_postx( NULL, csma_evolve, mac, mac);
+			}
+			#endif
 			mac->success = retval;
 		}
+		#ifdef CSMA_OSX_ENABLE
+		else
+		{
+			osx_postx( NULL, csma_evolve, mac, mac);
+		}
+		#endif
 		break;
     
     case CSMA_STATE_SLEEPING:

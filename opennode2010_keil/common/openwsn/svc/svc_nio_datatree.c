@@ -11,7 +11,7 @@
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_mac.h"
-#include "../osx/osx_tlsche.h"
+#include "../osx/osx_kernel.h"
 #include "svc_nodebase.h"
 #include "svc_nio_dispatcher.h"
 #include "svc_nio_datatree.h"
@@ -77,8 +77,7 @@ void dtp_destroy( TiDataTreeNetwork * net )
 	dtp_close( net );
 }
 
-TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, TiOsxTimeLineScheduler * scheduler,
-    TiNioNetLayerDispatcher *dispatcher, uint8 option )
+TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase,  TiNioNetLayerDispatcher *dispatcher, uint8 option )
 {
 	//net->state = DTP_STATE_STARTUP;
 	net->state = DTP_STATE_IDLE;//for testing
@@ -95,7 +94,6 @@ TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNo
 	net->distance = ~0;
 	net->mac = mac;
 	net->dispatcher=dispatcher;
-	net->scheduler=scheduler;
 	//net->listener = listener;
 	//net->lisowner = lisowner;
 	//net->txtrytime = DTP_MAX_TX_TRYTIME;
@@ -106,8 +104,7 @@ TiDataTreeNetwork * dtp_open_node( TiDataTreeNetwork * net, TiNioMac * mac, TiNo
 	net->response_id = net->request_id;
 	return net;
 }
-TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, 	TiOsxTimeLineScheduler * scheduler,
-    TiNioNetLayerDispatcher *dispatcher, uint8 option )
+TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiNioMac * mac, TiNodeBase * nbase, TiNioNetLayerDispatcher *dispatcher, uint8 option )
 {
 	net->state = DTP_STATE_IDLE;
 	net->option = option;
@@ -120,7 +117,6 @@ TiDataTreeNetwork * dtp_open_sink( TiDataTreeNetwork * net, TiNioMac * mac, TiNo
 	net->distance = ~0;
 	net->mac = mac;
 	net->dispatcher=dispatcher;
-	net->scheduler=scheduler;
 	//net->listener = listener;
 	//net->lisowner = lisowner;
 	//net->txtrytime = DTP_MAX_TX_TRYTIME;
@@ -210,7 +206,7 @@ void dtp_maintain_evolve( void * object, TiEvent * e)
 		//hal_delayms( 100 );
 		count ++;
 	}
-	osx_tlsche_taskspawn(net->scheduler, dtp_maintain_evolve, net,DTP_MAINTAIN_TIME,0,0);
+	osx_taskspawn( dtp_maintain_evolve, net, DTP_MAINTAIN_TIME, 0, 0);
 	return; 
 }
 
@@ -693,7 +689,7 @@ uint8 _dtp_broadcast( TiDataTreeNetwork * net, TiFrame * frame, uint8 option )
 
 
 
-
+/*
 void dtp_test_recv_evolve( void * object, TiEvent * e)	 //for recv
 {
 	TiDataTreeNetwork * net = (TiDataTreeNetwork *)object;
@@ -714,7 +710,7 @@ void dtp_test_recv_evolve( void * object, TiEvent * e)	 //for recv
 			led_toggle(LED_RED);
 		}
 	}
-	//osx_tlsche_taskspawn(net->scheduler, dtp_test_recv_evolve, net,1,legth,ptr[0]);//just for testing
-	osx_tlsche_taskspawn(net->scheduler, dtp_test_recv_evolve, net,1,0,0); //just for testing
+	//osx_tlsche_taskspawn(net->scheduler, dtp_test_recv_evolve, net,1,0,0); //just for testing
 	return; 
 }
+*/

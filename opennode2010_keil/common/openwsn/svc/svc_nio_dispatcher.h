@@ -44,6 +44,8 @@
  * @modified by zhangwei on 200905
  *	- improved performance. this version eliminate the using of TiVectorX, and 
  *    implement the event->handler map itself. 
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add NIO_DISPA_OSX_ENABLE
  ******************************************************************************/ 
 
 #include "svc_configall.h"
@@ -53,7 +55,7 @@
 #include "svc_nio_aloha.h"
 #include "svc_nio_csma.h"
 #include "svc_nodebase.h"
-#include "../osx/osx_tlsche.h"
+#include "../osx/osx_kernel.h"
 
 /******************************************************************************* 
  * attention
@@ -71,6 +73,8 @@
 
 #define NIO_DISPA_IORET_SUCCESS(ret)             ((ret)>0)
 #define NIO_DISPA_IORET_NOACTION				  0
+
+#define NIO_DISPA_OSX_ENABLE
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,13 +134,11 @@ typedef struct{
     char fwbuf_memory[NIO_DISPA_FRAME_MEMSIZE];
     char txbak_memory[NIO_DISPA_FRAME_MEMSIZE];
     _TiNioNetLayerDispatcherItem items[CONFIG_NIO_NETLAYER_DISP_CAPACITY];
-	TiOsxTimeLineScheduler * scheduler;	  //JOE 0709
 }TiNioNetLayerDispatcher;
 
 TiNioNetLayerDispatcher * nio_dispa_construct( void * mem, uint16 memsize );
 void nio_dispa_destroy(TiNioNetLayerDispatcher * dispatcher);
-//TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiAloha *mac);
-TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac,TiOsxTimeLineScheduler * scheduler);
+TiNioNetLayerDispatcher * nio_dispa_open( TiNioNetLayerDispatcher * dispatcher, TiNodeBase * database, TiNioMac *mac);
 void nio_dispa_close(TiNioNetLayerDispatcher * dispacher);
 intx nio_dispa_send(TiNioNetLayerDispatcher * dispacher, uint16 addr, TiFrame * f, uint8 option);
 intx nio_dispa_recv(TiNioNetLayerDispatcher * dispacher, uint16 * paddr, TiFrame * f, uint8 option);

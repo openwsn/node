@@ -24,7 +24,7 @@
 #include "../../../common/openwsn/hal/hal_assert.h"
 #include "../../../common/openwsn/hal/hal_timer.h"
 #include "../../../common/openwsn/hal/hal_debugio.h"
-#include "../../../common/openwsn/osx/osx_kernel_new.h"	
+#include "../../../common/openwsn/osx/osx_kernel.h"	
 #include "../../../common/openwsn/hal/hal_event.h"
 #include "asv_foundation.h"
 #include "appsvc1.h"

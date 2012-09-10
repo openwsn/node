@@ -48,6 +48,8 @@
  * @modified by Zhang Wei on 2012.08.02
  *  - add support to rxfilter mechanism.
  *  - simplied the cc2520_open() function parameters.
+ * @modified by zhang wei on 2012.08.27
+ *  - revised.
  ******************************************************************************/
 
 #include "hal_configall.h"
@@ -197,7 +199,7 @@ uint8 cc2520_disable_addrdecode( TiCc2520Adapter * cc ) ;
 uint8 cc2520_enable_filter( TiCc2520Adapter * cc );
 uint8 cc2520_disable_filter( TiCc2520Adapter * cc ) ;
 
-//以下5组函数只有在filter功能实现的时候才有意义
+//锟斤拷锟斤拷5锟介函锟斤拷只锟斤拷锟斤拷filter锟斤拷锟斤拷实锟街碉拷时锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
 //define whether the reserved frames are accepted or rejected
 uint8 cc2520_reserved_accept( TiCc2520Adapter * cc );
 uint8 cc2520_reserved_reject( TiCc2520Adapter * cc ) ;

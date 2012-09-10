@@ -596,6 +596,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_random.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_rtc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -641,6 +646,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\rtl\rtl_dumpframe.c</FilePath>
             </File>
+            <File>
+              <FileName>rtl_dispatcher.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\rtl\rtl_dispatcher.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -655,6 +665,31 @@
               <FileName>svc_nio_csma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\svc\svc_nio_csma.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>osx</GroupName>
+          <Files>
+            <File>
+              <FileName>osx_kernel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\osx\osx_kernel.c</FilePath>
+            </File>
+            <File>
+              <FileName>osx_taskheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\osx\osx_taskheap.c</FilePath>
+            </File>
+            <File>
+              <FileName>osx_taskpool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\osx\osx_taskpool.c</FilePath>
+            </File>
+            <File>
+              <FileName>osx_tlsche.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\osx\osx_tlsche.c</FilePath>
             </File>
           </Files>
         </Group>

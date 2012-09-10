@@ -56,7 +56,8 @@
  * @modified by Jiang Ridong in 2011.08
  *  - tested Ok.
  * @modified by zhangwei on 2012.07.20
- *
+ * @modified by ShiZhirong on 2012.08.28
+ *  - Add CSMA_OSX_ENABLE
  ******************************************************************************/  
 
 /**
@@ -72,6 +73,7 @@
 #include "../hal/hal_debugio.h"
 #include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timer.h"
+#include "../osx/osx_kernel.h"
 #include "svc_foundation.h"
 #include "svc_nio_acceptor.h"
 #include "svc_nio_mac.h"
@@ -111,8 +113,6 @@
 
 #define CONFIG_CSMA_MAX_BACKOFF_TIME           100
 #define CONFIG_CSMA_MIN_BACKOFF_TIME           2   
-/* Set the module work in standard CSMA behavior without any optimization */
-#define CONFIG_CSMA_STANDARD
 
 /* The csma header here includes: 
  *  - 2B for frame control
@@ -134,9 +134,15 @@
 /* The p-insist sending probability = CSMA_P_INSIST_INDICATOR / 255 */
 #define CSMA_P_INSIST_INDICATOR 200
 
-#define CSMA_OPTION_ACK                    0x01
-#define CSMA_OPTION_NOACK                  0x00
-#define CSMA_DEF_OPTION                    CSMA_OPTION_NOACK
+#define CSMA_OPTION_ACK                    	0x01
+#define CSMA_OPTION_NOACK                  	0x00
+
+/* Set the module work in standard CSMA behavior without any optimization */
+//#define CONFIG_CSMA_STANDARD
+#define CSMA_OPTION_AUTODELAY				0x02
+#define CSMA_OPTION_NOAUTODELAY				0x00
+
+#define CSMA_DEF_OPTION                    CSMA_OPTION_NOACK | CSMA_OPTION_AUTODELAY
 
 #define CSMA_IORET_SUCCESS(ret)             ((ret)>0)
 #define CSMA_IORET_NOACTION                 0
@@ -158,6 +164,8 @@
 #define CSMA_STATE_IDLE                    1
 #define CSMA_STATE_BACKOFF                 2
 #define CSMA_STATE_SLEEPING                3
+
+#define CSMA_OSX_ENABLE
 
 typedef struct{
     uint16 sendcount;
