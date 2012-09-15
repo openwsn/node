@@ -30,7 +30,8 @@
 
 #include "hal_configall.h"
 #include "hal_foundation.h"
-#include "../rtl/rtl_time.h"
+#include "hal_rtc.h"
+//#include "../rtl/rtl_time.h"
 
 /*******************************************************************************
  * hal_systicker
@@ -47,6 +48,8 @@
  *    component to generate pulse to drive the osx kernel to run.
  ******************************************************************************/
 
+#define HAL_RTC_ENABLE 
+ 
 /*
 #ifdef CONFIG_TARGETBOARD_GAINZ
   #define tm_value_t uintx
@@ -71,12 +74,53 @@ extern "C" {
  * R: Tick is an time unit. The system timer generates an expire event every tick
  *
  ******************************************************************************/
+ 
+#ifdef HAL_RTC_ENABLE
 
+#define TiTickerAdapter TiRtc
+#define hal_setlistener(ticker,listener,scheduler)  rtc_setlistener((ticker),(listener),(scheduler))
+//void hal_setlistener(TiTickerAdapter ticker,listener,scheduler);
+inline TiTickerAdapter * hal_ticker_construct(char * buf, uint8 size)
+{
+	return rtc_construct( buf , size);
+}
+ 
+inline TiTickerAdapter * hal_ticker_open(TiTickerAdapter * ticker)
+{
+	return rtc_open( ticker, NULL, NULL, 1, 1 );
+}
+
+inline void hal_ticker_start(TiTickerAdapter* ticker)
+{
+	rtc_setprscaler( ticker,32767);
+	rtc_start(ticker);
+}
+
+inline void hal_ticker_stop(TiTickerAdapter * ticker)
+{
+	rtc_stop( ticker );
+}
+ 
+#endif
+
+/* 
+osx_ticker_stop( sche->ticker );
+osx_ticker_start(sche->ticker);
+    //rtc_setprscaler( sche->timer,32767);				//JOE 0914
+    //rtc_start( sche->timer);							//JOE 0914 
+osx_setlistener	
+	rtc_setlistener(osx->ticker, osx_rtc_listener, osx->scheduler); 	  	//JOE 0914
+osx_ticker_construct	
+	osx->ticker = rtc_construct( (void *)ptrticker , sizeof(TiOsxTicker)); 			
+osx_ticker_open
+	osx->ticker = rtc_open( osx->ticker, NULL, NULL, 1, 1 );			
+*/ 
+ 
+ /*  
+//OLD Version  2012/9/14
 // this implements the TiBasicTimerInterface which is used to drive the OS and 
 // some simple timer requirements.
-
 #define tm_value_t uint16  
-
 typedef struct{
   uint8 state;
   //uint8 prescale_selector;
@@ -100,9 +144,8 @@ void systm_close( TiSysTimer * timer );
 void systm_start( TiSysTimer * timer );
 void systm_stop( TiSysTimer * timer );
 bool systm_expired( TiSysTimer * timer );
-
 // TiBasicTimerInterface * ticker_basicinterface( TiTimerAdapter * timer, TiBasicTimerInterface * intf );
-
+*/
 
 #ifdef __cplusplus
 }

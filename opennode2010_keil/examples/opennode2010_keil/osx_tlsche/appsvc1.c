@@ -27,8 +27,7 @@ void asv1_close( TiAppService1 * svc )
 
 void asv1_evolve( void * svcptr, TiEvent * e )
 {
-	TiAppService1 * svc = (TiAppService1 *)svcptr;
-
+//	TiAppService1 * svc = (TiAppService1 *)svcptr;
 //	switch (svc->state)
 //	{
 //	case 0:

@@ -42,13 +42,6 @@
  * and TiUartAdapter
  */
 
-/************************************************************
- * Q:
- * how to deal with the timer(rtc)
- * Shi Zhirong 
-***********************************************************/
-
-
 #include "osx_configall.h"
 #include <string.h>
 #ifdef CONFIG_OSX_DYNAMIC_MEMORY
@@ -105,7 +98,7 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 {
 	char * ptr;
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
-	char * ptrtimer;
+	char * ptrticker;
 	#endif
 	
 	TiOSX * osx = (TiOSX *)buf;
@@ -124,14 +117,19 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
 	ptr += DISPA_HOPESIZE(dpasize);
-	ptrtimer = ptr + sizeof(TiOsxTimeLineScheduler);	
+	ptrticker = ptr + sizeof(TiOsxTimeLineScheduler);	
 
-	osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 
-	osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );
-		
-	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);
-
-	rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 
+	//osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 			//JOE 0914
+	//osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );						  	//JOE 0914
+	//osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);		//JOE 0914
+	//rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 	  	//JOE 0914
+	
+	osx->ticker = osx_ticker_construct( (void *)ptrticker , sizeof(TiOsxTicker)); 			
+	osx->ticker = osx_ticker_open( osx->ticker );						  	
+	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->ticker);	
+	
+	osx_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
+	
 	#endif
 	return osx;
 }
@@ -272,10 +270,12 @@ void _osx_execute( TiOSX * osx )
 
 	hal_enable_interrupts();
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
-	rtc_setprscaler( osx->timer, 32767 );
-	rtc_start( osx->timer);
+	//rtc_setprscaler( osx->timer, 32767 );						//JOE 0914
+	//rtc_start( osx->timer);										//JOE 0914
+	osx_ticker_start(osx->ticker);
 	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
-	#endif																			//we should also modify the osx_tlsche.c line 90
+																			//we should also modify the osx_tlsche.c line 90
+	#endif																			
 	while (1)
 	{
 		_osx_evolve( osx, NULL );

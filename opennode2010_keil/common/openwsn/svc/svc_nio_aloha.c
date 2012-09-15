@@ -146,7 +146,7 @@ TiAloha * aloha_open( TiAloha * mac, TiFrameTxRxInterface * rxtx, TiNioAcceptor 
     mac->sendfailed = 0;
 	mac->option = option;
     mac->txbuf = frame_open( (char *)(&mac->txbuf_memory[0]), sizeof(mac->txbuf_memory), 0, 0, 0 );
-	mac->success = 0;//todo added by Jiang Ridong on 2011.04
+	mac->success = 0;
 	
 	#ifdef ALOHA_RXHANDLER_FOR_ACCEPTOR
 	mac->rxhandler = NULL;

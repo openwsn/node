@@ -84,7 +84,7 @@
 #include "osx_configall.h"
 #include "osx_foundation.h"
 #include "../rtl/rtl_dispatcher.h"
-//#include "osx_ticker.h"
+#include "osx_ticker.h"
 #include "osx_queue.h"
 #include "osx_tlsche.h"
 
@@ -93,11 +93,12 @@
 #endif
 
 #ifdef CONFIG_OSX_TLSCHE_ENABLE
-#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTimer))			//todo
-#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
+//#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTimer))			//todo
+	#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTicker))			//todo
+	#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
 #else
-#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize))
-#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
+	#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize))
+	#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
 #endif
 /*
 typedef void (* TiFunScheEvolve)(void * sche, TiEvent * e);
@@ -146,10 +147,10 @@ typedef struct{
 	TiDebugAgent *	        	dba;
 	#endif
 	#ifdef CONFIG_OSX_TIMER_ENABLE
-	TiOsxTicker *       		ticker;
-	#endif
-		
 	TiOsxTimer	*				timer;
+	#endif
+	
+	TiOsxTicker *       		ticker;		
 	
     #ifdef CONFIG_OSX_TLSCHE_ENABLE
 	TiOsxTimeLineScheduler *	scheduler;
@@ -166,7 +167,7 @@ extern TiOSX *              g_osx;
 #endif   
 
 #define osx_open(buf,size,quesize,dpasize)  _osx_open((buf),(size),(quesize),(dpasize))
-#define osx_open(buf,size,quesize,dpasize,timer)  _osx_open((buf),(size),(quesize),(dpasize),(timer))
+//#define osx_open(buf,size,quesize,dpasize,ticker)  _osx_open((buf),(size),(quesize),(dpasize),(ticker))
 #define osx_close()                         _osx_close(g_osx);
 
 #define osx_post(e)                         _osx_post((g_osx),(e))
@@ -212,7 +213,7 @@ void _osx_free( TiOSX * osx );
 #endif
 
 TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize);
-void _osx_close();
+void _osx_close(TiOSX * osx);
 
 
 /******************************************************************************

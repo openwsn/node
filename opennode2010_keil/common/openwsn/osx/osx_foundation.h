@@ -79,8 +79,7 @@
 #include "../hal/hal_interrupt.h"
 #include "../hal/hal_cpu.h"
 #include "../hal/hal_assert.h"
-#include "../hal/hal_timer.h"
-#include "../hal/hal_rtc.h"
+#include "osx_ticker.h"
 
 #define osx_assert(x) hal_assert(x)
 
@@ -126,9 +125,7 @@ inline void osx_atomic_end()
  ******************************************************************************/
 
 #define TiOsxTimer TiRtcAdapter
-
-
-
+					   
 /*******************************************************************************
  * Power Management
  ******************************************************************************/

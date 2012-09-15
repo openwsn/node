@@ -62,7 +62,6 @@ TiAppService1                       m_svcmem1;
 TiAppService2                       m_svcmem2;
 TiAppService3                       m_svcmem3;
 TiTimerAdapter                      m_timer;
-TiRtcAdapter 						m_rtc;
 uint16                              g_count=0;
 
 void on_timer_expired( void * object, TiEvent * e );
@@ -77,12 +76,10 @@ int main()
 	TiAppService2 * asv2;
 	TiAppService3 * asv3;
     TiTimerAdapter * evt_timer;
-	TiRtcAdapter * timer;
 	char * msg = "welcome to osxdemo...";
 
 	target_init();
-	//dbc_write( msg, strlen(msg) );	
-	timer = rtc_construct( (void *)(&m_rtc),sizeof(m_rtc));
+	dbc_write( msg, strlen(msg) );	
 
 	led_open(LED_RED);
 	led_on( LED_RED );
@@ -123,12 +120,9 @@ int main()
 	
 	osx_attach( EVENT_WAKEUP, asv1_evolve, asv1 );
 	//osx_attach( EVENT_WAKEUP, asv2_evolve, asv2 );
-
-//	osx_postx(2,asv2_evolve,asv2,asv2);
-
+	//	osx_postx(2,asv2_evolve,asv2,asv2);
 	//osx_taskspawn(asv1_evolve, asv1, 1, 0, 0 );
-
-
+	
 	/* configure the listener relation between service 2 and service 3.
 	 * you can also use
 	 *		osx_attach( 3, asv3_evolve, asv3 );
