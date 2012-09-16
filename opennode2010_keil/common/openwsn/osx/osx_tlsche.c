@@ -42,7 +42,7 @@ TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTi
 {
     osx_taskpool_construct( (char *)(&sche->taskpool), sizeof(TiOsxTaskPool) );
     osx_taskheap_open( &(sche->taskheap), &(sche->taskpool) );
-    sche->ticker = ticker; 												//JOE 0914
+    sche->ticker = ticker; 												
 	return sche;
 }
 
@@ -90,9 +90,6 @@ void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
 
 void osx_tlsche_execute( TiOsxTimeLineScheduler * sche )
 {
-    //rtc_setprscaler( sche->timer,32767);				//JOE 0914
-    //rtc_start( sche->timer);							//JOE 0914
-
 	osx_ticker_start(sche->ticker);
 	
     while (1)
@@ -137,12 +134,5 @@ void osx_ticker_listener(void * sche,TiEvent * e )
 	osx_tlsche_stepforward( sche, 1 );
 	hal_leave_critical();
 }
-/*
-void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e )				//JOE 0914
-{
-	hal_enter_critical();
-	osx_tlsche_stepforward( sche, 1 );
-	hal_leave_critical();
-}
-*/
+
 

@@ -59,7 +59,7 @@
  *
  *   osx_kernel, osx_simplesche, osx_rtsche, osx_fsche...
  *        |-------------|-------------|
- *         osx_timer, osx_queue, osx_dba
+ *         osx_ticker, osx_queue, osx_dba
  *                      |
  *               osx_foundation.h
  *                      |

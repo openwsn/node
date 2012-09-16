@@ -119,11 +119,6 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 	ptr += DISPA_HOPESIZE(dpasize);
 	ptrticker = ptr + sizeof(TiOsxTimeLineScheduler);	
 
-	//osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 			//JOE 0914
-	//osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );						  	//JOE 0914
-	//osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);		//JOE 0914
-	//rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 	  	//JOE 0914
-	
 	osx->ticker = osx_ticker_construct( (void *)ptrticker , sizeof(TiOsxTicker)); 			
 	osx->ticker = osx_ticker_open( osx->ticker );						  	
 	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->ticker);	
@@ -270,8 +265,6 @@ void _osx_execute( TiOSX * osx )
 
 	hal_enable_interrupts();
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
-	//rtc_setprscaler( osx->timer, 32767 );						//JOE 0914
-	//rtc_start( osx->timer);										//JOE 0914
 	osx_ticker_start(osx->ticker);
 	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
 																			//we should also modify the osx_tlsche.c line 90

@@ -43,9 +43,6 @@
  ******************************************************************************/
 #include "../hal/hal_ticker.h"
  
-#define TiOsxTicker TiTickerAdapter
-//#define TiOsxTicker TiSysTimer
-
 /*******************************************************************************
  * For developers
  * - TiOsxTicker is actually an timer/ticker interface required by the osx kernel.
@@ -58,6 +55,7 @@
  * @todo
  * - low power features can be added to this component in the future.
  ******************************************************************************/
+#define TiOsxTicker TiTickerAdapter
 
 #define osx_ticker_construct(buf,len)  hal_ticker_construct((buf),(len))
 #define osx_ticker_open(ticker)   hal_ticker_open(ticker)
@@ -65,8 +63,9 @@
 #define osx_ticker_stop(ticker)   hal_ticker_stop(ticker) 
 #define osx_setlistener(ticker,listener,scheduler)  hal_setlistener((ticker),(listener),(scheduler))
 
- /*
- //OLD Version
+/*
+//OLD Version
+//#define TiOsxTicker TiSysTimer
 inline TiOsxTicker * _osx_ticker_construct( char * buf, uint8 size )
 {
 	return systm_construct( buf, size );

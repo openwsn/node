@@ -52,6 +52,8 @@
  *	- revision
  * @modified by ShiZhirong on 2012.08.28
  *  - Add tlsche
+ * @modified by ShiZhirong on 2012.09.16
+ *  - update the osx_ticker
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
@@ -93,8 +95,7 @@
 #endif
 
 #ifdef CONFIG_OSX_TLSCHE_ENABLE
-//#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTimer))			//todo
-	#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTicker))			//todo
+	#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize) + sizeof(TiOsxTimeLineScheduler) + sizeof(TiOsxTicker))
 	#define OSX_SIZE (OSX_HOPESIZE(CONFIG_OSX_QUEUE_CAPACITY,CONFIG_OSX_DISPATCHER_CAPACITY))
 #else
 	#define OSX_HOPESIZE(quesize,dpasize) (sizeof(TiOSX) + OSX_QUEUE_HOPESIZE(sizeof(TiEvent), quesize) + DISPA_HOPESIZE(dpasize))

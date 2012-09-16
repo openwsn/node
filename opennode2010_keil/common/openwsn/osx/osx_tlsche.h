@@ -38,7 +38,6 @@ typedef struct{
     TiOsxTaskHeap taskheap;
     TiOsxTaskPool taskpool;
     TiOsxTicker * ticker;
-	//TiOsxTimer * timer;
 }TiOsxTimeLineScheduler;
 
 TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTicker * ticker );
