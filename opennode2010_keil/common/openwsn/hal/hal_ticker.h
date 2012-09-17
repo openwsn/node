@@ -78,8 +78,8 @@ extern "C" {
 #ifdef HAL_RTC_ENABLE
 
 #define TiTickerAdapter TiRtc
-#define hal_setlistener(ticker,listener,scheduler)  rtc_setlistener((ticker),(listener),(scheduler))
-//void hal_setlistener(TiTickerAdapter ticker,listener,scheduler);
+#define hal_ticker_setlistener(ticker,listener,scheduler)  rtc_setlistener((ticker),(listener),(scheduler))
+//void hal_ticker_setlistener(TiTickerAdapter ticker,listener,scheduler);
 inline TiTickerAdapter * hal_ticker_construct(char * buf, uint8 size)
 {
 	return rtc_construct( buf , size);

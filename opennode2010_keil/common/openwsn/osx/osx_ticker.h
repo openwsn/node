@@ -61,7 +61,7 @@
 #define osx_ticker_open(ticker)   hal_ticker_open(ticker)
 #define osx_ticker_start(ticker)  hal_ticker_start(ticker)
 #define osx_ticker_stop(ticker)   hal_ticker_stop(ticker) 
-#define osx_setlistener(ticker,listener,scheduler)  hal_setlistener((ticker),(listener),(scheduler))
+#define osx_ticker_setlistener(ticker,listener,scheduler)  hal_ticker_setlistener((ticker),(listener),(scheduler))
 
 /*
 //OLD Version

@@ -123,7 +123,7 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 	osx->ticker = osx_ticker_open( osx->ticker );						  	
 	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->ticker);	
 	
-	osx_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
+	osx_ticker_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
 	
 	#endif
 	return osx;
@@ -259,7 +259,7 @@ void _osx_execute( TiOSX * osx )
 	//dispa_attach( osx->dispatcher, EVENT_REBOOT, _osx_target_handler );
 	//dispa_attach( sche->dispatcher, EVENT_SHUTDOWN, _osx_target_shutdown );
 
-	//hal_setlistener( (TiFunEventHandler)_osx_post, osx );
+	hal_setlistener( (TiFunEventHandler)_osx_post, osx ); 	//hal_layer can use this listener to post the event into osx
 
     hal_assert( g_osx != NULL );
 
