@@ -198,6 +198,21 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
 
 void rtc_close( TiRtcAdapter * rtc )
 {
+    switch (rtc->id)
+    {
+    case 1:
+        RTC_ITConfig(RTC_IT_SEC, DISABLE);
+    	break;
+    case 2:
+        RTC_ITConfig(RTC_IT_OW, DISABLE);
+        break;
+    case 3:
+        RTC_ITConfig(RTC_IT_ALR, DISABLE);
+        break;
+    default:
+        hal_assert(0);
+        break;
+    }
     if ( rtc->id ==3)
     {
 		hal_detachhandler(INTNUM_RTCALARM);	  

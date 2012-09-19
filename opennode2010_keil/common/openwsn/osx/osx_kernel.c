@@ -265,6 +265,7 @@ void _osx_execute( TiOSX * osx )
 	hal_enable_interrupts();
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
 	osx_ticker_start(osx->ticker);
+	 	dbc_putchar(0xf2);
 	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
 																			//we should also modify the osx_tlsche.c line 90
 	#endif																			
@@ -374,20 +375,26 @@ void _osx_sleep(TiOSX * osx, uint16 sleep_time)
 {
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
 	//step 1:reset rtc to alarm
-	osx_ticker_stop(osx->ticker);
-	osx->ticker = osx_ticker_alarm_open(osx->ticker);
-	osx_ticker_setlistener(osx->ticker, NULL, NULL); 
-	osx_ticker_start(osx->ticker);
-	//step 2:sleep
-	osx_setalarm_count(osx->ticker,sleep_time,0);
-   	osx_enter_stop_mode();
+	osx_ticker_close( osx->ticker );
+	osx_ticker_stop( osx->ticker );
+	osx->ticker = osx_ticker_alarm_open( osx->ticker );
+	osx_ticker_setlistener( osx->ticker, NULL, NULL ); 
+		
+	osx_ticker_start( osx->ticker );
+	//step 2:sleep 
+	osx_setalarm_count( osx->ticker, sleep_time, 0 );
+	hal_delayms(1);
+	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+   	//osx_enter_stop_mode();
 	//step 3:step_forward the rtc
-	osx_tlsche_stepforward(osx->scheduler,sleep_time);
+	osx_tlsche_stepforward( osx->scheduler, sleep_time );
 	//step 4:reset alarm to rtc
-	osx_ticker_stop(osx->ticker);
-	osx->ticker = osx_ticker_open(osx->ticker);
-	osx_ticker_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
-	osx_ticker_start(osx->ticker);	
+	osx_ticker_close( osx->ticker );
+	osx_ticker_stop( osx->ticker );
+	osx->ticker = osx_ticker_open( osx->ticker );
+	osx_ticker_setlistener( osx->ticker, osx_ticker_listener, osx->scheduler ); 
+	osx_ticker_start( osx->ticker );
+
 	#endif
 }
 

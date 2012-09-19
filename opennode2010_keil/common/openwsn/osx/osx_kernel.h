@@ -55,7 +55,7 @@
  * @modified by ShiZhirong on 2012.09.16
  *  - update the osx_ticker
  * @modified by ShiZhirong on 2012.09.19
- *  - Add osx_sleep(untested)
+ *  - Add osx_sleep
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
@@ -191,7 +191,7 @@ extern TiOSX *              g_osx;
 #define osx_sleep_request()                 _osx_sleep_request(g_osx)
 #define osx_on_wakeup()                     _osx_on_wakeup(g_osx)
 
-#define osx_sleep(time)							_osx_sleep(g_osx,time)
+#define osx_sleep(time)						_osx_sleep(g_osx,time)
 #define osx_wakeup()						_osx_wakeup(g_osx)
 
 #ifdef CONFIG_OSX_TLSCHE_ENABLE

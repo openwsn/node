@@ -70,6 +70,15 @@ void on_timer_expired( void * object, TiEvent * e );
  * main()
  ******************************************************************************/
 
+void svc_sleep( void * svcptr, TiEvent * e )
+{
+	dbc_putchar(0xAA);
+	led_toggle(LED_ALL);
+	osx_sleep(10);
+	led_toggle(LED_ALL);
+	osx_taskspawn(svc_sleep,NULL,20,0,0);
+}
+
 int main()
 {
 	TiAppService1 * asv1;
@@ -101,10 +110,10 @@ int main()
 	 * Q: what's the maximum value of timer_setinterval for each hardware timer?
 	 * A: 1~8 (???)  */
 	 
-	evt_timer = timer_construct( (void *)&m_timer, sizeof(TiTimerAdapter) );
-	timer_open( evt_timer, CONFIG_TIMER_ID, on_timer_expired, (void*)g_osx, 0x01 );
-	timer_setinterval( evt_timer, 5, 1 );
-	timer_start( evt_timer );
+////	evt_timer = timer_construct( (void *)&m_timer, sizeof(TiTimerAdapter) );
+////	timer_open( evt_timer, CONFIG_TIMER_ID, on_timer_expired, (void*)g_osx, 0x01 );
+////	timer_setinterval( evt_timer, 5, 1 );
+////	timer_start( evt_timer );
 	/* create and initialize three runnable application services. the runnable service
 	 * is quite similar to OS's process. however, the runnable service improves the 
 	 * standard "process" with a data structure and event handler, which greatly simplied 
@@ -122,13 +131,14 @@ int main()
 	//osx_attach( EVENT_WAKEUP, asv2_evolve, asv2 );
 	//	osx_postx(2,asv2_evolve,asv2,asv2);
 	//osx_taskspawn(asv1_evolve, asv1, 1, 0, 0 );
-	
+	#ifdef SLEEP_TEST
+	osx_taskspawn(svc_sleep,NULL,0,0,0);
+	#endif
 	/* configure the listener relation between service 2 and service 3.
 	 * you can also use
 	 *		osx_attach( 3, asv3_evolve, asv3 );
 	 * however, the following code demonstrates how to implement complex relations 
 	 * among services.  */
-	
 	asv2_setlistener( asv2, (TiFunEventHandler)asv3_evolve, (void *)asv3 );
 
 	/* when the osx kernel really executed, it will enable the interrupts so that the 
