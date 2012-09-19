@@ -218,7 +218,7 @@ void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler)
 }
 
 
-void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)//interval = count +1;
+void rtc_setalarm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)//interval = count +1;
 {
     rtc->alarm_counter = count;
     RTC_WaitForLastTask();
@@ -527,7 +527,7 @@ void _rtc_interrupt_handler( void * object, TiEvent * e )
 TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInterface * intf )//提供的是alarm中断接口
 {
     intf->provider = rtc;
-    intf->setinterval = rtc_setalrm_count;
+    intf->setinterval = rtc_setalarm_count;
     intf->setscale = rtc_setprscaler;
     intf->setlistener = rtc_setlistener;
     intf->start = rtc_start;
@@ -538,7 +538,7 @@ TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInte
 TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInterface * intf )//提供的是alarm中断接口
 {
     intf->provider = rtc;
-    intf->setinterval = rtc_setalrm_count;
+    intf->setinterval = rtc_setalarm_count;
     intf->setscale = rtc_setprscaler;
     intf->setlistener = rtc_setlistener;
     intf->start = rtc_start;

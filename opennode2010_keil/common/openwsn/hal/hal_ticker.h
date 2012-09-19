@@ -31,7 +31,9 @@
 #include "hal_configall.h"
 #include "hal_foundation.h"
 #include "hal_rtc.h"
-//#include "../rtl/rtl_time.h"
+#include "../hal/hal_mcu.h"
+#include "../hal/hal_cpu.h"
+#include "../hal/hal_targetboard.h"
 
 /*******************************************************************************
  * hal_systicker
@@ -99,6 +101,26 @@ inline void hal_ticker_start(TiTickerAdapter* ticker)
 inline void hal_ticker_stop(TiTickerAdapter * ticker)
 {
 	rtc_stop( ticker );
+}
+
+inline void hal_ticker_close(TiTickerAdapter * ticker)
+{
+	rtc_close(ticker);
+}
+
+inline TiTickerAdapter * hal_ticker_alarm_open(TiTickerAdapter * ticker)
+{
+	return rtc_open(ticker, NULL, NULL, 3, 1);
+}
+
+inline void	hal_setalarm_count(TiTickerAdapter * ticker, uint16 count, uint8 repeat)
+{
+	rtc_setalarm_count(ticker, count, repeat);
+}
+
+inline void hal_enter_stop_mode()
+{
+	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 }
  
 #endif

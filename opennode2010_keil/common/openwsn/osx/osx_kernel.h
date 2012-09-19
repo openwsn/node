@@ -54,6 +54,8 @@
  *  - Add tlsche
  * @modified by ShiZhirong on 2012.09.16
  *  - update the osx_ticker
+ * @modified by ShiZhirong on 2012.09.19
+ *  - Add osx_sleep(untested)
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
@@ -186,8 +188,11 @@ extern TiOSX *              g_osx;
 //#define osx_execute()                       _osx_execute(g_osx)
 #define osx_hardevolve(e)                   _osx_hardevolve(g_osx,e)
 #define osx_hardexecute()                   _osx_hardexecute(g_osx)
-#define osx_sleep()                         _osx_sleep_request(g_osx)
-#define osx_wakeup()                        _osx_on_wakeup(g_osx)
+#define osx_sleep_request()                 _osx_sleep_request(g_osx)
+#define osx_on_wakeup()                     _osx_on_wakeup(g_osx)
+
+#define osx_sleep(time)							_osx_sleep(g_osx,time)
+#define osx_wakeup()						_osx_wakeup(g_osx)
 
 #ifdef CONFIG_OSX_TLSCHE_ENABLE
 #define osx_taskspawn(taskfunction, taskdata, starttime, priority, option )		osx_tlsche_taskspawn(g_osx->scheduler,(taskfunction),(taskdata),(starttime),(priority),(option))
@@ -280,19 +285,23 @@ void _osx_hardexecute( TiOSX * osx );
 
 /******************************************************************************
  * power management
- * osx_sleep()
+ * osx_sleep_request()
  * will put an system sleep event into the default system queue. by default, the
  * event will trigger the call to target_sleep() function. attention the kernel
  * scheduler is still need to finish processing all other events pending inside
  * the system queue before the sleep request event.
  *
- * osx_wakeup
+ * osx_on_wakeup
  * similar to osx_sleep(), this function will place an wakeup request event into
  * the default system queue. this will trigger the call to target_wakeup().
  *****************************************************************************/
 
-void _osx_sleep( TiOSX * osx );
-void _osx_wakeup( TiOSX * osx );
+void _osx_sleep_request( TiOSX * osx );
+void _osx_on_wakeup( TiOSX * osx );
+
+void _osx_sleep(TiOSX * osx, uint16 sleep_time);
+void _osx_wakup(TiOSX * osx);
+
 
 /******************************************************************************
  * osx_init()

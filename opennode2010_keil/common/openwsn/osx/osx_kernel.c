@@ -53,9 +53,8 @@
 #include "../hal/hal_debugio.h"
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
-
-#include "../hal/hal_event.h"
-
+#include "osx_ticker.h"
+#include "../hal/hal_event.h"	
 
 #define OSX_STATE_INITIAL		0x00
 #define OSX_STATE_RUNNING_BIT   0x01
@@ -371,6 +370,32 @@ void _osx_on_wakeup( TiOSX * osx )
 	_osx_postx( osx, EVENT_WAKEUP, NULL, osx, osx );
 }
 
+void _osx_sleep(TiOSX * osx, uint16 sleep_time)
+{
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	//step 1:reset rtc to alarm
+	osx_ticker_stop(osx->ticker);
+	osx->ticker = osx_ticker_alarm_open(osx->ticker);
+	osx_ticker_setlistener(osx->ticker, NULL, NULL); 
+	osx_ticker_start(osx->ticker);
+	//step 2:sleep
+	osx_setalarm_count(osx->ticker,sleep_time,0);
+	hal_delayms(1);
+   	osx_enter_stop_mode();
+	//step 3:step_forward the rtc
+	osx_tlsche_stepforward(osx->scheduler,sleep_time);
+	//step 4:reset alarm to rtc
+	osx_ticker_stop(osx->ticker);
+	osx->ticker = osx_ticker_open(osx->ticker);
+	osx_ticker_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
+	osx_ticker_start(osx->ticker);	
+	#endif
+}
+
+void _osx_wakeup(TiOSX * osx)
+{
+
+}
 
 /******************************************************************************
  * osx_init() and osx_execute()
@@ -400,6 +425,9 @@ void osx_execute( void )
     */
 	_osx_execute( g_osx );
 }
+
+
+
 
 
 

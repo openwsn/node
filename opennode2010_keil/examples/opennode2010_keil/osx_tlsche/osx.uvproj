@@ -331,7 +331,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>4</Optim>
             <oTime>0</oTime>
             <SplitLS>1</SplitLS>
             <OneElfS>0</OneElfS>

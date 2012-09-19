@@ -158,7 +158,7 @@ void rtc_setoverflow_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
  *      to (count+1) * timeslice.
  * @param repeat (Actually no use now. @todo)
  */
-void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
+void rtc_setalarm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat);
 void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler);
 
 /**

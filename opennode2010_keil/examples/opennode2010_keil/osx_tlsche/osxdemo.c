@@ -218,7 +218,7 @@ void on_timer_expired( void * object, TiEvent * e )
 
 	if(g_count%50 == 0 && g_count<600)
 	{
-		osx_wakeup();
+		osx_on_wakeup();
 		led_toggle(LED_RED);
 	 	dbc_putchar(g_count/10);
 	}

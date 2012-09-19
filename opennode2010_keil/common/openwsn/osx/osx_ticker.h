@@ -42,8 +42,9 @@
  * hardware SysTimer to help implement a OS core.
  ******************************************************************************/
 #include "../hal/hal_ticker.h"
- 
-/*******************************************************************************
+
+
+ /*******************************************************************************
  * For developers
  * - TiOsxTicker is actually an timer/ticker interface required by the osx kernel.
  *   Any component providing this interface can be used to drive the osx kernel.
@@ -57,11 +58,17 @@
  ******************************************************************************/
 #define TiOsxTicker TiTickerAdapter
 
-#define osx_ticker_construct(buf,len)  hal_ticker_construct((buf),(len))
-#define osx_ticker_open(ticker)   hal_ticker_open(ticker)
-#define osx_ticker_start(ticker)  hal_ticker_start(ticker)
-#define osx_ticker_stop(ticker)   hal_ticker_stop(ticker) 
-#define osx_ticker_setlistener(ticker,listener,scheduler)  hal_ticker_setlistener((ticker),(listener),(scheduler))
+#define osx_ticker_construct(buf,len)  							hal_ticker_construct((buf),(len))
+#define osx_ticker_open(ticker)   								hal_ticker_open(ticker)
+#define osx_ticker_start(ticker)  								hal_ticker_start(ticker)
+#define osx_ticker_stop(ticker)  					 			hal_ticker_stop(ticker) 
+#define osx_ticker_close(ticker)  								hal_ticker_close(ticker)
+#define osx_ticker_setlistener(ticker,listener,scheduler)  		hal_ticker_setlistener((ticker),(listener),(scheduler))
+
+#define osx_ticker_alarm_open(ticker)							hal_ticker_alarm_open(ticker)
+#define osx_setalarm_count(ticker, count, repeat)				hal_setalarm_count((ticker), (count), (repeat))
+
+#define osx_enter_stop_mode()									hal_enter_stop_mode()
 
 /*
 //OLD Version
