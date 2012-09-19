@@ -120,6 +120,7 @@ inline void	hal_setalarm_count(TiTickerAdapter * ticker, uint16 count, uint8 rep
 
 inline void hal_enter_stop_mode()
 {
+	hal_delayms(1);
 	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 }
  

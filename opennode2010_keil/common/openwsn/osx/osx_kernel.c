@@ -380,7 +380,6 @@ void _osx_sleep(TiOSX * osx, uint16 sleep_time)
 	osx_ticker_start(osx->ticker);
 	//step 2:sleep
 	osx_setalarm_count(osx->ticker,sleep_time,0);
-	hal_delayms(1);
    	osx_enter_stop_mode();
 	//step 3:step_forward the rtc
 	osx_tlsche_stepforward(osx->scheduler,sleep_time);
