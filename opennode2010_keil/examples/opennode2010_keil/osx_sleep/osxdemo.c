@@ -53,6 +53,8 @@
 #undef  CONFIG_TIMER_DRIVE
 //#define CONFIG_TIMER_DRIVE
 
+#define SLEEP_TEST
+
 #define CONFIG_DISPATCHER_TEST_ENABLE
 
 #define CONFIG_UART_ID              0
@@ -69,6 +71,15 @@ void on_timer_expired( void * object, TiEvent * e );
 /******************************************************************************* 
  * main()
  ******************************************************************************/
+
+void svc_sleep( void * svcptr, TiEvent * e )
+{
+	dbc_putchar(0xAA);
+	led_toggle(LED_ALL);
+	osx_sleep(5);
+	led_toggle(LED_ALL);
+	osx_taskspawn(svc_sleep,NULL,10,0,0);
+}
 
 int main()
 {
@@ -118,6 +129,10 @@ int main()
 	/* put the runnable application service into osx. then osx can dispatch events to 
 	 * these services. the services only run when it receives an event, namely, the 
 	 * events drives the service to forward according to the state machine.  */
+	#ifdef SLEEP_TEST
+	osx_taskspawn(svc_sleep,NULL,0,0,0);
+	#endif
+
 	osx_attach( EVENT_WAKEUP, asv1_evolve, asv1 );
 	//osx_attach( EVENT_WAKEUP, asv2_evolve, asv2 );
 	//	osx_postx(2,asv2_evolve,asv2,asv2);
@@ -129,6 +144,7 @@ int main()
 	 * however, the following code demonstrates how to implement complex relations 
 	 * among services.  */
 	asv2_setlistener( asv2, (TiFunEventHandler)asv3_evolve, (void *)asv3 );
+
 
 	/* when the osx kernel really executed, it will enable the interrupts so that the 
 	 * whole program can accept interrupt requests.
@@ -155,66 +171,6 @@ int main()
  */
 void on_timer_expired( void * object, TiEvent * e )
 {
-//	TiEvent newe;
-//	
-//	dbio_putchar(NULL,0xEE);
-//	
-//	g_count ++;
-//	if ((g_count % 15) == 0)
-//	{
-//	    //led_toggle( LED_RED );
-//		memset( &newe, 0x00, sizeof(TiEvent) );
-//        newe.id = ((g_count/15) % 3);
-//		if (newe.id == 0)
-//			newe.id = 3;
-//
-//		#ifndef CONFIG_DISPATCHER_TEST_ENABLE
-//        if (g_count % 2 == 0)
-//        {
-//		    newe.handler = asv1_evolve;
-//		    newe.objectfrom = object;
-//		    newe.objectto = &m_svcmem1;
-//        }
-//        else{
-//		    newe.handler = asv2_evolve;
-//		    newe.objectfrom = object;
-//		    newe.objectto = &m_svcmem2;
-//        }
-//		#endif
-//
-//		/* If the event's handler is NULL, then osx kernel will had to search for
-//		 * appropriate handler in the dispatcher table to process it. 
-//		 * 
-//		 * Since the event generator often doesn't know which object will process 
-//		 * the event, so the event dispatcher in the kernel is mandatory.
-//		 */
-//		#ifdef CONFIG_DISPATCHER_TEST_ENABLE
-//        if (g_count % 2 == 0)
-//        {
-//		    newe.handler = NULL;
-//		    newe.objectfrom = object;
-//		    newe.objectto = NULL;
-//        }
-//        else{
-//		    newe.handler = NULL;
-//		    newe.objectfrom = object;
-//		    newe.objectto = NULL;
-//        }
-//		#endif
-//
-//		osx_post( (TiEvent *)(&newe) );
-//	}
-//	
-//	#ifdef CONFIG_AUTO_STOP
-//	if (g_count == 61)
-//    {
-//        timer_close( &m_timer );
-//        timer_destroy( &m_timer );
-//		g_count = 0;
-//		led_off(LED_RED);
-//    } 
-//	#endif
-
 	if(g_count%50 == 0 && g_count<600)
 	{
 		osx_on_wakeup();

@@ -379,13 +379,10 @@ void _osx_sleep(TiOSX * osx, uint16 sleep_time)
 	osx_ticker_stop( osx->ticker );
 	osx->ticker = osx_ticker_alarm_open( osx->ticker );
 	osx_ticker_setlistener( osx->ticker, NULL, NULL ); 
-		
 	osx_ticker_start( osx->ticker );
 	//step 2:sleep 
 	osx_setalarm_count( osx->ticker, sleep_time, 0 );
-	hal_delayms(1);
-	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
-   	//osx_enter_stop_mode();
+   	osx_enter_stop_mode();
 	//step 3:step_forward the rtc
 	osx_tlsche_stepforward( osx->scheduler, sleep_time );
 	//step 4:reset alarm to rtc
@@ -394,7 +391,6 @@ void _osx_sleep(TiOSX * osx, uint16 sleep_time)
 	osx->ticker = osx_ticker_open( osx->ticker );
 	osx_ticker_setlistener( osx->ticker, osx_ticker_listener, osx->scheduler ); 
 	osx_ticker_start( osx->ticker );
-
 	#endif
 }
 
