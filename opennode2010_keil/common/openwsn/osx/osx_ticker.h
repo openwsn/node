@@ -41,11 +41,10 @@
  * for some MCU such as the ARM Cortex M3, the MCU core has already provide a
  * hardware SysTimer to help implement a OS core.
  ******************************************************************************/
+#include "../hal/hal_ticker.h"
 
-//#define TiOsxTicker TiTickerAdapter
-#define TiOsxTicker TiSysTimer
 
-/*******************************************************************************
+ /*******************************************************************************
  * For developers
  * - TiOsxTicker is actually an timer/ticker interface required by the osx kernel.
  *   Any component providing this interface can be used to drive the osx kernel.
@@ -57,7 +56,23 @@
  * @todo
  * - low power features can be added to this component in the future.
  ******************************************************************************/
+#define TiOsxTicker TiTickerAdapter
 
+#define osx_ticker_construct(buf,len)  							hal_ticker_construct((buf),(len))
+#define osx_ticker_open(ticker)   								hal_ticker_open(ticker)
+#define osx_ticker_start(ticker)  								hal_ticker_start(ticker)
+#define osx_ticker_stop(ticker)  					 			hal_ticker_stop(ticker) 
+#define osx_ticker_close(ticker)  								hal_ticker_close(ticker)
+#define osx_ticker_setlistener(ticker,listener,scheduler)  		hal_ticker_setlistener((ticker),(listener),(scheduler))
+
+#define osx_ticker_alarm_open(ticker)							hal_ticker_alarm_open(ticker)
+#define osx_setalarm_count(ticker, count, repeat)				hal_setalarm_count((ticker), (count), (repeat))
+
+#define osx_enter_stop_mode()									hal_enter_stop_mode()
+
+/*
+//OLD Version
+//#define TiOsxTicker TiSysTimer
 inline TiOsxTicker * _osx_ticker_construct( char * buf, uint8 size )
 {
 	return systm_construct( buf, size );
@@ -93,5 +108,5 @@ inline bool _osx_ticker_expired( TiOsxTicker * timer )
 	//return systm_expired( timer );
     return true;
 }
-
+*/
 #endif

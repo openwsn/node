@@ -42,13 +42,6 @@
  * and TiUartAdapter
  */
 
-/************************************************************
- * Q:
- * how to deal with the timer(rtc)
- * Shi Zhirong 
-***********************************************************/
-
-
 #include "osx_configall.h"
 #include <string.h>
 #ifdef CONFIG_OSX_DYNAMIC_MEMORY
@@ -60,9 +53,8 @@
 #include "../hal/hal_debugio.h"
 #include "../rtl/rtl_dispatcher.h"
 #include "osx_kernel.h"
-
-#include "../hal/hal_event.h"
-
+#include "osx_ticker.h"
+#include "../hal/hal_event.h"	
 
 #define OSX_STATE_INITIAL		0x00
 #define OSX_STATE_RUNNING_BIT   0x01
@@ -105,7 +97,7 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 {
 	char * ptr;
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
-	char * ptrtimer;
+	char * ptrticker;
 	#endif
 	
 	TiOSX * osx = (TiOSX *)buf;
@@ -124,14 +116,14 @@ TiOSX * _osx_open( void * buf, uint16 size, uint16 quesize, uint16 dpasize )
 
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
 	ptr += DISPA_HOPESIZE(dpasize);
-	ptrtimer = ptr + sizeof(TiOsxTimeLineScheduler);	
+	ptrticker = ptr + sizeof(TiOsxTimeLineScheduler);	
 
-	osx->timer = rtc_construct( (void *)ptrtimer , sizeof(TiOsxTimer)); 
-	osx->timer = rtc_open( osx->timer, NULL, NULL, 1, 1 );
-		
-	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->timer);
-
-	rtc_setlistener(osx->timer, osx_rtc_listener, osx->scheduler); 
+	osx->ticker = osx_ticker_construct( (void *)ptrticker , sizeof(TiOsxTicker)); 			
+	osx->ticker = osx_ticker_open( osx->ticker );						  	
+	osx->scheduler = osx_tlsche_open( (TiOsxTimeLineScheduler *)ptr,osx->ticker);	
+	
+	osx_ticker_setlistener(osx->ticker, osx_ticker_listener, osx->scheduler); 
+	
 	#endif
 	return osx;
 }
@@ -266,16 +258,17 @@ void _osx_execute( TiOSX * osx )
 	//dispa_attach( osx->dispatcher, EVENT_REBOOT, _osx_target_handler );
 	//dispa_attach( sche->dispatcher, EVENT_SHUTDOWN, _osx_target_shutdown );
 
-	//hal_setlistener( (TiFunEventHandler)_osx_post, osx );
+	hal_setlistener( (TiFunEventHandler)_osx_post, osx ); 	//hal_layer can use this listener to post the event into osx
 
     hal_assert( g_osx != NULL );
 
 	hal_enable_interrupts();
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
-	rtc_setprscaler( osx->timer, 32767 );
-	rtc_start( osx->timer);
+	osx_ticker_start(osx->ticker);
+	 	dbc_putchar(0xf2);
 	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
-	#endif																			//we should also modify the osx_tlsche.c line 90
+																			//we should also modify the osx_tlsche.c line 90
+	#endif																			
 	while (1)
 	{
 		_osx_evolve( osx, NULL );
@@ -378,6 +371,33 @@ void _osx_on_wakeup( TiOSX * osx )
 	_osx_postx( osx, EVENT_WAKEUP, NULL, osx, osx );
 }
 
+void _osx_sleep(TiOSX * osx, uint16 sleep_time)
+{
+	#ifdef CONFIG_OSX_TLSCHE_ENABLE
+	//step 1:reset rtc to alarm
+	osx_ticker_close( osx->ticker );
+	osx_ticker_stop( osx->ticker );
+	osx->ticker = osx_ticker_alarm_open( osx->ticker );
+	osx_ticker_setlistener( osx->ticker, NULL, NULL ); 
+	osx_ticker_start( osx->ticker );
+	//step 2:sleep 
+	osx_setalarm_count( osx->ticker, sleep_time, 0 );
+   	osx_enter_stop_mode();
+	//step 3:step_forward the rtc
+	osx_tlsche_stepforward( osx->scheduler, sleep_time );
+	//step 4:reset alarm to rtc
+	osx_ticker_close( osx->ticker );
+	osx_ticker_stop( osx->ticker );
+	osx->ticker = osx_ticker_open( osx->ticker );
+	osx_ticker_setlistener( osx->ticker, osx_ticker_listener, osx->scheduler ); 
+	osx_ticker_start( osx->ticker );
+	#endif
+}
+
+void _osx_wakeup(TiOSX * osx)
+{
+
+}
 
 /******************************************************************************
  * osx_init() and osx_execute()
@@ -407,6 +427,9 @@ void osx_execute( void )
     */
 	_osx_execute( g_osx );
 }
+
+
+
 
 
 

@@ -38,17 +38,17 @@ void _osx_taskheap_item_dump( TiOsxTaskHeap * heap, int8 idx );
 void _osx_taskheap_dump( TiOsxTaskHeap * heap );
 
 
-TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer * timer )
+TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTicker * ticker )
 {
     osx_taskpool_construct( (char *)(&sche->taskpool), sizeof(TiOsxTaskPool) );
     osx_taskheap_open( &(sche->taskheap), &(sche->taskpool) );
-    sche->timer = timer; 
+    sche->ticker = ticker; 												
 	return sche;
 }
 
 void osx_tlsche_close( TiOsxTimeLineScheduler * sche )
 {
-    // rtc_stop( sche->timer );
+    osx_ticker_stop( sche->ticker );
     osx_taskheap_close( &(sche->taskheap) );
     osx_taskpool_destroy( &(sche->taskpool) );
 }
@@ -84,19 +84,14 @@ void osx_tlsche_evolve( TiOsxTimeLineScheduler * sche, void * e )
         else
             break;
     }while (true);
-
     //osx_tlsche_stepforward( sche, CONFIG_OSX_TIMER_INTERVAL );
-//	osx_postx(1,osx_tlsche_evolve,sche,sche);//for testing 
+	//	osx_postx(1,osx_tlsche_evolve,sche,sche);//for testing 
 }
 
 void osx_tlsche_execute( TiOsxTimeLineScheduler * sche )
 {
-	//rtc_setinterval( sche->timer, 0, 2, 0x01); //定时周期为一秒 
-	//rtc_start( sche->timer );
-
-    rtc_setprscaler( sche->timer,32767);
-    rtc_start( sche->timer);
-
+	osx_ticker_start(sche->ticker);
+	
     while (1)
     {
         osx_tlsche_evolve( sche, NULL );
@@ -133,7 +128,7 @@ void osx_tlsche_stepforward( TiOsxTimeLineScheduler * sche, uint16 slicecount )
     }
 }
 
-void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e )
+void osx_ticker_listener(void * sche,TiEvent * e )
 {
 	hal_enter_critical();
 	osx_tlsche_stepforward( sche, 1 );

@@ -198,27 +198,33 @@ TiRtcAdapter * rtc_open( TiRtcAdapter * rtc, TiFunEventHandler listener, void * 
 
 void rtc_close( TiRtcAdapter * rtc )
 {
-    if ( rtc->id ==3)
+    switch (rtc->id)
     {
-		hal_detachhandler(INTNUM_RTCALARM);	  
+    case 1:
+        RTC_ITConfig(RTC_IT_SEC, DISABLE);
+    	hal_detachhandler(INTNUM_RTC); 
+		break;
+    case 2:	
+        RTC_ITConfig(RTC_IT_OW, DISABLE);
+        hal_detachhandler(INTNUM_RTC);
+		break;
+    case 3:
+        RTC_ITConfig(RTC_IT_ALR, DISABLE);
+		hal_detachhandler(INTNUM_RTCALARM);	
+        break;
+    default:
+        //hal_assert(0);
+        break;
     }
-    if ( rtc->id==2) 
-    {
-		hal_detachhandler(INTNUM_RTC);		
-    }
-	else if(rtc->id==1)
-	{	
-		hal_detachhandler(INTNUM_RTC);  
-	}
 }
 
 void rtc_setprscaler( TiRtcAdapter *rtc,uint16 prescaler)
 {
-   rtc->prescaler = prescaler;
+	rtc->prescaler = prescaler;
 }
 
 
-void rtc_setalrm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)//interval = count +1;
+void rtc_setalarm_count( TiRtcAdapter *rtc,uint16 count,uint8 repeat)//interval = count +1;
 {
     rtc->alarm_counter = count;
     RTC_WaitForLastTask();
@@ -371,30 +377,11 @@ void rtc_stop( TiRtcAdapter * rtc )
       RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, DISABLE);	
 }
 
-//void rtc_restart( TiRtcAdapter * rtc )
-//{
-//	rtc_start( rtc );
-//
-//}
-
 void rtc_restart( TiRtcAdapter * rtc )
 {
 	rtc_start( rtc );
+}
 
-}
-/*
-void _rtc_interrupt_disable( TiRtcAdapter * rtc )
-{
-	TIFR = (1 << TOV0);
-	TIMSK &= ~(1<<TOIE0);//关闭定时器0溢出中断。
-}
-	
-void _rtc_interrupt_enable( TiRtcAdapter * rtc )
-{
-	TIFR = (1 << TOV0);
-	TIMSK |= (1<<TOIE0);//打开定时器0溢出中断。
-}
-*/
 void rtc_setvalue( TiRtcAdapter * rtc, TiCalTime * caltime )
 {
     hal_disable_interrupts();
@@ -527,7 +514,7 @@ void _rtc_interrupt_handler( void * object, TiEvent * e )
 TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInterface * intf )//提供的是alarm中断接口
 {
     intf->provider = rtc;
-    intf->setinterval = rtc_setalrm_count;
+    intf->setinterval = rtc_setalarm_count;
     intf->setscale = rtc_setprscaler;
     intf->setlistener = rtc_setlistener;
     intf->start = rtc_start;
@@ -538,7 +525,7 @@ TiBasicTimerInterface * rtc_basicinterface( TiRtcAdapter * rtc, TiBasicTimerInte
 TiLightTimerInterface * rtc_lightinterface( TiRtcAdapter * rtc, TiLightTimerInterface * intf )//提供的是alarm中断接口
 {
     intf->provider = rtc;
-    intf->setinterval = rtc_setalrm_count;
+    intf->setinterval = rtc_setalarm_count;
     intf->setscale = rtc_setprscaler;
     intf->setlistener = rtc_setlistener;
     intf->start = rtc_start;

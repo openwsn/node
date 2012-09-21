@@ -28,8 +28,6 @@
 
 #include "osx_configall.h"
 #include "osx_foundation.h"
-#include "../hal/hal_rtc.h"
-#include "../hal/hal_timer.h"
 #include "osx_taskpool.h"
 #include "osx_taskheap.h"
 
@@ -39,10 +37,10 @@
 typedef struct{
     TiOsxTaskHeap taskheap;
     TiOsxTaskPool taskpool;
-    TiOsxTimer * timer;
+    TiOsxTicker * ticker;
 }TiOsxTimeLineScheduler;
 
-TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTimer * timer );
+TiOsxTimeLineScheduler * osx_tlsche_open( TiOsxTimeLineScheduler * sche, TiOsxTicker * ticker );
 void osx_tlsche_close( TiOsxTimeLineScheduler * sche );
 int8 osx_tlsche_taskspawn( TiOsxTimeLineScheduler * sche, TiOsxTask taskfunction, 
     void * taskdata, int16 starttime, uint8 priority, uint8 option );
@@ -53,7 +51,7 @@ void osx_tlsche_restart( TiOsxTimeLineScheduler * sche, uint8 id, int16 starttim
 #define osx_tlsche_stepbackward(sche,slicecount) osx_tlsche_stepforward((sche),(slicecount))
 void osx_tlsche_stepforward( TiOsxTimeLineScheduler * sche, uint16 slicecount );
 
-void osx_rtc_listener(TiOsxTimeLineScheduler * sche,TiEvent * e);
+void osx_ticker_listener(void * sche,TiEvent * e );
 
 /*
 Future Scheduler:
