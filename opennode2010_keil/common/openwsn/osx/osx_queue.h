@@ -118,7 +118,7 @@ inline bool osx_queue_empty( TiLightQueue * que )
 	bool ret;
 	hal_atomic_begin();
 	ret = lwque_empty(que);
-	hal_atomic_end();	  //@todo JOE 0820  and all below
+	hal_atomic_end();
 	return ret;
 }
 

@@ -386,10 +386,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>60</ColumnNumber>
+      <ColumnNumber>8</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>65</TopLine>
-      <CurrentLine>83</CurrentLine>
+      <TopLine>143</TopLine>
+      <CurrentLine>156</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\osxdemo.c</PathWithFileName>
       <FilenameWithoutPath>osxdemo.c</FilenameWithoutPath>
@@ -1287,9 +1287,9 @@
       <Documents>
         <Doc>
           <Name>.\osxdemo.c</Name>
-          <ColumnNumber>60</ColumnNumber>
-          <TopLine>65</TopLine>
-          <CurrentLine>83</CurrentLine>
+          <ColumnNumber>8</ColumnNumber>
+          <TopLine>143</TopLine>
+          <CurrentLine>156</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

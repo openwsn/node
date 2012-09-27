@@ -42,6 +42,5 @@ void asv1_evolve( void * svcptr, TiEvent * e )
 
 	//osx_postx(1,asv1_evolve,svc,svc);	//JOE
 	//osx_taskspawn(asv1_evolve, svc, 1, 0, 0 );
-	led_toggle(LED_RED);
 }
 

@@ -65,7 +65,7 @@
 static char m_osxmem[ OSX_SIZE ];
 #endif
 
-TiOSX * g_osx = NULL;
+volatile TiOSX * g_osx = NULL;
 
 /******************************************************************************
  * osx_construct
@@ -201,6 +201,8 @@ void _osx_asyninvoke( TiOSX * osx, TiFunEventHandler handler, uint16 evtid,
 	e.objectfrom = objectfrom;
 	e.objectto = objectto;
 	osx_queue_pushback( osx->eventqueue, &e );
+
+
 }
 
 bool _osx_attach( TiOSX * osx, uint8 eid, TiFunEventHandler handler, void * object )
@@ -225,15 +227,15 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 {
 	bool pop = false;
     TiOSX * osx = (TiOSX *)osxptr;
-
+	
 	if (e == NULL)
 	{
 		e = osx_queue_front( osx->eventqueue );
-		pop = true;
 	}
 
 	if (e != NULL)
-	{
+	{		
+		pop = true;
 		if (e->handler == NULL)
 		{	
 			hal_assert(e->id != 0);
@@ -244,7 +246,7 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 			e->handler( e->objectto, e );
 		}
 	}
-
+	 	
 	if (pop)
 		osx_queue_popfront(osx->eventqueue);	
 }
@@ -252,7 +254,6 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 void _osx_execute( TiOSX * osx )
 {
 	/*  register default handler for dispatching later */
-
 	//dispa_attach( osx->dispatcher, EVENT_SLEEP, _osx_target_sleep );
 	//dispa_attach( osx->dispatcher, EVENT_WAKEUP, _osx_target_wakeup );
 	//dispa_attach( osx->dispatcher, EVENT_REBOOT, _osx_target_handler );
@@ -265,7 +266,6 @@ void _osx_execute( TiOSX * osx )
 	hal_enable_interrupts();
 	#ifdef CONFIG_OSX_TLSCHE_ENABLE
 	osx_ticker_start(osx->ticker);
-	 	dbc_putchar(0xf2);
 	// osx_postx(1,osx_tlsche_evolve,osx->scheduler,osx->scheduler);	 	//way 1 to deal with the osx_tlsche_evolve: 
 																			//we should also modify the osx_tlsche.c line 90
 	#endif																			
@@ -366,7 +366,7 @@ void _osx_sleep_request( TiOSX * osx )
  * the osx kernel to do some post processings after hardware wakeup request. the
  * hardware wakeup request is usually raised by external hardware interrupts.
  */
-void _osx_on_wakeup( TiOSX * osx )
+void _osx_wakeup_request( TiOSX * osx )
 {
 	_osx_postx( osx, EVENT_WAKEUP, NULL, osx, osx );
 }
