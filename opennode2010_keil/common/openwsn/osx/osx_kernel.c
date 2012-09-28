@@ -231,11 +231,12 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 	if (e == NULL)
 	{
 		e = osx_queue_front( osx->eventqueue );
+		if(e != NULL)
+			pop = true;		
 	}
 
 	if (e != NULL)
 	{		
-		pop = true;
 		if (e->handler == NULL)
 		{	
 			hal_assert(e->id != 0);
