@@ -222,6 +222,8 @@ bool _osx_detach( TiOSX * osx, uint8 eid )
 
 /* _osx_evolve()
  * Everytime this function is called, one event is processed. 
+ * There are two versions for the _osx_evolve
+ * The first version doesn't copy the event out of the event queue and it is more high efficiency.(default)
  */
 void _osx_evolve( void * osxptr, TiEvent * e )
 {
@@ -249,7 +251,43 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 	}
 	 	
 	if (pop)
-		osx_queue_popfront(osx->eventqueue);	
+		osx_queue_popfront(osx->eventqueue);
+		
+	/* 
+	//This version copys the TiEvent from the event queue
+	TiOSX * osx = (TiOSX *)osxptr;	   
+	TiEvent evt,*evtptr;
+	if (e != NULL)
+	{		
+		if (e->handler == NULL)
+		{	
+			hal_assert(e->id != 0);
+			dispa_send( osx->dispatcher, e );
+		}
+		else
+		{
+			e->handler( e->objectto, e );
+		}
+	}
+	else
+	{
+		evtptr = osx_queue_front( osx->eventqueue );
+		if( evtptr != NULL )
+		{
+			memmove( &evt, evtptr, sizeof(TiEvent) );
+			osx_queue_popfront( osx->eventqueue );
+			if (evt.handler == NULL)
+			{	
+				hal_assert( evt.id != 0 );
+				dispa_send( osx->dispatcher, &evt );
+			}
+			else
+			{
+				evt.handler( evt.objectto, &evt );
+			}
+		}
+	}	
+	*/
 }
 
 void _osx_execute( TiOSX * osx )
