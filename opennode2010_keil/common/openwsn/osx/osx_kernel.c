@@ -243,7 +243,7 @@ void _osx_evolve( void * osxptr, TiEvent * e )
 		{	
 			hal_assert(e->id != 0);
 			dispa_send( osx->dispatcher, e );
-		}
+		} 
 		else
 		{
 			e->handler( e->objectto, e );

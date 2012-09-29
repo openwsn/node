@@ -57,7 +57,7 @@
  * @modified by ShiZhirong on 2012.09.19
  *  - Add osx_sleep
  * @modified by ShiZhirong on 2012.09.29
- *  - fix bug and add an optional version for osx_evolve
+ *  - fix bug and add an optional version for osx_evolve 
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
