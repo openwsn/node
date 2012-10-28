@@ -97,10 +97,10 @@ void sendnode1(void)
     seqid = 0;
 
 	target_init();
-	led_open();
-	led_on( LED_ALL );
+	led_open(LED_RED);
+	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_ALL );
+	led_off( LED_RED );
 
 	halUartInit(9600,0);
 

@@ -137,9 +137,7 @@ uint16 lwque_writedata( TiLightQueue * que, uint8 idx, void * data, uint16 len  
  */
 void * lwque_front( TiLightQueue * que )
 {
-	void * item = (que->count > 0) ? lwque_getbuf(que,que->front) : NULL;
-	
-    
+	void * item = (que->count > 0) ? lwque_getbuf(que,que->front) : NULL; 
 	return item;
 }
 

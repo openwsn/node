@@ -199,10 +199,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>43</TopLine>
-      <CurrentLine>43</CurrentLine>
+      <TopLine>92</TopLine>
+      <CurrentLine>103</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_cc2520tx.c</PathWithFileName>
       <FilenameWithoutPath>apl_cc2520tx.c</FilenameWithoutPath>
@@ -1016,9 +1016,9 @@
         </Doc>
         <Doc>
           <Name>.\apl_cc2520tx.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>43</TopLine>
-          <CurrentLine>43</CurrentLine>
+          <ColumnNumber>17</ColumnNumber>
+          <TopLine>92</TopLine>
+          <CurrentLine>103</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>

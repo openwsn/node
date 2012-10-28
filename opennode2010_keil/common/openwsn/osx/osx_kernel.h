@@ -56,6 +56,8 @@
  *  - update the osx_ticker
  * @modified by ShiZhirong on 2012.09.19
  *  - Add osx_sleep
+ * @modified by ShiZhirong on 2012.09.29
+ *  - fix bug and add an optional version for osx_evolve 
  ******************************************************************************/
 
 /* modified by zhangwei(openwsn@gmail.com) on 20091106
@@ -142,7 +144,7 @@ extern "C" {
 
 typedef struct{
 	uint8                   	state;
-	TiOsxQueue *           	 	eventqueue;
+    volatile TiOsxQueue *  	 	eventqueue;
 	TiFunEventHandler   	    listener;
 	void *                  	listenowner;
 	TiDispatcher *  	        dispatcher;
@@ -162,7 +164,7 @@ typedef struct{
 
 // todo: i think it's better for the g_osx to be volatile 
 //extern volatile TiOSX *              g_osx;
-extern TiOSX *              g_osx;
+extern volatile TiOSX * g_osx;
 
 #ifdef CONFIG_OSX_DYNAMIC_MEMORY
 #define osx_create(quesize,dpasize)         _osx_create(quesize,dpasize)
@@ -174,7 +176,7 @@ extern TiOSX *              g_osx;
 #define osx_close()                         _osx_close(g_osx);
 
 #define osx_post(e)                         _osx_post((g_osx),(e))
-#define osx_postx(eid,handler,objectfrom,objectto) _osx_postx(g_osx,eid,handler,objectfrom,objectto)
+#define osx_postx(eid,handler,objectfrom,objectto) _osx_postx((g_osx),(eid),(handler),(objectfrom),(objectto))
 #define osx_rtpost(e,deadline)              _osx_rtpost(g_osx,e,deadline)
 #define osx_futurepost(e,future)            _osx_futurepost(g_osx,e,future)
 #define osx_trigger(e)                      _osx_trigger(g_osx,e)
@@ -189,7 +191,7 @@ extern TiOSX *              g_osx;
 #define osx_hardevolve(e)                   _osx_hardevolve(g_osx,e)
 #define osx_hardexecute()                   _osx_hardexecute(g_osx)
 #define osx_sleep_request()                 _osx_sleep_request(g_osx)
-#define osx_on_wakeup()                     _osx_on_wakeup(g_osx)
+#define osx_wakeup_request()                _osx_wakeup_request(g_osx)
 
 #define osx_sleep(time)						_osx_sleep(g_osx,time)
 #define osx_wakeup()						_osx_wakeup(g_osx)
@@ -297,7 +299,7 @@ void _osx_hardexecute( TiOSX * osx );
  *****************************************************************************/
 
 void _osx_sleep_request( TiOSX * osx );
-void _osx_on_wakeup( TiOSX * osx );
+void _osx_wakeup_request( TiOSX * osx );
 
 void _osx_sleep(TiOSX * osx, uint16 sleep_time);
 void _osx_wakup(TiOSX * osx);

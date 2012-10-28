@@ -62,7 +62,7 @@ TiAppService1                       m_svcmem1;
 TiAppService2                       m_svcmem2;
 TiAppService3                       m_svcmem3;
 TiTimerAdapter                      m_timer;
-uint16                              g_count=0;
+volatile uint16                              g_count=0;
 
 void on_timer_expired( void * object, TiEvent * e );
 
@@ -79,7 +79,7 @@ int main()
 	char * msg = "welcome to osxdemo...";
 
 	target_init();
-	dbc_write( msg, strlen(msg) );	
+	//dbc_write( msg, strlen(msg) );	
 
 	led_open(LED_RED);
 	led_on( LED_RED );
@@ -92,7 +92,6 @@ int main()
 
 	/* interrupt must keep disabled during the osx initializing process. It will 
 	 * enabled until osx_execute(). */
-	
 	osx_init();
 
 	/* @attention: The timer_setinterval() cannot accept large duration values because
@@ -100,12 +99,11 @@ int main()
 	 * 
 	 * Q: what's the maximum value of timer_setinterval for each hardware timer?
 	 * A: 1~8 (???)  */
-	#ifdef TEST_NORMAL	 
 	evt_timer = timer_construct( (void *)&m_timer, sizeof(TiTimerAdapter) );
 	timer_open( evt_timer, CONFIG_TIMER_ID, on_timer_expired, (void*)g_osx, 0x01 );
-	timer_setinterval( evt_timer, 5, 1 );
-	timer_start( evt_timer );
-	#endif
+	timer_setinterval( evt_timer, 20, 1 );
+
+
 	/* create and initialize three runnable application services. the runnable service
 	 * is quite similar to OS's process. however, the runnable service improves the 
 	 * standard "process" with a data structure and event handler, which greatly simplied 
@@ -120,7 +118,7 @@ int main()
 	 * events drives the service to forward according to the state machine.  */
 	osx_attach( EVENT_WAKEUP, asv1_evolve, asv1 );
 	//osx_attach( EVENT_WAKEUP, asv2_evolve, asv2 );
-	//	osx_postx(2,asv2_evolve,asv2,asv2);
+	//osx_postx(2,asv2_evolve,asv2,asv2);
 	//osx_taskspawn(asv1_evolve, asv1, 1, 0, 0 );
 
 	/* configure the listener relation between service 2 and service 3.
@@ -128,13 +126,14 @@ int main()
 	 *		osx_attach( 3, asv3_evolve, asv3 );
 	 * however, the following code demonstrates how to implement complex relations 
 	 * among services.  */
-	asv2_setlistener( asv2, (TiFunEventHandler)asv3_evolve, (void *)asv3 );
+	//asv2_setlistener( asv2, (TiFunEventHandler)asv3_evolve, (void *)asv3 );
 
 	/* when the osx kernel really executed, it will enable the interrupts so that the 
 	 * whole program can accept interrupt requests.
      * attention: osx kernel already support sleep/wakeup because the sleep/wakeup 
 	 * handler have been registered inside the osx itself.  */
- 	dbc_putchar(0xf1);
+ 	//dbc_putchar(0xf1);
+ 	timer_start( evt_timer );
 
 	#ifndef CONFIG_TIMER_DRIVE
  	osx_execute();
@@ -155,69 +154,9 @@ int main()
  */
 void on_timer_expired( void * object, TiEvent * e )
 {
-//	TiEvent newe;
-//	
-//	dbio_putchar(NULL,0xEE);
-//	
-//	g_count ++;
-//	if ((g_count % 15) == 0)
-//	{
-//	    //led_toggle( LED_RED );
-//		memset( &newe, 0x00, sizeof(TiEvent) );
-//        newe.id = ((g_count/15) % 3);
-//		if (newe.id == 0)
-//			newe.id = 3;
-//
-//		#ifndef CONFIG_DISPATCHER_TEST_ENABLE
-//        if (g_count % 2 == 0)
-//        {
-//		    newe.handler = asv1_evolve;
-//		    newe.objectfrom = object;
-//		    newe.objectto = &m_svcmem1;
-//        }
-//        else{
-//		    newe.handler = asv2_evolve;
-//		    newe.objectfrom = object;
-//		    newe.objectto = &m_svcmem2;
-//        }
-//		#endif
-//
-//		/* If the event's handler is NULL, then osx kernel will had to search for
-//		 * appropriate handler in the dispatcher table to process it. 
-//		 * 
-//		 * Since the event generator often doesn't know which object will process 
-//		 * the event, so the event dispatcher in the kernel is mandatory.
-//		 */
-//		#ifdef CONFIG_DISPATCHER_TEST_ENABLE
-//        if (g_count % 2 == 0)
-//        {
-//		    newe.handler = NULL;
-//		    newe.objectfrom = object;
-//		    newe.objectto = NULL;
-//        }
-//        else{
-//		    newe.handler = NULL;
-//		    newe.objectfrom = object;
-//		    newe.objectto = NULL;
-//        }
-//		#endif
-//
-//		osx_post( (TiEvent *)(&newe) );
-//	}
-//	
-//	#ifdef CONFIG_AUTO_STOP
-//	if (g_count == 61)
-//    {
-//        timer_close( &m_timer );
-//        timer_destroy( &m_timer );
-//		g_count = 0;
-//		led_off(LED_RED);
-//    } 
-//	#endif
-
-	if(g_count%50 == 0 && g_count<600)
+	if((g_count%50 == 0) && (g_count<600))
 	{
-		osx_on_wakeup();
+		osx_wakeup_request();
 		led_toggle(LED_RED);
 	 	dbc_putchar(g_count/10);
 	}
