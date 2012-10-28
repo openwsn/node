@@ -88,8 +88,8 @@
 #include "../rtl/rtl_ieee802frame154.h"
 #include "../hal/hal_frame_transceiver.h"
 #include "../hal/hal_timesync.h"
-#include "svc_foundation.h"
 #include "../hal/hal_event.h"
+#include "svc_foundation.h"
 
 /** 
  * NIOACCEPTOR_HOPESIZE(...)

@@ -3,7 +3,7 @@
 /*******************************************************************************
  * This file is part of OpenWSN, the Open Wireless Sensor Network Platform.
  *
- * Copyright (C) 2005-2010 zhangwei(TongJi University)
+ * Copyright (C) 2005-2020 zhangwei(TongJi University)
  *
  * OpenWSN is a free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -28,11 +28,12 @@
 
 /* 
  * @state
- *  compiled successfully. released. stable.
+ *  released. tested.
  *
  * @modified by zhangwei on 2009.07.11
- *
  * @modified by zhangwei on 2010.08.17
+ *  - revision. 
+ * @modified by zhangwei on 2012.09.22
  *  - revision. 
  */
 
@@ -46,7 +47,7 @@ extern "C" {
  * An implementation of the assert mechanism for runtime debugging.
  */
 #ifdef CONFIG_DEBUG
-  #define hal_assert(v) hal_assert_report((v), __FILE__, __LINE__)
+  #define hal_assert(v) hal_assert_report((bool)(v), __FILE__, __LINE__)
 #else
   #define hal_assert(v) 
 #endif
@@ -76,4 +77,4 @@ void hal_assert_report( bool cond, char * file, uint16 line );
 }
 #endif
 
-#endif
+#endif /* _HAL_ASSERT_H_5748_ */

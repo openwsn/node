@@ -63,22 +63,11 @@
 #include "osx_configall.h"
 #include "../rtl/rtl_lightqueue.h"
 
-/* RingQueue Data Structure
- * This ring queue has fixed number of items/elements. It will not increase memory
- * when it's full. It's mainly used in kernel developing or embedded developing
- * without dynamic memory allocator support
- *
- */
-
-
 /* TiOsxQueue 基于 TiLightQueue实现，相比TiLightQueue，增加了互斥保护操作，
  * 使其可以用于multi-thread和interrupt service程序
  */
 
-#define OSX_QUEUE_HOPESIZE(itemsize,capacity) LIGHTQUEUE_HOPESIZE(itemsize,capacity)
-//#define LIGHTQUEUE_HOPESIZE(itemsize,capacity) (sizeof(TiLightQueue) + (itemsize)*(capacity))
-
-
+#define OSX_QUEUE_HOPESIZE(itemsize,capacity) LIGHTQUEUE_HOPESIZE((itemsize),(capacity))
 
 /* @attention
  * @warning

@@ -29,6 +29,8 @@
 /*******************************************************************************
  * @author zhangwei on 2012.08.02
  * - First version
+ * @modified by shi-zhirong(TongJi University) in 2012.08
+ * - Add some new event definitions.
  ******************************************************************************/
 
 
