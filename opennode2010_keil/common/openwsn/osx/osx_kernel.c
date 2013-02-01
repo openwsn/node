@@ -433,10 +433,6 @@ void _osx_sleep(TiOSX * osx, uint16 sleep_time)
 	#endif
 }
 
-void _osx_wakeup(TiOSX * osx)
-{
-
-}
 
 /******************************************************************************
  * osx_init() and osx_execute()

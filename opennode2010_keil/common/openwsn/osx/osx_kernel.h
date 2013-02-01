@@ -193,8 +193,8 @@ extern volatile TiOSX * g_osx;
 #define osx_sleep_request()                 _osx_sleep_request(g_osx)
 #define osx_wakeup_request()                _osx_wakeup_request(g_osx)
 
-#define osx_sleep(time)						_osx_sleep(g_osx,time)
-#define osx_wakeup()						_osx_wakeup(g_osx)
+#define osx_sleep(time)						_osx_sleep_request(g_osx,time)
+#define osx_wakeup()						_osx_wakeup_request(g_osx)
 
 #ifdef CONFIG_OSX_TLSCHE_ENABLE
 #define osx_taskspawn(taskfunction, taskdata, starttime, priority, option )		osx_tlsche_taskspawn(g_osx->scheduler,(taskfunction),(taskdata),(starttime),(priority),(option))

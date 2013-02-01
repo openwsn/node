@@ -105,6 +105,8 @@
 #define CONFIG_ALOHA_MAX_BACKOFF                100
 #define CONFIG_ALOHA_MIN_BACKOFF                2
 
+#define CONFIG_ALOHA_STANDARD
+
 #undef	ALOHA_RXHANDLER_FOR_ACCEPTOR
 
 /* The aloha header here includes: 
@@ -120,14 +122,9 @@
 #define ALOHA_HEADER_SIZE   11
 #define ALOHA_TAIL_SIZE     2
 
-#define ALOHA_OPTION_ACK                    	0x01
-#define ALOHA_OPTION_NOACK                  	0x00
-
-//#define CONFIG_ALOHA_STANDARD
-#define ALOHA_OPTION_AUTODELAY					0x02
-#define ALOHA_OPTION_NOAUTODELAY				0x00
-
-#define CSMA_DEF_OPTION            			ALOHA_OPTION_NOACK | ALOHA_OPTION_AUTODELAY
+#define ALOHA_OPTION_ACK                    0x01
+#define ALOHA_OPTION_NOACK                  0x00
+#define ALOHA_DEF_OPTION                    ALOHA_OPTION_NOACK
 
 #define ALOHA_IORET_SUCCESS(ret)             ((ret)>0)
 #define ALOHA_IORET_NOACTION                 0
@@ -149,8 +146,6 @@
 #define ALOHA_STATE_IDLE                    1
 #define ALOHA_STATE_BACKOFF                 2
 #define ALOHA_STATE_SLEEPING                3
-
-#define ALOHA_OSX_ENABLE
 
 #pragma pack(1) 
 typedef struct{

@@ -1,4 +1,4 @@
-//
+
 #include "../../common/openwsn/svc/svc_configall.h"
 #include "../../common/openwsn/hal/hal_cpu.h"
 #include "../../common/openwsn/hal/hal_timer.h"

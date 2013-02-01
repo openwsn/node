@@ -223,10 +223,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>10</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>2</TopLine>
+      <CurrentLine>2</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ieee802frame154_dump.c</PathWithFileName>
       <FilenameWithoutPath>apl_ieee802frame154_dump.c</FilenameWithoutPath>
@@ -582,7 +582,7 @@
       <Focus>0</Focus>
       <ColumnNumber>16</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>69</TopLine>
+      <TopLine>84</TopLine>
       <CurrentLine>84</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</PathWithFileName>
@@ -875,8 +875,14 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>1</ActiveTab>
+      <ActiveTab>3</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>
+          <ColumnNumber>16</ColumnNumber>
+          <TopLine>84</TopLine>
+          <CurrentLine>84</CurrentLine>
+        </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn\hal\opennode2010\hal_assert.c</Name>
           <ColumnNumber>0</ColumnNumber>
@@ -884,10 +890,16 @@
           <CurrentLine>1</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>
-          <ColumnNumber>16</ColumnNumber>
-          <TopLine>69</TopLine>
-          <CurrentLine>84</CurrentLine>
+          <Name>apl_ieee802frame154_dump.h</Name>
+          <ColumnNumber>11</ColumnNumber>
+          <TopLine>9</TopLine>
+          <CurrentLine>9</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\apl_ieee802frame154_dump.c</Name>
+          <ColumnNumber>10</ColumnNumber>
+          <TopLine>2</TopLine>
+          <CurrentLine>2</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

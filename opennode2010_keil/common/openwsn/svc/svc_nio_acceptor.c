@@ -559,7 +559,7 @@ int nac_rxfilter_for_transceiver(TiNioAcceptor * nac, char * inputbuf, uint16 le
             }
 			
 			#ifdef NIOACCEPTOR_OSX_ENABLE
-				hal_triggerevent( EVENT_DATA_ARRIVAL, nac, NULL );				  
+				hal_triggerevent( EVENT_DATA_ARRIVAL, nac, NULL );
 			#endif
         }
     }        

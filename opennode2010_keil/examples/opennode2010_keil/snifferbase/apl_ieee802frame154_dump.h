@@ -3,10 +3,10 @@
 
 /* application layer's frame dump */
 
-#include "../../common/openwsn/rtl/rtl_configall.h"
-#include "../../common/openwsn/rtl/rtl_foundation.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
+#include "openwsn/rtl/rtl_configall.h"
+#include "openwsn/rtl/rtl_foundation.h"
+#include "openwsn/rtl/rtl_frame.h"
+#include "openwsn/rtl/rtl_debugio.h"
 
 #define CONFIG_ASCII_OUTPUT
 #undef CONFIG_ASCII_OUTPUT

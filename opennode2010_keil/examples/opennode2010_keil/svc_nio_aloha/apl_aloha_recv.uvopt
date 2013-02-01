@@ -137,7 +137,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U805306163 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000</Name>
+          <Name>-U20100214 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint>
@@ -146,7 +146,7 @@
           <Type>0</Type>
           <LineNumber>503</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134259710</Address>
+          <Address>134233352</Address>
           <ByteObject>0</ByteObject>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
@@ -155,6 +155,36 @@
           <Filename></Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\nio_aloha_recv\svc_nio_acceptor\503</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>190</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134218476</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename></Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\nio_aloha_recv\apl_aloha_recv\190</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>198</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134218510</Address>
+          <ByteObject>0</ByteObject>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename></Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\nio_aloha_recv\apl_aloha_recv\198</Expression>
         </Bp>
       </Breakpoint>
       <DebugFlag>
@@ -213,10 +243,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>43</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>119</TopLine>
-      <CurrentLine>128</CurrentLine>
+      <TopLine>171</TopLine>
+      <CurrentLine>171</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_aloha_recv.c</PathWithFileName>
       <FilenameWithoutPath>apl_aloha_recv.c</FilenameWithoutPath>
@@ -836,10 +866,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>33</ColumnNumber>
+      <ColumnNumber>6</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>647</TopLine>
-      <CurrentLine>647</CurrentLine>
+      <TopLine>491</TopLine>
+      <CurrentLine>491</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\svc\svc_nio_aloha.c</PathWithFileName>
       <FilenameWithoutPath>svc_nio_aloha.c</FilenameWithoutPath>
@@ -848,8 +878,8 @@
 
   <AlienFiles>
     <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\svc\svc_nio_aloha.h</PathWithFilename>
-    <TopLine>91</TopLine>
-    <CurrentLine>111</CurrentLine>
+    <TopLine>200</TopLine>
+    <CurrentLine>200</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -903,31 +933,13 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
+      <ActiveTab>4</ActiveTab>
       <Documents>
         <Doc>
-          <Name>..\..\..\common\openwsn\svc\svc_nio_aloha.c</Name>
-          <ColumnNumber>33</ColumnNumber>
-          <TopLine>647</TopLine>
-          <CurrentLine>647</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_aloha_recv.c</Name>
-          <ColumnNumber>43</ColumnNumber>
-          <TopLine>119</TopLine>
-          <CurrentLine>128</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn/svc/svc_nio_aloha.h</Name>
-          <ColumnNumber>7</ColumnNumber>
-          <TopLine>91</TopLine>
-          <CurrentLine>111</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn\svc\svc_nio_acceptor.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>519</TopLine>
-          <CurrentLine>519</CurrentLine>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>
+          <ColumnNumber>34</ColumnNumber>
+          <TopLine>499</TopLine>
+          <CurrentLine>499</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn/svc/svc_nio_acceptor.h</Name>
@@ -936,10 +948,28 @@
           <CurrentLine>241</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520.c</Name>
-          <ColumnNumber>34</ColumnNumber>
-          <TopLine>499</TopLine>
-          <CurrentLine>499</CurrentLine>
+          <Name>..\..\..\common\openwsn\svc\svc_nio_acceptor.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>519</TopLine>
+          <CurrentLine>519</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn/svc/svc_nio_aloha.h</Name>
+          <ColumnNumber>7</ColumnNumber>
+          <TopLine>200</TopLine>
+          <CurrentLine>200</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\apl_aloha_recv.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>171</TopLine>
+          <CurrentLine>171</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\common\openwsn\svc\svc_nio_aloha.c</Name>
+          <ColumnNumber>6</ColumnNumber>
+          <TopLine>491</TopLine>
+          <CurrentLine>491</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
