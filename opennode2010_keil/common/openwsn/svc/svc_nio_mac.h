@@ -32,19 +32,10 @@
 	#define mac_ischannelclear(mac)  aloha_ischannelclear(mac)
 	#define mac_setprobability(mac,prob)  aloha_setsendprobability((mac),(prob))
 	#define mac_statistics(mac,stat)  aloha_statistics((mac),(stat))
-	
 	#define MAC_IORET_ERROR_NOACK 	ALOHA_IORET_ERROR_NOACK
 	//#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY ALOHA_IORET_ERROR_ACCEPTED_AND_BUSY
 	#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY 0
 	#define MAC_IORET_SUCCESS(retval)  ALOHA_IORET_SUCCESS((retval))
-	
-	#define MAC_OPTION_AUTODELAY 		ALOHA_OPTION_AUTODELAY
-	#define MAC_OPTION_NOAUTODELAY 		ALOHA_OPTION_NOAUTODELAY
-	#define MAC_OPTION_ACK  			ALOHA_OPTION_ACK
-	#define MAC_OPTION_NOACK  			ALOHA_OPTION_NOACK
-	#define MAC_DEF_OPTION 				ALOHA_DEF_OPTION
-	
-	#define MAC_OSX_ENALBE				ALOHA_OSX_ENABLE
 #endif
 
 /* TiCsma
@@ -68,18 +59,9 @@
 	#define mac_setprobability(mac,prob)  csma_setsendprobability((mac),(prob))
 	#define mac_statistics(mac,stat)  csma_statistics((mac),(stat))
 	#define mac_setsendprobability(mac,prob) csma_setsendprobability((mac),(prob))
-	
 	#define MAC_IORET_ERROR_NOACK 	CSMA_IORET_ERROR_NOACK
 	#define MAC_IORET_ERROR_ACCEPTED_AND_BUSY CSMA_IORET_ERROR_ACCEPTED_AND_BUSY
 	#define MAC_IORET_SUCCESS(retval)  CSMA_IORET_SUCCESS((retval))
-	
-	#define MAC_OPTION_AUTODELAY 		CSMA_OPTION_AUTODELAY
-	#define MAC_OPTION_NOAUTODELAY		CSMA_OPTION_NOAUTODELAY
-	#define MAC_OPTION_ACK  			CSMA_OPTION_ACK
-	#define MAC_OPTION_NOACK  			CSMA_OPTION_NOACK
-	#define MAC_DEF_OPTION 				CSMA_DEF_OPTION
-	
-	#define MAC_OSX_ENALBE				CSMA_OSX_ENABLE
 #endif /* CONFIG_CSMA_ENABLED */
 
 #ifdef CONFIG_MACA_ENABLED

@@ -11,9 +11,15 @@
 
 #define TSYNC_MAKE_DWORD(highest,high,lowe,lowest) (((uint32)highest<<24) | ((uint32)high<<16)|((uint16)lowe<<8)|((uint8)lowest))
 
+TiTimeSyncAdapter * hal_tsync_construct( char * buf,uintx size)
+{
+	memset(buf,0x00,size);
+	hal_assert( sizeof(TiTimeSyncAdapter)<=size);
+	return ( TiTimeSyncAdapter *)buf;
+}
+
 TiTimeSyncAdapter * hal_tsync_open( TiTimeSyncAdapter * tsync, TiRtcAdapter *rtc)
 {
-    memset( (void *)tsync, 0x00, sizeof(TiTimeSyncAdapter) );
     tsync->rtc = rtc;
     return tsync;
 }
@@ -55,17 +61,11 @@ intx hal_tsync_rxhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
         
         // rtc_curtime(tsync->rtc, &sendtime);
         //time_read32( systimer, ptr+18 );
-        
-        ptr[20] = (uint8)(recvtime);
-        ptr[21] = (uint8)(recvtime >> 8);
-        ptr[22] = (uint8)(recvtime >> 16);
-        ptr[23] = (uint8)(recvtime >> 24);
-
-//		ptr[18] = (uint8)(recvtime);
-//        ptr[19] = (uint8)(recvtime >> 8);
-//        ptr[20] = (uint8)(recvtime >> 16);
-//        ptr[21] = (uint8)(recvtime >> 24);
-
+    
+        ptr[22] = (uint8)(recvtime);
+        ptr[23] = (uint8)(recvtime >> 8);
+        ptr[24] = (uint8)(recvtime >> 16);
+        ptr[25] = (uint8)(recvtime >> 24);
     }
 
     hal_assert( input == output );
@@ -84,17 +84,12 @@ intx hal_tsync_txhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * o
     {
         // recommend rtc_curtime(tsync->rtc)
         //sendtime = tsync->rtc->currenttime;
-		
 		sendtime = RTC_GetCounter();
         
-		ptr[4] = (uint8)(sendtime);
-        ptr[5] = (uint8)(sendtime>>8);
-        ptr[6] = (uint8)(sendtime>>16);
-        ptr[7] = (uint8)(sendtime>>24);
-//		ptr[2] = (uint8)(sendtime);
-//        ptr[3] = (uint8)(sendtime>>8);
-//        ptr[4] = (uint8)(sendtime>>16);
-//        ptr[5] = (uint8)(sendtime>>24);
+		ptr[6] = (uint8)(sendtime);
+        ptr[7] = (uint8)(sendtime>>8);
+        ptr[8] = (uint8)(sendtime>>16);
+        ptr[9] = (uint8)(sendtime>>24);
 
     }
     

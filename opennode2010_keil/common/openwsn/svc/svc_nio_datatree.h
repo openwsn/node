@@ -152,7 +152,7 @@
 #define DTP_BROADCAST_ADDRESS           0xFFFF
 
 //#define DTP_DEFAULT_MAX_HOPCOUNT		0x05
-#define DTP_MAINTAIN_TIME				2
+#define DTP_MAINTAIN_TIME				10
 //#define DTP_MAINTAIN_TIME				2000
 
 /* The transportation type of a frame is very important in the routing. They're 

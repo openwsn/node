@@ -12,7 +12,9 @@ typedef struct{
     TiRtcAdapter *rtc;              
 }TiTimeSyncAdapter;
 
+TiTimeSyncAdapter * hal_tsync_construct( char * buf,uintx size);
 TiTimeSyncAdapter * hal_tsync_open( TiTimeSyncAdapter * tsync, TiRtcAdapter *rtc);
+
 intx hal_tsync_close(TiTimeSyncAdapter * tsync );
 intx hal_tsync_rxhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * output, uint8 option );
 intx hal_tsync_txhandler(TiTimeSyncAdapter * tsync, TiFrame * input, TiFrame * output, uint8 option );

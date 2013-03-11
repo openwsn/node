@@ -167,7 +167,7 @@ void csma_sendnode(void)
         while (1)
         {  
             retval = mac_send(mac, CONFIG_CSMA_REMOTE_ADDRESS, txbuf, 1); 
-			if( retval == MAC_IORET_ERROR_NOACK || MAC_IORET_ERROR_ACCEPTED_AND_BUSY || MAC_IORET_SUCCESS(retval) )
+			if( (retval == MAC_IORET_ERROR_NOACK) || (retval == MAC_IORET_ERROR_ACCEPTED_AND_BUSY) || (MAC_IORET_SUCCESS(retval)) )
             {	
                 led_toggle( LED_RED );
                 break;

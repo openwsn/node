@@ -22,7 +22,8 @@
 #define CONFIG_NIOACCEPTOR_RXQUE_CAPACITY 2
 #define CONFIG_NIOACCEPTOR_TXQUE_CAPACITY 1
 
-#include "../../common/openwsn/hal/hal_configall.h"
+//#include "../../common/openwsn/hal/hal_configall.h"
+#include "openwsn/hal/hal_configall.h"
 #include <stdlib.h>
 #include <string.h>
 
