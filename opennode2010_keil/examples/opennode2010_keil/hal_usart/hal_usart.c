@@ -155,7 +155,7 @@ int main( void)
 {
 	uint8 ch;
 	ch = 0x00;
-	led_open();
+	led_open(LED_ALL);
 	RCC_Configuration();
 	GPIO_Configuration();
 

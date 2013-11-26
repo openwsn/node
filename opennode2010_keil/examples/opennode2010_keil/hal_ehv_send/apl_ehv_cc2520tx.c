@@ -61,6 +61,11 @@
 #define REMOTE_ADDRESS		0x02
 #define DEFAULT_CHANNEL     11
 
+#define STATE_INIT          0
+#define STATE_ACTIVE        1
+#define STATE_SLEEP         2
+#define STATE_POWERDOWN     3
+
 static TiUartAdapter        m_uart;      
 static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
@@ -68,12 +73,75 @@ static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static TiIEEE802Frame154Descriptor m_desc;
 static TiCc2520Adapter      m_cc;
 
+
+static char m_state = STATE_INIT;
+
 void sendnode1(void);
 //void sendnode2(void);
 
 int main(void)
 {
-    sendnode1();
+    short value = 0;
+    
+	// Initialize GPIO for led, UART for debugging output, and the transceiver for
+	// wirelesss communication. 
+
+	target_init();
+
+	led_open(LED_RED);
+	led_on( LED_RED );
+	hal_delayms( 500 );
+	led_off( LED_RED );
+
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	dbc_mem( msg, strlen(msg) );
+    
+    ehv_init();
+    sensor_init();
+    wls_init();
+    rtclock_init();
+    
+    hal_enable_interrupts();
+
+	// Wait for the module to be wakeup through external interrupt after charged 
+	// enough energy. The CPU will be wakeup automatically when an external interrupt
+	// reach it.
+
+    while (1)
+    {
+        switch (m_state)
+        {
+        case STATE_INIT:
+            m_state = STATE_ACTIVE;
+            continue;
+            break;
+            
+        case STATE_ACTIVE:
+            value = sensor_getvalue16();
+            wls_startup();
+            wls_send(value);
+            wls_shutdown();
+                        
+            // set the time for the next wakeup supported by the RTC hardware. 
+            // The RTC will raise an external interrupt request to the CPU and 
+            // wakeup the CPU to work. The CPU will continue their former work
+            // if it is in sleep or startup(boot the CPU) if it is power down.
+            //
+            rtclock_restart(10);
+            m_state = STATE_POWERDOWN;
+            ehv_set_taskdone(1);
+            mcu_powerdown();
+            break;
+            
+        case STATE_SLEEP:
+        case STATE_POWERDOWN:
+            break;
+        }
+    }
+
+	return 0;
 }
 
 void sendnode1(void)

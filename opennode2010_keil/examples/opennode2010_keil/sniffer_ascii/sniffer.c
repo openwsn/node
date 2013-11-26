@@ -46,24 +46,7 @@
  * 	- revision.
  ******************************************************************************/ 
 
-#include "../../common/openwsn/hal/hal_configall.h"
-#include <stdlib.h>
-#include <string.h>
-#include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ascii.h"
-#include "../../common/openwsn/rtl/rtl_assert.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
+#include "apl_foundation.h"
 
 /**
  * This macro controls the apl_ieee802frame154_dump module to output
@@ -96,7 +79,7 @@
 
 #define MAX_IEEE802FRAME154_SIZE    128
 
-static TiCc2420Adapter g_cc;
+static TiCc2520Adapter g_cc;
 static char m_frame[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 
 #ifdef CONFIG_LISTENER
@@ -127,28 +110,30 @@ void sniffer(void)
 
 	target_init();
 
-	led_open();
+	led_open(0x00);	  // TODO: whether the parameter is right? by zhangwei
 	led_on( LED_RED );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
     rtl_init( dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
     dbc_mem( msg, strlen(msg) );
+    dbc_putchar( 0xFF );
 
-	cc = cc2420_construct( (void *)(&g_cc), sizeof(TiCc2420Adapter) );
+	cc = cc2520_construct( (void *)(&g_cc), sizeof(TiCc2520Adapter) );
 	#ifdef CONFIG_LISTENER
-	cc = cc2420_open( cc, 0, _cc2420_listener, cc, 0x00 );
+	//cc = cc2520_open( cc, 0, _cc2420_listener, cc, 0x00 );
 	#else
-    cc = cc2420_open( cc, 0, NULL, NULL, 0x00 );
+    //cc = cc2520_open( cc, 0, NULL, NULL, 0x00 );
+	cc = cc2520_open( cc, 0, 0x00 );
 	#endif
 
 	cc2420_setchannel( cc, DEFAULT_CHANNEL );
-	cc2420_setrxmode( cc );							// enable RX mode
+	cc2420_rxon( cc );							// enable RX mode
 	cc2420_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
 	cc2420_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
 	cc2420_disable_addrdecode( cc );				// disable address decoding
 	cc2420_disable_autoack( cc );
-	cc2420_settxpower( cc, CC2420_POWER_1);//cc2420_settxpower( cc, CC2420_POWER_2);CC2420_POWER_1
+	//cc2420_settxpower( cc, CC2420_POWER_1);//cc2420_settxpower( cc, CC2420_POWER_2);CC2420_POWER_1
 
     frame = frame_open( (char*)(&m_frame), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
 
@@ -161,10 +146,10 @@ void sniffer(void)
 	#ifndef CONFIG_LISTENER
 	while(1) 
 	{
-		uint8 first ;
-		uint8 count;
-		len = 0;
-		count = 0;
+		//uint8 first ;
+		//uint8 count;
+		//len = 0;
+		//count = 0;
         frame_reset( frame, 0, 0, 0 );
         len = cc2420_read( cc, frame_startptr(frame), frame_capacity(frame), 0x00 );
 
@@ -176,14 +161,14 @@ void sniffer(void)
 			dbc_putchar( 0xfe);//todo for testing
 			led_toggle( LED_RED );
         }
-		//hal_delay( 1000);
+		//hal_delayms( 1000);
 		cc2420_evolve( cc );
 	}
 	#endif 
 }
 
-/* _cc2420_listener
- * This is a callback function handler of the TiCc2420Adapter. It will be called 
+/* _cc2520_listener
+ * This is a callback function handler of the TiCc2520Adapter. It will be called 
  * each time a new frame received by the cc2420 adapter. 
  * 
  * @attention
@@ -193,7 +178,7 @@ void sniffer(void)
 #ifdef CONFIG_LISTENER
 void _cc2420_listener( void * owner, TiEvent * e )
 {
-	TiCc2420Adapter * cc = (TiCc2420Adapter *)(owner);
+	TiCc2520Adapter * cc = (TiCc2520Adapter *)(owner);
     TiFrame * frame = (TiFrame *)&m_frame;
     int8 len=0;
 
@@ -213,16 +198,14 @@ void _cc2420_listener( void * owner, TiEvent * e )
 	
 	while (1)
 	{
-		uint8 first ;
-		uint8 count;
-		char * ptr;
-		len = 0;
+		//uint8 first ;
+		//uint8 count;
+		//char * ptr;
+		//len = 0;
         frame_reset(frame, 0, 0, 0);
-        len = cc2420_read( cc, frame_startptr(frame), frame_capacity(frame), 0x00 );
+        len = cc2520_read( cc, frame_startptr(frame), frame_capacity(frame), 0x00 );
         if (len > 0)
         {
-			
-            
             frame_setlength( frame, len );
             //ieee802frame154_dump( frame );
 			//dbc_putchar( 0xab);//todo for tesitng

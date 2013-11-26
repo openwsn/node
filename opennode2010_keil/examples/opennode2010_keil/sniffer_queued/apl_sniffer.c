@@ -49,6 +49,9 @@
  * 	- revision.
  * @modified by zhangwei on 2011.05.06
  * 	- revised.
+ * @modified by zhangwei on 2013.11.26
+ *  - Upgraded to support cc2520 transceiver. However, I have't time to test it yet.
+ *    So it depends on you!
  ******************************************************************************/ 
 
 /** 
@@ -60,26 +63,7 @@
 #define CONFIG_UART_INTERRUPT_DRIVEN
 #undef CONFIG_UART_INTERRUPT_DRIVEN
 
-#include "../../common/openwsn/hal/hal_configall.h"
-#include <stdlib.h>
-#include <string.h>
-#include <avr/wdt.h>
-#include "../../common/openwsn/hal/hal_foundation.h"
-#include "../../common/openwsn/hal/hal_cpu.h"
-#include "../../common/openwsn/hal/hal_interrupt.h"
-#include "../../common/openwsn/hal/hal_led.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/hal/hal_assert.h"
-#include "../../common/openwsn/hal/hal_cc2420.h"
-#include "../../common/openwsn/hal/hal_uart.h"
-#include "../../common/openwsn/hal/hal_targetboard.h"
-#include "../../common/openwsn/hal/hal_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_ascii.h"
-#include "../../common/openwsn/rtl/rtl_assert.h"
-#include "../../common/openwsn/rtl/rtl_debugio.h"
-#include "../../common/openwsn/rtl/rtl_frame.h"
-#include "../../common/openwsn/rtl/rtl_framequeue.h"
+#include "apl_foundation.h"
 
 /**
  * This macro controls the apl_ieee802frame154_dump module to output
@@ -123,7 +107,7 @@ typedef struct{
   uint32 dropped;
 }TiSnifferStatistics;
 
-static TiCc2420Adapter m_cc;
+static TiCc2520Adapter m_cc;
 TiUartAdapter m_uart;
 static char m_nio_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
 static char m_nio_rxque[SNIFFER_FMQUE_HOPESIZE];
@@ -151,7 +135,7 @@ int main(void)
 void nss_execute(void)
 {
 	char * msg = "welcome to sniffer ...";
-    TiCc2420Adapter * cc;
+    TiCc2520Adapter * cc;
     TiFrame * nio_rxbuf;
 	TiFrameQueue * nio_rxque;
 	TiUartAdapter * uart;
@@ -165,9 +149,9 @@ void nss_execute(void)
 	#endif
 
 	target_init();
-	led_open();
+	led_open(0);
 	led_on( LED_RED );
-	hal_delay( 500 );
+	hal_delayms( 500 );
 	led_off( LED_ALL );
 
 	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
@@ -177,15 +161,17 @@ void nss_execute(void)
 	
 	// Initialize the TiCc2420Adapter component for wireless network communication 
 
-	cc = cc2420_construct( (void *)(&m_cc), sizeof(TiCc2420Adapter) );
-	cc = cc2420_open( cc, 0, NULL, NULL, 0x00 );
-	cc2420_setchannel( cc, DEFAULT_CHANNEL );
-	cc2420_setrxmode( cc );							// enable RX mode
-	cc2420_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
-	cc2420_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
-	cc2420_disable_addrdecode( cc );				// disable address decoding
-	cc2420_disable_autoack( cc );
-	cc2420_settxpower( cc, CC2420_POWER_1);
+	cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
+	//cc = cc2520_open( cc, 0, NULL, NULL, 0x00 );
+	cc = cc2520_open( cc, 0, 0x00 );// TODO: should check the parameters
+	cc2520_setchannel( cc, DEFAULT_CHANNEL );
+	//cc2520_setrxmode( cc );							// enable RX mode
+	cc2520_rxon(cc);
+	cc2520_setpanid( cc, PANID );					// network identifier, seems no use in sniffer mode
+	cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// in network address, seems no use in sniffer mode
+	cc2520_disable_addrdecode( cc );				// disable address decoding
+	cc2520_disable_autoack( cc );
+	//cc2520_settxpower( cc, CC2520_POWER_1);
 	
 	nio_rxque = fmque_construct( &m_nio_rxque[0], sizeof(m_nio_rxque) );
     nio_rxbuf = frame_open( (char*)(&m_nio_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0 );
@@ -222,7 +208,7 @@ void nss_execute(void)
 		len = 0;
 		count = 0;
         frame_reset( nio_rxbuf, 0, 0, 0 );
-        len = cc2420_read( cc, frame_startptr( nio_rxbuf), frame_capacity( nio_rxbuf), 0x00 );
+        len = cc2520_read( cc, frame_startptr( nio_rxbuf), frame_capacity( nio_rxbuf), 0x00 );
 
         if ( len > 0)
         {
@@ -282,7 +268,7 @@ void nss_execute(void)
 		#endif /* CONFIG_ACTIVE_SENDING_MODE */
 		
 		// Simulate the running the cc2420 internal task
-		cc2420_evolve( cc );
+		cc2520_evolve( cc );
 	}
 }
 

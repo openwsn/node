@@ -1,0 +1,18 @@
+Energy Harvesting Receiver 
+========================================================================
+Based on cc2520rx
+
+Project Description: 
+
+
+
+
+
+
+== Obsolate ==
+
+
+this is a very simple frame sending test program. it will periodically sending frames.Energy H
+mainly used for demonstration and testing.
+
+tested successuflly by jiangridong on2011.8
