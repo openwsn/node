@@ -51,6 +51,8 @@
  * 	- revised.
  * @modified by jiang ridong, zhangwei in 2011.08
  * 	- revised.
+ * @modified by bu-shijun and zhangwei on 2013.11.28
+ * 	- revised. and tested ok with hal_cc2520tx.
  ******************************************************************************/ 
 
 /** 

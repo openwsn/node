@@ -686,7 +686,9 @@ uint8 USART_Send( uint8 ch)
 	{
 	}
 #endif
+	return 1;
 }
+
 
 
 uint8 USART_Get( uint8 ch)
@@ -783,4 +785,5 @@ void halUartEnableRxFlow(uint8 enable)
     }
 }
 */
+
 

@@ -1,7 +1,9 @@
- #include "apl_foundation.h"
+#include "apl_foundation.h"
 #include "../../../common/openwsn/rtl/rtl_frame.h"
 #include "../../../common/openwsn/rtl/rtl_ieee802frame154.h"
 //#include "../../common/openwsn/hal/opennode2010/hal_led.h"
+#include "../../../common/openwsn/hal/hal_cc2520.h"
+#include "../../../common/openwsn/hal/opennode2010/hal_cc2520base.h"
 
 USART_InitTypeDef USART_InitStructure;
 ADC_InitTypeDef ADC_InitStructure;
@@ -204,6 +206,7 @@ static uint8 USART_Send( uint8 ch)
 	while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
 	{
 	}
+	return 1;
 }
 
 
@@ -218,7 +221,7 @@ static uint8 USART_Send( uint8 ch)
  * @return      none
  */
 
-void main (void)
+int main (void)
 {
  
 	int i;
@@ -227,7 +230,7 @@ void main (void)
 	uint16 adc;
 	len = 0x00;
     RCC_Configuration( );
-    led_open();
+    led_open(LED_ALL);
     led_off( LED_RED);//todo 下面三句的顺序不能变
     CC2520_Activate();
 	SPI_GPIO_Configuration();
@@ -244,7 +247,7 @@ void main (void)
 	halRfSetShortAddr( 0x02);
 	halRfSetPanId( 0x01);
 
-	hal_delay( 2);
+	hal_delayms( 2);
 	
 	//enable GPIO0 and GPIO1 for temperature sensor
 	CC2520_REGWR8(CC2520_GPIOCTRL0, 0x80);
@@ -268,7 +271,8 @@ void main (void)
 	   hal_delay( 1000);
 
 	}
-	
+
+	return 0;	
 }
 
 

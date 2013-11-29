@@ -225,10 +225,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>20</ColumnNumber>
+      <ColumnNumber>38</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>151</TopLine>
-      <CurrentLine>151</CurrentLine>
+      <CurrentLine>161</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_uartecho.c</PathWithFileName>
       <FilenameWithoutPath>apl_uartecho.c</FilenameWithoutPath>
@@ -314,7 +314,7 @@
 
   <Group>
     <GroupName>stm32f10x_std</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -517,7 +517,7 @@
 
   <Group>
     <GroupName>hal</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -610,10 +610,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>35</ColumnNumber>
+      <ColumnNumber>54</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>315</TopLine>
-      <CurrentLine>315</CurrentLine>
+      <TopLine>346</TopLine>
+      <CurrentLine>346</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</PathWithFileName>
       <FilenameWithoutPath>hal_uart.c</FilenameWithoutPath>
@@ -626,7 +626,7 @@
       <Focus>0</Focus>
       <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>29</TopLine>
+      <TopLine>19</TopLine>
       <CurrentLine>29</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</PathWithFileName>
@@ -684,9 +684,9 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_configall.h</PathWithFilename>
-    <TopLine>110</TopLine>
-    <CurrentLine>110</CurrentLine>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_uart.h</PathWithFilename>
+    <TopLine>91</TopLine>
+    <CurrentLine>91</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -710,9 +710,9 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_uart.h</PathWithFilename>
-    <TopLine>91</TopLine>
-    <CurrentLine>91</CurrentLine>
+    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_configall.h</PathWithFilename>
+    <TopLine>110</TopLine>
+    <CurrentLine>110</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -740,19 +740,19 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
+      <ActiveTab>4</ActiveTab>
       <Documents>
         <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</Name>
-          <ColumnNumber>35</ColumnNumber>
-          <TopLine>315</TopLine>
-          <CurrentLine>315</CurrentLine>
+          <Name>..\..\..\common\openwsn/hal/hal_uart.h</Name>
+          <ColumnNumber>20</ColumnNumber>
+          <TopLine>91</TopLine>
+          <CurrentLine>91</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</Name>
-          <ColumnNumber>5</ColumnNumber>
-          <TopLine>29</TopLine>
-          <CurrentLine>29</CurrentLine>
+          <Name>.\apl_uartecho.c</Name>
+          <ColumnNumber>38</ColumnNumber>
+          <TopLine>151</TopLine>
+          <CurrentLine>161</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\common\openwsn/hal/hal_configall.h</Name>
@@ -761,16 +761,16 @@
           <CurrentLine>110</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\apl_uartecho.c</Name>
-          <ColumnNumber>20</ColumnNumber>
-          <TopLine>151</TopLine>
-          <CurrentLine>151</CurrentLine>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</Name>
+          <ColumnNumber>5</ColumnNumber>
+          <TopLine>19</TopLine>
+          <CurrentLine>29</CurrentLine>
         </Doc>
         <Doc>
-          <Name>..\..\..\common\openwsn/hal/hal_uart.h</Name>
-          <ColumnNumber>20</ColumnNumber>
-          <TopLine>91</TopLine>
-          <CurrentLine>91</CurrentLine>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</Name>
+          <ColumnNumber>54</ColumnNumber>
+          <TopLine>346</TopLine>
+          <CurrentLine>346</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

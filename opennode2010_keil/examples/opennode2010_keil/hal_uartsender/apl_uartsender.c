@@ -29,6 +29,11 @@
 /**
  * @state 
  * - Released. Tested Ok by zhangwei and NingHuaqiang on 2011.09.13
+ * 
+ * modified by zhangwei on 2013.11.28
+ * - Revised source code. 
+ * - Tested ok when UART_ID is set to 0. The responding USART is the interface
+ *   nearby the JTAG interface in opennode hardware.
  */
 
 /**
@@ -41,7 +46,20 @@
 #define UART_ID 1
 #else
 #define UART_ID CONFIG_SIO_UART_ID
-#endif
+#endif	  
+
+/**
+ * @attention: 
+ * For opennode hardware, there're two USART. Be sure to change the software UART_ID
+ * to adapt to your own hardware UART settings. 
+ * <p>
+ * The USART nearby the JTAG interface on the opennode base board is with UART 0
+ * in openwsn software. The other is id 1 in openwsn software. This id is NOT
+ * identical with the datasheet's USART id.
+ */  
+
+#undef UART_ID
+#define UART_ID 0
 
 TiUartAdapter m_uart;
 
@@ -63,7 +81,7 @@ void uart_active_send1()
     count = 0;
 
     target_init();
-    led_open();
+    led_open( LED_ALL );
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
@@ -89,7 +107,7 @@ void uart_active_send2()
     count = 0;
 
     target_init();
-    led_open();
+    led_open( LED_ALL );
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
@@ -102,7 +120,7 @@ void uart_active_send2()
         ch = count++;
         for (i=0; i<20; i++)
         {
-         	uart_write(uart, &ch, 1, 0x00);
+         	uart_write(uart, (char*)(&ch), 1, 0x00);
         }
         hal_delayms(1000);
         led_toggle(LED_RED);

@@ -27,7 +27,7 @@
     <TargetOption>
       <CLKADS>8000000</CLKADS>
       <OPTTT>
-        <gFlags>0</gFlags>
+        <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
         <RunSim>1</RunSim>
         <RunTarget>0</RunTarget>
@@ -118,6 +118,13 @@
         <tIfile></tIfile>
         <pMon>Segger\JL2CM3.dll</pMon>
       </DebugOpt>
+      <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>JL2CM3</Key>
+          <Name>-U20100214 -O78 -S0 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -N00("ARM CoreSight SW-DP") -D00(1BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000</Name>
+        </SetRegEntry>
+      </TargetDriverDllRegistry>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>

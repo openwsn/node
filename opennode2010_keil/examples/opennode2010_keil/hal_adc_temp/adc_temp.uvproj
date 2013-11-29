@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>1.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -29,6 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -566,11 +567,6 @@
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_debugio.c</FilePath>
             </File>
             <File>
-              <FileName>hal_digio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digio.c</FilePath>
-            </File>
-            <File>
               <FileName>hal_foundation.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_foundation.c</FilePath>
@@ -604,6 +600,11 @@
               <FileName>hal_cc2520vx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_cc2520vx.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_digitio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\common\openwsn\hal\opennode2010\hal_digitio.c</FilePath>
             </File>
           </Files>
         </Group>

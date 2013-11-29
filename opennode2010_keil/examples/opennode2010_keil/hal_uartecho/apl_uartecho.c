@@ -24,6 +24,10 @@
  *
  ******************************************************************************/
 
+/* @modified by zhangwei on 2013.11.28
+ * - Revised. Tested Ok with the USART id 0. This USART is the one nearby the JTAG
+ *   interface in the opennode base board. 
+ */
 #include "apl_foundation.h"
 
 /**
@@ -31,9 +35,11 @@
  * - You should attention the which UART you use by default. The node hardware (mainly
  *   the MCU) should provide at least 1 U(S)ART. A lot of example and testing programs
  *   needs this UART for I/O. 
+ * 
+ *   valid UART_ID = 0|1
  */
 #ifndef CONFIG_SIO_UART_ID
-#define UART_ID 1
+#define UART_ID 0
 #else
 #define UART_ID CONFIG_SIO_UART_ID
 #endif

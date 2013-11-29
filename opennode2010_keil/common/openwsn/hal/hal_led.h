@@ -49,7 +49,7 @@
 #define LED_YELLOW 	LED3
 #define LED_BLUE	LED4
 
-#define LED_ALL     (LED4 + LED1 + LED2 + LED3)
+#define LED_ALL     (LED1 + LED2 + LED3 + LED4)
 
 #ifdef __cplusplus
 extern "C" {

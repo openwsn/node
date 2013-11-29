@@ -156,21 +156,6 @@
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>155</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134218640</Address>
-          <ByteObject>0</ByteObject>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>apl_ehv_cc2520tx.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
       </Breakpoint>
       <DebugFlag>
         <trace>0</trace>
@@ -214,10 +199,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>10</ColumnNumber>
+      <ColumnNumber>47</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>114</TopLine>
-      <CurrentLine>114</CurrentLine>
+      <TopLine>61</TopLine>
+      <CurrentLine>77</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_cc2520tx.c</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_cc2520tx.c</FilenameWithoutPath>
@@ -228,10 +213,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>49</ColumnNumber>
+      <ColumnNumber>57</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>10</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_foundation.h</PathWithFileName>
       <FilenameWithoutPath>apl_foundation.h</FilenameWithoutPath>
@@ -242,10 +227,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>32</ColumnNumber>
+      <ColumnNumber>50</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>5</TopLine>
-      <CurrentLine>15</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_energyharvest.c</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_energyharvest.c</FilenameWithoutPath>
@@ -270,10 +255,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>8</ColumnNumber>
+      <ColumnNumber>21</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>17</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_sensor.c</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_sensor.c</FilenameWithoutPath>
@@ -284,10 +269,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>42</ColumnNumber>
+      <ColumnNumber>7</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>78</TopLine>
-      <CurrentLine>78</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_wireless.c</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_wireless.c</FilenameWithoutPath>
@@ -298,10 +283,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>94</ColumnNumber>
+      <ColumnNumber>16</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>7</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_energyharvest.h</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_energyharvest.h</FilenameWithoutPath>
@@ -326,10 +311,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>27</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>7</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_sensor.h</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_sensor.h</FilenameWithoutPath>
@@ -340,10 +325,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>57</ColumnNumber>
+      <ColumnNumber>42</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>7</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_ehv_wireless.h</PathWithFileName>
       <FilenameWithoutPath>apl_ehv_wireless.h</FilenameWithoutPath>
@@ -758,7 +743,7 @@
 
   <Group>
     <GroupName>hal</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <File>
@@ -977,10 +962,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>35</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.inc</PathWithFileName>
       <FilenameWithoutPath>hal_stm32f10x_it.inc</FilenameWithoutPath>
@@ -1058,52 +1043,16 @@
       <ActiveTab>0</ActiveTab>
       <Documents>
         <Doc>
-          <Name>.\apl_ehv_energyharvest.h</Name>
-          <ColumnNumber>33</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>7</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_ehv_wireless.h</Name>
-          <ColumnNumber>57</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>7</CurrentLine>
-        </Doc>
-        <Doc>
           <Name>.\apl_ehv_cc2520tx.c</Name>
-          <ColumnNumber>10</ColumnNumber>
-          <TopLine>114</TopLine>
-          <CurrentLine>114</CurrentLine>
+          <ColumnNumber>47</ColumnNumber>
+          <TopLine>61</TopLine>
+          <CurrentLine>77</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\apl_ehv_wireless.c</Name>
-          <ColumnNumber>42</ColumnNumber>
-          <TopLine>78</TopLine>
-          <CurrentLine>78</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>apl_foundation.h</Name>
-          <ColumnNumber>49</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>10</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_ehv_energyharvest.c</Name>
-          <ColumnNumber>32</ColumnNumber>
-          <TopLine>5</TopLine>
-          <CurrentLine>15</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_ehv_sensor.h</Name>
-          <ColumnNumber>27</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>7</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_ehv_sensor.c</Name>
-          <ColumnNumber>8</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>17</CurrentLine>
+          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_stm32f10x_it.inc</Name>
+          <ColumnNumber>22</ColumnNumber>
+          <TopLine>51</TopLine>
+          <CurrentLine>57</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

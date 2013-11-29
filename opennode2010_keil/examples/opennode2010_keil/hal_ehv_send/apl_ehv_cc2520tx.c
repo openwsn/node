@@ -44,22 +44,10 @@
 #include "openwsn/hal/hal_debugio.h"
 #include "openwsn/rtl/rtl_ieee802frame154.h"
 #include "openwsn/hal/hal_interrupt.h"
-
-#ifdef CONFIG_DEBUG
-#define GDEBUG
-#endif
-//#define TEST_ACK_REQUEST
-
-#define UART_ID 1
-
-// The following macro is acutally an constant 128. You cannot change its value.
-#define MAX_IEEE802FRAME154_SIZE FRAME154_MAX_FRAME_LENGTH
-
-
-#define PANID				0x0001
-#define LOCAL_ADDRESS		0x01  
-#define REMOTE_ADDRESS		0x02
-#define DEFAULT_CHANNEL     11
+#include "apl_ehv_rtc.h"
+#include "apl_ehv_sensor.h"
+#include "apl_ehv_wireless.h"
+#include "apl_ehv_energyharvest.h"
 
 #define STATE_INIT          0
 #define STATE_ACTIVE        1
@@ -67,14 +55,8 @@
 #define STATE_POWERDOWN     3
 
 static TiUartAdapter        m_uart;      
-static char                 m_txbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-static char                 m_rxbuf[FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE)];
-
-static TiIEEE802Frame154Descriptor m_desc;
 static TiCc2520Adapter      m_cc;
-
-
-static char m_state = STATE_INIT;
+static char m_state 		= STATE_INIT;
 
 void sendnode1(void);
 //void sendnode2(void);
@@ -82,6 +64,8 @@ void sendnode1(void);
 int main(void)
 {
     short value = 0;
+	TiUartAdapter * uart = NULL;
+	char * msg = "welcome to energy harvesting sensor sender...";
     
 	// Initialize GPIO for led, UART for debugging output, and the transceiver for
 	// wirelesss communication. 
@@ -94,16 +78,22 @@ int main(void)
 	led_off( LED_RED );
 
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+    //uart = uart_open(uart, CONFIG_UART_ID, 9600, 8, 1, 0);
+	uart = uart_open(uart, 0, 9600, 8, 1, 0);
 	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
 	dbc_mem( msg, strlen(msg) );
-    
+
     ehv_init();
     sensor_init();
-    wls_init();
-    rtclock_init();
+    wls_init(&m_cc, uart);
+    //rtclock_init();
     
     hal_enable_interrupts();
+
+	while (1)
+	{
+		dbc_mem( msg, strlen(msg) );
+	}
 
 	// Wait for the module to be wakeup through external interrupt after charged 
 	// enough energy. The CPU will be wakeup automatically when an external interrupt
@@ -115,15 +105,28 @@ int main(void)
         {
         case STATE_INIT:
             m_state = STATE_ACTIVE;
-            continue;
+			// continue;
             break;
             
         case STATE_ACTIVE:
             value = sensor_getvalue16();
+			/*
             wls_startup();
             wls_send(value);
             wls_shutdown();
+			*/
+
+			#ifdef DEBUG_WIRELESS_ONLY
+			led_toggle(LED_RED);
+			hal_delayms(800);
+            wls_startup();
+            wls_send(value);
+            wls_shutdown();
+			// continue;
+			#endif
                         
+			
+			#ifndef DEBUG_WIRELESS_ONLY
             // set the time for the next wakeup supported by the RTC hardware. 
             // The RTC will raise an external interrupt request to the CPU and 
             // wakeup the CPU to work. The CPU will continue their former work
@@ -133,6 +136,8 @@ int main(void)
             m_state = STATE_POWERDOWN;
             ehv_set_taskdone(1);
             mcu_powerdown();
+			#endif
+
             break;
             
         case STATE_SLEEP:
@@ -144,129 +149,3 @@ int main(void)
 	return 0;
 }
 
-void sendnode1(void)
-{
-	char * msg = "welcome to sendnode...";
-    TiCc2520Adapter * cc;
-    TiUartAdapter * uart;
-    TiFrame * txbuf;
-	TiFrame * rxbuf;
-
-    TiIEEE802Frame154Descriptor * desc;
-    uint8 initlayer;
-    uint8 initlayerstart;
-    uint8 initlayersize;
-    uint8 tmp=0;
-
-    uint8 i, first, seqid, option, len,seqid_ack,len_ack;
-    char * ptr;
-	char * ptr_ack;
-
-    seqid = 0;
-
-	target_init();
-	led_open(LED_RED);
-	led_on( LED_RED );
-	hal_delayms( 500 );
-	led_off( LED_RED );
-
-	halUartInit(9600,0);
-
-    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
-	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
-	dbc_mem( msg, strlen(msg) );
-    
-    cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
-    cc2520_open( cc, 0, 0x00 );
-    cc2520_setchannel( cc, DEFAULT_CHANNEL );
-    cc2520_rxon( cc );							    // Enable RX
-    cc2520_enable_addrdecode( cc );					// enable address decoding and filtering
-    cc2520_setpanid( cc, PANID );					// set network identifier 
-    cc2520_setshortaddress( cc, LOCAL_ADDRESS );	// set node identifier in a sub-network
-    cc2520_enable_autoack( cc );
-	//cc2520_disable_autoack( cc );
-
-    desc = ieee802frame154_open( &m_desc );
-    option = 0x00;
-
-    hal_enable_interrupts();
-
-    while(1)  
-    {
-        //led_off(LED_RED);
-
-        // @attention
-        // - When you open the frame, you must guarantee there're at least two empty
-        //   byte space for later frame_skipouter(), or else you'll encounter assertion
-        //   failure in the rtl_frame module.
-        initlayer = 3;
-        initlayerstart = 13;
-        initlayersize = 6;
-
-        txbuf = frame_open((char*)(&m_txbuf), sizeof(m_txbuf), initlayer, initlayerstart, initlayersize );
-		rxbuf = frame_open((char*)(&m_rxbuf), FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE), 0, 0, 0);
-
-        // assign some random data into the frame. for demostration only.        
-        ptr = frame_startptr(txbuf);
-        for (i = 0; i< 6; i++)
-            ptr[i] = '0' + i;
-
-        // create the 802.15.4 protocol header. attention it requires at least 12 bytes 
-        // for the header and 2 bytes for the tail(CRC checdum).
-        frame_skipouter(txbuf, initlayerstart-1, 2);
-        desc = ieee802frame154_format(desc, frame_startptr(txbuf), frame_capacity(txbuf), 
-            FRAME154_DEF_FRAMECONTROL_DATA); 
-        rtl_assert( desc != NULL );
-        ieee802frame154_set_sequence( desc, seqid); 
-        ieee802frame154_set_panto( desc, PANID );
-        ieee802frame154_set_shortaddrto( desc, REMOTE_ADDRESS );
-        ieee802frame154_set_panfrom( desc, PANID );
-        ieee802frame154_set_shortaddrfrom( desc, LOCAL_ADDRESS );
-        frame_setlength(txbuf, initlayerstart + initlayersize - 1 + 2);
-        first = frame_firstlayer(txbuf);
-
-		option=1;
-        len = cc2520_write(cc, frame_layerstartptr(txbuf,first), frame_length(txbuf), option);
-		USART_Send(seqid);
-        if (len > 0)
-        {
-			frame_reset(rxbuf, 0, 0, 0);
-            led_toggle(LED_RED);
-            //led_on(LED_RED);
-            //hal_delayms(500);
-
-            seqid++;
-
-//			len_ack = cc2520_read(cc, frame_startptr(rxbuf), frame_capacity(rxbuf), 0x00);
-//        	if (len_ack > 0)
-//        	{
-//				ptr_ack = frame_startptr(rxbuf);
-//				USART_Send(ptr_ack[3]);
-//			}
-				
-/*
-            tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
-            dbc_uint8(tmp);                     // size of the TiFrame object
-            tmp = sizeof(TiFrame); 
-            dbc_uint8(tmp);                     // size of the TiFrame description header size
-            dbc_uint8(frame_capacity(txbuf));   // frame capacity
-            dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
-            dbc_uint8(len);                     // data length actually sent
-*/
-            
-           // tmp = FRAME_HOPESIZE(MAX_IEEE802FRAME154_SIZE);
-            //dbc_uint8(tmp);                     // size of the TiFrame object
-            //tmp = sizeof(TiFrame); 
-           // dbc_uint8(tmp);                     // size of the TiFrame description header size
-           // dbc_uint8(frame_capacity(txbuf));   // frame capacity
-            //dbc_uint8(frame_length(txbuf));     // data length in the current layer of the frame
-            //dbc_uint8(len);                     // data length actually sent
-			
-			hal_delayus(5);
-			hal_delayms(1000);
-        }
-        else{
-        }
-    }
-}
