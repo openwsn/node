@@ -51,6 +51,9 @@
  *    depend on hal_debugio. you can initialize rtl_debugio with any standard byte
  *    device interface. hal_debugio with initialize rtl_debugio so you needn't care
  *    its initialization if you call dbo_open()
+ * @modified by zhangwei on 2013.11.29
+ *  - add hal_debug_open(...) and hal_debug_close() and hal_debug_init()
+ *  - Tested Ok. Please refer to example hal_debugio
  *******************************************************************************
  */
 
@@ -75,6 +78,7 @@
 #define TiDebugUart TiDebugIoAdapter
 
 typedef struct{
+  uint8 id;
   uint8 txlen;
   char txbuf[CONFIG_DBO_TXBUFFER_SIZE];
 }TiDebugIoAdapter;
@@ -96,6 +100,13 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate );
 void dbio_close( TiDebugIoAdapter * dbio );
 char dbio_getchar( TiDebugIoAdapter * dbio );
 intx dbio_putchar( TiDebugIoAdapter * dbio, char ch );
+
+TiDebugIoAdapter * hal_debug_open( uint8 usart_id, uint16 baudrate );
+void hal_debug_close( TiDebugIoAdapter * dbio );
+char hal_debug_getchar( TiDebugIoAdapter * dbio );
+intx hal_debug_putchar( TiDebugIoAdapter * dbio, char ch );
+
+void hal_debug_init(uint8 uartid, uint16 baudrate);
 
 /**
  * Initialize the debug I/O functionality of the system. It will call dbio_open() 

@@ -53,6 +53,11 @@
  * 	- revised.
  * @modified by bu-shijun and zhangwei on 2013.11.28
  * 	- revised. and tested ok with hal_cc2520tx.
+ * @modified by bu-shijun and zhangwei on 2013.11.29
+ * 	- revised. Improved the hal_debugio module so that we can configure which uart
+ *    to use. Now the hal_debug_init() function replace the old rtl_init(...).
+ *    though we can still use rtl_init(...). And the most important, the debug I/O
+ *    can work now. Attention you should choose the correct UART component.
  ******************************************************************************/ 
 
 /** 
@@ -159,7 +164,14 @@ void _nss_execute(void)
 	#endif
 
     target_init();
-    rtl_init( (void *)dbio_open(9600), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+
+    // For opennode hardware, the first parameter 1 indicate the debug module 
+	// to use the second USART and 0 indicates the module to use the first USART.
+	// The seconds USART is nearby the JTAG and the first one is in the I/O interface.
+	//
+	hal_debug_init(1, 9600);
+    //rtl_init( (void *)hal_debug_open(1,9600), (TiFunDebugIoPutChar)hal_debug_putchar, 
+    //    (TiFunDebugIoGetChar)hal_debug_getchar, hal_assert_report );
 
     led_open(LED_RED);
     led_on( LED_RED );
@@ -168,8 +180,7 @@ void _nss_execute(void)
     dbc_write( msg, strlen(msg) );
 
     uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-    // uart = uart_open( uart,1, 9600, 8, 1, 0 );
-    uart = uart_open( uart,0, 9600, 8, 1, 0 );
+    uart = uart_open( uart,1, 9600, 8, 1, 0 );
     hal_assert( uart != NULL );
 
     cc = cc2520_construct((char *)(&m_cc), sizeof(TiCc2520Adapter));

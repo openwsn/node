@@ -99,17 +99,18 @@ void sendnode1(void)
     seqid = 0;
 
 	target_init();
-	led_open(LED_RED);
+	led_open(LED_ALL);
 	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_RED );
+	led_off( LED_ALL );
 
-	halUartInit(9600,0);
+	//halUartInit(9600,0);
+	hal_debug_init(UART_ID, 9600);
+	dbc_mem( msg, strlen(msg) );
 
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
     uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
-	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
-	dbc_mem( msg, strlen(msg) );
+	//rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
     
     cc = cc2520_construct( (void *)(&m_cc), sizeof(TiCc2520Adapter) );
     cc2520_open( cc, 0, 0x00 );

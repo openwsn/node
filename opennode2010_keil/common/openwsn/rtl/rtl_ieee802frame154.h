@@ -492,7 +492,7 @@ inline char * ieee802frame154_msdu( TiIEEE802Frame154Descriptor * desc )
 	return desc->msdu;
 }
 
-inline bool ieee802frame154_msdu_len( TiIEEE802Frame154Descriptor * desc )
+inline int ieee802frame154_msdu_len( TiIEEE802Frame154Descriptor * desc )
 {
 	return desc->msdu_len;
 }

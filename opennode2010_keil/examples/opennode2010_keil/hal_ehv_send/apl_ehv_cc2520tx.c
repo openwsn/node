@@ -49,17 +49,15 @@
 #include "apl_ehv_wireless.h"
 #include "apl_ehv_energyharvest.h"
 
+#define UART_ID 1
+
 #define STATE_INIT          0
 #define STATE_ACTIVE        1
 #define STATE_SLEEP         2
 #define STATE_POWERDOWN     3
 
 static TiUartAdapter        m_uart;      
-static TiCc2520Adapter      m_cc;
 static char m_state 		= STATE_INIT;
-
-void sendnode1(void);
-//void sendnode2(void);
 
 int main(void)
 {
@@ -70,30 +68,42 @@ int main(void)
 	// Initialize GPIO for led, UART for debugging output, and the transceiver for
 	// wirelesss communication. 
 
+	sendnode1(&m_uart);
+/*
 	target_init();
 
-	led_open(LED_RED);
+	led_open(LED_ALL);
 	led_on( LED_RED );
 	hal_delayms( 500 );
-	led_off( LED_RED );
+	led_off( LED_ALL );
 
-    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
-    //uart = uart_open(uart, CONFIG_UART_ID, 9600, 8, 1, 0);
-	uart = uart_open(uart, 0, 9600, 8, 1, 0);
-	rtl_init( uart, (TiFunDebugIoPutChar)uart_putchar, (TiFunDebugIoGetChar)uart_getchar_wait, hal_assert_report );
+	// Currently, USART 1 is configured to be the debug input/output. 
+	// It's the UART nearby the JTAG interface. When the application starts, 
+	// you'll see the welcome message. This means the application can be 
+	// be started successfully and at least the UART and the basic hardware
+	// can work properly.
+	//
+	hal_debug_init(1, 9600);
 	dbc_mem( msg, strlen(msg) );
 
-    ehv_init();
-    sensor_init();
-    wls_init(&m_cc, uart);
+	// The following UART is for other use. If the UART_ID override the default
+	// debug UART, then the uart hardware will use the new settings. The debug
+	// input/output can still work but the parameter changed.
+	//
+    uart = uart_construct((void *)(&m_uart), sizeof(m_uart));
+    uart = uart_open(uart, UART_ID, 9600, 8, 1, 0);
+
+    //ehv_init();
+    //sensor_init();
+    wls_open(uart);
     //rtclock_init();
+	wls_startup();
     
     hal_enable_interrupts();
 
-	while (1)
-	{
-		dbc_mem( msg, strlen(msg) );
-	}
+
+	sendnode1();
+
 
 	// Wait for the module to be wakeup through external interrupt after charged 
 	// enough energy. The CPU will be wakeup automatically when an external interrupt
@@ -109,19 +119,14 @@ int main(void)
             break;
             
         case STATE_ACTIVE:
-            value = sensor_getvalue16();
-			/*
-            wls_startup();
-            wls_send(value);
-            wls_shutdown();
-			*/
+            //value = sensor_getvalue16();
 
 			#ifdef DEBUG_WIRELESS_ONLY
 			led_toggle(LED_RED);
 			hal_delayms(800);
-            wls_startup();
+            //wls_startup();
             wls_send(value);
-            wls_shutdown();
+            //wls_shutdown();
 			// continue;
 			#endif
                         
@@ -146,6 +151,8 @@ int main(void)
         }
     }
 
+	wls_close();
+*/
+
 	return 0;
 }
-

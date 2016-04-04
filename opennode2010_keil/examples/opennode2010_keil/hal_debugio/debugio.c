@@ -68,8 +68,14 @@ void debugio()
 	led_on(LED_ALL);
 	hal_delayms( 1000 );
 	led_off( LED_ALL );
+    
+    rtl_init( (void*)hal_debug_open(1, 9600), (TiFunDebugIoPutChar)hal_debug_putchar, (TiFunDebugIoGetChar)hal_debug_getchar, hal_assert_report );
+	hal_enable_interrupts();
+    
 	while(1)
 	{
 		dbc_mem(msg, strlen(msg));
+		led_toggle(LED_RED);
+		hal_delayms(1000);
 	}
 }

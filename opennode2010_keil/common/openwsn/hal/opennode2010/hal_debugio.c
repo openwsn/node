@@ -36,18 +36,87 @@
 #undef	CONFIG_DBO_UART2
 #define CONFIG_DBO_UART1
 
-static bool g_dbio_init = false;
+static bool m_debugio_init = false;
+
 TiDebugIoAdapter g_dbio;
 
 /*******************************************************************************
  * raw debug input/output device
  ******************************************************************************/
 
+TiDebugIoAdapter * hal_debug_open( uint8 usart_id, uint16 bandrate )
+{
+    USART_InitTypeDef USART_InitStructure;
+    TiDebugIoAdapter * retvalue = NULL;
+	
+    if (m_debugio_init)
+		return  &g_dbio;
+
+	memset( &g_dbio, 0x00, sizeof(TiDebugIoAdapter) );
+
+    g_dbio.id = usart_id;
+    switch (usart_id)
+    {
+    case 0:
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        USART_InitStructure.USART_BaudRate = bandrate;
+        USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+        USART_InitStructure.USART_StopBits = USART_StopBits_1;
+        USART_InitStructure.USART_Parity = USART_Parity_No;
+        USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+        USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+        USART_Init( USART1,&USART_InitStructure);
+        USART_Cmd( USART1,ENABLE);
+        retvalue = &g_dbio;
+        break;
+    
+    case 1:
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+        
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+        USART_InitStructure.USART_BaudRate = bandrate;
+        USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+        USART_InitStructure.USART_StopBits = USART_StopBits_1;
+        USART_InitStructure.USART_Parity = USART_Parity_No;
+        USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+        USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+        USART_Init( USART2,&USART_InitStructure);
+        USART_Cmd( USART2,ENABLE);
+        retvalue = &g_dbio;
+        break;
+    }
+	
+	m_debugio_init = true;
+    return retvalue;
+}
+
 TiDebugIoAdapter * dbio_open( uint16 bandrate )
 {
     USART_InitTypeDef USART_InitStructure;
     
-	if (g_dbio_init)
+	if (m_debugio_init)
 		return  &g_dbio;
 
 	memset( &g_dbio, 0x00, sizeof(TiDebugIoAdapter) );
@@ -100,15 +169,39 @@ TiDebugIoAdapter * dbio_open( uint16 bandrate )
     USART_Cmd( USART2,ENABLE);
 	#endif
 	
-	g_dbio_init = true;
+	m_debugio_init = true;
     return &g_dbio;
+}
+
+void hal_debugio_close(TiDebugIoAdapter * adapter)
+{
+    m_debugio_init = false;
 }
 
 void dbio_close( TiDebugIoAdapter * dbio )
 {
     // @todo
 	g_dbio.txlen = 0;
-	g_dbio_init = false;
+	m_debugio_init = false;
+}
+
+char hal_debug_getchar( TiDebugIoAdapter * dbio )
+{
+	char retvalue = 0x00;
+
+	switch (dbio->id)
+	{
+	case 0:
+	    // Loop until the USARTz Receive Data Register is not empty 
+		while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET) {};
+	    retvalue = (USART_ReceiveData(USART1) & 0xFF); 
+		break;
+	case 1:
+	    while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET) {};
+	    retvalue = (USART_ReceiveData(USART2) & 0xFF); 
+		break;
+	}
+	return retvalue;
 }
 
 /* get a char from UART. if there's no input from UART, then this function will wait
@@ -126,6 +219,31 @@ char dbio_getchar( TiDebugIoAdapter * dbio )
     while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == RESET) {};
     return (USART_ReceiveData(USART2) & 0xFF); 
     #endif
+}
+
+/* _dbio_putchar()
+ * this function sends one character only through the UART hardware. 
+ * 
+ * @return
+ *	0 means success, and -1 means failed (ususally due to the buffer is full)
+ *  when this functions returns -1, you need retry.
+ */
+intx hal_debug_putchar( TiDebugIoAdapter * debugio, char ch )
+{
+	switch (debugio->id)
+	{
+	case 0:
+	    /* Loop until USARTy DR register is empty */
+	    while ( USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET) {};
+	    USART_SendData( USART1,ch);
+		break;
+	case 1:
+	    while ( USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET) {};
+    	USART_SendData( USART2,ch);
+		break;
+	}
+
+	return 1;
 }
 
 /* _dbio_putchar()
@@ -160,6 +278,13 @@ TiByteDeviceInterface * dbio_interface( TiByteDeviceInterface * intf )
     return intf;
 }
 */
+
+void hal_debug_init(uint8 uartid, uint16 baudrate)
+{
+    TiDebugIoAdapter * dbio = hal_debug_open(uartid, baudrate);
+    rtl_init( (void*)dbio, (TiFunDebugIoPutChar)hal_debug_putchar, (TiFunDebugIoGetChar)hal_debug_getchar, 
+        hal_assert_report );
+}
 
 void dbio_init()
 {

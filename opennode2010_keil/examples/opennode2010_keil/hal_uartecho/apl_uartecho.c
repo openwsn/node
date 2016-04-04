@@ -65,12 +65,16 @@ void uartecho1()
     char ch;
     intx count;
 	static int seq_id=1;
+	char * msg = "welcoome to uartecho example...";
 
     target_init();
     led_open(LED_ALL);
     led_on( LED_ALL);
     hal_delayms( 500 );
     led_off( LED_ALL );
+
+	//hal_debug_init(UART_ID, 9600);
+	//dbc_write(msg, strlen(msg));
 
     //halUartInit(9600,0);
     uart = uart_construct((void *)(&m_uart), sizeof(m_uart));

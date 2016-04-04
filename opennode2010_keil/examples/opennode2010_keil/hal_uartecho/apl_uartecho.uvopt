@@ -225,10 +225,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>38</ColumnNumber>
+      <ColumnNumber>63</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>151</TopLine>
-      <CurrentLine>161</CurrentLine>
+      <TopLine>82</TopLine>
+      <CurrentLine>82</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\apl_uartecho.c</PathWithFileName>
       <FilenameWithoutPath>apl_uartecho.c</FilenameWithoutPath>
@@ -610,10 +610,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>54</ColumnNumber>
+      <ColumnNumber>34</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>346</TopLine>
-      <CurrentLine>346</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</PathWithFileName>
       <FilenameWithoutPath>hal_uart.c</FilenameWithoutPath>
@@ -626,8 +626,8 @@
       <Focus>0</Focus>
       <ColumnNumber>5</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>19</TopLine>
-      <CurrentLine>29</CurrentLine>
+      <TopLine>0</TopLine>
+      <CurrentLine>0</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</PathWithFileName>
       <FilenameWithoutPath>hal_targetboard.c</FilenameWithoutPath>
@@ -682,98 +682,5 @@
       <FilenameWithoutPath>rtl_foundation.c</FilenameWithoutPath>
     </File>
   </Group>
-
-  <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_uart.h</PathWithFilename>
-    <TopLine>91</TopLine>
-    <CurrentLine>91</CurrentLine>
-    <Constant>0</Constant>
-    <WindowPosition>
-      <length>0</length>
-      <flags>0</flags>
-      <showCmd>0</showCmd>
-      <MinPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MinPosition>
-      <MaxPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MaxPosition>
-      <NormalPosition>
-        <Top>0</Top>
-        <Left>0</Left>
-        <Right>0</Right>
-        <Bottom>0</Bottom>
-      </NormalPosition>
-    </WindowPosition>
-  </AlienFiles>
-
-  <AlienFiles>
-    <PathWithFilename>D:\dev\openwsn\source\node\opennode2010_keil\common\openwsn\hal\hal_configall.h</PathWithFilename>
-    <TopLine>110</TopLine>
-    <CurrentLine>110</CurrentLine>
-    <Constant>0</Constant>
-    <WindowPosition>
-      <length>0</length>
-      <flags>0</flags>
-      <showCmd>0</showCmd>
-      <MinPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MinPosition>
-      <MaxPosition>
-        <xPos>0</xPos>
-        <yPos>0</yPos>
-      </MaxPosition>
-      <NormalPosition>
-        <Top>0</Top>
-        <Left>0</Left>
-        <Right>0</Right>
-        <Bottom>0</Bottom>
-      </NormalPosition>
-    </WindowPosition>
-  </AlienFiles>
-
-  <MDIGroups>
-    <Orientation>1</Orientation>
-    <ActiveMDIGroup>0</ActiveMDIGroup>
-    <MDIGroup>
-      <Size>100</Size>
-      <ActiveTab>4</ActiveTab>
-      <Documents>
-        <Doc>
-          <Name>..\..\..\common\openwsn/hal/hal_uart.h</Name>
-          <ColumnNumber>20</ColumnNumber>
-          <TopLine>91</TopLine>
-          <CurrentLine>91</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\apl_uartecho.c</Name>
-          <ColumnNumber>38</ColumnNumber>
-          <TopLine>151</TopLine>
-          <CurrentLine>161</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn/hal/hal_configall.h</Name>
-          <ColumnNumber>17</ColumnNumber>
-          <TopLine>110</TopLine>
-          <CurrentLine>110</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_targetboard.c</Name>
-          <ColumnNumber>5</ColumnNumber>
-          <TopLine>19</TopLine>
-          <CurrentLine>29</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\common\openwsn\hal\opennode2010\hal_uart.c</Name>
-          <ColumnNumber>54</ColumnNumber>
-          <TopLine>346</TopLine>
-          <CurrentLine>346</CurrentLine>
-        </Doc>
-      </Documents>
-    </MDIGroup>
-  </MDIGroups>
 
 </ProjectOpt>

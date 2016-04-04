@@ -29,6 +29,15 @@ while (1)
 }
 
 
+====== 
+
+2013.12.01
+
+- Revised by zhangwei. 
+- Tested ok with the cc2520tx sender node and the COM assistant utility software.
+
+
 =================================================================
 released
 tested by Jiang RiDong
+

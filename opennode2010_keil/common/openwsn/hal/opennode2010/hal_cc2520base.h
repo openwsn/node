@@ -387,6 +387,12 @@
 #define CC2520_INS_REGRD               0x80
 #define CC2520_INS_REGWR               0xC0
 
+/* modified by zhangwei on 2014.03.31
+ * Add the following pragma to make Keil compiler recognize anonymous struct
+ * or else it will report error.
+ */ 
+#pragma anon_unions
+
 #ifdef CONFIG_TARGETBOARD_OPENNODE2010
 #ifdef CONFIG_TOOLCHAIN_MDK
 typedef union {
@@ -405,7 +411,7 @@ typedef union {
         BYTE b3;
     }mem;
 } EDWORD;
-#else    
+#else
 typedef union {
     WORD w;
     struct {

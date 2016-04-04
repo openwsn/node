@@ -2,8 +2,15 @@ This's the open source version of OpenWSN project by TongJi University.
 
 For the detail about the OpenWSN project, please refer to the project site:
 http://code.google.com/p/openwsn
--
--
+
+From 2012, you can download the most updated source code from:
+https://github.com/openwsn/node
+
+
+Recommend working directory:
+
+	D:\dev\openwsn\source\node
+
 
 How to sync with openwsn node project on GitHub?
 =================================================================================

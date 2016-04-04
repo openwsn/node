@@ -60,8 +60,9 @@ int main(void)
 	led_off( LED_ALL );
 	while(1)
 	{
-		led_toggle(count);
-		hal_delayms(100);
+		//led_toggle(count);
+		led_toggle(LED_RED);
+		hal_delayms(1000);
 		count++;
 	}
 }

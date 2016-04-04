@@ -149,13 +149,16 @@ void nss_execute(void)
 	#endif
 
 	target_init();
-	led_open(0);
+	led_open(LED_ALL);
 	led_on( LED_RED );
 	hal_delayms( 500 );
 	led_off( LED_ALL );
 
+	hal_debug_init(1, 9600);
+	dbc_mem( msg, strlen(msg) );
+
 	#ifndef CONFIG_UART_INTERRUPT_DRIVEN
-	rtl_init( dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
+	//rtl_init( dbio_open(38400), (TiFunDebugIoPutChar)dbio_putchar, (TiFunDebugIoGetChar)dbio_getchar, hal_assert_report );
     // dbc_mem( msg, strlen(msg) );
     #endif
 	
@@ -189,7 +192,8 @@ void nss_execute(void)
 	// That's why I don't modifiy the following source code. It should run smoothly.
 
 	uart = uart_construct( (void *)&m_uart, sizeof(TiUartAdapter) );
-	uart = uart_open( uart, 0, 38400, 8, 1, 0 );
+	//uart = uart_open( uart, 0, 38400, 8, 1, 0 );
+	uart = uart_open( uart, 0, 9600, 8, 1, 0 );
 	hal_assert( uart != NULL );
 
 	// Start listening to the wireless network arrivals and the serial network arrivals.
